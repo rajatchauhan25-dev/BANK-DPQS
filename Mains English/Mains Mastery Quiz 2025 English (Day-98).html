@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-98)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>Select the most appropriate words that are both grammatically and contextually correct to fill in the blanks.</strong></p><br><p><strong>The organization’s initiative to ____________ literacy among underprivileged communities aims to ____________ social inequalities.</strong></p>", "options": ["<p>obscure, exacerbate</p>", "<p>enhance, alleviate</p>", "<p>hinder, diminish</p>", "<p>complicate, reinforce</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The organization’s initiative to \"enhance\" literacy among underprivileged communities aims to \"alleviate\" social inequalities. Enhancing means to improve or increase, and alleviating means to reduce or lessen social inequalities.</p>"}, {"question": "<p><strong>Select the most appropriate words that are both grammatically and contextually correct to fill in the blanks.</strong></p><br><p><strong>The scientist's findings were crucial to ____________ the previously accepted theories, which were deemed ____________ by recent evidence.</strong></p>", "options": ["<p>corroborating, irrelevant</p>", "<p>substantiating, progressive</p>", "<p>undermining, outdated</p>", "<p>affirming, novel</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The scientist's findings were crucial to \"undermining\" the previously accepted theories, which were deemed \"outdated\" by recent evidence. Undermining means to weaken or challenge, and outdated refers to theories that are no longer considered relevant or accurate.</p>"}, {"question": "<p><strong>Select the most appropriate words that are both grammatically and contextually correct to fill in the blanks.</strong></p><br><p><strong>The committee decided to ____________ the proposed legislation after numerous ____________ were raised regarding its implications.</strong></p>", "options": ["<p>advance, objections</p>", "<p>reject, amendments</p>", "<p>postpone, concerns</p>", "<p>ratify, endorsements</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The committee decided to \"postpone\" the proposed legislation after numerous \"concerns\" were raised regarding its implications. Postpone means to delay or defer, and concerns refer to issues or doubts that need to be addressed.</p>"}, {"question": "<p><strong>Select the most appropriate words that are both grammatically and contextually correct to fill in the blanks.</strong></p><br><p><strong>In order to ____________ the project timeline, the team must ____________ effective communication among all stakeholders.</strong></p>", "options": ["<p>accelerate, facilitate</p>", "<p>hinder, obstruct</p>", "<p>delay, complicate</p>", "<p>prolong, diminish</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>In order to \"accelerate\" the project timeline, the team must \"facilitate\" effective communication among all stakeholders. Accelerating means to speed up, and facilitating means to make something easier or more efficient.</p>"}, {"question": "<p><strong>Select the most appropriate words that are both grammatically and contextually correct to fill in the blanks.</strong></p><br><p><strong>The keynote speaker aimed to ____________ the audience's understanding of global issues and ____________ their motivation to take action.</strong></p>", "options": ["<p>confuse, diminish</p>", "<p>enlighten, inspire</p>", "<p>obscure, discourage</p>", "<p>isolate, trivialize</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The keynote speaker aimed to \"enlighten\" the audience's understanding of global issues and \"inspire\" their motivation to take action. Enlightening means to provide knowledge or insight, and inspiring means to stimulate action or motivation.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>An overlooked aspect of this election is the starkly different approach of the Bharatiya Janata Party and the Congress in the realms of technology and human rights. This divergence is not merely academic but could have implications for the country’s socio-economic fabric and its governance ethos. The BJP’s manifesto is heavily tech-centric, envisioning a future where technology is the linchpin of development. Under the chapter ‘Modi ki Guarantee for Technology and Innovations,’ the BJP outlines an ambitious agenda to harness cutting-edge technologies across various sectors. From leveraging AI for language preservation to employing drones in fisheries, the party’s commitment to technological innovation is evident. Initiatives like expanding 5G and pioneering 6G technologies, advancing Graphene-based programmes, and embarking on the National Quantum Mission underscore a vision of India as a global tech powerhouse. However, this aggressive push for technology raises critical concerns about the absence of a parallel emphasis on rights and privacy. The BJP’s manifesto, while expansive on technological solutions, remains conspicuously silent on how these advancements will safeguard citizens’ privacy and rights. In an era where data privacy is paramount, this omission is significant. The manifesto does not articulate how the existing data protection laws will be enforced or improved to protect individuals’ privacy amid the tech boom. This gap is troubling, as it suggests a potential oversight in balancing technological progress with essential civil liberties. In stark contrast, the Congress manifesto takes a more measured approach, focusing heavily on a rights-based framework. While it acknowledges the importance of technology in driving economic growth and job creation, its primary emphasis is on protecting and enhancing human rights. The Congress promises to uphold intellectual property rights, enforce the Rights of Persons with Disabilities Act, and ensure the legal protection of gig workers and domestic help. Furthermore, the party aims to amend the Digital Personal Data Protection Act to prevent governmental overreach and censorship. This approach by Congress suggests a commitment to socioeconomic equity and legal safeguards although it can never be guaranteed that technological advancements will not eclipse rights of individuals. The party’s manifesto underscores the importance of addressing systemic issues such as discrimination against women and protecting the rights of religious minorities, aiming to foster an inclusive society. The divergence in these manifestos reflects broader ideological differences between the two parties. The BJP’s techno-solution approach is forward looking, but risks overshadowing critical human rights issues. Congress’s rights-centric agenda, although less technologically ambitious, lays stress on legal and social frameworks. For India, the path forward must balance these two approaches. Technological advancements are undoubtedly crucial for economic growth and global competitiveness. However, these must be pursued without compromising on the protection of individual rights and privacy. A balanced strategy that integrates technological innovation with robust rights-based safeguards will ensure sustainable and inclusive development.</p><br><p><strong>Which technology-related initiatives are emphasized in the BJP's manifesto?</strong></p>", "options": ["<p>Renewable energy projects</p>", "<p>Space exploration missions</p>", "<p>Advancements in quantum computing</p>", "<p>Traditional farming techniques</p>", "<p>Rural infrastructure development</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: </strong><strong>C</strong></p>\n<p>The correct answer is (c) Advancements in quantum computing. The passage highlights initiatives like expanding 5G and pioneering 6G technologies, advancing Graphene-based programmes, and embarking on the National Quantum Mission as part of the BJP's tech-centric agenda.</p>\n<p>In the passage, the BJP's manifesto is described as heavily tech-centric, envisioning a future where technology is central to development. The party outlines an ambitious agenda to harness cutting-edge technologies across various sectors. Specifically, the passage highlights initiatives such as expanding 5G and pioneering 6G technologies, advancing Graphene-based programs, and embarking on the National Quantum Mission.</p>\n<p>a). Renewable energy projects: While renewable energy projects are undoubtedly important for sustainable development and may be part of a political party's agenda, they are not specifically highlighted in the passage as a key focus of the BJP's manifesto. The passage instead emphasizes the party's commitment to technological innovation across various sectors, with a particular emphasis on areas like quantum computing, 5G and 6G technologies, graphene-based programs, and the National Quantum Mission.</p>\n<p>b). Space exploration missions: Similar to renewable energy projects, space exploration missions are not explicitly mentioned in the passage as a primary focus of the BJP's manifesto. While space exploration and related technologies could contribute to technological advancement, the passage primarily discusses the party's emphasis on harnessing cutting-edge technologies like quantum computing rather than space exploration specifically.</p>\n<p>d). Traditional farming techniques: The passage does not highlight traditional farming techniques as a key focus of the BJP's manifesto. Instead, it emphasizes the party's vision of leveraging advanced technologies across various sectors for development, suggesting a forward-looking approach rather than a focus on traditional methods.</p>\n<p>e). Rural infrastructure development: While rural infrastructure development is essential for overall development and may be part of a political party's agenda, it is not highlighted in the passage as a primary focus of the BJP's tech-centric manifesto. The passage focuses more on the party's ambitious agenda for technological innovation, particularly in areas like quantum computing and 5G/6G technologies.</p>\n<p>In summary, while options (a), (b), (d), and (e) may represent important areas of focus for political agendas, they are not explicitly emphasized in the passage as key technology-related initiatives of the BJP's manifesto. Therefore, based on the information provided, option (c), advancements in quantum computing, remains the correct answer.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>An overlooked aspect of this election is the starkly different approach of the Bharatiya Janata Party and the Congress in the realms of technology and human rights. This divergence is not merely academic but could have implications for the country’s socio-economic fabric and its governance ethos. The BJP’s manifesto is heavily tech-centric, envisioning a future where technology is the linchpin of development. Under the chapter ‘Modi ki Guarantee for Technology and Innovations,’ the BJP outlines an ambitious agenda to harness cutting-edge technologies across various sectors. From leveraging AI for language preservation to employing drones in fisheries, the party’s commitment to technological innovation is evident. Initiatives like expanding 5G and pioneering 6G technologies, advancing Graphene-based programmes, and embarking on the National Quantum Mission underscore a vision of India as a global tech powerhouse. However, this aggressive push for technology raises critical concerns about the absence of a parallel emphasis on rights and privacy. The BJP’s manifesto, while expansive on technological solutions, remains conspicuously silent on how these advancements will safeguard citizens’ privacy and rights. In an era where data privacy is paramount, this omission is significant. The manifesto does not articulate how the existing data protection laws will be enforced or improved to protect individuals’ privacy amid the tech boom. This gap is troubling, as it suggests a potential oversight in balancing technological progress with essential civil liberties. In stark contrast, the Congress manifesto takes a more measured approach, focusing heavily on a rights-based framework. While it acknowledges the importance of technology in driving economic growth and job creation, its primary emphasis is on protecting and enhancing human rights. The Congress promises to uphold intellectual property rights, enforce the Rights of Persons with Disabilities Act, and ensure the legal protection of gig workers and domestic help. Furthermore, the party aims to amend the Digital Personal Data Protection Act to prevent governmental overreach and censorship. This approach by Congress suggests a commitment to socioeconomic equity and legal safeguards although it can never be guaranteed that technological advancements will not eclipse rights of individuals. The party’s manifesto underscores the importance of addressing systemic issues such as discrimination against women and protecting the rights of religious minorities, aiming to foster an inclusive society. The divergence in these manifestos reflects broader ideological differences between the two parties. The BJP’s techno-solution approach is forward looking, but risks overshadowing critical human rights issues. Congress’s rights-centric agenda, although less technologically ambitious, lays stress on legal and social frameworks. For India, the path forward must balance these two approaches. Technological advancements are undoubtedly crucial for economic growth and global competitiveness. However, these must be pursued without compromising on the protection of individual rights and privacy. A balanced strategy that integrates technological innovation with robust rights-based safeguards will ensure sustainable and inclusive development.</p><br><p><strong>What critical concern does the passage raise about the BJP's manifesto?</strong></p>", "options": ["<p>Lack of emphasis on social welfare programs</p>", "<p>Absence of a focus on environmental conservation</p>", "<p>Potential infringement on citizens' privacy and rights</p>", "<p>Insufficient investment in healthcare infrastructure</p>", "<p>Neglect of educational reforms</p>"], "correctIndex": 2, "solution": "<p><strong>Answer:</strong><strong> C</strong></p>\n<p>The correct answer is (c) Potential infringement on citizens' privacy and rights. The passage mentions that while the BJP's manifesto is expansive on technological solutions, it remains conspicuously silent on how these advancements will safeguard citizens' privacy and rights, raising critical concerns.</p>\n<p>The passage highlights that while the BJP's manifesto is expansive on technological solutions and envisions a future where technology is central to development, it remains conspicuously silent on how these advancements will safeguard citizens' privacy and rights. This omission raises critical concerns about the potential infringement on citizens' privacy and rights in the face of aggressive technological advancement.</p>\n<p>a). Lack of emphasis on social welfare programs: While the passage doesn't explicitly discuss the BJP's emphasis on social welfare programs, it primarily focuses on the party's tech-centric agenda and the potential implications for citizens' privacy and rights. Therefore, this option does not directly address the critical concern raised in the passage.</p>\n<p>b). Absence of a focus on environmental conservation: Environmental conservation is not the central concern raised in the passage. While it's important, the passage primarily discusses the potential infringement on citizens' privacy and rights due to the aggressive push for technology in the BJP's manifesto.</p>\n<p>d). Insufficient investment in healthcare infrastructure: The passage does not specifically address the BJP's investment in healthcare infrastructure. The critical concern raised in the passage revolves around the potential infringement on citizens' privacy and rights due to the aggressive push for technology, rather than the level of investment in healthcare infrastructure.</p>\n<p>e). Neglect of educational reforms: Educational reforms are not the primary concern raised in the passage. While educational reforms are important for development, the passage primarily discusses the potential infringement on citizens' privacy and rights in the context of the BJP's tech-centric manifesto.</p>\n<p>In summary, option (c) Potential infringement on citizens' privacy and rights directly addresses the critical concern raised in the passage about the BJP's manifesto, as it highlights the absence of a parallel emphasis on rights and privacy amid the aggressive push for technology. Therefore, (c) is the correct answer.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>An overlooked aspect of this election is the starkly different approach of the Bharatiya Janata Party and the Congress in the realms of technology and human rights. This divergence is not merely academic but could have implications for the country’s socio-economic fabric and its governance ethos. The BJP’s manifesto is heavily tech-centric, envisioning a future where technology is the linchpin of development. Under the chapter ‘Modi ki Guarantee for Technology and Innovations,’ the BJP outlines an ambitious agenda to harness cutting-edge technologies across various sectors. From leveraging AI for language preservation to employing drones in fisheries, the party’s commitment to technological innovation is evident. Initiatives like expanding 5G and pioneering 6G technologies, advancing Graphene-based programmes, and embarking on the National Quantum Mission underscore a vision of India as a global tech powerhouse. However, this aggressive push for technology raises critical concerns about the absence of a parallel emphasis on rights and privacy. The BJP’s manifesto, while expansive on technological solutions, remains conspicuously silent on how these advancements will safeguard citizens’ privacy and rights. In an era where data privacy is paramount, this omission is significant. The manifesto does not articulate how the existing data protection laws will be enforced or improved to protect individuals’ privacy amid the tech boom. This gap is troubling, as it suggests a potential oversight in balancing technological progress with essential civil liberties. In stark contrast, the Congress manifesto takes a more measured approach, focusing heavily on a rights-based framework. While it acknowledges the importance of technology in driving economic growth and job creation, its primary emphasis is on protecting and enhancing human rights. The Congress promises to uphold intellectual property rights, enforce the Rights of Persons with Disabilities Act, and ensure the legal protection of gig workers and domestic help. Furthermore, the party aims to amend the Digital Personal Data Protection Act to prevent governmental overreach and censorship. This approach by Congress suggests a commitment to socioeconomic equity and legal safeguards although it can never be guaranteed that technological advancements will not eclipse rights of individuals. The party’s manifesto underscores the importance of addressing systemic issues such as discrimination against women and protecting the rights of religious minorities, aiming to foster an inclusive society. The divergence in these manifestos reflects broader ideological differences between the two parties. The BJP’s techno-solution approach is forward looking, but risks overshadowing critical human rights issues. Congress’s rights-centric agenda, although less technologically ambitious, lays stress on legal and social frameworks. For India, the path forward must balance these two approaches. Technological advancements are undoubtedly crucial for economic growth and global competitiveness. However, these must be pursued without compromising on the protection of individual rights and privacy. A balanced strategy that integrates technological innovation with robust rights-based safeguards will ensure sustainable and inclusive development.</p><br><p><strong>What is the primary focus of the BJP's manifesto, as outlined in the passage?</strong></p>", "options": ["<p>Protection of human rights</p>", "<p>Economic growth through technology</p>", "<p>Promotion of social equality</p>", "<p>Strengthening of legal frameworks</p>", "<p>Preservation of cultural heritage</p>"], "correctIndex": 1, "solution": "<p><strong>Answer:</strong><strong> B</strong></p>\n<p>The correct answer is (b) Economic growth through technology. The passage mentions that the BJP's manifesto is heavily tech-centric, envisioning a future where technology is the linchpin of development, and outlines an ambitious agenda to harness cutting-edge technologies across various sectors.</p>\n<p>In the passage, it's stated that the primary focus of the BJP's manifesto is heavily tech-centric, envisioning a future where technology is the linchpin of development. The passage describes the BJP's ambitious agenda to harness cutting-edge technologies across various sectors. Specifically, under the chapter 'Modi ki Guarantee for Technology and Innovations,' the BJP outlines initiatives to leverage technology for development.</p>\n<p>a). Protection of human rights: While the passage mentions concerns about the potential infringement on citizens' privacy and rights due to the aggressive push for technology in the BJP's manifesto, it does not suggest that the primary focus of the manifesto is the protection of human rights. Instead, the emphasis is on technological innovation for economic growth.</p>\n<p>c). Promotion of social equality: While social equality may be an aspect of the BJP's agenda, the passage primarily emphasizes the party's tech-centric approach and ambitious agenda for technological innovation across various sectors, suggesting that economic growth through technology is the primary focus.</p>\n<p>d). Strengthening of legal frameworks: Strengthening legal frameworks is not explicitly highlighted as the primary focus of the BJP's manifesto in the passage. While legal frameworks may be important for governance, the passage focuses more on the party's tech-centric agenda and its implications for economic growth.</p>\n<p>e). Preservation of cultural heritage: Preservation of cultural heritage is not the primary focus of the BJP's manifesto as outlined in the passage. While cultural heritage may be part of the broader agenda of a political party, the passage primarily discusses the party's vision for economic growth through technology.</p>\n<p>In summary, option (b) Economic growth through technology directly addresses the primary focus of the BJP's manifesto as outlined in the passage, which emphasizes a tech-centric approach and ambitious agenda for technological innovation across various sectors. Therefore, (b) is the correct answer.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>An overlooked aspect of this election is the starkly different approach of the Bharatiya Janata Party and the Congress in the realms of technology and human rights. This divergence is not merely academic but could have implications for the country’s socio-economic fabric and its governance ethos. The BJP’s manifesto is heavily tech-centric, envisioning a future where technology is the linchpin of development. Under the chapter ‘Modi ki Guarantee for Technology and Innovations,’ the BJP outlines an ambitious agenda to harness cutting-edge technologies across various sectors. From leveraging AI for language preservation to employing drones in fisheries, the party’s commitment to technological innovation is evident. Initiatives like expanding 5G and pioneering 6G technologies, advancing Graphene-based programmes, and embarking on the National Quantum Mission underscore a vision of India as a global tech powerhouse. However, this aggressive push for technology raises critical concerns about the absence of a parallel emphasis on rights and privacy. The BJP’s manifesto, while expansive on technological solutions, remains conspicuously silent on how these advancements will safeguard citizens’ privacy and rights. In an era where data privacy is paramount, this omission is significant. The manifesto does not articulate how the existing data protection laws will be enforced or improved to protect individuals’ privacy amid the tech boom. This gap is troubling, as it suggests a potential oversight in balancing technological progress with essential civil liberties. In stark contrast, the Congress manifesto takes a more measured approach, focusing heavily on a rights-based framework. While it acknowledges the importance of technology in driving economic growth and job creation, its primary emphasis is on protecting and enhancing human rights. The Congress promises to uphold intellectual property rights, enforce the Rights of Persons with Disabilities Act, and ensure the legal protection of gig workers and domestic help. Furthermore, the party aims to amend the Digital Personal Data Protection Act to prevent governmental overreach and censorship. This approach by Congress suggests a commitment to socioeconomic equity and legal safeguards although it can never be guaranteed that technological advancements will not eclipse rights of individuals. The party’s manifesto underscores the importance of addressing systemic issues such as discrimination against women and protecting the rights of religious minorities, aiming to foster an inclusive society. The divergence in these manifestos reflects broader ideological differences between the two parties. The BJP’s techno-solution approach is forward looking, but risks overshadowing critical human rights issues. Congress’s rights-centric agenda, although less technologically ambitious, lays stress on legal and social frameworks. For India, the path forward must balance these two approaches. Technological advancements are undoubtedly crucial for economic growth and global competitiveness. However, these must be pursued without compromising on the protection of individual rights and privacy. A balanced strategy that integrates technological innovation with robust rights-based safeguards will ensure sustainable and inclusive development.</p><br><p><strong>What broader ideological differences between the BJP and the Congress are highlighted in the passage?</strong></p>", "options": ["<p>Differences in foreign policy approaches</p>", "<p>Disparities in economic development strategies</p>", "<p>Variances in environmental conservation priorities</p>", "<p>Contrasts in technological innovation versus rights-based frameworks</p>", "<p>Disagreements on social welfare program implementation</p>"], "correctIndex": 3, "solution": "<p><strong>Answer:</strong><strong> D</strong></p>\n<p>The correct answer is (d) Contrasts in technological innovation versus rights-based frameworks. The passage discusses how the BJP's techno-solution approach contrasts with the Congress's rights-centric agenda, reflecting broader ideological differences between the two parties.</p>\n<p>In the passage, the broader ideological differences between the BJP and the Congress are highlighted based on their respective manifestos. The passage outlines that the BJP's manifesto takes a forward-looking, techno-solution approach, emphasizing technological innovation as central to development. On the other hand, the Congress manifesto is described as taking a more measured approach, focusing heavily on a rights-based framework.</p>\n<p>a). Differences in foreign policy approaches: While differences in foreign policy approaches may exist between political parties, the passage does not specifically highlight this as one of the broader ideological differences between the BJP and the Congress. Instead, it focuses on their approaches to technology and rights-based frameworks.</p>\n<p>b). Disparities in economic development strategies: Economic development strategies may indeed differ between political parties, but the passage primarily discusses the BJP's emphasis on technological innovation and the Congress's focus on a rights-based framework rather than specific economic development strategies.</p>\n<p>c). Variances in environmental conservation priorities: Environmental conservation priorities are not explicitly discussed as one of the broader ideological differences between the BJP and the Congress in the passage. The passage primarily focuses on their approaches to technology and rights-based frameworks.</p>\n<p>e). Disagreements on social welfare program implementation: While disagreements on social welfare program implementation may be part of broader ideological differences between political parties, the passage primarily highlights the BJP's tech-centric approach and the Congress's emphasis on rights-based frameworks as the key contrasting ideologies.</p>\n<p>In summary, option (d) Contrasts in technological innovation versus rights-based frameworks directly addresses the broader ideological differences highlighted in the passage, reflecting the BJP's forward-looking approach to technological innovation and the Congress's focus on a rights-based framework. Therefore, (d) is the correct answer.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>An overlooked aspect of this election is the starkly different approach of the Bharatiya Janata Party and the Congress in the realms of technology and human rights. This divergence is not merely academic but could have implications for the country’s socio-economic fabric and its governance ethos. The BJP’s manifesto is heavily tech-centric, envisioning a future where technology is the linchpin of development. Under the chapter ‘Modi ki Guarantee for Technology and Innovations,’ the BJP outlines an ambitious agenda to harness cutting-edge technologies across various sectors. From leveraging AI for language preservation to employing drones in fisheries, the party’s commitment to technological innovation is evident. Initiatives like expanding 5G and pioneering 6G technologies, advancing Graphene-based programmes, and embarking on the National Quantum Mission underscore a vision of India as a global tech powerhouse. However, this aggressive push for technology raises critical concerns about the absence of a parallel emphasis on rights and privacy. The BJP’s manifesto, while expansive on technological solutions, remains conspicuously silent on how these advancements will safeguard citizens’ privacy and rights. In an era where data privacy is paramount, this omission is significant. The manifesto does not articulate how the existing data protection laws will be enforced or improved to protect individuals’ privacy amid the tech boom. This gap is troubling, as it suggests a potential oversight in balancing technological progress with essential civil liberties. In stark contrast, the Congress manifesto takes a more measured approach, focusing heavily on a rights-based framework. While it acknowledges the importance of technology in driving economic growth and job creation, its primary emphasis is on protecting and enhancing human rights. The Congress promises to uphold intellectual property rights, enforce the Rights of Persons with Disabilities Act, and ensure the legal protection of gig workers and domestic help. Furthermore, the party aims to amend the Digital Personal Data Protection Act to prevent governmental overreach and censorship. This approach by Congress suggests a commitment to socioeconomic equity and legal safeguards although it can never be guaranteed that technological advancements will not eclipse rights of individuals. The party’s manifesto underscores the importance of addressing systemic issues such as discrimination against women and protecting the rights of religious minorities, aiming to foster an inclusive society. The divergence in these manifestos reflects broader ideological differences between the two parties. The BJP’s techno-solution approach is forward looking, but risks overshadowing critical human rights issues. Congress’s rights-centric agenda, although less technologically ambitious, lays stress on legal and social frameworks. For India, the path forward must balance these two approaches. Technological advancements are undoubtedly crucial for economic growth and global competitiveness. However, these must be pursued without compromising on the protection of individual rights and privacy. A balanced strategy that integrates technological innovation with robust rights-based safeguards will ensure sustainable and inclusive development.</p><br><p><strong>How does the Congress aim to address concerns related to data privacy?</strong></p>", "options": ["<p>By expanding surveillance measures</p>", "<p>By enforcing stringent censorship laws</p>", "<p>By amending existing data protection laws</p>", "<p>By limiting access to technological innovations</p>", "<p>By promoting international data sharing agreements</p>"], "correctIndex": 2, "solution": "<p><strong>Answer:</strong><strong> C</strong></p>\n<p>The correct answer is (c) By amending existing data protection laws. The passage mentions that the Congress aims to amend the Digital Personal Data Protection Act to prevent governmental overreach and censorship, indicating its approach to address concerns related to data privacy.</p>\n<p>In the passage, it's mentioned that the Congress aims to address concerns related to data privacy by amending the Digital Personal Data Protection Act. The party intends to amend this act to prevent governmental overreach and censorship, indicating its approach to addressing concerns related to data privacy through legislative measures.</p>\n<p>a). By expanding surveillance measures: Expanding surveillance measures would likely exacerbate concerns related to data privacy rather than address them. The passage does not suggest that the Congress aims to address data privacy concerns through increased surveillance.</p>\n<p>b). By enforcing stringent censorship laws: Enforcing stringent censorship laws is not the approach highlighted in the passage for addressing concerns related to data privacy. Instead, the passage suggests that the Congress aims to prevent governmental overreach and censorship through amendments to data protection laws.</p>\n<p>d). By limiting access to technological innovations: Limiting access to technological innovations is not mentioned in the passage as the Congress's approach to addressing concerns related to data privacy. The party's focus, as described in the passage, is on amending data protection laws to safeguard privacy rights.</p>\n<p>e). By promoting international data sharing agreements: While promoting international data sharing agreements may be part of a comprehensive approach to data privacy, the passage does not specifically highlight this as the Congress's strategy for addressing concerns related to data privacy. Instead, the passage emphasizes the party's intention to amend existing data protection laws.</p>\n<p>In summary, option (c) By amending existing data protection laws directly addresses the Congress's approach to addressing concerns related to data privacy, as outlined in the passage. Therefore, (c) is the correct answer.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>An overlooked aspect of this election is the starkly different approach of the Bharatiya Janata Party and the Congress in the realms of technology and human rights. This divergence is not merely academic but could have implications for the country’s socio-economic fabric and its governance ethos. The BJP’s manifesto is heavily tech-centric, envisioning a future where technology is the linchpin of development. Under the chapter ‘Modi ki Guarantee for Technology and Innovations,’ the BJP outlines an ambitious agenda to harness cutting-edge technologies across various sectors. From leveraging AI for language preservation to employing drones in fisheries, the party’s commitment to technological innovation is evident. Initiatives like expanding 5G and pioneering 6G technologies, advancing Graphene-based programmes, and embarking on the National Quantum Mission underscore a vision of India as a global tech powerhouse. However, this aggressive push for technology raises critical concerns about the absence of a parallel emphasis on rights and privacy. The BJP’s manifesto, while expansive on technological solutions, remains conspicuously silent on how these advancements will safeguard citizens’ privacy and rights. In an era where data privacy is paramount, this omission is significant. The manifesto does not articulate how the existing data protection laws will be enforced or improved to protect individuals’ privacy amid the tech boom. This gap is troubling, as it suggests a potential oversight in balancing technological progress with essential civil liberties. In stark contrast, the Congress manifesto takes a more measured approach, focusing heavily on a rights-based framework. While it acknowledges the importance of technology in driving economic growth and job creation, its primary emphasis is on protecting and enhancing human rights. The Congress promises to uphold intellectual property rights, enforce the Rights of Persons with Disabilities Act, and ensure the legal protection of gig workers and domestic help. Furthermore, the party aims to amend the Digital Personal Data Protection Act to prevent governmental overreach and censorship. This approach by Congress suggests a commitment to socioeconomic equity and legal safeguards although it can never be guaranteed that technological advancements will not eclipse rights of individuals. The party’s manifesto underscores the importance of addressing systemic issues such as discrimination against women and protecting the rights of religious minorities, aiming to foster an inclusive society. The divergence in these manifestos reflects broader ideological differences between the two parties. The BJP’s techno-solution approach is forward looking, but risks overshadowing critical human rights issues. Congress’s rights-centric agenda, although less technologically ambitious, lays stress on legal and social frameworks. For India, the path forward must balance these two approaches. Technological advancements are undoubtedly crucial for economic growth and global competitiveness. However, these must be pursued without compromising on the protection of individual rights and privacy. A balanced strategy that integrates technological innovation with robust rights-based safeguards will ensure sustainable and inclusive development.</p><br><p><strong>According to the passage, what is essential for India's path forward?</strong></p>", "options": ["<p>Technological advancement at all costs</p>", "<p>Complete overhaul of existing legal frameworks</p>", "<p>A balance between technological innovation and human rights safeguards</p>", "<p>Emphasis on traditional methods of governance</p>", "<p>Dependence on international aid for development projects</p>"], "correctIndex": 2, "solution": "<p><strong>Answer:</strong><strong> C</strong></p>\n<p>The correct answer is (c) A balance between technological innovation and human rights safeguards. The passage emphasizes the importance of balancing technological advancements with robust rights-based safeguards to ensure sustainable and inclusive development for India's path forward.</p>\n<p>In the passage, it's emphasized that for India's path forward, it is essential to balance technological advancement with human rights safeguards. The passage highlights that while technological advancements are crucial for economic growth and global competitiveness, they must be pursued without compromising on the protection of individual rights and privacy. Therefore, achieving a balance between technological innovation and human rights safeguards is deemed necessary for sustainable and inclusive development.</p>\n<p>a). Technological advancement at all costs: While technological advancement is important, the passage suggests that it should not come at the expense of compromising human rights and privacy. Therefore, pursuing technological advancement at all costs is not advocated in the passage.</p>\n<p>b). Complete overhaul of existing legal frameworks: While the passage emphasizes the importance of legal safeguards and amendments to address concerns such as data privacy, it does not suggest a complete overhaul of existing legal frameworks as essential for India's path forward. Instead, it emphasizes achieving a balance between technological innovation and human rights safeguards.</p>\n<p>d). Emphasis on traditional methods of governance: The passage does not advocate for an emphasis on traditional methods of governance as essential for India's path forward. Instead, it focuses on the importance of balancing technological innovation with human rights safeguards to ensure sustainable development.</p>\n<p>e). Dependence on international aid for development projects: The passage does not suggest dependence on international aid for development projects as essential for India's path forward. Instead, it emphasizes the importance of achieving a balance between technological innovation and human rights safeguards for sustainable and inclusive development.</p>\n<p>In summary, option (c) A balance between technological innovation and human rights safeguards directly addresses the essential aspect highlighted in the passage for India's path forward. Therefore, (c) is the correct answer.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>An overlooked aspect of this election is the starkly different approach of the Bharatiya Janata Party and the Congress in the realms of technology and human rights. This divergence is not merely academic but could have implications for the country’s socio-economic fabric and its governance ethos. The BJP’s manifesto is heavily tech-centric, envisioning a future where technology is the linchpin of development. Under the chapter ‘Modi ki Guarantee for Technology and Innovations,’ the BJP outlines an ambitious agenda to harness cutting-edge technologies across various sectors. From leveraging AI for language preservation to employing drones in fisheries, the party’s commitment to technological innovation is evident. Initiatives like expanding 5G and pioneering 6G technologies, advancing Graphene-based programmes, and embarking on the National Quantum Mission underscore a vision of India as a global tech powerhouse. However, this aggressive push for technology raises critical concerns about the absence of a parallel emphasis on rights and privacy. The BJP’s manifesto, while expansive on technological solutions, remains conspicuously silent on how these advancements will safeguard citizens’ privacy and rights. In an era where data privacy is paramount, this omission is significant. The manifesto does not articulate how the existing data protection laws will be enforced or improved to protect individuals’ privacy amid the tech boom. This gap is troubling, as it suggests a potential oversight in balancing technological progress with essential civil liberties. In stark contrast, the Congress manifesto takes a more measured approach, focusing heavily on a rights-based framework. While it acknowledges the importance of technology in driving economic growth and job creation, its primary emphasis is on protecting and enhancing human rights. The Congress promises to uphold intellectual property rights, enforce the Rights of Persons with Disabilities Act, and ensure the legal protection of gig workers and domestic help. Furthermore, the party aims to amend the Digital Personal Data Protection Act to prevent governmental overreach and censorship. This approach by Congress suggests a commitment to socioeconomic equity and legal safeguards although it can never be guaranteed that technological advancements will not eclipse rights of individuals. The party’s manifesto underscores the importance of addressing systemic issues such as discrimination against women and protecting the rights of religious minorities, aiming to foster an inclusive society. The divergence in these manifestos reflects broader ideological differences between the two parties. The BJP’s techno-solution approach is forward looking, but risks overshadowing critical human rights issues. Congress’s rights-centric agenda, although less technologically ambitious, lays stress on legal and social frameworks. For India, the path forward must balance these two approaches. Technological advancements are undoubtedly crucial for economic growth and global competitiveness. However, these must be pursued without compromising on the protection of individual rights and privacy. A balanced strategy that integrates technological innovation with robust rights-based safeguards will ensure sustainable and inclusive development.</p><br><p><strong>What is the tone of the passage regarding the discussion of the BJP's and Congress's manifestos?</strong></p>", "options": ["<p>Sarcastic</p>", "<p>Neutral</p>", "<p>Critical</p>", "<p>Enthusiastic</p>", "<p>Nostalgic</p>"], "correctIndex": 1, "solution": "<p><strong>Answer:</strong><strong> B</strong></p>\n<p>The correct answer is (b) Neutral.</p>\n<p>The tone of the passage is the author's attitude towards the subject matter. In this passage, the author presents an analysis of the BJP's and Congress's manifestos by comparing and contrasting their different approaches to technology and human rights. The author does not show strong emotion or bias towards either party but instead provides a balanced discussion of both manifestos, highlighting their respective focuses and potential implications.</p>\n<p>(a) Sarcastic: The passage does not use irony or sarcasm to mock or convey contempt.</p>\n<p>(b) Neutral: The author maintains an impartial and objective tone, presenting facts and observations without taking sides.</p>\n<p>(c) Critical: Although the passage does raise concerns about the BJP's emphasis on technology without addressing privacy, it does not do so in a harsh or overly critical manner.</p>\n<p>(d) Enthusiastic: The tone is not characterized by excitement or positive emotion towards the subject matter.</p>\n<p>(e) Nostalgic: The passage does not reflect a longing for the past or past events.</p>\n<p>Therefore, the tone of the passage regarding the discussion of the BJP's and Congress's manifestos is best described as neutral.</p>"}, {"question": "<p><strong>In the table given below two columns are given to connect the sentence. The sentence given in column A may or may not be connected with column B contextually and grammatically. You have to identify possible combination to combine the sentence from column A to column B. If any possible connections are not found from the option, choose “None of these.”</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172449279063.png\" title=\"1.png\"/></p>", "options": ["<p>A1 &amp; B3</p>", "<p>C1, A3 &amp; B2</p>", "<p>C2 &amp; A3</p>", "<p>B2 &amp; A3</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>A3:</strong> Despite the rain, the outdoor concert continued, delighting dedicated fans.</p>\n<p><strong>B2:</strong> Maria practices the piano daily, hoping to perform at next month's festival.</p>\n<p><strong>C1:</strong> The new policy aims to improve satisfaction by offering flexible hours and more benefits.</p>"}, {"question": "<p><strong>In the table given below two columns are given to connect the sentence. The sentence given in column A may or may not be connected with column B contextually and grammatically. You have to identify possible combination to combine the sentence from column A to column B. If any possible connections are not found from the option, choose “None of these.”</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172449287920.png\" title=\"2.png\"/></p>", "options": ["<p>A1, C2 &amp; B3</p>", "<p>C1, A3 &amp; B2</p>", "<p>C2 &amp; A3</p>", "<p>B2 &amp; A3</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>A1:</strong> When the power went out, everyone worked together to ensure the presentation was on time.</p>\n<p><strong>B3:</strong> After years of research, the scientists finally made a breakthrough in renewable energy.</p>\n<p><strong>C2:</strong> The picturesque village in the mountains attracts tourists from around the world.</p>"}, {"question": "<p><strong>In the table given below two columns are given to connect the sentence. The sentence given in column A may or may not be connected with column B contextually and grammatically. You have to identify possible combination to combine the sentence from column A to column B. If any possible connections are not found from the option, choose “None of these.”</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172449295862.png\" title=\"3.png\"/></p>", "options": ["<p>A1 &amp; B3</p>", "<p>C1, A2 &amp; B3</p>", "<p>C2 &amp; A3</p>", "<p>C1, B2 &amp; A3</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>A3:</strong> Completing the marathon was challenging, but it boosted his confidence.</p>\n<p><strong>B2:</strong> The new museum exhibit features works from contemporary artists on identity and heritage.</p>\n<p><strong>C1:</strong> The meeting was brief but productive, with many important decisions made.</p>"}, {"question": "<p><strong>In the table given below two columns are given to connect the sentence. The sentence given in column A may or may not be connected with column B contextually and grammatically. You have to identify possible combination to combine the sentence from column A to column B. If any possible connections are not found from the option, choose “None of these.”</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172449320265.png\" title=\"4.png\"/></p>", "options": ["<p>A1 &amp; B3</p>", "<p>C1, A3 &amp; B2</p>", "<p>C2 &amp; A3</p>", "<p>B2 &amp; A3</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>A1:</strong> She quickly packed her bags, eager to start her vacation.</p>\n<p><strong>B3:</strong> The dog barked loudly, alerting the neighbors to the intruder.</p>\n<p><strong>C2:</strong> He studied hard and passed the exam with flying colors.</p>"}, {"question": "<p><strong>In the table given below two columns are given to connect the sentence. The sentence given in column A may or may not be connected with column B contextually and grammatically. You have to identify possible combination to combine the sentence from column A to column B. If any possible connections are not found from the option, choose “None of these.”</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172449324689.png\" title=\"6.png\"/></p>", "options": ["<p>A1 &amp; B3</p>", "<p>C1, A3 &amp; B2</p>", "<p>C2 &amp; A3</p>", "<p>B2 &amp; A3</p>", "<p>None of these</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p><strong>A1:</strong> The sunset painted the sky in hues of orange and pink.</p>\n<p><strong>B2:</strong> They enjoyed a quiet evening at home, watching their favorite movie.</p>\n<p><strong>C3:</strong> After years of research, the scientists finally made a breakthrough in their study of renewable energy sources.</p>"}, {"question": "<p><strong>Given below are a few questions based on the paragraph given. You have to fill in the blanks and answer the questions accordingly. If none of the options are correct then choose option E as your answer. </strong></p>\n<p>In 2022, China's population fell for the first time in six decades (to 6.77 births per 1,000 people, the lowest on record, from 7.52 in 2021), a decline that was <strong>(a)_____________</strong> to mark the start of a long period of decline in its citizen numbers with <strong>(b)______________ (c)_______________</strong> for its economy and the world. Meanwhile, demographers have warned China will get old before it gets rich, as its workforce shrinks and indebted local governments spend more on their elderly population. To encourage marriage and <strong>(d)____________</strong> the country's <strong>(e)_________</strong> birth rate, China said last month it would launch pilot projects in more than 20 cities to create a \"new-era\" marriage and childbearing culture.</p><br><p><strong>Which of the following option fits best in the blank a?</strong></p>", "options": ["<p>expected</p>", "<p>created</p>", "<p>fumbled</p>", "<p>toppled</p>", "<p>None of the above</p>"], "correctIndex": 0, "solution": "<p><strong>Answer:</strong> <strong>A</strong></p>\n<p>Here, expected fits best as per the context of the sentence as it means something as likely to happen and here some such scenarios can be seen. So, option A is the correct answer.</p>\n<p>Fumbled means to do or handle something clumsily.</p>\n<p>Toppled means overbalance or cause to overbalance and fall.</p>"}, {"question": "<p><strong>Given below are a few questions based on the paragraph given. You have to fill in the blanks and answer the questions accordingly. If none of the options are correct then choose option E as your answer. </strong></p>\n<p>In 2022, China's population fell for the first time in six decades (to 6.77 births per 1,000 people, the lowest on record, from 7.52 in 2021), a decline that was <strong>(a)_____________</strong> to mark the start of a long period of decline in its citizen numbers with <strong>(b)______________ (c)_______________</strong> for its economy and the world. Meanwhile, demographers have warned China will get old before it gets rich, as its workforce shrinks and indebted local governments spend more on their elderly population. To encourage marriage and <strong>(d)____________</strong> the country's <strong>(e)_________</strong> birth rate, China said last month it would launch pilot projects in more than 20 cities to create a \"new-era\" marriage and childbearing culture.</p><br><p><strong>Which of the following option fits best in the blank b?</strong></p>", "options": ["<p>astounding</p>", "<p>esoteric</p>", "<p>clumsy</p>", "<p>profound</p>", "<p>None of the above</p>"], "correctIndex": 3, "solution": "<p><strong>Ans</strong><strong>wer: D</strong></p>\n<p>Here, profound fits best as per the context of the sentence as it means very great or intense. So, option D is the correct answer.</p>\n<p>Astounding means causing somebody to feel extremely surprised.</p>\n<p>Esoteric means intended for or likely to be understood or enjoyed by only few people with a special knowledge or interest.</p>"}, {"question": "<p><strong>Given below are a few questions based on the paragraph given. You have to fill in the blanks and answer the questions accordingly. If none of the options are correct then choose option E as your answer. </strong></p>\n<p>In 2022, China's population fell for the first time in six decades (to 6.77 births per 1,000 people, the lowest on record, from 7.52 in 2021), a decline that was <strong>(a)_____________</strong> to mark the start of a long period of decline in its citizen numbers with <strong>(b)______________ (c)_______________</strong> for its economy and the world. Meanwhile, demographers have warned China will get old before it gets rich, as its workforce shrinks and indebted local governments spend more on their elderly population. To encourage marriage and <strong>(d)____________</strong> the country's <strong>(e)_________</strong> birth rate, China said last month it would launch pilot projects in more than 20 cities to create a \"new-era\" marriage and childbearing culture.</p><br><p><strong>Which of the following option fits best in the blank c?</strong></p>", "options": ["<p>genre</p>", "<p>dilapidation</p>", "<p>implications</p>", "<p>obtrusion</p>", "<p>None of the above</p>"], "correctIndex": 2, "solution": "<p><strong>Answer:</strong> <strong>C</strong></p>\n<p>Here, implication fits best as it means the effect that something will have on something else in the future and here it is said in the context of population. So, option C is the correct answer.</p>\n<p>Dilapidation means deteriorated or fallen into partial ruin especially through neglect or misuse.</p>\n<p>Obtrusion means the act of imposing on someone in an unwelcome or intrusive way.</p>"}, {"question": "<p><strong>Given below are a few questions based on the paragraph given. You have to fill in the blanks and answer the questions accordingly. If none of the options are correct then choose option E as your answer. </strong></p>\n<p>In 2022, China's population fell for the first time in six decades (to 6.77 births per 1,000 people, the lowest on record, from 7.52 in 2021), a decline that was <strong>(a)_____________</strong> to mark the start of a long period of decline in its citizen numbers with <strong>(b)______________ (c)_______________</strong> for its economy and the world. Meanwhile, demographers have warned China will get old before it gets rich, as its workforce shrinks and indebted local governments spend more on their elderly population. To encourage marriage and <strong>(d)____________</strong> the country's <strong>(e)_________</strong> birth rate, China said last month it would launch pilot projects in more than 20 cities to create a \"new-era\" marriage and childbearing culture.</p><br><p><strong>Which of the following option fits best in the blank d?</strong></p>", "options": ["<p>decline</p>", "<p>deteriorate</p>", "<p>welcome</p>", "<p>boost</p>", "<p>None of the above</p>"], "correctIndex": 3, "solution": "<p><strong>Ans</strong><strong>wer: D</strong></p>\n<p>Here, boost fits best as per the context of the sentence as it means to increase and here the context is of the births. So, option D is the correct answer.</p>"}, {"question": "<p><strong>Given below are a few questions based on the paragraph given. You have to fill in the blanks and answer the questions accordingly. If none of the options are correct then choose option E as your answer. </strong></p>\n<p>In 2022, China's population fell for the first time in six decades (to 6.77 births per 1,000 people, the lowest on record, from 7.52 in 2021), a decline that was <strong>(a)_____________</strong> to mark the start of a long period of decline in its citizen numbers with <strong>(b)______________ (c)_______________</strong> for its economy and the world. Meanwhile, demographers have warned China will get old before it gets rich, as its workforce shrinks and indebted local governments spend more on their elderly population. To encourage marriage and <strong>(d)____________</strong> the country's <strong>(e)_________</strong> birth rate, China said last month it would launch pilot projects in more than 20 cities to create a \"new-era\" marriage and childbearing culture.</p><br><p><strong>Which of the following option fits best in the blank e?</strong></p>", "options": ["<p>flagging</p>", "<p>mesmerizing</p>", "<p>tantalising</p>", "<p>predominating</p>", "<p>None of the above</p>"], "correctIndex": 0, "solution": "<p><strong>Ans</strong><strong>wer: A</strong></p>\n<p>Here, flagging fits best as per the context of the sentence as it means to become tired or less strong and here less strong birth rate is being talked. So, option A is the correct answer.</p>\n<p>Mesmerizing means to hold somebody’s attention completely.</p>\n<p>Tantalising means making you want something that you cannot have or do or tempting</p>\n<p>Predominating means to be most important or greatest in number.</p>"}, {"question": "<p><strong>In the following </strong><strong>questions,</strong><strong> two sentences with five words are given in bold. These words may or may not be in their correct position. The sentence is then followed by options with the correct combination of words that should replace each other in order to make the sentence grammatically and contextually correct. Find the correct combination of words that replace each other. In case, none of the options seem to be correct, mark the option E i.e. 'None of these' as your answer.</strong></p><br><p><strong>I</strong><strong>)</strong><strong>.</strong> With determination in his eyes, Alex <strong>(a)</strong> <strong>wafted</strong> on a challenging journey to <strong>(b) treat</strong> his lifelong dream of becoming a professional musician.</p>\n<p><strong>II</strong><strong>)</strong><strong>.</strong> The aroma of freshly baked bread <strong>(c)</strong> <strong>embarked</strong> through the air, enticing passersby to <strong>(d)</strong> <strong>stop</strong> and indulge in a savory <strong>(e) pursue</strong>.</p>", "options": ["<p>A-C &amp; B-E</p>", "<p>A-D &amp; B-C</p>", "<p>Only B-E</p>", "<p>A-E &amp; B-D</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>I</strong><strong>)</strong><strong>.</strong> With determination in his eyes, Alex <strong>embarked</strong> on a challenging journey to <strong>pursue</strong> his lifelong dream of becoming a professional musician.</p>\n<p><strong>II</strong><strong>)</strong><strong>.</strong> The aroma of freshly baked bread <strong>wafted</strong> through the air, enticing passersby to stop and indulge in a savory <strong>treat</strong>.</p>\n<p>Therefore, option A is the correct answer.</p>"}, {"question": "<p><strong>In the following </strong><strong>questions,</strong><strong> two sentences with five words are given in bold. These words may or may not be in their correct position. The sentence is then followed by options with the correct combination of words that should replace each other in order to make the sentence grammatically and contextually correct. Find the correct combination of words that replace each other. In case, none of the options seem to be correct, mark the option E i.e. 'None of these' as your answer.</strong></p><br><p><strong>I</strong><strong>)</strong><strong>. </strong>As the rain poured outside, Emily <strong>(a)</strong> <strong>curled</strong> up on the couch with her beloved pet cat, finding <strong>(b)</strong> <strong>masterpiece</strong> in their shared warmth.</p>\n<p><strong>II</strong><strong>)</strong><strong>.</strong> With each <strong>(c)</strong> <strong>stroke</strong> of the brush, the artist <strong>(d)</strong> <strong>poured</strong> their emotions onto the canvas, creating a <strong>(e) comfort</strong> that captivated viewers.</p>", "options": ["<p>A-C &amp; B-E</p>", "<p>A-D &amp; B-C</p>", "<p>Only B-E</p>", "<p>A-E &amp; B-D</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>I</strong><strong>)</strong><strong>.</strong><strong> </strong>As the rain poured outside, Emily <strong>curled</strong> up on the couch with her beloved pet cat, finding <strong>comfort</strong> in their shared warmth.</p>\n<p><strong>II</strong><strong>)</strong><strong>.</strong> With each <strong>stroke </strong>of the brush, the artist <strong>poured</strong> their emotions onto the canvas, creating a <strong>masterpiece</strong> that captivated viewers.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>In the following </strong><strong>questions,</strong><strong> two sentences with five words are given in bold. These words may or may not be in their correct position. The sentence is then followed by options with the correct combination of words that should replace each other in order to make the sentence grammatically and contextually correct. Find the correct combination of words that replace each other. In case, none of the options seem to be correct, mark the option E i.e. 'None of these' as your answer.</strong></p><br><p><strong>I</strong><strong>)</strong><strong>.</strong> Amidst the hustle and <strong>(a)</strong> <strong>vivid</strong> of the city, a sense of tranquility enveloped Maria as she <strong>(b)</strong> <strong>shared</strong> through the serene park, admiring the vibrant flowers in bloom.</p>\n<p><strong>II</strong><strong>)</strong><strong>.</strong> With a twinkle in her eye, Grandma <strong>(c)</strong> <strong>strolled</strong> cherished <strong>(d)</strong> <strong>memories</strong> from her youth, painting <strong>(e)</strong> <strong>bustle</strong> pictures of days gone by.</p>", "options": ["<p>A-C &amp; B-E</p>", "<p>A-D &amp; B-C</p>", "<p>Only B-E</p>", "<p>A-E &amp; B-C</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>I</strong><strong>)</strong><strong>.</strong> Amidst the hustle and <strong>bustle</strong> of the city, a sense of tranquility enveloped Maria as she <strong>strolled</strong> through the serene park, admiring the vibrant flowers in bloom.</p>\n<p><strong>II</strong><strong>)</strong><strong>.</strong> With a twinkle in her eye, Grandma <strong>shared</strong> cherished <strong>memories</strong> from her youth, painting <strong>vivid</strong> pictures of days gone by.</p>\n<p>Therefore, option D is the correct answer.</p>"}, {"question": "<p><strong>In the following </strong><strong>questions,</strong><strong> two sentences with five words are given in bold. These words may or may not be in their correct position. The sentence is then followed by options with the correct combination of words that should replace each other in order to make the sentence grammatically and contextually correct. Find the correct combination of words that replace each other. In case, none of the options seem to be correct, mark the option E i.e. 'None of these' as your answer.</strong></p><br><p><strong>I</strong><strong>)</strong><strong>.</strong> The melody of laughter <strong>(a)</strong> <strong>filled</strong> the room as friends gathered around the table,<strong> (b) reminiscing</strong> about old times and creating new memories.</p>\n<p><strong>II</strong><strong>)</strong><strong>.</strong> With a sense of pride, Thomas gazed upon the <strong>(c)</strong> <strong>completed</strong> project, <strong>(d)</strong> <strong>knowing</strong> that his hard work and <strong>(e)</strong> <strong>dedication</strong> had paid off in the end.</p>", "options": ["<p>A-C &amp; B-E</p>", "<p>A-D &amp; B-C</p>", "<p>Only B-E</p>", "<p>A-E &amp; B-D</p>", "<p>None of these</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>The highlighted words in the given sentences are contextually correct.</p>\n<p>Therefore, option E is the correct answer.</p>"}, {"question": "<p><strong>In the following </strong><strong>questions,</strong><strong> two sentences with five words are given in bold. These words may or may not be in their correct position. The sentence is then followed by options with the correct combination of words that should replace each other in order to make the sentence grammatically and contextually correct. Find the correct combination of words that replace each other. In case, none of the options seem to be correct, mark the option E i.e. 'None of these' as your answer.</strong></p><br><p><strong>I</strong><strong>)</strong><strong>.</strong> The gentle breeze rustled <strong>(a) through</strong> the leaves, carrying with it the <strong>(b) awaited</strong> of pine and the promise of a new day.</p>\n<p><strong>II</strong><strong>)</strong><strong>.</strong> With a sense of anticipation, Maya eagerly <strong>(c) scent</strong> the arrival of her long-lost friend, hoping to <strong>(d) reconnect</strong> and reminisce about their <strong>(e) shared</strong> adventures.</p>", "options": ["<p>A-C &amp; B-E</p>", "<p>A-D &amp; B-C</p>", "<p>Only B-C</p>", "<p>A-E &amp; B-D</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>I</strong><strong>)</strong><strong>.</strong> The gentle breeze rustled <strong>through</strong> the leaves, carrying with it the <strong>scent</strong> of pine and the promise of a new day.</p>\n<p><strong>II</strong><strong>)</strong><strong>.</strong> With a sense of anticipation, Maya eagerly <strong>awaited </strong>the arrival of her long-lost friend, hoping to <strong>reconnect</strong> and reminisce about their <strong>shared</strong> adventures.</p>\n<p>Therefore, option C is the correct answer.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-98)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-98)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

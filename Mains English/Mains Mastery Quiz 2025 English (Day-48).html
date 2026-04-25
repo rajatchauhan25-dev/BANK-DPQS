@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-48)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>In the following questions, three columns are given containing three Sentences/phrases/connectors each. In first column, sentences/phrases are A, B and C, in the third column the sentences/phrases are D, E and F and in the second column connectors 1,2 and 3 are given. The sentence/phrase from the first column may or may not connect with another sentence/phrase from the second or third column to make a grammatically and contextually correct sentence. Each question has five options, four of which display the sequence(s) in which the sentences/phrases can be joined to form a grammatically and contextually correct sentence. If none of the options given forms a correct sentence after combination, mark (e), i.e. “None of these” as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/173087376250.png\" title=\"14.PNG\"/></p>", "options": ["<p>A2D, B3E and C1F</p>", "<p>B2E, A3D and C1F</p>", "<p>A1D, B2E and C3F</p>", "<p>A1F, B3D and C2E</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>A3D: </strong>While the gallery featured contemporary art, it also included pieces from the Renaissance; thus, visitors could appreciate a wide range of artistic styles.</p>\n<p><strong>B2E: </strong>Although the workout was intense, she felt invigorated afterward; consequently, she looked forward to her next session.</p>\n<p><strong>C1F: </strong>Even with the unexpected obstacles, the team worked collaboratively; as a result, they completed the project ahead of schedule.</p>"}, {"question": "<p><strong>In the following questions, three columns are given containing three Sentences/phrases/connectors each. In first column, sentences/phrases are A, B and C, in the third column the sentences/phrases are D, E and F and in the second column connectors 1,2 and 3 are given. The sentence/phrase from the first column may or may not connect with another sentence/phrase from the second or third column to make a grammatically and contextually correct sentence. Each question has five options, four of which display the sequence(s) in which the sentences/phrases can be joined to form a grammatically and contextually correct sentence. If none of the options given forms a correct sentence after combination, mark (e), i.e. “None of these” as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/173097091767.png\" title=\"157.PNG\"/></p>", "options": ["<p>A2D, B3E and C1F</p>", "<p>Only B1E &amp; C2F</p>", "<p>A2D, B1E and C3F</p>", "<p>A1F, B3D and C2E</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>A2D: </strong>While the science fair showcased impressive projects, it also highlighted the creativity of the students; moreover, many of them expressed interest in pursuing STEM careers.</p>\n<p><strong>B1E: </strong>Although the recipe seemed daunting, she enjoyed the cooking process; thus, the meal turned out to be a delightful experience.</p>\n<p><strong>C3F: </strong>Even though he was new to the group, his ideas were well-received; consequently, he quickly became an integral part of the team.</p>"}, {"question": "<p><strong>In the following questions, three columns are given containing three Sentences/phrases/connectors each. In first column, sentences/phrases are A, B and C, in the third column the sentences/phrases are D, E and F and in the second column connectors 1,2 and 3 are given. The sentence/phrase from the first column may or may not connect with another sentence/phrase from the second or third column to make a grammatically and contextually correct sentence. Each question has five options, four of which display the sequence(s) in which the sentences/phrases can be joined to form a grammatically and contextually correct sentence. If none of the options given forms a correct sentence after combination, mark (e), i.e. “None of these” as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/173097113497.png\" title=\"158.PNG\"/></p>", "options": ["<p>A2D, B3E and C1F</p>", "<p>Only B2E &amp; C3F</p>", "<p>A2D, B1E and C2F</p>", "<p>A1F, B3D and C2E</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>A2D: </strong>While the technology was innovative, it required thorough testing; as a result, the developers made several improvements before the launch.</p>\n<p><strong>B3E: </strong>Although the hike was challenging, the breathtaking views made it worthwhile; moreover, they encountered several interesting wildlife along the way.</p>\n<p><strong>C1F: </strong>Even with her busy schedule, she prioritized self-care; therefore, she made time for meditation and exercise each week.</p>"}, {"question": "<p><strong>In the following questions, three columns are given containing three Sentences/phrases/connectors each. In first column, sentences/phrases are A, B and C, in the third column the sentences/phrases are D, E and F and in the second column connectors 1,2 and 3 are given. The sentence/phrase from the first column may or may not connect with another sentence/phrase from the second or third column to make a grammatically and contextually correct sentence. Each question has five options, four of which display the sequence(s) in which the sentences/phrases can be joined to form a grammatically and contextually correct sentence. If none of the options given forms a correct sentence after combination, mark (e), i.e. “None of these” as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/173087427821.png\" title=\"17.PNG\"/></p>", "options": ["<p>A2D, B3E and C1F</p>", "<p>Only B2E &amp; C1F</p>", "<p>A2D, B1E and C2F</p>", "<p>A1F, B3D and C2E</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>A1F: </strong>While the competition was fierce, she maintained a positive attitude; thus, her confidence helped her perform at her best.</p>\n<p><strong>B3D: </strong>Although the seminar was scheduled for three hours, it flew by due to the engaging content; consequently, attendees left feeling inspired.</p>\n<p><strong>C2E: </strong>Even with limited information, the detective pieced together the clues; as a result, the case was solved more quickly than expected.</p>"}, {"question": "<p><strong>In the following questions, three columns are given containing three Sentences/phrases/connectors each. In first column, sentences/phrases are A, B and C, in the third column the sentences/phrases are D, E and F and in the second column connectors 1,2 and 3 are given. The sentence/phrase from the first column may or may not connect with another sentence/phrase from the second or third column to make a grammatically and contextually correct sentence. Each question has five options, four of which display the sequence(s) in which the sentences/phrases can be joined to form a grammatically and contextually correct sentence. If none of the options given forms a correct sentence after combination, mark (e), i.e. “None of these” as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/173087438954.png\" title=\"18.PNG\"/></p>", "options": ["<p>A2D, B3E and C1F</p>", "<p>Only B2E &amp; C3F</p>", "<p>A2D, B1E and C3F</p>", "<p>A1F, B3D and C2E</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>A2D: </strong>While the city offered a vibrant nightlife, it also had plenty of parks and green spaces; thus, residents enjoyed a balanced lifestyle.</p>\n<p><strong>B1E: </strong>Although the book was lengthy, its rich character development kept readers captivated; moreover, the plot twists were unexpected and thrilling.</p>\n<p><strong>C3F: </strong>Even though she faced criticism, her determination to succeed never wavered; consequently, she achieved her goals and earned respect from her peers.</p>"}, {"question": "<p><strong>In the following questions, a sentence is given with a blank, which is followed by a word. You have to identify the given word is correct or not, if not, choose the correct word from the following options.</strong></p><br><p>The Dubai <strong>________(drought)</strong> prompted much speculation about whether the UAE's cloud-seeding programme was the culprit.</p>", "options": ["<p>surge</p>", "<p>stream</p>", "<p>deluge</p>", "<p>dearth</p>", "<p>No replacement required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer</strong><strong>: C</strong></p>\n<p>In this sentence, the word that best fits in the blank to convey the idea of heavy rainfall or a flood is \"deluge.\"</p>\n<p>Therefore, the correct answer is: c) deluge</p>\n<p>Surge (Option a) typically refers to a sudden powerful forward or upward movement, often in the context of a large increase. While it can be related to water, it doesn't specifically convey the idea of heavy rainfall or a flood.</p>\n<p>Stream (Option b) refers to a continuous flow of water, but it doesn't necessarily suggest the magnitude or intensity of a deluge.</p>\n<p>Deluge (Option c) means a severe flood or a heavy downpour of rain, which accurately conveys the idea of heavy rainfall or a flood in the context of the sentence.</p>\n<p>Dearth (Option d) means a scarcity or lack of something, which is the opposite of what is described in the sentence.</p>\n<p>Drought refers to a prolonged period of abnormally low rainfall, which is the opposite of a deluge.</p>\n<p>So, \"deluge\" is the most appropriate word in this context to describe the heavy rainfall or flood that prompted speculation about the UAE's cloud-seeding program.</p>"}, {"question": "<p><strong>In the following questions, a sentence is given with a blank, which is followed by a word. You have to identify the given word is correct or not, if not, choose the correct word from the following options.</strong></p><br><p>As soon as Hamas executed its attack last October 7, it was inevitable that Israel would strike back in strength without any <strong>_______(euphoria)</strong>.</p>", "options": ["<p>anguish</p>", "<p>remorse</p>", "<p>exultation</p>", "<p>exuberance</p>", "<p>No replacement required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer</strong><strong>: B</strong></p>\n<p>In this sentence, the word that best fits in the blank to convey the idea that Israel would strike back without any feeling of guilt or regret is \"remorse.\"</p>\n<p>Therefore, the correct answer is: b) remorse</p>\n<p>Anguish (Option a) refers to severe mental or physical pain or suffering. While Israel might indeed strike back with anguish or anger, the sentence focuses on the lack of guilt or regret, which \"anguish\" does not directly convey.</p>\n<p>Remorse (Option b) means a feeling of deep regret or guilt for a wrong committed. This word accurately reflects the lack of regret or guilt Israel would feel when striking back after an attack by Hamas.</p>\n<p>Exultation (Option c) means a feeling of triumphant elation or jubilation, which is not appropriate in the context of a military response to an attack.</p>\n<p>Exuberance (Option d) refers to the quality of being full of energy, excitement, and cheerfulness. It doesn't fit the context of Israel's response to an attack.</p>\n<p>Euphoria refers to a feeling or state of intense excitement and happiness, often to an excessive degree. It doesn't convey the lack of guilt or regret that Israel would feel when striking back.</p>\n<p>So, \"remorse\" is the most appropriate word in this context to convey the idea that Israel would strike back without any feeling of guilt or regret.</p>"}, {"question": "<p><strong>In the following questions, a sentence is given with a blank, which is followed by a word. You have to identify the given word is correct or not, if not, choose the correct word from the following options.</strong></p><br><p>Over recent decades, policymakers have equated consumption, often funded by borrowing because of <strong>_______(buoyant)</strong> incomes, to better living standards.</p>", "options": ["<p>creeping</p>", "<p>prolific</p>", "<p>stagnant</p>", "<p>indolent</p>", "<p>No replacement required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer</strong><strong>: C</strong></p>\n<p>In the given sentence, the word that best fits in the blank to convey the idea of incomes that are not increasing or growing is \"stagnant.\"</p>\n<p>Therefore, the correct answer is: c) stagnant</p>\n<p>Creeping (Option a) typically means slowly advancing or increasing, which doesn't align with the idea of incomes that are not growing.</p>\n<p>Prolific (Option b) means producing in large quantities or being highly productive, which is the opposite of what is being described in the context of stagnant incomes.</p>\n<p>Stagnant (Option c) refers to something that is not advancing, developing, or increasing. In the context of incomes, stagnant means that they are not growing or increasing over time, which fits well in the sentence.</p>\n<p>Indolent (Option d) means lazy or slothful, which is not directly related to the concept of incomes that are not growing.</p>\n<p>Buoyant means cheerful or optimistic, or in a financial context, it can mean having a tendency to rise or float. Neither of these meanings fits well in the context of describing incomes that are not growing.</p>\n<p>So, \"stagnant\" is the most appropriate word in this context to convey the idea of incomes that are not increasing or growing over recent decades.</p>"}, {"question": "<p><strong>In the following questions, a sentence is given with a blank, which is followed by a word. You have to identify the given word is correct or not, if not, choose the correct word from the following options.</strong></p><br><p>As the world’s largest democracy, India boasts of a youthful population, a demographic advantage that, if properly leveraged, could <strong>_______(expedite) </strong>the nation towards becoming an advanced economy by 2047.</p>", "options": ["<p>gather</p>", "<p>propel</p>", "<p>impede</p>", "<p>thwart</p>", "<p>No replacement required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer</strong><strong>: B</strong></p>\n<p>In this sentence, the word that best fits in the blank to convey the idea of moving or driving the nation forward is \"propel.\"</p>\n<p>Therefore, the correct answer is: b) propel</p>\n<p>Gather (Option a) means to bring together or collect, but it doesn't convey the idea of moving or advancing the nation towards becoming an advanced economy.</p>\n<p>Propel (Option b) means to drive or push forward. In the context of the sentence, it accurately conveys the idea of leveraging the youthful population to drive or advance the nation towards becoming an advanced economy.</p>\n<p>Impede (Option c) means to hinder or obstruct progress, which is the opposite of what is intended in the sentence.</p>\n<p>Thwart (Option d) means to prevent or frustrate someone's efforts, which is also the opposite of what is intended in the sentence.</p>\n<p>Expedite means to make something happen sooner or faster, but it doesn't convey the idea of driving or advancing the nation forward.</p>\n<p>So, \"propel\" is the most appropriate word in this context.</p>"}, {"question": "<p><strong>In the following questions, a sentence is given with a blank, which is followed by a word. You have to identify the given word is correct or not, if not, choose the correct word from the following options.</strong></p><br><p>India stands at a crossroads, poised to either capitalise on its demographic dividend or <strong>_______(squander) </strong>its potential.</p>", "options": ["<p>exploit</p>", "<p>retrench</p>", "<p>converge</p>", "<p>replenish</p>", "<p>No replacement required</p>"], "correctIndex": 4, "solution": "<p><strong>Answer</strong><strong>: E</strong></p>\n<p>No replacement required</p>\n<p>In this sentence, the word \"squander\" correctly conveys the idea of wasting or failing to make the best use of India's potential. The option (e), \"No replacement required,\" indicates that the given word in the sentence is appropriate.</p>\n<p>Exploit (Option a) typically has a negative connotation, implying the selfish or unfair use of resources for personal gain. It doesn't align with the intended meaning of making the best use of India's potential in a positive and beneficial way.</p>\n<p>Retrench (Option b) means to reduce or cut back, especially in terms of expenses or resources. It doesn't fit in the context of making the best use of India's potential.</p>\n<p>Converge (Option c) means to come together or meet at a point. While it could suggest a positive outcome, it doesn't convey the idea of utilizing India's potential.</p>\n<p>Replenish (Option d) means to refill or restore something that has been depleted. It doesn't fit in the context of deciding whether to make the best use of India's potential.</p>\n<p>So, \"squander\" accurately captures the notion of wasting or failing to utilize India's potential, making it the correct choice for the sentence. Therefore, \"No replacement required\" is the appropriate answer.</p>"}, {"question": "<p><strong>Rearrange the following five sentences (A), (B), (C), (D), and (E) in the proper sequence to form a meaningful paragraph; then answer the questions given below them.</strong></p>\n<p><strong>A</strong><strong>).</strong> During this aging process, you had first heard statements such as: \"You can't ride your bicycle until you are seven', and, \"You can't drive a car until you're 18\".</p>\n<p><strong>B</strong><strong>).</strong> quite oblivious to the physical aging process (A) /part of you has an ageless mind and is (B) / but you need to remember that (C) / overcome this excuse of being old (D) / you just need to encourage it to (E)  </p>\n<p><strong>C</strong><strong>).</strong> The age excuse of being too old comes from an inclination to identify yourself with the number of trips you have made around the sun.</p>\n<p><strong>D</strong><strong>).</strong> The age of your body can seem to be _______ an obstacle on the road to changing long-held thinking habits.</p>\n<p><strong>E</strong><strong>).</strong> Then at some point you discovered that you went from being not old enough to being too old.</p><br><p><strong>Which of the following words can be filled in sentence D?</strong></p>", "options": ["<p>quiet</p>", "<p>quite</p>", "<p>needed</p>", "<p>mundane</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>Quite:</strong> To a significant extent or degree; fairly.</p>\n<p><strong>Vital: </strong>Essential or necessary for life.</p>\n<p><strong>Mundane:</strong> Ordinary and dull.</p>\n<p>Quite (Option B) is the correct choice because it is used to emphasize the extent or degree of something. In this context, it means that the age of the body can be a significant or considerable obstacle.</p>\n<p>The age of your body can seem to be <strong><u>quite</u></strong> an obstacle on the road to changing long-held thinking habits.</p>"}, {"question": "<p><strong>Rearrange the following five sentences (A), (B), (C), (D), and (E) in the proper sequence to form a meaningful paragraph; then answer the questions given below them.</strong></p>\n<p><strong>A</strong><strong>).</strong> During this aging process, you had first heard statements such as: \"You can't ride your bicycle until you are seven', and, \"You can't drive a car until you're 18\".</p>\n<p><strong>B</strong><strong>).</strong> quite oblivious to the physical aging process (A) /part of you has an ageless mind and is (B) / but you need to remember that (C) / overcome this excuse of being old (D) / you just need to encourage it to (E)  </p>\n<p><strong>C</strong><strong>).</strong> The age excuse of being too old comes from an inclination to identify yourself with the number of trips you have made around the sun.</p>\n<p><strong>D</strong><strong>).</strong> The age of your body can seem to be _______ an obstacle on the road to changing long-held thinking habits.</p>\n<p><strong>E</strong><strong>).</strong> Then at some point you discovered that you went from being not old enough to being too old.</p><br><p><strong>Sentence B is divided into five parts. Rearrange the parts into a meaningful sentence and mark the option accordingly.</strong></p>", "options": ["<p>ebacd</p>", "<p>edcab</p>", "<p>baecd</p>", "<p>cbaed</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>The corrected sentence is:</strong></p>\n<p>“But you need to remember that part of you has an ageless mind and is quite oblivious to the physical aging process you just need to encourage it to overcome this excuse of being old.”</p>"}, {"question": "<p><strong>Rearrange the following five sentences (A), (B), (C), (D), and (E) in the proper sequence to form a meaningful paragraph; then answer the questions given below them.</strong></p>\n<p><strong>A</strong><strong>).</strong> During this aging process, you had first heard statements such as: \"You can't ride your bicycle until you are seven', and, \"You can't drive a car until you're 18\".</p>\n<p><strong>B</strong><strong>).</strong> quite oblivious to the physical aging process (A) /part of you has an ageless mind and is (B) / but you need to remember that (C) / overcome this excuse of being old (D) / you just need to encourage it to (E)  </p>\n<p><strong>C</strong><strong>).</strong> The age excuse of being too old comes from an inclination to identify yourself with the number of trips you have made around the sun.</p>\n<p><strong>D</strong><strong>).</strong> The age of your body can seem to be _______ an obstacle on the road to changing long-held thinking habits.</p>\n<p><strong>E</strong><strong>).</strong> Then at some point you discovered that you went from being not old enough to being too old.</p><br><p>Which of the following options is the pair of the <strong>antepenultimate</strong> and <strong>penultimate</strong> statement respectively after the correct rearrangement?</p>", "options": ["<p>DE</p>", "<p>EC</p>", "<p>AD</p>", "<p>BC</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The final arrangement is <strong>DAECB.</strong></p>\n<p>The paragraph begins with <strong>Sentence</strong> <strong>D</strong>, which acknowledges that the physical aging of the body can appear to be a significant barrier when trying to change long-held thinking habits. It sets up the context that aging can be perceived as an obstacle. Next, <strong>Sentence A</strong> provides specific examples from the aging process, such as being told you can't ride a bicycle until age seven or drive a car until you're eighteen. This illustrates how societal milestones define age-related limitations. Following this, <strong>Sentence E</strong> describes the realization that at some point, one transitions from being considered \"not old enough\" to being deemed \"too old,\" highlighting the shift in perception over time. <strong>Sentence C</strong> then explains that the tendency to use age as an excuse is rooted in the inclination to define oneself by the number of years lived. Finally, <strong>Sentence B</strong> offers a positive perspective by reminding us that despite physical aging, the mind remains ageless. It encourages overcoming the notion of being \"too old\" by recognizing and nurturing the timeless aspects of one’s mental capabilities. This sequence logically flows from identifying the problem to understanding the societal influence and concluding with an uplifting message about mental resilience.</p>"}, {"question": "<p><strong>Rearrange the following five sentences (A), (B), (C), (D), and (E) in the proper sequence to form a meaningful paragraph; then answer the questions given below them.</strong></p>\n<p><strong>A</strong><strong>).</strong> During this aging process, you had first heard statements such as: \"You can't ride your bicycle until you are seven', and, \"You can't drive a car until you're 18\".</p>\n<p><strong>B</strong><strong>).</strong> quite oblivious to the physical aging process (A) /part of you has an ageless mind and is (B) / but you need to remember that (C) / overcome this excuse of being old (D) / you just need to encourage it to (E)  </p>\n<p><strong>C</strong><strong>).</strong> The age excuse of being too old comes from an inclination to identify yourself with the number of trips you have made around the sun.</p>\n<p><strong>D</strong><strong>).</strong> The age of your body can seem to be _______ an obstacle on the road to changing long-held thinking habits.</p>\n<p><strong>E</strong><strong>).</strong> Then at some point you discovered that you went from being not old enough to being too old.</p><br><p>Which of the following would be the <strong>Introductory </strong>sentence?</p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The final arrangement is <strong>DAECB.</strong></p>\n<p>The paragraph begins with <strong>Sentence</strong> <strong>D</strong>, which acknowledges that the physical aging of the body can appear to be a significant barrier when trying to change long-held thinking habits. It sets up the context that aging can be perceived as an obstacle. Next, <strong>Sentence A</strong> provides specific examples from the aging process, such as being told you can't ride a bicycle until age seven or drive a car until you're eighteen. This illustrates how societal milestones define age-related limitations. Following this, <strong>Sentence E</strong> describes the realization that at some point, one transitions from being considered \"not old enough\" to being deemed \"too old,\" highlighting the shift in perception over time. <strong>Sentence C</strong> then explains that the tendency to use age as an excuse is rooted in the inclination to define oneself by the number of years lived. Finally, <strong>Sentence B</strong> offers a positive perspective by reminding us that despite physical aging, the mind remains ageless. It encourages overcoming the notion of being \"too old\" by recognizing and nurturing the timeless aspects of one’s mental capabilities. This sequence logically flows from identifying the problem to understanding the societal influence and concluding with an uplifting message about mental resilience.</p>"}, {"question": "<p><strong>Rearrange the following five sentences (A), (B), (C), (D), and (E) in the proper sequence to form a meaningful paragraph; then answer the questions given below them.</strong></p>\n<p><strong>A</strong><strong>).</strong> During this aging process, you had first heard statements such as: \"You can't ride your bicycle until you are seven', and, \"You can't drive a car until you're 18\".</p>\n<p><strong>B</strong><strong>).</strong> quite oblivious to the physical aging process (A) /part of you has an ageless mind and is (B) / but you need to remember that (C) / overcome this excuse of being old (D) / you just need to encourage it to (E)  </p>\n<p><strong>C</strong><strong>).</strong> The age excuse of being too old comes from an inclination to identify yourself with the number of trips you have made around the sun.</p>\n<p><strong>D</strong><strong>).</strong> The age of your body can seem to be _______ an obstacle on the road to changing long-held thinking habits.</p>\n<p><strong>E</strong><strong>).</strong> Then at some point you discovered that you went from being not old enough to being too old.</p><br><p>Which of the following would be the <strong>Concluding </strong>sentence?</p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The final arrangement is <strong>DAECB.</strong></p>\n<p>The paragraph begins with <strong>Sentence</strong> <strong>D</strong>, which acknowledges that the physical aging of the body can appear to be a significant barrier when trying to change long-held thinking habits. It sets up the context that aging can be perceived as an obstacle. Next, <strong>Sentence A</strong> provides specific examples from the aging process, such as being told you can't ride a bicycle until age seven or drive a car until you're eighteen. This illustrates how societal milestones define age-related limitations. Following this, <strong>Sentence E</strong> describes the realization that at some point, one transitions from being considered \"not old enough\" to being deemed \"too old,\" highlighting the shift in perception over time. <strong>Sentence C</strong> then explains that the tendency to use age as an excuse is rooted in the inclination to define oneself by the number of years lived. Finally, <strong>Sentence B</strong> offers a positive perspective by reminding us that despite physical aging, the mind remains ageless. It encourages overcoming the notion of being \"too old\" by recognizing and nurturing the timeless aspects of one’s mental capabilities. This sequence logically flows from identifying the problem to understanding the societal influence and concluding with an uplifting message about mental resilience.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions given below.</strong></p>\n<p>The Reserve Bank of India has pegged the Indian economy to grow at 7.2 per cent this year. Medium term forecasts, such as those by the IMF, expect the momentum to continue over the coming years. However, concern over the lack of quality jobs continues to persist. The recently released periodic labour force survey provides <strong><u>granular </u></strong>information on the state of the labour market in India. Several trends warrant closer examination.</p>\n<p>First, at the aggregate level, the labour force participation rate (15 years and above) has risen from  49.8 per cent in 2017-18 to 60.1 per cent in 2023-24. However, much of this is due to the sharp rise in female participation, especially in rural areas, where it has risen from 24.6 per cent to 47.6 per cent over this period. While a rise in female participation should ideally be welcome, some have argued that it may be a sign of distress — women stepping out of the house to augment their household income. </p>\n<p>As per the survey, the share of women engaged in salaried employment has fallen. More are now engaged in self-employment — across the country, the share of women who are self-employed has risen from 51.9 per cent in 2017-18 to 67.4 per cent in 2023-24 — either as unpaid helpers in household enterprises or as own-account workers. This indicates the absence of alternatives. Second, a large section of the labour force continues to be employed in informal firms. The percentage of workers engaged in informal enterprises (proprietary and partnerships) stood at 73.2 per cent in 2023-24. While it has fallen marginally from 74.3 per cent in 2022-23, it remains higher than the estimate of 68.2 per cent in 2017-18. Third, the share of the labour force engaged in agriculture continues to edge upwards, while that engaged in manufacturing remains almost stagnant. In 2017-18, 44.1 per cent of workers were employed in the farm sector. By 2023-24, it had risen to 46.1 per cent, underlining the reversal of the trend of the falling share of the farm sector seen over the past decades. On the other hand, the share of the labour force engaged in manufacturing remains roughly the same — 11.6 per cent in 2021-22 and 11.4 per cent in 2023-24. Fourth, the unemployment rate (15 years and above) has fallen from 6 per cent in 2017-18 to 3.2 per cent in 2023-24. While youth unemployment has fallen from 17.8 per cent in 2017-18 to 10.2 per cent in 2023-24, it remains high.</p>\n<p>The unemployment rate is also higher among the more educated, with those with a secondary and above level of education having much higher rates than others. The labour market data reinforces the key development challenge facing India — of inadequate creation of more <strong><u>remunerative</u></strong> and productive employment opportunities. Addressing this challenge is becoming more difficult with the production process becoming more capital intensive and labour saving, as the India Employment Report 2024 has also noted. This issue should be at the forefront of the policy agenda.</p><br><p><strong>What is the tone of the passage?</strong></p>", "options": ["<p>Optimistic</p>", "<p>Concerned</p>", "<p>Neutral</p>", "<p>Sarcastic</p>", "<p>Joyful</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage addresses various concerns related to the employment sector, such as the lack of quality jobs, increasing informal employment, and rising female participation potentially due to economic distress. The author's tone reflects a sense of worry and apprehension over these issues, indicating a concerned tone. A) Incorrect because, although the passage mentions economic growth, it primarily focuses on negative employment trends, which do not create an optimistic tone. C) Incorrect because the passage takes a clear stance by highlighting challenges in the employment sector, which suggests that the author is not neutral. D) Incorrect because there is no use of irony or sarcasm in the passage. The language is direct and straightforward, aimed at expressing concern over employment trends. E) Incorrect because there is no use of joyful or glad statements in the passage. Therefore, Option B would be the best choice.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions given below.</strong></p>\n<p>The Reserve Bank of India has pegged the Indian economy to grow at 7.2 per cent this year. Medium term forecasts, such as those by the IMF, expect the momentum to continue over the coming years. However, concern over the lack of quality jobs continues to persist. The recently released periodic labour force survey provides <strong><u>granular </u></strong>information on the state of the labour market in India. Several trends warrant closer examination.</p>\n<p>First, at the aggregate level, the labour force participation rate (15 years and above) has risen from  49.8 per cent in 2017-18 to 60.1 per cent in 2023-24. However, much of this is due to the sharp rise in female participation, especially in rural areas, where it has risen from 24.6 per cent to 47.6 per cent over this period. While a rise in female participation should ideally be welcome, some have argued that it may be a sign of distress — women stepping out of the house to augment their household income. </p>\n<p>As per the survey, the share of women engaged in salaried employment has fallen. More are now engaged in self-employment — across the country, the share of women who are self-employed has risen from 51.9 per cent in 2017-18 to 67.4 per cent in 2023-24 — either as unpaid helpers in household enterprises or as own-account workers. This indicates the absence of alternatives. Second, a large section of the labour force continues to be employed in informal firms. The percentage of workers engaged in informal enterprises (proprietary and partnerships) stood at 73.2 per cent in 2023-24. While it has fallen marginally from 74.3 per cent in 2022-23, it remains higher than the estimate of 68.2 per cent in 2017-18. Third, the share of the labour force engaged in agriculture continues to edge upwards, while that engaged in manufacturing remains almost stagnant. In 2017-18, 44.1 per cent of workers were employed in the farm sector. By 2023-24, it had risen to 46.1 per cent, underlining the reversal of the trend of the falling share of the farm sector seen over the past decades. On the other hand, the share of the labour force engaged in manufacturing remains roughly the same — 11.6 per cent in 2021-22 and 11.4 per cent in 2023-24. Fourth, the unemployment rate (15 years and above) has fallen from 6 per cent in 2017-18 to 3.2 per cent in 2023-24. While youth unemployment has fallen from 17.8 per cent in 2017-18 to 10.2 per cent in 2023-24, it remains high.</p>\n<p>The unemployment rate is also higher among the more educated, with those with a secondary and above level of education having much higher rates than others. The labour market data reinforces the key development challenge facing India — of inadequate creation of more <strong><u>remunerative</u></strong> and productive employment opportunities. Addressing this challenge is becoming more difficult with the production process becoming more capital intensive and labour saving, as the India Employment Report 2024 has also noted. This issue should be at the forefront of the policy agenda.</p><br><p><strong>Why has the female labour force participation rate increased significantly in rural areas?</strong></p>", "options": ["<p>Women are now receiving more educational opportunities</p>", "<p>There has been an increase in salaried employment for women</p>", "<p>Women are stepping out to contribute to household income due to economic distress</p>", "<p>The agriculture sector has opened up more jobs for women</p>", "<p>All of the above</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The passage suggests that the increase in female labour force participation in rural areas is seen as a possible indicator of economic distress, where women are compelled to work to augment household income. This is emphasized by the observation that a larger proportion of women are now engaged in self-employment rather than salaried positions, indicating a lack of better. employment opportunities. C) Women are stepping out to contribute to household income due to economic distress. A) Incorrect because the passage does not mention an increase in educational opportunities as a reason for rising participation. B) Incorrect because the passage explicitly states that the share of women in salaried employment has fallen. D) Incorrect because, while the agricultural sector's share has increased, the passage does not attribute the rise in female participation specifically to new opportunities in agriculture. Hence, Option C would be the most suitable answer.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions given below.</strong></p>\n<p>The Reserve Bank of India has pegged the Indian economy to grow at 7.2 per cent this year. Medium term forecasts, such as those by the IMF, expect the momentum to continue over the coming years. However, concern over the lack of quality jobs continues to persist. The recently released periodic labour force survey provides <strong><u>granular </u></strong>information on the state of the labour market in India. Several trends warrant closer examination.</p>\n<p>First, at the aggregate level, the labour force participation rate (15 years and above) has risen from  49.8 per cent in 2017-18 to 60.1 per cent in 2023-24. However, much of this is due to the sharp rise in female participation, especially in rural areas, where it has risen from 24.6 per cent to 47.6 per cent over this period. While a rise in female participation should ideally be welcome, some have argued that it may be a sign of distress — women stepping out of the house to augment their household income. </p>\n<p>As per the survey, the share of women engaged in salaried employment has fallen. More are now engaged in self-employment — across the country, the share of women who are self-employed has risen from 51.9 per cent in 2017-18 to 67.4 per cent in 2023-24 — either as unpaid helpers in household enterprises or as own-account workers. This indicates the absence of alternatives. Second, a large section of the labour force continues to be employed in informal firms. The percentage of workers engaged in informal enterprises (proprietary and partnerships) stood at 73.2 per cent in 2023-24. While it has fallen marginally from 74.3 per cent in 2022-23, it remains higher than the estimate of 68.2 per cent in 2017-18. Third, the share of the labour force engaged in agriculture continues to edge upwards, while that engaged in manufacturing remains almost stagnant. In 2017-18, 44.1 per cent of workers were employed in the farm sector. By 2023-24, it had risen to 46.1 per cent, underlining the reversal of the trend of the falling share of the farm sector seen over the past decades. On the other hand, the share of the labour force engaged in manufacturing remains roughly the same — 11.6 per cent in 2021-22 and 11.4 per cent in 2023-24. Fourth, the unemployment rate (15 years and above) has fallen from 6 per cent in 2017-18 to 3.2 per cent in 2023-24. While youth unemployment has fallen from 17.8 per cent in 2017-18 to 10.2 per cent in 2023-24, it remains high.</p>\n<p>The unemployment rate is also higher among the more educated, with those with a secondary and above level of education having much higher rates than others. The labour market data reinforces the key development challenge facing India — of inadequate creation of more <strong><u>remunerative</u></strong> and productive employment opportunities. Addressing this challenge is becoming more difficult with the production process becoming more capital intensive and labour saving, as the India Employment Report 2024 has also noted. This issue should be at the forefront of the policy agenda.</p><br><p><strong>What can be inferred about the nature of employment in India based on the passage?</strong></p>", "options": ["<p>Most of the employment opportunities are moving towards the manufacturing sector</p>", "<p>The rise in female participation is largely due to an increase in salaried positions in rural areas</p>", "<p>A significant proportion of the workforce is engaged in low-quality jobs</p>", "<p>The unemployment rate has risen sharply in recent years</p>", "<p>More than one option are inferred</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>The passage highlights that a large share of the workforce is engaged in informal employment. and self-employment. It also mentions that many women are involved in unpaid work or work as own-account workers, which indicates the prevalence of low-quality jobs in the Indian employment sector. A) Incorrect because the passage mentions that employment in manufacturing remains almost stagnant. B) Incorrect because the share of women in salaried employment has actually decreased, not increased. C) Correct because the passage states that a large section of the labour force continues to be employed in informal firms. D) Correct because the labour force participation rate (15 years and above) has risen from  49.8 per cent in 2017-18 to 60.1 per cent in 2023-24 Thus, Option E would be the best choice.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions given below.</strong></p>\n<p>The Reserve Bank of India has pegged the Indian economy to grow at 7.2 per cent this year. Medium term forecasts, such as those by the IMF, expect the momentum to continue over the coming years. However, concern over the lack of quality jobs continues to persist. The recently released periodic labour force survey provides <strong><u>granular </u></strong>information on the state of the labour market in India. Several trends warrant closer examination.</p>\n<p>First, at the aggregate level, the labour force participation rate (15 years and above) has risen from  49.8 per cent in 2017-18 to 60.1 per cent in 2023-24. However, much of this is due to the sharp rise in female participation, especially in rural areas, where it has risen from 24.6 per cent to 47.6 per cent over this period. While a rise in female participation should ideally be welcome, some have argued that it may be a sign of distress — women stepping out of the house to augment their household income. </p>\n<p>As per the survey, the share of women engaged in salaried employment has fallen. More are now engaged in self-employment — across the country, the share of women who are self-employed has risen from 51.9 per cent in 2017-18 to 67.4 per cent in 2023-24 — either as unpaid helpers in household enterprises or as own-account workers. This indicates the absence of alternatives. Second, a large section of the labour force continues to be employed in informal firms. The percentage of workers engaged in informal enterprises (proprietary and partnerships) stood at 73.2 per cent in 2023-24. While it has fallen marginally from 74.3 per cent in 2022-23, it remains higher than the estimate of 68.2 per cent in 2017-18. Third, the share of the labour force engaged in agriculture continues to edge upwards, while that engaged in manufacturing remains almost stagnant. In 2017-18, 44.1 per cent of workers were employed in the farm sector. By 2023-24, it had risen to 46.1 per cent, underlining the reversal of the trend of the falling share of the farm sector seen over the past decades. On the other hand, the share of the labour force engaged in manufacturing remains roughly the same — 11.6 per cent in 2021-22 and 11.4 per cent in 2023-24. Fourth, the unemployment rate (15 years and above) has fallen from 6 per cent in 2017-18 to 3.2 per cent in 2023-24. While youth unemployment has fallen from 17.8 per cent in 2017-18 to 10.2 per cent in 2023-24, it remains high.</p>\n<p>The unemployment rate is also higher among the more educated, with those with a secondary and above level of education having much higher rates than others. The labour market data reinforces the key development challenge facing India — of inadequate creation of more <strong><u>remunerative</u></strong> and productive employment opportunities. Addressing this challenge is becoming more difficult with the production process becoming more capital intensive and labour saving, as the India Employment Report 2024 has also noted. This issue should be at the forefront of the policy agenda.</p><br><p><strong>According to the passage, what percentage of workers were employed in the agricultural sector in 2023-24?</strong></p>", "options": ["<p>44.1%</p>", "<p>46.1%</p>", "<p>47.6%</p>", "<p>49.8%</p>", "<p>45.2%</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage states that in 2023-24, the share of workers employed in the agricultural sector had risen to 46.1%. This figure is mentioned as a comparison with the previous percentage in 2017-18, highlighting a reversal of the declining trend seen in previous decades. A) 44.1%: Incorrect because this was the percentage of workers in the farm sector in 2017-18, not 2023-24. C) 47.6%: Incorrect because 47.6% represents the female participation rate in rural areas, not the overall agricultural employment rate. D) 49.8%: Incorrect as this percentage refers to the labour force participation rate in 2017-18, nat the employment in the farm sector. E) 45.2%: Incorrect as this percentage is not mentioned in the passage. Hence, Option B is the most suitable answer.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions given below.</strong></p>\n<p>The Reserve Bank of India has pegged the Indian economy to grow at 7.2 per cent this year. Medium term forecasts, such as those by the IMF, expect the momentum to continue over the coming years. However, concern over the lack of quality jobs continues to persist. The recently released periodic labour force survey provides <strong><u>granular </u></strong>information on the state of the labour market in India. Several trends warrant closer examination.</p>\n<p>First, at the aggregate level, the labour force participation rate (15 years and above) has risen from  49.8 per cent in 2017-18 to 60.1 per cent in 2023-24. However, much of this is due to the sharp rise in female participation, especially in rural areas, where it has risen from 24.6 per cent to 47.6 per cent over this period. While a rise in female participation should ideally be welcome, some have argued that it may be a sign of distress — women stepping out of the house to augment their household income. </p>\n<p>As per the survey, the share of women engaged in salaried employment has fallen. More are now engaged in self-employment — across the country, the share of women who are self-employed has risen from 51.9 per cent in 2017-18 to 67.4 per cent in 2023-24 — either as unpaid helpers in household enterprises or as own-account workers. This indicates the absence of alternatives. Second, a large section of the labour force continues to be employed in informal firms. The percentage of workers engaged in informal enterprises (proprietary and partnerships) stood at 73.2 per cent in 2023-24. While it has fallen marginally from 74.3 per cent in 2022-23, it remains higher than the estimate of 68.2 per cent in 2017-18. Third, the share of the labour force engaged in agriculture continues to edge upwards, while that engaged in manufacturing remains almost stagnant. In 2017-18, 44.1 per cent of workers were employed in the farm sector. By 2023-24, it had risen to 46.1 per cent, underlining the reversal of the trend of the falling share of the farm sector seen over the past decades. On the other hand, the share of the labour force engaged in manufacturing remains roughly the same — 11.6 per cent in 2021-22 and 11.4 per cent in 2023-24. Fourth, the unemployment rate (15 years and above) has fallen from 6 per cent in 2017-18 to 3.2 per cent in 2023-24. While youth unemployment has fallen from 17.8 per cent in 2017-18 to 10.2 per cent in 2023-24, it remains high.</p>\n<p>The unemployment rate is also higher among the more educated, with those with a secondary and above level of education having much higher rates than others. The labour market data reinforces the key development challenge facing India — of inadequate creation of more <strong><u>remunerative</u></strong> and productive employment opportunities. Addressing this challenge is becoming more difficult with the production process becoming more capital intensive and labour saving, as the India Employment Report 2024 has also noted. This issue should be at the forefront of the policy agenda.</p><br><p>The phrase <strong><u>\"at the forefront of the policy agenda\"</u></strong> in the passage suggests that employment challenges should be:</p>", "options": ["<p>Kept in the background</p>", "<p>Ignored in favor of other issues</p>", "<p>Given the highest priority</p>", "<p>Left to the private sector</p>", "<p>None of the above</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The phrase \"at the forefront of the policy agenda\" means that employment challenges should be treated as the most important issue and should receive the highest level of attention and action by policymakers. A) Incorrect because it suggests prioritizing the issue, not pushing it to the background. B) Incorrect as \"at the forefront\" means the issue should be of primary importance, not ignored. D) Incorrect because the passage calls for the issue to be addressed through policy, which implies government action, not reliance on the private sector. Therefore, Option C is the most suitable answer.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions given below.</strong></p>\n<p>The Reserve Bank of India has pegged the Indian economy to grow at 7.2 per cent this year. Medium term forecasts, such as those by the IMF, expect the momentum to continue over the coming years. However, concern over the lack of quality jobs continues to persist. The recently released periodic labour force survey provides <strong><u>granular </u></strong>information on the state of the labour market in India. Several trends warrant closer examination.</p>\n<p>First, at the aggregate level, the labour force participation rate (15 years and above) has risen from  49.8 per cent in 2017-18 to 60.1 per cent in 2023-24. However, much of this is due to the sharp rise in female participation, especially in rural areas, where it has risen from 24.6 per cent to 47.6 per cent over this period. While a rise in female participation should ideally be welcome, some have argued that it may be a sign of distress — women stepping out of the house to augment their household income. </p>\n<p>As per the survey, the share of women engaged in salaried employment has fallen. More are now engaged in self-employment — across the country, the share of women who are self-employed has risen from 51.9 per cent in 2017-18 to 67.4 per cent in 2023-24 — either as unpaid helpers in household enterprises or as own-account workers. This indicates the absence of alternatives. Second, a large section of the labour force continues to be employed in informal firms. The percentage of workers engaged in informal enterprises (proprietary and partnerships) stood at 73.2 per cent in 2023-24. While it has fallen marginally from 74.3 per cent in 2022-23, it remains higher than the estimate of 68.2 per cent in 2017-18. Third, the share of the labour force engaged in agriculture continues to edge upwards, while that engaged in manufacturing remains almost stagnant. In 2017-18, 44.1 per cent of workers were employed in the farm sector. By 2023-24, it had risen to 46.1 per cent, underlining the reversal of the trend of the falling share of the farm sector seen over the past decades. On the other hand, the share of the labour force engaged in manufacturing remains roughly the same — 11.6 per cent in 2021-22 and 11.4 per cent in 2023-24. Fourth, the unemployment rate (15 years and above) has fallen from 6 per cent in 2017-18 to 3.2 per cent in 2023-24. While youth unemployment has fallen from 17.8 per cent in 2017-18 to 10.2 per cent in 2023-24, it remains high.</p>\n<p>The unemployment rate is also higher among the more educated, with those with a secondary and above level of education having much higher rates than others. The labour market data reinforces the key development challenge facing India — of inadequate creation of more <strong><u>remunerative</u></strong> and productive employment opportunities. Addressing this challenge is becoming more difficult with the production process becoming more capital intensive and labour saving, as the India Employment Report 2024 has also noted. This issue should be at the forefront of the policy agenda.</p><br><p>Which of the following will be the <strong>synonym</strong> of the boldened word \"<strong>granular</strong>\" ?</p>", "options": ["<p>mammoth</p>", "<p>batted</p>", "<p>stand off</p>", "<p>responding</p>", "<p>coarse</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>According to the context of the sentence, the word \"granular\" refers to \"the quality of including a lot of small details\". Of the given options, the word provided in Option E makes the most sense and fits perfectly. Therefore, Option E is the correct answer.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions given below.</strong></p>\n<p>The Reserve Bank of India has pegged the Indian economy to grow at 7.2 per cent this year. Medium term forecasts, such as those by the IMF, expect the momentum to continue over the coming years. However, concern over the lack of quality jobs continues to persist. The recently released periodic labour force survey provides <strong><u>granular </u></strong>information on the state of the labour market in India. Several trends warrant closer examination.</p>\n<p>First, at the aggregate level, the labour force participation rate (15 years and above) has risen from  49.8 per cent in 2017-18 to 60.1 per cent in 2023-24. However, much of this is due to the sharp rise in female participation, especially in rural areas, where it has risen from 24.6 per cent to 47.6 per cent over this period. While a rise in female participation should ideally be welcome, some have argued that it may be a sign of distress — women stepping out of the house to augment their household income. </p>\n<p>As per the survey, the share of women engaged in salaried employment has fallen. More are now engaged in self-employment — across the country, the share of women who are self-employed has risen from 51.9 per cent in 2017-18 to 67.4 per cent in 2023-24 — either as unpaid helpers in household enterprises or as own-account workers. This indicates the absence of alternatives. Second, a large section of the labour force continues to be employed in informal firms. The percentage of workers engaged in informal enterprises (proprietary and partnerships) stood at 73.2 per cent in 2023-24. While it has fallen marginally from 74.3 per cent in 2022-23, it remains higher than the estimate of 68.2 per cent in 2017-18. Third, the share of the labour force engaged in agriculture continues to edge upwards, while that engaged in manufacturing remains almost stagnant. In 2017-18, 44.1 per cent of workers were employed in the farm sector. By 2023-24, it had risen to 46.1 per cent, underlining the reversal of the trend of the falling share of the farm sector seen over the past decades. On the other hand, the share of the labour force engaged in manufacturing remains roughly the same — 11.6 per cent in 2021-22 and 11.4 per cent in 2023-24. Fourth, the unemployment rate (15 years and above) has fallen from 6 per cent in 2017-18 to 3.2 per cent in 2023-24. While youth unemployment has fallen from 17.8 per cent in 2017-18 to 10.2 per cent in 2023-24, it remains high.</p>\n<p>The unemployment rate is also higher among the more educated, with those with a secondary and above level of education having much higher rates than others. The labour market data reinforces the key development challenge facing India — of inadequate creation of more <strong><u>remunerative</u></strong> and productive employment opportunities. Addressing this challenge is becoming more difficult with the production process becoming more capital intensive and labour saving, as the India Employment Report 2024 has also noted. This issue should be at the forefront of the policy agenda.</p><br><p>Which of the following will be the <strong>antonym</strong> of the boldened word \"<strong>remunerative</strong>\" ?</p>", "options": ["<p>particulate</p>", "<p>impurities</p>", "<p>mediocre</p>", "<p>deficiency</p>", "<p>More than one in options</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>According to the context of the sentence, the word \"remunerative\" refers to \"providing payment for work or profitable\". The word “mediocre” and “ deficiency” both are same in meaning which is not enough or average. Therefore, Option E is the correct answer.</p>"}, {"question": "<p><strong>Select the most appropriate words that are both grammatically and contextually correct to replace the words given in bold.</strong></p><br><p>To enhance national cybersecurity, the government is implementing <strong><u>huge</u></strong> protection measures and fostering <strong><u>minute</u></strong> collaborations between tech firms and security agencies.</p>", "options": ["<p>minimal, occasional</p>", "<p>robust, strategic</p>", "<p>outdated, sporadic</p>", "<p>lenient, arbitrary</p>", "<p>No replacement required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>To enhance national cybersecurity, the government is implementing \"robust\" protection measures and fostering \"strategic\" collaborations between tech firms and security agencies. Robust protection measures are strong and comprehensive, ensuring effective security, while strategic collaborations involve carefully planned partnerships to enhance overall cybersecurity.</p>"}, {"question": "<p><strong>Select the most appropriate words that are both grammatically and contextually correct to replace the words given in bold.</strong></p><br><p>In efforts to stimulate economic growth, the government is enacting<strong><u>bauble</u></strong> tax reforms and providing <strong><u>affable</u></strong>incentives to attract foreign investment.</p>", "options": ["<p>drastic, nominal</p>", "<p>moderate, substantial</p>", "<p>conservative, minimal</p>", "<p>expansive, restricted</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>Bauble: </strong>decoration</p>\n<p><strong>Affable: </strong>polite &amp; friendly</p>\n<p>In efforts to stimulate economic growth, the government is enacting \"moderate\" tax reforms and providing \"substantial\" incentives to attract foreign investment. Moderate tax reforms involve reasonable changes to tax policies that balance interests, while substantial incentives offer significant financial or other benefits to attract and retain foreign investors.</p>"}, {"question": "<p><strong>Select the most appropriate words that are both grammatically and contextually correct to replace the words given in bold.</strong></p><br><p>To improve environmental sustainability, the government is supporting <strong><u>extensive</u></strong> conservation initiatives and mandating <strong><u>stringent</u></strong> regulations on industrial waste.</p>", "options": ["<p>ad-hoc, lenient</p>", "<p>extensive, stringent</p>", "<p>minimal, outdated</p>", "<p>sporadic, flexible</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>To improve environmental sustainability, the government is supporting \"extensive\" conservation initiatives and mandating \"stringent\" regulations on industrial waste. Extensive conservation initiatives cover a wide range of environmental protection efforts, while stringent regulations impose strict requirements on how industrial waste is managed to reduce environmental impact.</p>"}, {"question": "<p><strong>Select the most appropriate words that are both grammatically and contextually correct to replace the words given in bold.</strong></p><br><p>The government’s plan to modernize public transportation includes upgrading <strong><u>adequate</u></strong>transit infrastructure and integrating <strong><u>ancient</u></strong>technology for efficient operations.</p>", "options": ["<p>antiquated, rudimentary</p>", "<p>outdated, basic</p>", "<p>state-of-the-art, advanced</p>", "<p>obsolete, conventional</p>", "<p>No replacement required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The government’s plan to modernize public transportation includes upgrading \"state-of-the-art\" transit infrastructure and integrating \"advanced\" technology for efficient operations. State-of-the-art transit infrastructure uses the latest, most advanced designs and features, while advanced technology enhances operational efficiency and service quality.</p>"}, {"question": "<p><strong>Select the most appropriate words that are both grammatically and contextually correct to replace the words given in bold.</strong></p><br><p>To address public health concerns, the government is expanding <strong><u>primary</u></strong> healthcare coverage and investing in <strong><u>limited</u></strong> programs aimed at disease prevention.</p>", "options": ["<p>limited, sporadic</p>", "<p>universal, comprehensive</p>", "<p>exclusive, minimal</p>", "<p>restricted, arbitrary</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>To address public health concerns, the government is expanding \"universal\" healthcare coverage and investing in \"comprehensive\" programs aimed at disease prevention. Universal healthcare coverage ensures that all individuals have access to medical services, while comprehensive programs provide a wide range of preventative measures to address various health issues.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-48)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-48)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

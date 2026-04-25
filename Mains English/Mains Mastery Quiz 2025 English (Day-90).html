@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-90)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>Below in each questions some sentences are given, find the odd sentence out and rearrange the remaining sentences to make a coherent paragraph.</strong></p><br><p><strong>A).</strong> The rapid advancements in artificial intelligence have sparked both excitement and concern among experts across various industries.</p>\n<p><strong>B).</strong> Many companies are integrating AI systems into their operations to optimize processes and improve decision-making.</p>\n<p><strong>C).</strong> Recent breakthroughs in AI have enabled machines to perform complex tasks, such as language translation and medical diagnostics, with unprecedented accuracy.</p>\n<p><strong>D).</strong> While the benefits of AI are evident, there are growing concerns about its impact on job markets and data privacy.</p>\n<p><strong>E).</strong> Some organizations have begun implementing stricter cybersecurity measures to safeguard against hacking and data breaches.</p>", "options": ["<p>A, B, C, E; D</p>", "<p>A, C, B, D; E</p>", "<p>B, A, E, D; C</p>", "<p>C, E, B, D; A</p>", "<p>E, A, D, C; B</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>Sentence A introduces the advancements in AI. Sentence C highlights the capabilities of AI in complex tasks. Sentence B discusses companies integrating AI into operations. Sentence D raises concerns about its impact.</p>\n<p><strong>Odd one out:</strong> E (It focuses on cybersecurity, which is unrelated to the broader theme of AI's advancements and its impact on industries.)</p>"}, {"question": "<p><strong>Below in each questions some sentences are given, find the odd sentence out and rearrange the remaining sentences to make a coherent paragraph.</strong></p><br><p><strong>A).</strong> The shift towards renewable energy has been driven by the need to reduce greenhouse gas emissions and combat climate change.</p>\n<p><strong>B).</strong> Solar and wind energy have emerged as viable alternatives to fossil fuels, offering clean and sustainable power solutions.</p>\n<p><strong>C).</strong> Many governments are offering subsidies and incentives to promote the adoption of renewable energy technologies.</p>\n<p><strong>D).</strong> The construction of nuclear power plants, however, remains a contentious issue due to concerns over safety and waste disposal.</p>\n<p><strong>E).</strong> Technological advancements have also played a crucial role in making renewable energy more affordable and accessible.</p>", "options": ["<p>A, B, D, E; C</p>", "<p>A, C, B, D; E</p>", "<p>A, B, C, E; D</p>", "<p>C, E, B, D; A</p>", "<p>E, A, D, C; B</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Sentence A introduces the shift towards renewable energy. Sentence B discusses the rise of solar and wind energy as alternatives. Sentence C talks about government incentives. Sentence E mentions how technology has made renewable energy more affordable.</p>\n<p><strong>Odd one out:</strong> D (It discusses nuclear power, which is a separate issue from the focus on renewable energy.)</p>"}, {"question": "<p><strong>Below in each questions some sentences are given, find the odd sentence out and rearrange the remaining sentences to make a coherent paragraph.</strong></p><br><p><strong>A).</strong> The international conference on biodiversity brought together scientists and environmentalists from around the world.</p>\n<p><strong>B).</strong> Participants discussed strategies for preserving endangered species and restoring damaged ecosystems.</p>\n<p><strong>C).</strong> The conference highlighted the urgent need for global cooperation in addressing the loss of biodiversity.</p>\n<p><strong>D).</strong> Many developing nations are facing economic challenges that hinder their ability to invest in conservation efforts.</p>\n<p><strong>E).</strong> One of the key outcomes was the formation of a new international coalition dedicated to protecting critical habitats.</p>", "options": ["<p>A, B, C, E; D</p>", "<p>A, C, B, D; E</p>", "<p>B, A, E, D; C</p>", "<p>C, E, B, D; A</p>", "<p>E, A, D, C; B</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Sentence A introduces the international conference on biodiversity. Sentence B discusses the key topics. Sentence C highlights the need for global cooperation. Sentence E describes the formation of an international coalition.</p>\n<p><strong>Odd one out: D</strong> (It focuses on economic challenges in developing nations, which is not directly related to the central theme of the conference and its outcomes.)</p>"}, {"question": "<p><strong>Below in each questions some sentences are given, find the odd sentence out and rearrange the remaining sentences to make a coherent paragraph.</strong></p><br><p><strong>A).</strong> The introduction of electric vehicles is seen as a major step towards reducing carbon emissions in the transportation sector.</p>\n<p><strong>B).</strong> Governments around the world are setting ambitious targets to phase out gasoline and diesel-powered cars.</p>\n<p><strong>C).</strong> The automotive industry is facing challenges in sourcing the materials needed for large-scale battery production.</p>\n<p><strong>D).</strong> Electric vehicles are becoming more affordable, thanks to advances in battery technology and manufacturing.</p>\n<p><strong>E).</strong> Many consumers are still hesitant to switch to electric cars due to concerns over charging infrastructure and range limitations.</p>", "options": ["<p>A, B, C, E; D</p>", "<p>A, C, B, D; E</p>", "<p>A, B, D, E; C</p>", "<p>C, E, B, D; A</p>", "<p>E, A, D, C; B</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Sentence A introduces the shift towards electric vehicles as a way to reduce emissions. Sentence B discusses government targets. Sentence D mentions affordability due to advancements in battery technology. Sentence E highlights consumer concerns.</p>\n<p><strong>Odd one out: </strong>C (It discusses challenges in material sourcing, which is less directly connected to the broader theme of electric vehicle adoption and consumer concerns.)</p>"}, {"question": "<p><strong>Below in each questions some sentences are given, find the odd sentence out and rearrange the remaining sentences to make a coherent paragraph.</strong></p><br><p><strong>A).</strong> The human brain is a highly complex organ, capable of processing vast amounts of information simultaneously.</p>\n<p><strong>B).</strong> Neuroscientists have made significant strides in understanding how different areas of the brain control various cognitive functions.</p>\n<p><strong>C).</strong> Recent studies suggest that neuroplasticity allows the brain to adapt and rewire itself in response to new experiences and learning.</p>\n<p><strong>D).</strong> Advances in neuroimaging technologies have provided researchers with unprecedented insights into brain activity.</p>\n<p><strong>E).</strong> Many technological gadgets, such as smartphones and tablets, are designed to enhance cognitive productivity.</p>", "options": ["<p>A, B, C, E; D</p>", "<p>A, C, B, D; E</p>", "<p>B, A, E, D; C</p>", "<p>A, B, D, C; E</p>", "<p>E, A, D, C; B</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>Sentence A introduces the complexity of the human brain. Sentence B discusses strides in neuroscience. Sentence D talks about advances in neuroimaging technology. Sentence C mentions neuroplasticity.</p>\n<p><strong>Odd one out:</strong> E (It discusses technological gadgets, which is unrelated to the scientific exploration of brain functions.)</p>"}, {"question": "<p><strong>In the sentence given below two blanks are there followed by six words to fill the blank to complete the sentence meaningfully correct. You have to choose the correct pair of words to complete the sentence.</strong></p><br><p><strong>The fintech startup _______ traditional banking models, ______ blockchain technology to streamline transactions, enhance security, and foster financial inclusion in the digital economy.</strong></p>\n<p><strong>1).</strong> disrupted</p>\n<p><strong>2).</strong> ravaged</p>\n<p><strong>3).</strong> impeded</p>\n<p><strong>4).</strong> exploiting</p>\n<p><strong>5).</strong> leveraging</p>\n<p><strong>6).</strong> oppressing</p>", "options": ["<p>1 and 4</p>", "<p>2 and 5</p>", "<p>3 and 6</p>", "<p>1 and 5</p>", "<p>3 and 4</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>1 and 5</p>\n<p>Disrupted: This term is appropriate because it indicates that the fintech startup has caused significant changes or disturbances to traditional banking models. Fintech startups often aim to disrupt the status quo of the financial industry by introducing innovative technologies and business models.</p>\n<p>Leveraging: This term is fitting because it suggests that the fintech startup is utilizing or taking advantage of blockchain technology to achieve its goals. In this context, the startup is using blockchain technology as a tool to streamline transactions, enhance security, and promote financial inclusion.</p>\n<p>The other options do not accurately convey the intended meaning or context:</p>\n<p>\"Ravaged\" implies destruction or severe damage, which is not the appropriate characterization of the fintech startup's impact on traditional banking models.</p>\n<p>\"Impeded\" suggests that the fintech startup hindered or obstructed traditional banking models, which contradicts the idea of disruption and innovation.</p>\n<p>\"Exploiting\" carries a negative connotation of taking advantage of something for selfish gain, which may not accurately reflect the fintech startup's intentions or actions.</p>\n<p>\"Oppressing\" implies unjust or cruel treatment, which is not the appropriate description of the fintech startup's relationship with traditional banking models.</p>"}, {"question": "<p><strong>In the sentence given below two blanks are there followed by six words to fill the blank to complete the sentence meaningfully correct. You have to choose the correct pair of words to complete the sentence.</strong></p><br><p><strong>On March 22, during an election campaign speech in Rajkot in Gujarat, Union Minister and Rajkot Bharatiya Janata Party (BJP) candidate Parshottam Rupala _____ triggered ______ when he praised the Dalits at the expense of the Kshatriyas or Rajputs.</strong></p>\n<p><strong>1).</strong> obliviously</p>\n<p><strong>2).</strong> unwittingly</p>\n<p><strong>3).</strong> obtusely</p>\n<p><strong>4).</strong> profanation</p>\n<p><strong>5).</strong> outrage</p>\n<p><strong>6).</strong> deterioration</p>", "options": ["<p>1 and 6</p>", "<p>2 and 5</p>", "<p>3 and 6</p>", "<p>1 and 5</p>", "<p>3 and 4</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>2 and 5</p>\n<p>Unwittingly: This term indicates that Union Minister Parshottam Rupala praised the Dalits without being aware of the potential consequences or offense it might cause to the Kshatriyas or Rajputs. It suggests that his actions were unintentional or done without full knowledge.</p>\n<p>Outrage: This term is suitable because it denotes a strong feeling of anger or indignation provoked by Parshottam Rupala's remarks. Praising one group at the expense of another, especially in a sensitive context like caste dynamics in Indian society, can lead to outrage and condemnation.</p>\n<p>The other options do not accurately convey the intended meaning or context:</p>\n<p>\"Obliviously\" suggests that Parshottam Rupala made his remarks without being aware of what he was saying, which might not be the case given the context of an election campaign speech.</p>\n<p>\"Obtusely\" implies that Parshottam Rupala made his remarks in a dull or insensitive manner, which might not accurately capture the situation.</p>\n<p>\"Profanation\" refers to the act of disrespecting something sacred or holy, which does not precisely describe the situation of praising one group over another in a political speech.</p>\n<p>\"Deterioration\" suggests a decline or worsening of a situation, which doesn't fit the context of the reaction to Parshottam Rupala's speech.</p>"}, {"question": "<p><strong>In the sentence given below two blanks are there followed by six words to fill the blank to complete the sentence meaningfully correct. You have to choose the correct pair of words to complete the sentence.</strong></p><br><p><strong>The Aadhaar-Based Payment System (ABPS) has been _______ sufficient attention, mostly on account of the myriad issues _______ it.</strong></p>\n<p><strong>1).</strong> accorded</p>\n<p><strong>2).</strong> conferred</p>\n<p><strong>3).</strong> conceded</p>\n<p><strong>4).</strong> plaguing</p>\n<p><strong>5).</strong> enthralling</p>\n<p><strong>6).</strong> cajoling</p>", "options": ["<p>1 and 4</p>", "<p>2 and 5</p>", "<p>2 and 6</p>", "<p>1 and 5</p>", "<p>3 and 4</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>1 and 4</p>\n<p>Accorded: This term means to give or grant something, such as attention, recognition, or importance. In this context, it suggests that the ABPS has received a significant amount of attention from various stakeholders.</p>\n<p>Plaguing: This term refers to causing persistent trouble, distress, or torment. It accurately describes the numerous issues or problems that have been affecting the Aadhaar-Based Payment System.</p>\n<p>The other options do not accurately convey the intended meaning or context:</p>\n<p>\"Conferred\" typically refers to granting an honor or privilege, which is not suitable in this context.</p>\n<p>\"Conceded\" means to admit or acknowledge something reluctantly, which doesn't fit the context of the ABPS receiving attention.</p>\n<p>\"Enthralling\" means captivating or fascinating, which doesn't accurately describe the attention given to the ABPS, especially considering the negative connotation implied by the subsequent phrase about issues</p>\n<p>\"Cajoling\" means persuading someone to do something through flattery or gentle urging, which doesn't fit the context of the ABPS receiving attention or the issues it faces.</p>"}, {"question": "<p><strong>In the sentence given below two blanks are there followed by six words to fill the blank to complete the sentence meaningfully correct. You have to choose the correct pair of words to complete the sentence.</strong></p><br><p><strong>Elon Musk’s N1 implant, introduced to facilitate operating devices by just intending it in the brain, has _____ many into realising how far seemingly _____ neuroscience has been put to practical, commercial use.</strong></p>\n<p><strong>1).</strong> rattled</p>\n<p><strong>2).</strong> spurred</p>\n<p><strong>3).</strong> jolted</p>\n<p><strong>4).</strong> exotic</p>\n<p><strong>5).</strong> peculiar</p>\n<p><strong>6).</strong> intriguing</p>", "options": ["<p>1 and 5</p>", "<p>2 and 6</p>", "<p>3 and 6</p>", "<p>2 and 4</p>", "<p>3 and 4</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>3 and 4</p>\n<p>Jolted: This term suggests that Elon Musk's N1 implant has caused surprise or shock, potentially by its innovative nature or the implications it holds. It implies that the introduction of the implant has prompted people to reassess their understanding or expectations regarding neuroscience and its practical applications.</p>\n<p>Exotic: This term conveys the idea that Elon Musk's N1 implant is unusual, unconventional, or rare. It suggests that the implant represents a departure from the norm or the expected, particularly in the context of how neuroscience is typically applied. The word \"seemingly\" preceding \"neuroscience\" also adds to the idea that the application of neuroscience to practical, commercial use may appear exotic or unexpected to some.</p>\n<p>The other options do not accurately convey the intended meaning or context:</p>\n<p>\"Rattled\" implies a feeling of anxiety or nervousness, which may not be the most appropriate characterization of people's reaction to the N1 implant.</p>\n<p>\"Spurred\" suggests that the N1 implant has motivated or encouraged people to realize something, but it doesn't capture the sense of surprise or the unconventional nature of the implant's introduction.</p>\n<p>\"Tedious\" means boring or monotonous, which is not appropriate in the context of discussing a groundbreaking technological advancement.</p>\n<p>\"Mediocre\" means of average or ordinary quality, which is not suitable for describing the impact of Elon Musk's N1 implant on people's realization about the use of neuroscience in practical applications.</p>"}, {"question": "<p><strong>In the sentence given below two blanks are there followed by six words to fill the blank to complete the sentence meaningfully correct. You have to choose the correct pair of words to complete the sentence.</strong></p><br><p><strong>The _____ of electricity shortages rises again as hot weather _____ across the country.</strong></p>\n<p><strong>1).</strong> infelicity</p>\n<p><strong>2).</strong> torment</p>\n<p><strong>3).</strong> spectre</p>\n<p><strong>4).</strong> plunges</p>\n<p><strong>5).</strong> plummets</p>\n<p><strong>6).</strong> descends</p>", "options": ["<p>1 and 4</p>", "<p>2 and 5</p>", "<p>3 and 6</p>", "<p>1 and 5</p>", "<p>3 and 4</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>3 and 6</p>\n<p>Spectre: This term refers to something widely feared or regarded as a source of terror or anxiety. In this context, it suggests that the possibility or threat of electricity shortages is looming over the situation, evoking a sense of fear or concern.</p>\n<p>Descends: This term implies a gradual movement downward. In the context of hot weather spreading across the country, it suggests that the heat is gradually moving or spreading, potentially exacerbating the risk of electricity shortages.</p>\n<p>The other options do not accurately convey the intended meaning or context:</p>\n<p>\"Infelicity\" means unhappiness or misfortune, which doesn't fit the context of discussing the rising possibility of electricity shortages.</p>\n<p>\"Torment\" refers to severe physical or mental suffering, which may not accurately describe the situation of electricity shortages.</p>\n<p>\"Plunges\" typically means to fall or drop suddenly and forcefully, which doesn't fit the context of the gradual spread of hot weather.</p>\n<p>\"Plummets\" means to fall or drop straight down at a high speed, which also doesn't fit the context of the gradual spread of hot weather.</p>"}, {"question": "<p><strong>Read the sentence to find out whether there is an error in it. The error, if any, will be in one part of the sentence. The letter corresponding to that part will be your answer. If the given sentence is correct as it is, mark the answer as 'No Error'</strong>.</p><br><p><strong>King Charles III’s visit to Australia this week, the first by a sitting British monarch since Queen Elizabeth 70 years ago, has rekindled the debate on ending the country’s constitutional link to the British monarchy.</strong></p>", "options": ["<p>70 years ago, has rekindled the debate on</p>", "<p>King Charles III&rsquo;s visit to Australia this week, the first</p>", "<p>ending the country&rsquo;s constitutional link to the British monarchy</p>", "<p>by a sitting British monarch since Queen Elizabeth</p>", "<p>No error</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>Given sentence doesn't have any error, Hence Option E is the answer.</p>"}, {"question": "<p><strong>Read the sentence to find out whether there is an error in it. The error, if any, will be in one part of the sentence. The letter corresponding to that part will be your answer. If the given sentence is correct as it is, mark the answer as 'No Error'</strong>.</p><br><p><strong>Stating that he was tired of doing continuous politics because of the back to back Lok Sabha and Assembly elections, Abdullah said he now wants to concentrate more on addressing the issues face the people of Jammu and Kashmir.</strong></p>", "options": ["<p>to back Lok Sabha and Assembly elections, Abdullah said</p>", "<p>he now wants to concentrate more on addressing the</p>", "<p>Stating that he was tired of doing continuous politics because of the back</p>", "<p>issues face the people of Jammu and Kashmir</p>", "<p>No Error</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The usage of finite verb \"face\" in the part D of the sentence is grammatically incorrect which should be replaced with the adjective \"facing\" to make the sentence grammatically correct as it qualifies a noun \"issues\". Thus, Option D is the most suitable answer.</p>"}, {"question": "<p><strong>Read the sentence to find out whether there is an error in it. The error, if any, will be in one part of the sentence. The letter corresponding to that part will be your answer. If the given sentence is correct as it is, mark the answer as 'No Error'</strong>.</p><br><p><strong>The chief minister also announced that he will hold meetings with the party cadence on the sidelines of government functions to get their feedback, rather than depending solely on government officials.</strong></p>", "options": ["<p>meetings with the party cadence on the sidelines of</p>", "<p>government functions to get their feedback</p>", "<p>rather than depending solely on government officials</p>", "<p>The chief minister also announced that he will hold</p>", "<p>No Error</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Since the usage of objective noun \"cadence\" is contextually incorrect which should be replaced with \"cadres\" to make the sentence grammatically correct. Therefore, Option A is the most suitable answer.</p>\n<p>Cadre (N) -  a nucleus or core group especially of trained personnel able to assume control and to train others</p>\n<p>Cadence (N) - a regular rise and fall of sound, especially of the human voice</p>"}, {"question": "<p><strong>Read the sentence to find out whether there is an error in it. The error, if any, will be in one part of the sentence. The letter corresponding to that part will be your answer. If the given sentence is correct as it is, mark the answer as 'No Error'</strong>.</p><br><p><strong>The board of the company, where had posted a consolidated net profit of Rs 36 crore in the same quarter last fiscal, has also approved the raising of Rs 8,500 crore through qualified institutional placement of equity shares, Zomato Ltd said in a regulatory filing.</strong></p>", "options": ["<p>net profit of Rs 36 crore in the same quarter last fiscal, has</p>", "<p>placement of equity shares, Zomato Ltd said in a regulatory filing</p>", "<p>The board of the company, where had posted a consolidated</p>", "<p>also approved the raising of Rs 8,500 crore through qualified institutional</p>", "<p>No Error</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>As the usage of subjective pronoun \"where\" is contextually incorrect which should be replaced with \"which\" to make the sentence meaningfully correct as it indicates the board of the company. Hence, Option C will be the most appropriate answer.</p>"}, {"question": "<p><strong>Read the sentence to find out whether there is an error in it. The error, if any, will be in one part of the sentence. The letter corresponding to that part will be your answer. If the given sentence is correct as it is, mark the answer as 'No Error'</strong>.</p><br><p><strong>According to Kumari, the highway construction has ongoing since 2012, and a private company excavated land along the road, irresponsibly dumping the soil on Forest department land near a toll barrier.</strong></p>", "options": ["<p>along the road, irresponsibly dumping</p>", "<p>According to Kumari, the highway construction has ongoing</p>", "<p>the soil on Forest department land near a toll barrier</p>", "<p>since 2012, and a private company excavated land</p>", "<p>No Error</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>Since it indicates the ongoing process of construction in which state of the process is mentioned, the usage of active form of continuous verb \"has ongoing\" is grammatically incorrect which should be replaced with \"has been ongoing\" to make the sentence meaningfully correct. Hence, Option B will be the most appropriate answer.</p>"}, {"question": "<p><strong>There is information in the form of passage given below. Some questions have been framed on the same which can be solved by a careful reading of the passage. You must read the given details carefully and choose the best option for each question as your answer. </strong></p><p>Ayurveda suffered a decline in the late 19th century in the absence of research and development. Ayurveda was the backbone of health care through ancient and medieval times, until the 19th century, because it was a discipline for ensuring longevity rather than merely treating the symptoms of illness. As scholars have claimed it was a science of life; not merely to cure the sick but also to make the healthy healthier; Chavanprash is an elementary example while Rasayana or rejuvenation is its advanced face.</p><p>Until Allopathy took long strides in the early decades of the 20th century, Ayurveda commanded its place. Yet Indian scholars have not strategized the recovery of this science of life. Our science of life — Ayur Veda — is potentially a champion of Indian civilizational revival and deserves our serious attention. Its concept of positive health care must be fully discovered. Who does not wish to live well and long? When I began to work, I was 20 and it was considered to be too early. My employers retired its staff and executives at 55. Today, those retired at 60 complain about how to occupy themselves. Most of them are fit to continue working. Death at 71 or 72 is considered tragically young. At Independence time, 60 was an acceptable age to wind up from life. Give or take, life span expectation has jumped by 20 years in better-to-do families. The new challenge before Ayurveda, or any other school of treatment, is how to make the lengthening of lives more interesting, and more readily enjoyable. Ayurveda and its Rasayana have rejuvenation.</p><p>Similarly, Naturopathy can work wonders. I have witnessed my cousin being made to lose weight and how. When her therapy began, she was 18 years old weighing 216 lbs. In twelve months, the weight came down to 130 lbs. The medicines were few, the diet was strict for six days a week. Once a week she could have even a bar of chocolate. In a country with rampant poverty, Homeopathy can be a good alternative. In some persons, a few drops of its medicines work wonders. All for a few rupees — no pain, no injections, no surgeries. Germans invented it and they must be generously complimented. Unfortunately, hardly anyone has pursued it with research. Hence this wonderful cure has not gone very far. Nevertheless, the system deserves encouragement and greater patronage. Incidentally, Homeopathy is so named because it is not an antagonistic treatment. <strong><em>It is sympathetic in the sense that the medicine aggravate symptoms of the ailment in the hope that they get pushed out of the body.</em></strong> Most other schools of medical treatment are known to be antagonistic which means attacking the symptoms in the hope of killing them. Ayurveda and Naturopathy are different in the sense that one takes a broad view of the patient's whole life or ayu. Naturopathy again leans on nature and tries to bring the patients' living <strong><em>in step with</em></strong> what nature expected. Antagonist treatment can provoke reactions. Homeopathy is different from others in this regard.</p><p>Ayurveda must be given the credit for innovating the vocation of nursing. Both male and female nursing began centuries ago although the practice took a long time to spread. Indeed, Ayurveda has a record of innovativeness, sustaining a whole Indian civilization with its holistic approach to life. <strong>__________</strong>, more confidence in its practitioners is necessary; investors would come given this ingredient.</p><br><p><strong>Which of the given options provides the best central theme for the passage given above?</strong></p>", "options": ["Ayurveda was the backbone of healthcare through ancient and medieval times and came to India in the 19th century", "Ayurveda has provided holistic health to mankind since ancient times, it needs a little support to become an alternative to allopathy", "Most people in India are poor and that is the reason alternative branches of medicine are not just needed but necessary", "Homeopathy, Naturopathy and Ayurveda are ancient secrets of the civilisation and proper research can help alleviate the use of Allopathy completely", "Each individual wants to live long but what is more important is that, one should focus more on living a healthier life"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p><p>The entire passage talks about the impact of Ayurveda and other branches of medicine as they can help in the holistic development of an individual but the benefits of these disciplines has become unfruitful because very few people know about it and there is a lot of scope in research in these areas so that it can gain acceptance as an alternative to allopathy.</p><p>The first option looks like an additional information and it doesn’t answer our question. The third option is one of the aspects discussed in the passage and not the central idea. The fourth option talks about alleviation of allopathy completely which is not the ambition of the author so it can be ruled out. The fifth option is not relevant to the question.</p><p>So, the best is to go with option (b) as the answer.</p>"}, {"question": "<p><strong>There is information in the form of passage given below. Some questions have been framed on the same which can be solved by a careful reading of the passage. You must read the given details carefully and choose the best option for each question as your answer. </strong></p><p>Ayurveda suffered a decline in the late 19th century in the absence of research and development. Ayurveda was the backbone of health care through ancient and medieval times, until the 19th century, because it was a discipline for ensuring longevity rather than merely treating the symptoms of illness. As scholars have claimed it was a science of life; not merely to cure the sick but also to make the healthy healthier; Chavanprash is an elementary example while Rasayana or rejuvenation is its advanced face.</p><p>Until Allopathy took long strides in the early decades of the 20th century, Ayurveda commanded its place. Yet Indian scholars have not strategized the recovery of this science of life. Our science of life — Ayur Veda — is potentially a champion of Indian civilizational revival and deserves our serious attention. Its concept of positive health care must be fully discovered. Who does not wish to live well and long? When I began to work, I was 20 and it was considered to be too early. My employers retired its staff and executives at 55. Today, those retired at 60 complain about how to occupy themselves. Most of them are fit to continue working. Death at 71 or 72 is considered tragically young. At Independence time, 60 was an acceptable age to wind up from life. Give or take, life span expectation has jumped by 20 years in better-to-do families. The new challenge before Ayurveda, or any other school of treatment, is how to make the lengthening of lives more interesting, and more readily enjoyable. Ayurveda and its Rasayana have rejuvenation.</p><p>Similarly, Naturopathy can work wonders. I have witnessed my cousin being made to lose weight and how. When her therapy began, she was 18 years old weighing 216 lbs. In twelve months, the weight came down to 130 lbs. The medicines were few, the diet was strict for six days a week. Once a week she could have even a bar of chocolate. In a country with rampant poverty, Homeopathy can be a good alternative. In some persons, a few drops of its medicines work wonders. All for a few rupees — no pain, no injections, no surgeries. Germans invented it and they must be generously complimented. Unfortunately, hardly anyone has pursued it with research. Hence this wonderful cure has not gone very far. Nevertheless, the system deserves encouragement and greater patronage. Incidentally, Homeopathy is so named because it is not an antagonistic treatment. <strong><em>It is sympathetic in the sense that the medicine aggravate symptoms of the ailment in the hope that they get pushed out of the body.</em></strong> Most other schools of medical treatment are known to be antagonistic which means attacking the symptoms in the hope of killing them. Ayurveda and Naturopathy are different in the sense that one takes a broad view of the patient's whole life or ayu. Naturopathy again leans on nature and tries to bring the patients' living <strong><em>in step with</em></strong> what nature expected. Antagonist treatment can provoke reactions. Homeopathy is different from others in this regard.</p><p>Ayurveda must be given the credit for innovating the vocation of nursing. Both male and female nursing began centuries ago although the practice took a long time to spread. Indeed, Ayurveda has a record of innovativeness, sustaining a whole Indian civilization with its holistic approach to life. <strong>__________</strong>, more confidence in its practitioners is necessary; investors would come given this ingredient.</p><br><p><strong>In what context has the phrase <em>‘in step with’</em> been used in the passage?</strong></p>", "options": ["People like to live in the comfort of their homes", "Naturopathy is in harmony with the nature", "People wish to get all their treatments in a hurry", "The people wish to get natural treatments as they heal quickly", "Other than the given options"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p><p>The sentence in which the phrase has been used hints at naturopathy which works in tandem with the nature. The phrase ‘<strong>in step with</strong>’ means in agreement with someone or something.</p><p>Here, the second option explains the usage of the phrase and all the other options are superfluous.</p><p>Thus, the correct answer is option (b).</p>"}, {"question": "<p><strong>There is information in the form of passage given below. Some questions have been framed on the same which can be solved by a careful reading of the passage. You must read the given details carefully and choose the best option for each question as your answer. </strong></p><p>Ayurveda suffered a decline in the late 19th century in the absence of research and development. Ayurveda was the backbone of health care through ancient and medieval times, until the 19th century, because it was a discipline for ensuring longevity rather than merely treating the symptoms of illness. As scholars have claimed it was a science of life; not merely to cure the sick but also to make the healthy healthier; Chavanprash is an elementary example while Rasayana or rejuvenation is its advanced face.</p><p>Until Allopathy took long strides in the early decades of the 20th century, Ayurveda commanded its place. Yet Indian scholars have not strategized the recovery of this science of life. Our science of life — Ayur Veda — is potentially a champion of Indian civilizational revival and deserves our serious attention. Its concept of positive health care must be fully discovered. Who does not wish to live well and long? When I began to work, I was 20 and it was considered to be too early. My employers retired its staff and executives at 55. Today, those retired at 60 complain about how to occupy themselves. Most of them are fit to continue working. Death at 71 or 72 is considered tragically young. At Independence time, 60 was an acceptable age to wind up from life. Give or take, life span expectation has jumped by 20 years in better-to-do families. The new challenge before Ayurveda, or any other school of treatment, is how to make the lengthening of lives more interesting, and more readily enjoyable. Ayurveda and its Rasayana have rejuvenation.</p><p>Similarly, Naturopathy can work wonders. I have witnessed my cousin being made to lose weight and how. When her therapy began, she was 18 years old weighing 216 lbs. In twelve months, the weight came down to 130 lbs. The medicines were few, the diet was strict for six days a week. Once a week she could have even a bar of chocolate. In a country with rampant poverty, Homeopathy can be a good alternative. In some persons, a few drops of its medicines work wonders. All for a few rupees — no pain, no injections, no surgeries. Germans invented it and they must be generously complimented. Unfortunately, hardly anyone has pursued it with research. Hence this wonderful cure has not gone very far. Nevertheless, the system deserves encouragement and greater patronage. Incidentally, Homeopathy is so named because it is not an antagonistic treatment. <strong><em>It is sympathetic in the sense that the medicine aggravate symptoms of the ailment in the hope that they get pushed out of the body.</em></strong> Most other schools of medical treatment are known to be antagonistic which means attacking the symptoms in the hope of killing them. Ayurveda and Naturopathy are different in the sense that one takes a broad view of the patient's whole life or ayu. Naturopathy again leans on nature and tries to bring the patients' living <strong><em>in step with</em></strong> what nature expected. Antagonist treatment can provoke reactions. Homeopathy is different from others in this regard.</p><p>Ayurveda must be given the credit for innovating the vocation of nursing. Both male and female nursing began centuries ago although the practice took a long time to spread. Indeed, Ayurveda has a record of innovativeness, sustaining a whole Indian civilization with its holistic approach to life. <strong>__________</strong>, more confidence in its practitioners is necessary; investors would come given this ingredient.</p><br><p><strong>Which of the following can be inferred from the passage?</strong></p><p><strong>(i)</strong> The Greeks have contributed to Indian medicine since ages so much so that the life expectancy has gone up</p><p><strong>(ii)</strong> Most of the alternative branches of medicine work on the symptoms and not just the problem</p><p><strong>(iii)</strong> Renowned medicine practitioners have only worked on gastronomy and treatments by working on the stomach</p>", "options": ["Only (i)", "Both (i) and (ii)", "Only (ii)", "Both (ii) and (iii)", "None"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p><p>The first statement makes no sense as; the passage has not described anything about the Greeks. We can’t infer things that are not based on details given in the passage.</p><p>The second statement can be inferred because it has been mentioned in the passage that most medicines, except Homeopathy attack the symptoms of the problems to eradicate them. So, this statement makes complete sense.</p><p>The third statement is a completely new idea and nothing of the sort finds its mention in the passage.</p><p>So, the only statement that is correct can be found in option (c).</p>"}, {"question": "<p><strong>There is information in the form of passage given below. Some questions have been framed on the same which can be solved by a careful reading of the passage. You must read the given details carefully and choose the best option for each question as your answer. </strong></p><p>Ayurveda suffered a decline in the late 19th century in the absence of research and development. Ayurveda was the backbone of health care through ancient and medieval times, until the 19th century, because it was a discipline for ensuring longevity rather than merely treating the symptoms of illness. As scholars have claimed it was a science of life; not merely to cure the sick but also to make the healthy healthier; Chavanprash is an elementary example while Rasayana or rejuvenation is its advanced face.</p><p>Until Allopathy took long strides in the early decades of the 20th century, Ayurveda commanded its place. Yet Indian scholars have not strategized the recovery of this science of life. Our science of life — Ayur Veda — is potentially a champion of Indian civilizational revival and deserves our serious attention. Its concept of positive health care must be fully discovered. Who does not wish to live well and long? When I began to work, I was 20 and it was considered to be too early. My employers retired its staff and executives at 55. Today, those retired at 60 complain about how to occupy themselves. Most of them are fit to continue working. Death at 71 or 72 is considered tragically young. At Independence time, 60 was an acceptable age to wind up from life. Give or take, life span expectation has jumped by 20 years in better-to-do families. The new challenge before Ayurveda, or any other school of treatment, is how to make the lengthening of lives more interesting, and more readily enjoyable. Ayurveda and its Rasayana have rejuvenation.</p><p>Similarly, Naturopathy can work wonders. I have witnessed my cousin being made to lose weight and how. When her therapy began, she was 18 years old weighing 216 lbs. In twelve months, the weight came down to 130 lbs. The medicines were few, the diet was strict for six days a week. Once a week she could have even a bar of chocolate. In a country with rampant poverty, Homeopathy can be a good alternative. In some persons, a few drops of its medicines work wonders. All for a few rupees — no pain, no injections, no surgeries. Germans invented it and they must be generously complimented. Unfortunately, hardly anyone has pursued it with research. Hence this wonderful cure has not gone very far. Nevertheless, the system deserves encouragement and greater patronage. Incidentally, Homeopathy is so named because it is not an antagonistic treatment. <strong><em>It is sympathetic in the sense that the medicine aggravate symptoms of the ailment in the hope that they get pushed out of the body.</em></strong> Most other schools of medical treatment are known to be antagonistic which means attacking the symptoms in the hope of killing them. Ayurveda and Naturopathy are different in the sense that one takes a broad view of the patient's whole life or ayu. Naturopathy again leans on nature and tries to bring the patients' living <strong><em>in step with</em></strong> what nature expected. Antagonist treatment can provoke reactions. Homeopathy is different from others in this regard.</p><p>Ayurveda must be given the credit for innovating the vocation of nursing. Both male and female nursing began centuries ago although the practice took a long time to spread. Indeed, Ayurveda has a record of innovativeness, sustaining a whole Indian civilization with its holistic approach to life. <strong>__________</strong>, more confidence in its practitioners is necessary; investors would come given this ingredient.</p><br><p><strong>What does one understand by the phrase ‘<em>sympathetic treatment</em>’ as used in the passage?</strong></p>", "options": ["A treatment that goes against the body of the patient", "The use of reverse psychology where the patient is treated for the problem he doesn&rsquo;t have", "Using drugs that block the production of a particular substance in one&rsquo;s body", "A treatment that tries to intensify the symptoms so that they can be pushed out of the patient&rsquo;s body", "Not discussed in the passage"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p><p>Homeopathy as described in the passage is a school of medicine that uses sympathetic treatment in which, as explained the symptoms are directly worked upon so that they can be intensified and brought to light before they can be completely alleviated.</p><p>The first option doesn’t make any sense as, it doesn’t match with the given meaning. The second option is mere wordplay and can be eliminated for being superfluous. There’s no clue about the third option in the entire passage. The fourth option can be upheld from the lines from the third paragraph given below:</p><p><em>Incidentally, <strong>Homeopathy</strong> is so named because it is <strong>not an antagonistic</strong> treatment. <strong>It is sympathetic</strong> in the sense that <strong>the medicine aggravates symptoms of the ailment in the hope that they get pushed out of the body</strong>.</em></p><p>Thus, the correct answer is option (d).</p>"}, {"question": "<p><strong>There is information in the form of passage given below. Some questions have been framed on the same which can be solved by a careful reading of the passage. You must read the given details carefully and choose the best option for each question as your answer. </strong></p><p>Ayurveda suffered a decline in the late 19th century in the absence of research and development. Ayurveda was the backbone of health care through ancient and medieval times, until the 19th century, because it was a discipline for ensuring longevity rather than merely treating the symptoms of illness. As scholars have claimed it was a science of life; not merely to cure the sick but also to make the healthy healthier; Chavanprash is an elementary example while Rasayana or rejuvenation is its advanced face.</p><p>Until Allopathy took long strides in the early decades of the 20th century, Ayurveda commanded its place. Yet Indian scholars have not strategized the recovery of this science of life. Our science of life — Ayur Veda — is potentially a champion of Indian civilizational revival and deserves our serious attention. Its concept of positive health care must be fully discovered. Who does not wish to live well and long? When I began to work, I was 20 and it was considered to be too early. My employers retired its staff and executives at 55. Today, those retired at 60 complain about how to occupy themselves. Most of them are fit to continue working. Death at 71 or 72 is considered tragically young. At Independence time, 60 was an acceptable age to wind up from life. Give or take, life span expectation has jumped by 20 years in better-to-do families. The new challenge before Ayurveda, or any other school of treatment, is how to make the lengthening of lives more interesting, and more readily enjoyable. Ayurveda and its Rasayana have rejuvenation.</p><p>Similarly, Naturopathy can work wonders. I have witnessed my cousin being made to lose weight and how. When her therapy began, she was 18 years old weighing 216 lbs. In twelve months, the weight came down to 130 lbs. The medicines were few, the diet was strict for six days a week. Once a week she could have even a bar of chocolate. In a country with rampant poverty, Homeopathy can be a good alternative. In some persons, a few drops of its medicines work wonders. All for a few rupees — no pain, no injections, no surgeries. Germans invented it and they must be generously complimented. Unfortunately, hardly anyone has pursued it with research. Hence this wonderful cure has not gone very far. Nevertheless, the system deserves encouragement and greater patronage. Incidentally, Homeopathy is so named because it is not an antagonistic treatment. <strong><em>It is sympathetic in the sense that the medicine aggravate symptoms of the ailment in the hope that they get pushed out of the body.</em></strong> Most other schools of medical treatment are known to be antagonistic which means attacking the symptoms in the hope of killing them. Ayurveda and Naturopathy are different in the sense that one takes a broad view of the patient's whole life or ayu. Naturopathy again leans on nature and tries to bring the patients' living <strong><em>in step with</em></strong> what nature expected. Antagonist treatment can provoke reactions. Homeopathy is different from others in this regard.</p><p>Ayurveda must be given the credit for innovating the vocation of nursing. Both male and female nursing began centuries ago although the practice took a long time to spread. Indeed, Ayurveda has a record of innovativeness, sustaining a whole Indian civilization with its holistic approach to life. <strong>__________</strong>, more confidence in its practitioners is necessary; investors would come given this ingredient.</p><br><p><strong>Which of the given parts of the sentence highlighted above has an error in it?</strong></p>", "options": ["It is sympathetic in the sense", "that the medicine aggravate", "symptoms of the ailment in", "the hope that they get", "pushed out of the body."], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p><p>The sentence carries a very simple error of subject-verb agreement. The verb <strong>aggravate </strong>which means to make something worse or more serious has been wrongly used in its plural form. The subject <strong>medicine </strong>is singular and should be followed by a singular verb <strong>aggravates. </strong></p><p>So, the best would be to mark option (b) as the answer.</p>"}, {"question": "<p><strong>Read the paragraph carefully and answer the following questions: </strong></p>\n<p>The Emergency, imposed on June 25, 1975 by the then Prime Minister Indira Gandhi, and which lasted 21 months till March 21, 1977, remains a blot on the history of democratic India. The rule by decree, the suspension of civil liberties and free speech, the arbitrariness of government actions, and the indiscriminate arrests of dissenters and Opposition figures using <strong>(__A__)</strong> preventive detention laws, among other measures, continue to haunt Indians who experienced it in all its <strong>(__B__)</strong> forms. The traumatic episode is a reminder of the responsibility of democratic institutions in always safeguarding the freedoms and rights of citizens. When freshly elected and returning Lok Sabha Speaker Om Birla read out a resolution, on June 26, 2024, “condemning the imposition of Emergency” and termed it as an attack on the Constitution, one could have considered this as a note of caution about the <strong>(__C__)</strong> of suspending civil liberties, and as a pledge that this would never be allowed to happen again. But seen in the light of Mr. Birla’s actions, when, as Speaker in the 17th Lok Sabha, he indiscriminately used his powers to suspend several Opposition MPs, and the executive’s use of draconian laws to <strong>(__D__)</strong> dissent from civil society, the polity and the media, the resolution seems not much more than lip service against the Emergency. It seems more a political ploy to target the Congress party. Indeed, the ruling BJP in the recent past resorted to similar excesses without even the fig leaf of a declaration of Emergency. If the government of the day is truly committed to undo the damages of the Emergency and not repeat its grave errors, it would have not taken recourse to the same measures in the recent past, seen in the attack on the free press, the use of enforcement and investigative agencies to selectively target Opposition representatives, and draconian preventive detention laws to keep political prisoners, activists and journalists in jail without trial, including by the <strong>(E)</strong> <strong>foisting</strong> of charges against them. The BJP’s authoritarian actions are one reason why its electoral representation in the 18th Lok Sabha has been trimmed to below the majority mark. The 2024 general election verdict might not have been a decisive rejection of the ruling party — as it was in 1977 — but it is no less significant as it empowers those in responsible positions in Indian democratic institutions to resist authoritarianism. A more thoroughgoing Opposition in Parliament that questions ruling party high-handedness; a vigilant judiciary that ensures justice to the many unjustly held <strong>(F)</strong> <strong>dissidents</strong>; and a civil society that pushes for the withdrawal of draconian preventive detention laws and a ruling party that coheres with these — only such substantive steps will enable India to decisively move on from the dark period of the Emergency.</p><br><p><strong>Which of the following words can fit in the blank A?</strong></p>", "options": ["<p>draconian</p>", "<p>obdurate</p>", "<p>implacable</p>", "<p>remorseful</p>", "<p>benignant<strong> </strong></p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The word that fits in the blank A is: a) draconian</p>\n<p>\"Draconian\" refers to laws or measures that are excessively harsh and severe. This fits the context of the sentence, which describes preventive detention laws used during the Emergency to arrest dissenters and Opposition figures indiscriminately.</p>\n<p><strong>a). Draconian:</strong> This term is derived from Draco, an ancient Athenian legislator known for implementing extremely harsh laws. In modern usage, \"draconian\" refers to rules or laws that are very severe or harsh. This fits perfectly in the context of preventive detention laws used during the Emergency period, which were indeed very harsh and severe.</p>\n<p><strong>b). Obdurate:</strong> This word means stubbornly refusing to change one's opinion or course of action. While it can describe a person's attitude, it doesn't fit the context of describing laws or measures.</p>\n<p><strong>c). Implacable:</strong> This means unable to be appeased or pacified. While it can describe a person's attitude or a force, it doesn't appropriately describe laws or measures in the given context.</p>\n<p><strong>d). Remorseful:</strong> This means feeling or expressing regret or guilt. It is a positive attribute associated with a sense of repentance. This does not fit the context of describing preventive detention laws.</p>\n<p><strong>e). Benignant:</strong> This means kindly and benevolent. This is the opposite of what the sentence is describing. The laws during the Emergency were harsh and repressive, not kind or benevolent.</p>\n<p>Thus, \"draconian\" is the most appropriate word to fill in the blank, as it accurately describes the nature of the preventive detention laws during the Emergency period.</p>"}, {"question": "<p><strong>Read the paragraph carefully and answer the following questions: </strong></p>\n<p>The Emergency, imposed on June 25, 1975 by the then Prime Minister Indira Gandhi, and which lasted 21 months till March 21, 1977, remains a blot on the history of democratic India. The rule by decree, the suspension of civil liberties and free speech, the arbitrariness of government actions, and the indiscriminate arrests of dissenters and Opposition figures using <strong>(__A__)</strong> preventive detention laws, among other measures, continue to haunt Indians who experienced it in all its <strong>(__B__)</strong> forms. The traumatic episode is a reminder of the responsibility of democratic institutions in always safeguarding the freedoms and rights of citizens. When freshly elected and returning Lok Sabha Speaker Om Birla read out a resolution, on June 26, 2024, “condemning the imposition of Emergency” and termed it as an attack on the Constitution, one could have considered this as a note of caution about the <strong>(__C__)</strong> of suspending civil liberties, and as a pledge that this would never be allowed to happen again. But seen in the light of Mr. Birla’s actions, when, as Speaker in the 17th Lok Sabha, he indiscriminately used his powers to suspend several Opposition MPs, and the executive’s use of draconian laws to <strong>(__D__)</strong> dissent from civil society, the polity and the media, the resolution seems not much more than lip service against the Emergency. It seems more a political ploy to target the Congress party. Indeed, the ruling BJP in the recent past resorted to similar excesses without even the fig leaf of a declaration of Emergency. If the government of the day is truly committed to undo the damages of the Emergency and not repeat its grave errors, it would have not taken recourse to the same measures in the recent past, seen in the attack on the free press, the use of enforcement and investigative agencies to selectively target Opposition representatives, and draconian preventive detention laws to keep political prisoners, activists and journalists in jail without trial, including by the <strong>(E)</strong> <strong>foisting</strong> of charges against them. The BJP’s authoritarian actions are one reason why its electoral representation in the 18th Lok Sabha has been trimmed to below the majority mark. The 2024 general election verdict might not have been a decisive rejection of the ruling party — as it was in 1977 — but it is no less significant as it empowers those in responsible positions in Indian democratic institutions to resist authoritarianism. A more thoroughgoing Opposition in Parliament that questions ruling party high-handedness; a vigilant judiciary that ensures justice to the many unjustly held <strong>(F)</strong> <strong>dissidents</strong>; and a civil society that pushes for the withdrawal of draconian preventive detention laws and a ruling party that coheres with these — only such substantive steps will enable India to decisively move on from the dark period of the Emergency.</p><br><p><strong>Which of the following words can fit in the blank B?</strong></p>", "options": ["<p>obstinate</p>", "<p>vicious</p>", "<p>vindictive</p>", "<p>submissive</p>", "<p>scrupulous</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The correct word to fit in the blank (B) is \"vicious.\"</p>\n<p>The sentence describes the harsh and oppressive nature of the Emergency, and \"vicious\" accurately conveys the brutality and severity of the actions taken during that period. Therefore, the answer is: b) vicious</p>\n<p><strong>a). obstinate:</strong> This word means stubbornly refusing to change one's opinion or chosen course of action, despite attempts to persuade one to do so. While it implies stubbornness, it doesn't capture the harshness or cruelty that is being described about the Emergency.</p>\n<p><strong>b). vicious:</strong> This word means deliberately cruel or violent. It aptly describes the brutal and oppressive nature of the Emergency, making it the most appropriate choice to convey the severity of the actions taken during that time.</p>\n<p><strong>c). vindictive:</strong> This word means having or showing a strong or unreasoning desire for revenge. While the actions during the Emergency could be seen as harsh, the context is about the overall brutality and suppression of freedoms rather than revenge, making \"vicious\" a better fit.</p>\n<p><strong>d). submissive:</strong> This word means ready to conform to the authority or will of others; meekly obedient or passive. This is the opposite of what is being described, as the Emergency was a time of active and aggressive oppression, not passivity.</p>\n<p><strong>e). scrupulous:</strong> This word means diligent, thorough, and extremely attentive to details, or having moral integrity. This is not at all fitting in the context of describing the Emergency, which was marked by a lack of moral integrity and indiscriminate harshness.</p>\n<p>Thus, \"vicious\" is the word that best captures the severe and oppressive nature of the Emergency.</p>"}, {"question": "<p><strong>Read the paragraph carefully and answer the following questions: </strong></p>\n<p>The Emergency, imposed on June 25, 1975 by the then Prime Minister Indira Gandhi, and which lasted 21 months till March 21, 1977, remains a blot on the history of democratic India. The rule by decree, the suspension of civil liberties and free speech, the arbitrariness of government actions, and the indiscriminate arrests of dissenters and Opposition figures using <strong>(__A__)</strong> preventive detention laws, among other measures, continue to haunt Indians who experienced it in all its <strong>(__B__)</strong> forms. The traumatic episode is a reminder of the responsibility of democratic institutions in always safeguarding the freedoms and rights of citizens. When freshly elected and returning Lok Sabha Speaker Om Birla read out a resolution, on June 26, 2024, “condemning the imposition of Emergency” and termed it as an attack on the Constitution, one could have considered this as a note of caution about the <strong>(__C__)</strong> of suspending civil liberties, and as a pledge that this would never be allowed to happen again. But seen in the light of Mr. Birla’s actions, when, as Speaker in the 17th Lok Sabha, he indiscriminately used his powers to suspend several Opposition MPs, and the executive’s use of draconian laws to <strong>(__D__)</strong> dissent from civil society, the polity and the media, the resolution seems not much more than lip service against the Emergency. It seems more a political ploy to target the Congress party. Indeed, the ruling BJP in the recent past resorted to similar excesses without even the fig leaf of a declaration of Emergency. If the government of the day is truly committed to undo the damages of the Emergency and not repeat its grave errors, it would have not taken recourse to the same measures in the recent past, seen in the attack on the free press, the use of enforcement and investigative agencies to selectively target Opposition representatives, and draconian preventive detention laws to keep political prisoners, activists and journalists in jail without trial, including by the <strong>(E)</strong> <strong>foisting</strong> of charges against them. The BJP’s authoritarian actions are one reason why its electoral representation in the 18th Lok Sabha has been trimmed to below the majority mark. The 2024 general election verdict might not have been a decisive rejection of the ruling party — as it was in 1977 — but it is no less significant as it empowers those in responsible positions in Indian democratic institutions to resist authoritarianism. A more thoroughgoing Opposition in Parliament that questions ruling party high-handedness; a vigilant judiciary that ensures justice to the many unjustly held <strong>(F)</strong> <strong>dissidents</strong>; and a civil society that pushes for the withdrawal of draconian preventive detention laws and a ruling party that coheres with these — only such substantive steps will enable India to decisively move on from the dark period of the Emergency.</p><br><p><strong>Which of the following words cannot fit in the blank C?</strong></p>", "options": ["<p>perils</p>", "<p>exigencies</p>", "<p>jeopardies</p>", "<p>predicaments</p>", "<p>submissive<strong> </strong></p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>The word that cannot fit in the blank (C) is: e) submissive</p>\n<p>This is because the context of the sentence is discussing the negative consequences or dangers (perils, exigencies, jeopardies, predicaments) of suspending civil liberties, whereas \"submissive\" does not align with this context.</p>\n<p><strong>a). Perils:</strong> This means serious and immediate danger. The sentence discusses the dangers of suspending civil liberties, so this word fits well.</p>\n<p><strong>b). Exigencies:</strong> This means urgent needs or demands. While it can be used to refer to pressing situations, it does not directly convey the negative consequences or dangers. However, it can still fit in the context if interpreted as urgent and challenging situations caused by suspending civil liberties.</p>\n<p><strong>c). Jeopardies:</strong> This means dangers of loss, harm, or failure. This word fits well with the context as it conveys the risks involved in suspending civil liberties.</p>\n<p><strong>d). Predicaments:</strong> This means difficult, unpleasant, or embarrassing situations. This word also fits well in the context, as suspending civil liberties can lead to difficult and problematic situations.</p>\n<p><strong>e). Submissive:</strong> This means ready to conform to the authority or will of others; meekly obedient or passive. This word does not fit in the context, as it describes a personality trait rather than a negative consequence or danger of suspending civil liberties.</p>\n<p>Thus, \"submissive\" is the word that cannot fit in the blank (C).</p>"}, {"question": "<p><strong>Read the paragraph carefully and answer the following questions: </strong></p>\n<p>The Emergency, imposed on June 25, 1975 by the then Prime Minister Indira Gandhi, and which lasted 21 months till March 21, 1977, remains a blot on the history of democratic India. The rule by decree, the suspension of civil liberties and free speech, the arbitrariness of government actions, and the indiscriminate arrests of dissenters and Opposition figures using <strong>(__A__)</strong> preventive detention laws, among other measures, continue to haunt Indians who experienced it in all its <strong>(__B__)</strong> forms. The traumatic episode is a reminder of the responsibility of democratic institutions in always safeguarding the freedoms and rights of citizens. When freshly elected and returning Lok Sabha Speaker Om Birla read out a resolution, on June 26, 2024, “condemning the imposition of Emergency” and termed it as an attack on the Constitution, one could have considered this as a note of caution about the <strong>(__C__)</strong> of suspending civil liberties, and as a pledge that this would never be allowed to happen again. But seen in the light of Mr. Birla’s actions, when, as Speaker in the 17th Lok Sabha, he indiscriminately used his powers to suspend several Opposition MPs, and the executive’s use of draconian laws to <strong>(__D__)</strong> dissent from civil society, the polity and the media, the resolution seems not much more than lip service against the Emergency. It seems more a political ploy to target the Congress party. Indeed, the ruling BJP in the recent past resorted to similar excesses without even the fig leaf of a declaration of Emergency. If the government of the day is truly committed to undo the damages of the Emergency and not repeat its grave errors, it would have not taken recourse to the same measures in the recent past, seen in the attack on the free press, the use of enforcement and investigative agencies to selectively target Opposition representatives, and draconian preventive detention laws to keep political prisoners, activists and journalists in jail without trial, including by the <strong>(E)</strong> <strong>foisting</strong> of charges against them. The BJP’s authoritarian actions are one reason why its electoral representation in the 18th Lok Sabha has been trimmed to below the majority mark. The 2024 general election verdict might not have been a decisive rejection of the ruling party — as it was in 1977 — but it is no less significant as it empowers those in responsible positions in Indian democratic institutions to resist authoritarianism. A more thoroughgoing Opposition in Parliament that questions ruling party high-handedness; a vigilant judiciary that ensures justice to the many unjustly held <strong>(F)</strong> <strong>dissidents</strong>; and a civil society that pushes for the withdrawal of draconian preventive detention laws and a ruling party that coheres with these — only such substantive steps will enable India to decisively move on from the dark period of the Emergency.</p><br><p><strong>Which of the following words cannot fit in the blank D?</strong></p>", "options": ["<p>stifle</p>", "<p>suffocate</p>", "<p>strangulate</p>", "<p>suppress</p>", "<p>assuage</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>The words \"stifle,\" \"suffocate,\" \"strangulate,\" and \"suppress\" all fit in the context of preventing or repressing dissent. However, \"assuage\" means to make an unpleasant feeling less intense or to alleviate, which is the opposite of the intended meaning in this context.</p>\n<p>Therefore, the word that cannot fit in the blank D is: e) assuage</p>\n<p><strong>a). Stifle:</strong> To stifle means to suppress or restrain. In the context of the passage, it refers to preventing dissent or opposition from expressing freely.</p>\n<p><strong>b). Suffocate:</strong> To suffocate means to deprive of oxygen or to suppress or stifle. Metaphorically, it can mean to prevent something from developing or progressing, similar to stifling dissent.</p>\n<p><strong>c). Strangulate:</strong> To strangulate means to strangle or to suppress or restrict. It implies forcefully preventing something from functioning properly or from happening.</p>\n<p><strong>d). Suppress:</strong> To suppress means to forcibly put an end to something, such as dissent or opposition. It involves using authority or power to prevent expression or action.</p>\n<p><strong>e). Assuage:</strong> To assuage means to make less intense or to alleviate. It is the opposite of what is described in the passage, which discusses actions to prevent dissent and suppress opposition.</p>\n<p>In the context of the passage, which discusses authoritarian actions to curb dissent and opposition, the words \"stifle,\" \"suffocate,\" \"strangulate,\" and \"suppress\" all describe methods used to restrict freedoms and rights. However, \"assuage\" does not fit because it means to calm or soothe, which contradicts the idea of suppressing dissent and opposition.</p>\n<p>Therefore, the word that cannot fit in the blank D based on the context is: e) assuage</p>"}, {"question": "<p><strong>Read the paragraph carefully and answer the following questions: </strong></p>\n<p>The Emergency, imposed on June 25, 1975 by the then Prime Minister Indira Gandhi, and which lasted 21 months till March 21, 1977, remains a blot on the history of democratic India. The rule by decree, the suspension of civil liberties and free speech, the arbitrariness of government actions, and the indiscriminate arrests of dissenters and Opposition figures using <strong>(__A__)</strong> preventive detention laws, among other measures, continue to haunt Indians who experienced it in all its <strong>(__B__)</strong> forms. The traumatic episode is a reminder of the responsibility of democratic institutions in always safeguarding the freedoms and rights of citizens. When freshly elected and returning Lok Sabha Speaker Om Birla read out a resolution, on June 26, 2024, “condemning the imposition of Emergency” and termed it as an attack on the Constitution, one could have considered this as a note of caution about the <strong>(__C__)</strong> of suspending civil liberties, and as a pledge that this would never be allowed to happen again. But seen in the light of Mr. Birla’s actions, when, as Speaker in the 17th Lok Sabha, he indiscriminately used his powers to suspend several Opposition MPs, and the executive’s use of draconian laws to <strong>(__D__)</strong> dissent from civil society, the polity and the media, the resolution seems not much more than lip service against the Emergency. It seems more a political ploy to target the Congress party. Indeed, the ruling BJP in the recent past resorted to similar excesses without even the fig leaf of a declaration of Emergency. If the government of the day is truly committed to undo the damages of the Emergency and not repeat its grave errors, it would have not taken recourse to the same measures in the recent past, seen in the attack on the free press, the use of enforcement and investigative agencies to selectively target Opposition representatives, and draconian preventive detention laws to keep political prisoners, activists and journalists in jail without trial, including by the <strong>(E)</strong> <strong>foisting</strong> of charges against them. The BJP’s authoritarian actions are one reason why its electoral representation in the 18th Lok Sabha has been trimmed to below the majority mark. The 2024 general election verdict might not have been a decisive rejection of the ruling party — as it was in 1977 — but it is no less significant as it empowers those in responsible positions in Indian democratic institutions to resist authoritarianism. A more thoroughgoing Opposition in Parliament that questions ruling party high-handedness; a vigilant judiciary that ensures justice to the many unjustly held <strong>(F)</strong> <strong>dissidents</strong>; and a civil society that pushes for the withdrawal of draconian preventive detention laws and a ruling party that coheres with these — only such substantive steps will enable India to decisively move on from the dark period of the Emergency.</p><br><p>Which of the following words can replace “<strong>foisting</strong>” used in the sentence?</p>", "options": ["<p>imposing</p>", "<p>ascetic</p>", "<p>austere</p>", "<p>middling</p>", "<p>faltering</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The word \"foisting\" in the sentence refers to the imposition or imposition of charges against individuals. Therefore, the correct replacement from the given options is: a) imposing</p>\n<p>So, the sentence would read: \"...including by the imposing of charges against them.\"</p>\n<p><strong>a). imposing:</strong> This means to force something unwelcome or unfamiliar on someone, which aligns well with the context of charges being imposed on individuals.</p>\n<p><strong>b). ascetic:</strong> This refers to someone who practices severe self-discipline and abstention from indulgence, typically for religious reasons. It doesn't fit the context of charges being imposed.</p>\n<p><strong>c). austere:</strong> This means severe or strict in manner, attitude, or appearance, which doesn't directly relate to charges being imposed.</p>\n<p><strong>d). middling:</strong> This means of average or moderate size, extent, or quality, and doesn't fit the context of charges being imposed.</p>\n<p><strong>e). faltering:</strong> This means to lose strength or momentum, which doesn't fit the context of charges being imposed.</p>\n<p>Therefore, among the options given, \"imposing\" is the only word that correctly conveys the meaning of forcing or imposing charges, as used in the sentence about the imposition of charges against political prisoners, activists, and journalists.</p>"}, {"question": "<p><strong>Read the paragraph carefully and answer the following questions: </strong></p>\n<p>The Emergency, imposed on June 25, 1975 by the then Prime Minister Indira Gandhi, and which lasted 21 months till March 21, 1977, remains a blot on the history of democratic India. The rule by decree, the suspension of civil liberties and free speech, the arbitrariness of government actions, and the indiscriminate arrests of dissenters and Opposition figures using <strong>(__A__)</strong> preventive detention laws, among other measures, continue to haunt Indians who experienced it in all its <strong>(__B__)</strong> forms. The traumatic episode is a reminder of the responsibility of democratic institutions in always safeguarding the freedoms and rights of citizens. When freshly elected and returning Lok Sabha Speaker Om Birla read out a resolution, on June 26, 2024, “condemning the imposition of Emergency” and termed it as an attack on the Constitution, one could have considered this as a note of caution about the <strong>(__C__)</strong> of suspending civil liberties, and as a pledge that this would never be allowed to happen again. But seen in the light of Mr. Birla’s actions, when, as Speaker in the 17th Lok Sabha, he indiscriminately used his powers to suspend several Opposition MPs, and the executive’s use of draconian laws to <strong>(__D__)</strong> dissent from civil society, the polity and the media, the resolution seems not much more than lip service against the Emergency. It seems more a political ploy to target the Congress party. Indeed, the ruling BJP in the recent past resorted to similar excesses without even the fig leaf of a declaration of Emergency. If the government of the day is truly committed to undo the damages of the Emergency and not repeat its grave errors, it would have not taken recourse to the same measures in the recent past, seen in the attack on the free press, the use of enforcement and investigative agencies to selectively target Opposition representatives, and draconian preventive detention laws to keep political prisoners, activists and journalists in jail without trial, including by the <strong>(E)</strong> <strong>foisting</strong> of charges against them. The BJP’s authoritarian actions are one reason why its electoral representation in the 18th Lok Sabha has been trimmed to below the majority mark. The 2024 general election verdict might not have been a decisive rejection of the ruling party — as it was in 1977 — but it is no less significant as it empowers those in responsible positions in Indian democratic institutions to resist authoritarianism. A more thoroughgoing Opposition in Parliament that questions ruling party high-handedness; a vigilant judiciary that ensures justice to the many unjustly held <strong>(F)</strong> <strong>dissidents</strong>; and a civil society that pushes for the withdrawal of draconian preventive detention laws and a ruling party that coheres with these — only such substantive steps will enable India to decisively move on from the dark period of the Emergency.</p><br><p>Which of the following words can replace “<strong>dissidents</strong>” used in the sentence?</p>", "options": ["<p>disputants</p>", "<p>renegades</p>", "<p>patrons</p>", "<p>adherents</p>", "<p>dependents<strong> </strong></p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The word \"dissidents\" refers to individuals who oppose official policy, especially that of an authoritarian state. Among the options provided, the word that best fits this meaning is \"renegades\" (option b), which refers to people who desert and betray an organization, country, or set of principles. Therefore, the answer is: b) renegades</p>\n<p><strong>a). disputants:</strong> Disputants are individuals involved in a dispute or argument. While they may oppose each other in a disagreement, the term doesn't specifically connote opposition to an authoritarian state or policy.</p>\n<p><strong>b). renegades:</strong> Renegades are individuals who desert or betray an organization, country, or set of principles. In the context of opposition to authoritarianism or policies, renegades can imply those who defy or oppose the established authority.</p>\n<p><strong>c). patrons:</strong> Patrons are supporters or sponsors of something, such as an organization, cause, or person. They are not necessarily oppositional figures against authoritarian policies.</p>\n<p><strong>d). adherents:</strong> Adherents are followers or supporters of a particular person, party, or belief. They are not typically associated with opposing authoritarian policies or dissent.</p>\n<p><strong>e). dependents:</strong> Dependents are individuals who rely on someone else for support or resources. They do not directly relate to oppositional figures against authoritarianism.</p>\n<p>In the context provided, \"dissidents\" refers to individuals who oppose or dissent against authoritarian policies. Among the options given, \"renegades\" (option b) aligns most closely with this meaning, as renegades often challenge or betray established authority or principles.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-90)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-90)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

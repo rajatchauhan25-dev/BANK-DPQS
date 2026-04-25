@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-73)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>Below, a passage is given with five blanks labelled (a-e). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>The rapid advancement of artificial intelligence (AI) has created a paradigm shift in various industries. Companies are increasingly adopting AI technologies to <strong>(a) ___________ </strong>processes and enhance productivity. However, the integration of AI is not without its challenges. One significant concern is the potential for job displacement, as automated systems <strong>(b) ___________</strong> the roles traditionally filled by human workers. Additionally, there is the issue of data privacy. With AI systems processing vast amounts of personal data, the risk of <strong>(c) ___________</strong> breaches has become a major concern. To mitigate these risks, organizations must implement robust security measures and ensure compliance with data protection regulations. Furthermore, there is a growing need for ethical guidelines to govern AI development and deployment. The potential for AI to perpetuate biases and <strong>(d) ___________</strong> existing inequalities necessitates careful consideration. As AI continues to evolve, it is crucial that stakeholders collaborate to create frameworks that <strong>(e) ___________</strong> both innovation and societal well-being.</p><br><p><strong>Which word comes in the blank labelled a?</strong></p>", "options": ["<p>disrupt</p>", "<p>streamline</p>", "<p>complicate</p>", "<p>hinder</p>", "<p>prolong</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>\"<strong>Streamline</strong>\" means to make a process more efficient and effective, which aligns with the context of enhancing productivity through AI technologies.</p>"}, {"question": "<p><strong>Below, a passage is given with five blanks labelled (a-e). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>The rapid advancement of artificial intelligence (AI) has created a paradigm shift in various industries. Companies are increasingly adopting AI technologies to <strong>(a) ___________ </strong>processes and enhance productivity. However, the integration of AI is not without its challenges. One significant concern is the potential for job displacement, as automated systems <strong>(b) ___________</strong> the roles traditionally filled by human workers. Additionally, there is the issue of data privacy. With AI systems processing vast amounts of personal data, the risk of <strong>(c) ___________</strong> breaches has become a major concern. To mitigate these risks, organizations must implement robust security measures and ensure compliance with data protection regulations. Furthermore, there is a growing need for ethical guidelines to govern AI development and deployment. The potential for AI to perpetuate biases and <strong>(d) ___________</strong> existing inequalities necessitates careful consideration. As AI continues to evolve, it is crucial that stakeholders collaborate to create frameworks that <strong>(e) ___________</strong> both innovation and societal well-being.</p><br><p><strong>Which word comes in the blank labelled b?</strong></p>", "options": ["<p>replace</p>", "<p>create</p>", "<p>diminish</p>", "<p>bolster</p>", "<p>vacate</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>\"<strong>Replace</strong>\" fits the context as automated systems taking over the roles traditionally filled by human workers.</p>"}, {"question": "<p><strong>Below, a passage is given with five blanks labelled (a-e). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>The rapid advancement of artificial intelligence (AI) has created a paradigm shift in various industries. Companies are increasingly adopting AI technologies to <strong>(a) ___________ </strong>processes and enhance productivity. However, the integration of AI is not without its challenges. One significant concern is the potential for job displacement, as automated systems <strong>(b) ___________</strong> the roles traditionally filled by human workers. Additionally, there is the issue of data privacy. With AI systems processing vast amounts of personal data, the risk of <strong>(c) ___________</strong> breaches has become a major concern. To mitigate these risks, organizations must implement robust security measures and ensure compliance with data protection regulations. Furthermore, there is a growing need for ethical guidelines to govern AI development and deployment. The potential for AI to perpetuate biases and <strong>(d) ___________</strong> existing inequalities necessitates careful consideration. As AI continues to evolve, it is crucial that stakeholders collaborate to create frameworks that <strong>(e) ___________</strong> both innovation and societal well-being.</p><br><p><strong>Which word comes in the blank labelled c?</strong></p>", "options": ["<p>trust</p>", "<p>security</p>", "<p>system</p>", "<p>data</p>", "<p>information</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>\"<strong>Information</strong>\" is suitable here because AI systems process vast amounts of personal data, and the risk of information breaches is a major concern.</p>"}, {"question": "<p><strong>Below, a passage is given with five blanks labelled (a-e). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>The rapid advancement of artificial intelligence (AI) has created a paradigm shift in various industries. Companies are increasingly adopting AI technologies to <strong>(a) ___________ </strong>processes and enhance productivity. However, the integration of AI is not without its challenges. One significant concern is the potential for job displacement, as automated systems <strong>(b) ___________</strong> the roles traditionally filled by human workers. Additionally, there is the issue of data privacy. With AI systems processing vast amounts of personal data, the risk of <strong>(c) ___________</strong> breaches has become a major concern. To mitigate these risks, organizations must implement robust security measures and ensure compliance with data protection regulations. Furthermore, there is a growing need for ethical guidelines to govern AI development and deployment. The potential for AI to perpetuate biases and <strong>(d) ___________</strong> existing inequalities necessitates careful consideration. As AI continues to evolve, it is crucial that stakeholders collaborate to create frameworks that <strong>(e) ___________</strong> both innovation and societal well-being.</p><br><p><strong>Which word comes in the blank labelled d?</strong></p>", "options": ["<p>reduce</p>", "<p>remove</p>", "<p>exacerbate</p>", "<p>equalize</p>", "<p>harmonize</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>\"<strong>Exacerbate</strong>\" means to make an issue worse, which fits the context of AI potentially worsening existing inequalities.</p>"}, {"question": "<p><strong>Below, a passage is given with five blanks labelled (a-e). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>The rapid advancement of artificial intelligence (AI) has created a paradigm shift in various industries. Companies are increasingly adopting AI technologies to <strong>(a) ___________ </strong>processes and enhance productivity. However, the integration of AI is not without its challenges. One significant concern is the potential for job displacement, as automated systems <strong>(b) ___________</strong> the roles traditionally filled by human workers. Additionally, there is the issue of data privacy. With AI systems processing vast amounts of personal data, the risk of <strong>(c) ___________</strong> breaches has become a major concern. To mitigate these risks, organizations must implement robust security measures and ensure compliance with data protection regulations. Furthermore, there is a growing need for ethical guidelines to govern AI development and deployment. The potential for AI to perpetuate biases and <strong>(d) ___________</strong> existing inequalities necessitates careful consideration. As AI continues to evolve, it is crucial that stakeholders collaborate to create frameworks that <strong>(e) ___________</strong> both innovation and societal well-being.</p><br><p><strong>Which word comes in the blank labelled e?</strong></p>", "options": ["<p>stifle</p>", "<p>inhibit</p>", "<p>support</p>", "<p>challenge</p>", "<p>balance</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>\"<strong>Support</strong>\" is appropriate as it refers to creating frameworks that foster both innovation and societal well-being.</p>"}, {"question": "<p><strong>In each of the following questions, a sentence has been given and divided into five parts out of which one part is erroneous. You are required to choose the option which is grammatically or contextually incorrect.</strong></p><br><p>In a vibrant democracy such as India<strong>, (A)/</strong> the right to vote <strong>(B)/</strong> is not just a privilege <strong>(C)/</strong> but also a fundamental duty <strong>(D)/</strong> enshrine in the Constitution <strong>(E).</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>The error is in part (E), where \"enshrine\" is corrected to \"enshrined\" to ensure proper verb form. \"Enshrined\" is the past participle form of the verb \"enshrine,\" which is needed here to match the passive construction and indicate that the duty is already established in the Constitution.</p>\n<p><strong>So, the corrected sentence is: “</strong>In a vibrant democracy such as India, the right to vote is not just a privilege but also a fundamental duty <strong>enshrined</strong> in the Constitution<strong>.”</strong></p>"}, {"question": "<p><strong>In each of the following questions, a sentence has been given and divided into five parts out of which one part is erroneous. You are required to choose the option which is grammatically or contextually incorrect.</strong></p><br><p>One<strong> </strong>of the key decision Vladimir Putin <strong>(A)/</strong> took after being sworn <strong>(B)/</strong> in as Russia’s President for the fifth time <strong>(C)/</strong> was to remove <strong>(D)/</strong> his long-time Minister of Defence, Sergei Shoigu <strong>(E).</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The error is in part (A), where \"decision\" should be \"decisions\" to agree with \"One of the key decisions.\" The phrase \"One of the\" requires a plural noun.</p>\n<p>\"One of the\" Construction: The phrase \"one of the\" is a common expression in English that is always followed by a plural noun. This construction indicates that you are selecting a single item from a group of items.</p>\n<p>Example: \"One of the books on the shelf is missing.\" Here, \"books\" is plural because it is the group from which one book is being singled out.</p>\n<p>Noun Agreement: In the original sentence, \"decision\" is singular, which does not agree with the plural requirement of the phrase \"one of the.\"</p>\n<p>To correct this, \"decision\" must be changed to \"decisions,\" making it plural and properly matching the \"one of the\" construction.</p>\n<p>Corrected Part: Changing \"decision\" to \"decisions\" ensures that the sentence is grammatically correct and clearly conveys that among the multiple key decisions made by Vladimir Putin, one specific decision is being highlighted.</p>\n<p><strong>Thus, the corrected sentence reads:</strong> One of the key <strong>decisions</strong> Vladimir Putin took after being sworn in as Russia’s President for the fifth time was to remove his long-time Minister of Defence, Sergei Shoigu. This correction ensures proper grammatical structure and clarity.</p>"}, {"question": "<p><strong>In each of the following questions, a sentence has been given and divided into five parts out of which one part is erroneous. You are required to choose the option which is grammatically or contextually incorrect.</strong></p><br><p>The mandate for employers <strong>(A)/</strong> to declare a holiday on <strong>(B)/</strong> election day raise pertinent questions <strong>(C)/</strong> about the balance between <strong>(D)/</strong> civic responsibility and personal freedoms <strong>(E).</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The error is in part (C), where \"raise\" should be \"raises\" to ensure subject-verb agreement.</p>\n<p>Subject-Verb Agreement: The subject of the sentence is \"The mandate,\" which is singular.</p>\n<p>The verb \"raise\" needs to agree with the singular subject \"mandate.\"</p>\n<p>Therefore, the correct form of the verb should be \"raises.\"</p>\n<p>Corrected part: C) election day raises pertinent questions</p>\n<p><strong>Thus, the corrected sentence reads:</strong> The mandate for employers to declare a holiday on election day <strong>raises</strong> pertinent questions about the balance between civic responsibility and personal freedoms.</p>"}, {"question": "<p><strong>In each of the following questions, a sentence has been given and divided into five parts out of which one part is erroneous. You are required to choose the option which is grammatically or contextually incorrect.</strong></p><br><p>Delhi’s solid waste management (SWM) system should integrate <strong>(A)/</strong> decentralised options for <strong>(B)/</strong> both wet and dry waste, <strong>(C)/</strong> backed by large processing facilities to ensure <strong>(D)/</strong> all the waste generated are scientifically processed <strong>(E).</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>The error is in part (E), where \"are\" should be \"is\" to ensure subject-verb agreement.</p>\n<p>Subject-Verb Agreement: The subject of the clause \"all the waste generated\" is singular because \"waste\" is an uncountable noun.</p>\n<p>The verb \"are\" needs to agree with the singular subject \"waste.\"</p>\n<p>Therefore, the correct form of the verb should be \"is.\"</p>\n<p>Corrected part: E) all the waste generated is scientifically processed</p>\n<p><strong>Thus, the corrected sentence reads:</strong> Delhi’s solid waste management (SWM) system should integrate decentralised options for both wet and dry waste, backed by large processing facilities to ensure all the waste <strong>generated is</strong> scientifically processed.</p>"}, {"question": "<p><strong>In each of the following questions, a sentence has been given and divided into five parts out of which one part is erroneous. You are required to choose the option which is grammatically or contextually incorrect.</strong></p><br><p>The Army is all set to begin receiving <strong>(A)/</strong> another set of Russian Igla-S Very Short Range Air Defence Systems (VSHORAD) <strong>(B)/</strong> by the end of May or early next month, <strong>(C)/</strong> filling a critical void in its air defence requirements <strong>(D)/</strong> which has been repeatedly delayed <strong>(E).</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>The error is in part (E), where \"has been\" should be corrected to \"have been\" to match the plural subject \"requirements.\" Since \"requirements\" is plural, the verb should also be plural.</p>\n<p><strong>Thus, the corrected sentence reads: </strong>The Army is all set to begin receiving another set of Russian Igla-S Very Short Range Air Defence systems (VSHORAD) by the end of May or early next month, filling a critical void in its air defence requirements which <strong>have been</strong> repeatedly delayed.</p>"}, {"question": "<p><strong>In the following questions, each question is divided into five parts where one part is fixed. Rearrange the remaining four parts into a meaningful sentence and mark the option accordingly.</strong></p><br><p><strong>The ongoing discourse about </strong>/(A) the implications of artificial intelligence on /(B) fear among workers regarding job security /(C) labor markets reveals a deep-seated /(D) and the potential for widespread displacement.</p>", "options": ["<p>DCBA</p>", "<p>ACBD</p>", "<p>ACDB</p>", "<p>BDCA</p>", "<p>No arrangement required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>The corrected sentence is:</strong></p>\n<p><strong>The ongoing discourse about </strong>the implications of artificial intelligence on labor markets reveals a deep-seated fear among workers regarding job security and the potential for widespread displacement.</p>"}, {"question": "<p><strong>In the following questions, each question is divided into five parts where one part is fixed. Rearrange the remaining four parts into a meaningful sentence and mark the option accordingly.</strong></p><br><p><strong>Despite the apparent prosperity </strong>/(A) access to essential resources and opportunities /(B) remains a persistent challenge, as marginalized /(C) communities continue to grapple with limited /(D) in urban centers, the stark reality of systemic inequality.</p>", "options": ["<p>ACDB</p>", "<p>ACBD</p>", "<p>BACD</p>", "<p>DBCA</p>", "<p>No arrangement required</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>The corrected sentence is:</strong></p>\n<p><strong>Despite the apparent prosperity </strong>in urban centers, the stark reality of systemic inequality remains a persistent challenge, as marginalized communities continue to grapple with limited access to essential resources and opportunities.</p>"}, {"question": "<p><strong>In the following questions, each question is divided into five parts where one part is fixed. Rearrange the remaining four parts into a meaningful sentence and mark the option accordingly.</strong></p><br><p>(A) The researchers embarked on an ambitious /(B) project aimed at deciphering the genetic /(C) codes of endangered species, hoping to /(D) develop strategies that would mitigate the risks of /<strong>extinction and promote biodiversity.</strong></p>", "options": ["<p>ADCB</p>", "<p>ADBC</p>", "<p>CABD</p>", "<p>DBCA</p>", "<p>No arrangement required</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p><strong>The corrected sentence is:</strong></p>\n<p>The researchers embarked on an ambitious project aimed at deciphering the genetic codes of endangered species, hoping to develop strategies that would mitigate the risks of <strong>extinction and promote biodiversity.</strong></p>"}, {"question": "<p><strong>In the following questions, each question is divided into five parts where one part is fixed. Rearrange the remaining four parts into a meaningful sentence and mark the option accordingly.</strong></p><br><p>(A) policies enacted in one country can reverberate /(B) interconnected, the ramifications of financial /(C) As the global economy becomes increasingly /(D) across borders, influencing markets and /<strong>economies worldwide in unforeseen ways.</strong></p>", "options": ["<p>ADCB</p>", "<p>CBAD</p>", "<p>CDAB</p>", "<p>DCAB</p>", "<p>No arrangement required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>The corrected sentence is:</strong></p>\n<p>As the global economy becomes increasingly interconnected, the ramifications of financial policies enacted in one country can reverberate across borders, influencing markets and <strong>economies worldwide in unforeseen ways.</strong></p>"}, {"question": "<p><strong>In the following questions, each question is divided into five parts where one part is fixed. Rearrange the remaining four parts into a meaningful sentence and mark the option accordingly.</strong></p><br><p>(A) The author’s latest novel deftly intertwines /(B) against the backdrop of a rapidly /(C) exploring the intricacies of human relationships /(D) themes of love, loss, and redemption, /<strong>changing socio-political landscape</strong>.</p>", "options": ["<p>ADCB</p>", "<p>ADBC</p>", "<p>BACD</p>", "<p>ABDC</p>", "<p>No arrangement required</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>The corrected sentence is:</strong></p>\n<p>The author’s latest novel deftly intertwines themes of love, loss, and redemption, exploring the intricacies of human relationships against the backdrop of a rapidly <strong>changing socio-political landscape.</strong></p>"}, {"question": "<p><strong>In each of the following questions, a short paragraph is given with one sentence or a part of sentence missing from it, a blank is given in that place. Find the suitable sentence or phrase  from the options that can fit the blank both grammatically and contextually.</strong></p><br><p><strong>Proxgy, a first of its kind global service launched during the coronavirus pandemic which enables its users to book a real-world human avatar anytime at every serviceable place, and navigate the physical world through that proxy avatar while sitting at home with an immersive experience in a live manner. Proxgy aims to change the way people navigate through their daily outdoor tasks by hailing a Proxgy through the Proxgy user app which links the user to their Proxgy. _________</strong><strong>________________ .The camera access is controlled by the user via a multidirectional joystick control within the Proxgy user app, giving users a real-time immersive experience of the Proxgy’s surrounding.</strong></p>", "options": ["<p>However, in the prior cases of visa issuance bans, the nationals of a single country were not targeted in the way that Chinese citizens have been under this week&rsquo;s visa revocation</p>", "<p>Either way, China&rsquo;s economic aggression will continue to face pushback from a wounded and angry America</p>", "<p>Proxgy uses patent-pending technologies to provided live video and audio stream to users via a proprietary smart helmet which has a 360 degree rotatable camera mounted on top</p>", "<p>Proxgy uses patent-pending technologies to provide live video and audio stream to users via a proprietary smart helmet which has a 360 degree rotatable camera mounted on top</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The passage is about “Proxgy”, hence options (a) and (b) are out of context.</p>\n<p>Both (c) and (d) look similar and related to the context of the passage, but (c) is grammatically incorrect as after “to” we should use the base form “provide”.</p>\n<p>Hence (d) is the correct answer.</p>"}, {"question": "<p><strong>In each of the following questions, a short paragraph is given with one sentence or a part of sentence missing from it, a blank is given in that place. Find the suitable sentence or phrase  from the options that can fit the blank both grammatically and contextually.</strong></p><br><p><strong>Ozone is probably most associated with its high abundance in the Earth’s upper atmosphere. The ozone layer in the stratosphere absorbs much of the incoming solar ultraviolet radiation and came into the wider general consciousness in the 1980s with the discovery that it was seasonally thinning. This led to the 1987 Montreal Protocol on Substances that Deplete the Ozone Layer, an example of a successful international environmental protection agreement. _____________</strong><strong>___________ . These ozone-depleting substances (ODS) are themselves potent greenhouse gases and, with their atmospheric lifespan of 50–100 years, have contributed to global warming, but to what extent? In a Letter in this issue, Lorenzo Polvani and co-authors investigate the role that these ODS have played in Arctic warming from 1955 to 2015.</strong></p>", "options": ["<p>The phase-out of chlorofluorocarbons and halons, through the transition and eventual phase-out of less ozone-damaging substances such as hydrofluorocarbons, has seen declines in their emissions, with stabilization and now ongoing recovery of the ozone layer</p>", "<p>The phase-out of chlorofluorocarbons and halons, through the transition and eventual phase-out of less ozone-damaging substances such because hydrofluorocarbons, has seen declines in their emissions, with stabilization and now ongoing recovery of the ozone layer</p>", "<p>The phase-out of chlorofluorocarbons and halons, through the transition and eventual phase-out of less ozone-damaging substances such as hydrofluorocarbons, has saw declines in their emissions, with stabilization and now ongoing recovery of the ozone layer</p>", "<p>The phase-out of chlorofluorocarbons and halons, through the transition and eventual phase-out of less ozone-damaging substances such as hydrofluorocarbons, has seen declines in their emissions, with stabilization and now ongoing recovery for the ozone layer</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The passage is about the Ozone Layer. Hence all the options are related to the context, but (b), (c) and (d) are grammatically incorrect.</p>\n<p>In (b), “because” should be replaced with “as”.</p>\n<p>In (c), “saw” should be replaced with “seen” as after “has” we should use V3.</p>\n<p>In (d), “for the ozone layer” should be replaced with “of ozone layer” as we need a possessive sense.</p>\n<p>Therefore, option A is the correct answer.</p>"}, {"question": "<p><strong>In each of the following questions, a short paragraph is given with one sentence or a part of sentence missing from it, a blank is given in that place. Find the suitable sentence or phrase  from the options that can fit the blank both grammatically and contextually.</strong></p><br><p><strong>The central government on Thursday said it will borrow under a special Reserve Bank of India (RBI) window and lend the money to states that opt for debt to bridge their revenue gap this fiscal arising from the indirect tax reform three years ago. ___________. So far, 21 states and two Union territories—Delhi and Jammu and Kashmir—have opted for this option to bridge their GST revenue shortfall this year. An official statement issued by the finance ministry said the estimated shortfall of ₹1.1 trillion, assuming all states opt for borrowing, will be borrowed by central government in tranches and passed on to states “as a back-to-back loan in lieu of GST Compensation cess releases.\"</strong></p>", "options": ["<p>The Training of Trainers (TOT) Programme will be held in December 2018- January 2019 in the first phase. Here total of 160 trainers will be trained in 4 batches of 40 each in December-January period</p>", "<p>The borrowings will show as debt in the books of states and the centre&rsquo;s fiscal deficit will be unaffect</p>", "<p>The borrowings will show as debt in the books of states and the centre&rsquo;s fiscal deficit will be unaffected</p>", "<p>India&rsquo;s poor progress on nutritional indices must dispel the hubris surrounding strong economic growth for years, and turn national focus on persisting hunger, wasting and stunting among children</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Options (a) and (d) are out of context.</p>\n<p>Options (b) and (c) are related to the given passage and they look similar, but (b) is grammatically incorrect.</p>\n<p>In (b), “unaffect” should be replaced with “unaffected” as after “be” we should use V3.</p>\n<p>Hence (c) is correct.</p>"}, {"question": "<p><strong>In each of the following questions, a short paragraph is given with one sentence or a part of sentence missing from it, a blank is given in that place. Find the suitable sentence or phrase  from the options that can fit the blank both grammatically and contextually.</strong></p><br><p><strong>Nine straight months of contraction in passenger vehicle sales has also begun _______________________ and lay-offs at dealerships, component suppliers and vehicle makers themselves while the Federation of Automobile Dealers Associations recently warned of more jobs being at risk, on top of about two lakh positions that have already been shed, the Society of Indian Automobile Manufacturers admitted that the industry had laid off at least about 15,000 contract workers in the last three months.</strong></p>", "options": ["<p>Experiencing a serious slowdown which is evident for some time now</p>", "<p>Bedeviling demand in the auto sectors that are well established</p>", "<p>Extracting a toll in terms of showroom closures</p>", "<p>Setting up capacity, especially of fossil-fuel powered vehicles, has largely been overlooked</p>", "<p>To formulate policy interventions to address this sectoral crisis or risk wider contagion</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Option (c) seems to be logical according to the context and is the correct part to complete the incomplete sentence of the passage.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>In each of the following questions, a short paragraph is given with one sentence or a part of sentence missing from it, a blank is given in that place. Find the suitable sentence or phrase  from the options that can fit the blank both grammatically and contextually.</strong></p><br><p><strong>There were elaborate mentions of unitary schemes from the one nation one tax’ that is already in place, to a one nation, one poll plan that is in the making. Such overarching plans are central to _____________________ but if India is to be on a new course for the better, it needs more than grandstanding from the Red Fort.</strong></p>", "options": ["<p>Gathering clouds of a crisis in the economy</p>", "<p>His vision and the speech reflected that thinking</p>", "<p>Current slump in rural and urban demand and investment slowdown</p>", "<p>Hope and optimism, now more than at any moment in recent past</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>Option (b) seems to be logical to the context and is the correct part to complete the incomplete sentence of passage.</p>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>The biggest electoral contest in the world will conclude with the seventh phase of voting on June 1. It has been a dynamic election season; the battleground vibrant with slogans, promises and appeals. The major coalitions, the NDA and INDIA, have each deployed strategic messaging to galvanise voter support. When it comes to sloganeering, the BJP-led NDA has been a hands-down winner, coming up with not one but several catchy phrases to woo the electorate. ‘Sabka Saath, Sabka Vikas, Sabka Vishwas’ (Together with all, Development for all, Trust of all) has been a cornerstone of its campaign. ‘Naya Bharat’ (New India), aimed at portraying the vision for a progressive and self-reliant nation, was another NDA slogan. Along the same lines was ‘Aatmanirbhar Bharat’ (Self-reliant India) which reflected the NDA’s focus on boosting local industries and reducing dependency on foreign goods. But more interesting were its jumlas (catchy phrases) that were floated intermittently to give the NDA ‘top recall value’: ‘Abki baar 400 paar’ (this time, we will cross 400) and ‘Modi ki guarantee’. The major takeaways from the NDA’s election pitch were of course its ‘Sankalp Patra’, heavily focused on economic progress, showcasing initiatives like Make in India, Digital India and the push towards a $5 trillion economy. The NDA alliance also highlighted its efforts in strengthening national security. The message is clear — a strong leadership to safeguard the nation. Not to be outdone, the INDIA bloc also used several slogans to reach voters’ hearts. Prominence was given to slogans critical of the Modi Government’s unpopular policies and its actions to subvert democracy by sending Opposition leaders to jail. ‘Jai jawan, Jai kisan, Jai samvidhan’ (Hail the soldier, the farmer, the Constitution) drew heavily on this sentiment. ‘Bharat Jodo’ (Unite India), a call for unity across the nation's diverse fabric to counter divisive politics, was inspired by Rahul Gandhi’s pan-India foot march. Yet another slogan from the INDIA stable was ‘Nyay’ (Justice), a promise to address disparities and ensure equitable growth. The INDIA alliance has positioned itself as the protector of social justice, focusing on uplifting marginalised communities, ensuring minority rights and addressing caste-based and religious discrimination. The INDIA bloc has promised to tackle issues like farmer suicides, inadequate MSP (Minimum Support Price) and the need for comprehensive agrarian reforms. Of course, ‘Save democracy’ has been its main theme. The NDA’s pitch was more country-centric security, $5 trillion economy and so forth but INDIA’s pitch was more about people, their sufferings and plight due to economic hardships. INDIA's focus on social justice and inclusivity is designed to attract voters who feel marginalised. Their promises to address agrarian distress and safeguard democratic values are aimed at rural voters, farmers and the educated urban electorate. Who really touched people’s hearts, we shall get to know on June 4.</p><br><p><strong>What is the primary focus of the INDIA alliance as described in the passage?</strong></p>", "options": ["<p>National security</p>", "<p>Economic progress</p>", "<p>Social justice and inclusivity</p>", "<p>Boosting local industries</p>", "<p>Reducing foreign dependency</p>"], "correctIndex": 2, "solution": "<p><strong>Answer:</strong><strong> C</strong></p>\n<p>The passage highlights the INDIA alliance's focus on social justice and inclusivity, including addressing marginalised communities and ensuring minority rights.</p>\n<p>The passage clearly outlines the main focus areas of the INDIA alliance. It states that the INDIA alliance positions itself as the protector of social justice, aiming to uplift marginalized communities, ensure minority rights, and address caste-based and religious discrimination. Additionally, the INDIA alliance emphasizes tackling issues like farmer suicides, inadequate Minimum Support Price (MSP), and the need for comprehensive agrarian reforms.</p>\n<p>Social justice and inclusivity: The INDIA alliance is described as focusing on uplifting marginalized communities, ensuring minority rights, addressing caste-based and religious discrimination, and tackling agrarian distress. Their slogans like \"Nyay\" (Justice) and \"Jai jawan, Jai kisan, Jai samvidhan\" reflect this emphasis on social justice and inclusivity.</p>\n<p>Option a (National security): This is primarily highlighted as a focus of the NDA, not the INDIA alliance. The NDA is mentioned as having efforts in strengthening national security.</p>\n<p>Option b (Economic progress): While economic issues are part of the INDIA alliance's platform, the passage specifically emphasizes their focus on social justice over purely economic progress, which is more heavily associated with the NDA's campaign.</p>\n<p>Option d (Boosting local industries): This is linked to the NDA’s slogan \"Aatmanirbhar Bharat\" and their focus on reducing dependency on foreign goods, not the primary focus of the INDIA alliance.</p>\n<p>Option e (Reducing foreign dependency): Again, this focus aligns with the NDA’s agenda of promoting local industries under \"Aatmanirbhar Bharat\" rather than the INDIA alliance's priorities.</p>\n<p>Thus, social justice and inclusivity is the correct and primary focus of the INDIA alliance as described in the passage.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>The biggest electoral contest in the world will conclude with the seventh phase of voting on June 1. It has been a dynamic election season; the battleground vibrant with slogans, promises and appeals. The major coalitions, the NDA and INDIA, have each deployed strategic messaging to galvanise voter support. When it comes to sloganeering, the BJP-led NDA has been a hands-down winner, coming up with not one but several catchy phrases to woo the electorate. ‘Sabka Saath, Sabka Vikas, Sabka Vishwas’ (Together with all, Development for all, Trust of all) has been a cornerstone of its campaign. ‘Naya Bharat’ (New India), aimed at portraying the vision for a progressive and self-reliant nation, was another NDA slogan. Along the same lines was ‘Aatmanirbhar Bharat’ (Self-reliant India) which reflected the NDA’s focus on boosting local industries and reducing dependency on foreign goods. But more interesting were its jumlas (catchy phrases) that were floated intermittently to give the NDA ‘top recall value’: ‘Abki baar 400 paar’ (this time, we will cross 400) and ‘Modi ki guarantee’. The major takeaways from the NDA’s election pitch were of course its ‘Sankalp Patra’, heavily focused on economic progress, showcasing initiatives like Make in India, Digital India and the push towards a $5 trillion economy. The NDA alliance also highlighted its efforts in strengthening national security. The message is clear — a strong leadership to safeguard the nation. Not to be outdone, the INDIA bloc also used several slogans to reach voters’ hearts. Prominence was given to slogans critical of the Modi Government’s unpopular policies and its actions to subvert democracy by sending Opposition leaders to jail. ‘Jai jawan, Jai kisan, Jai samvidhan’ (Hail the soldier, the farmer, the Constitution) drew heavily on this sentiment. ‘Bharat Jodo’ (Unite India), a call for unity across the nation's diverse fabric to counter divisive politics, was inspired by Rahul Gandhi’s pan-India foot march. Yet another slogan from the INDIA stable was ‘Nyay’ (Justice), a promise to address disparities and ensure equitable growth. The INDIA alliance has positioned itself as the protector of social justice, focusing on uplifting marginalised communities, ensuring minority rights and addressing caste-based and religious discrimination. The INDIA bloc has promised to tackle issues like farmer suicides, inadequate MSP (Minimum Support Price) and the need for comprehensive agrarian reforms. Of course, ‘Save democracy’ has been its main theme. The NDA’s pitch was more country-centric security, $5 trillion economy and so forth but INDIA’s pitch was more about people, their sufferings and plight due to economic hardships. INDIA's focus on social justice and inclusivity is designed to attract voters who feel marginalised. Their promises to address agrarian distress and safeguard democratic values are aimed at rural voters, farmers and the educated urban electorate. Who really touched people’s hearts, we shall get to know on June 4.</p><br><p>Which of the following slogans was <strong>NOT</strong> associated with the NDA’s campaign according to the passage?</p>", "options": ["<p>Abki baar 400 paar</p>", "<p>Sabka Saath, Sabka Vikas, Sabka Vishwas</p>", "<p>Modi ki guarantee</p>", "<p>Naya Bharat</p>", "<p>Save democracy</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>The passage primarily discusses the slogans and themes associated with both the NDA and the INDIA alliance’s campaigns. However, \"Save democracy\" is a slogan explicitly associated with the INDIA alliance’s campaign, not the NDA’s.</p>\n<p>Option a (Abki baar 400 paar): This slogan is mentioned in the passage as one of the catchy phrases associated with the NDA’s campaign.</p>\n<p>Option b (Sabka Saath, Sabka Vikas, Sabka Vishwas): This slogan is explicitly mentioned in the passage as a cornerstone of the NDA’s campaign.</p>\n<p>Option c (Modi ki guarantee): This slogan is mentioned in the passage as one of the catchy phrases floated intermittently to give the NDA ‘top recall value’.</p>\n<p>Option d (Naya Bharat): This slogan is mentioned in the passage as another NDA slogan aimed at portraying the vision for a progressive and self-reliant nation.</p>\n<p>Option e (Save democracy): This slogan is associated with the INDIA alliance’s campaign, focusing on protecting democratic values, as mentioned in the passage.</p>\n<p>Thus, the slogan Save democracy was NOT associated with the NDA’s campaign according to the passage.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>The biggest electoral contest in the world will conclude with the seventh phase of voting on June 1. It has been a dynamic election season; the battleground vibrant with slogans, promises and appeals. The major coalitions, the NDA and INDIA, have each deployed strategic messaging to galvanise voter support. When it comes to sloganeering, the BJP-led NDA has been a hands-down winner, coming up with not one but several catchy phrases to woo the electorate. ‘Sabka Saath, Sabka Vikas, Sabka Vishwas’ (Together with all, Development for all, Trust of all) has been a cornerstone of its campaign. ‘Naya Bharat’ (New India), aimed at portraying the vision for a progressive and self-reliant nation, was another NDA slogan. Along the same lines was ‘Aatmanirbhar Bharat’ (Self-reliant India) which reflected the NDA’s focus on boosting local industries and reducing dependency on foreign goods. But more interesting were its jumlas (catchy phrases) that were floated intermittently to give the NDA ‘top recall value’: ‘Abki baar 400 paar’ (this time, we will cross 400) and ‘Modi ki guarantee’. The major takeaways from the NDA’s election pitch were of course its ‘Sankalp Patra’, heavily focused on economic progress, showcasing initiatives like Make in India, Digital India and the push towards a $5 trillion economy. The NDA alliance also highlighted its efforts in strengthening national security. The message is clear — a strong leadership to safeguard the nation. Not to be outdone, the INDIA bloc also used several slogans to reach voters’ hearts. Prominence was given to slogans critical of the Modi Government’s unpopular policies and its actions to subvert democracy by sending Opposition leaders to jail. ‘Jai jawan, Jai kisan, Jai samvidhan’ (Hail the soldier, the farmer, the Constitution) drew heavily on this sentiment. ‘Bharat Jodo’ (Unite India), a call for unity across the nation's diverse fabric to counter divisive politics, was inspired by Rahul Gandhi’s pan-India foot march. Yet another slogan from the INDIA stable was ‘Nyay’ (Justice), a promise to address disparities and ensure equitable growth. The INDIA alliance has positioned itself as the protector of social justice, focusing on uplifting marginalised communities, ensuring minority rights and addressing caste-based and religious discrimination. The INDIA bloc has promised to tackle issues like farmer suicides, inadequate MSP (Minimum Support Price) and the need for comprehensive agrarian reforms. Of course, ‘Save democracy’ has been its main theme. The NDA’s pitch was more country-centric security, $5 trillion economy and so forth but INDIA’s pitch was more about people, their sufferings and plight due to economic hardships. INDIA's focus on social justice and inclusivity is designed to attract voters who feel marginalised. Their promises to address agrarian distress and safeguard democratic values are aimed at rural voters, farmers and the educated urban electorate. Who really touched people’s hearts, we shall get to know on June 4.</p><br><p><strong>What is one of the NDA’s major economic goals mentioned in the passage?</strong></p>", "options": ["<p>Addressing farmer suicides</p>", "<p>Ensuring equitable growth</p>", "<p>A $5 trillion economy</p>", "<p>Strengthening the Constitution</p>", "<p>Tackling agrarian distress</p>"], "correctIndex": 2, "solution": "<p><strong>Answer:</strong><strong> C</strong></p>\n<p>The passage mentions that one of the NDA’s major economic goals is achieving a $5 trillion economy.</p>\n<p>The passage discusses several aspects of the NDA's campaign, particularly emphasizing their economic goals and vision for India's progress. One of the major economic goals mentioned for the NDA is achieving a $5 trillion economy. This is clearly highlighted in the passage where it states: \"The major takeaways from the NDA’s election pitch were of course its ‘Sankalp Patra’, heavily focused on economic progress, showcasing initiatives like Make in India, Digital India and the push towards a $5 trillion economy.\"</p>\n<p>A $5 trillion economy: The passage directly mentions this as one of the main goals in the NDA's campaign, focusing on economic growth and development through various initiatives such as Make in India and Digital India.</p>\n<p>Option a (Addressing farmer suicides): This is mentioned as a concern for the INDIA alliance, focusing on agrarian distress and reforms.</p>\n<p>Option b (Ensuring equitable growth): While important, this is part of the INDIA alliance's focus on social justice and addressing disparities.</p>\n<p>Option d (Strengthening the Constitution): This is linked to the INDIA alliance’s slogan “Jai jawan, Jai kisan, Jai samvidhan” and their focus on protecting democratic values.</p>\n<p>Option e (Tackling agrarian distress): Again, this is a major concern of the INDIA alliance, focusing on agrarian reforms and support for farmers.</p>\n<p>Thus, a $5 trillion economy is one of the NDA’s major economic goals mentioned in the passage.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>The biggest electoral contest in the world will conclude with the seventh phase of voting on June 1. It has been a dynamic election season; the battleground vibrant with slogans, promises and appeals. The major coalitions, the NDA and INDIA, have each deployed strategic messaging to galvanise voter support. When it comes to sloganeering, the BJP-led NDA has been a hands-down winner, coming up with not one but several catchy phrases to woo the electorate. ‘Sabka Saath, Sabka Vikas, Sabka Vishwas’ (Together with all, Development for all, Trust of all) has been a cornerstone of its campaign. ‘Naya Bharat’ (New India), aimed at portraying the vision for a progressive and self-reliant nation, was another NDA slogan. Along the same lines was ‘Aatmanirbhar Bharat’ (Self-reliant India) which reflected the NDA’s focus on boosting local industries and reducing dependency on foreign goods. But more interesting were its jumlas (catchy phrases) that were floated intermittently to give the NDA ‘top recall value’: ‘Abki baar 400 paar’ (this time, we will cross 400) and ‘Modi ki guarantee’. The major takeaways from the NDA’s election pitch were of course its ‘Sankalp Patra’, heavily focused on economic progress, showcasing initiatives like Make in India, Digital India and the push towards a $5 trillion economy. The NDA alliance also highlighted its efforts in strengthening national security. The message is clear — a strong leadership to safeguard the nation. Not to be outdone, the INDIA bloc also used several slogans to reach voters’ hearts. Prominence was given to slogans critical of the Modi Government’s unpopular policies and its actions to subvert democracy by sending Opposition leaders to jail. ‘Jai jawan, Jai kisan, Jai samvidhan’ (Hail the soldier, the farmer, the Constitution) drew heavily on this sentiment. ‘Bharat Jodo’ (Unite India), a call for unity across the nation's diverse fabric to counter divisive politics, was inspired by Rahul Gandhi’s pan-India foot march. Yet another slogan from the INDIA stable was ‘Nyay’ (Justice), a promise to address disparities and ensure equitable growth. The INDIA alliance has positioned itself as the protector of social justice, focusing on uplifting marginalised communities, ensuring minority rights and addressing caste-based and religious discrimination. The INDIA bloc has promised to tackle issues like farmer suicides, inadequate MSP (Minimum Support Price) and the need for comprehensive agrarian reforms. Of course, ‘Save democracy’ has been its main theme. The NDA’s pitch was more country-centric security, $5 trillion economy and so forth but INDIA’s pitch was more about people, their sufferings and plight due to economic hardships. INDIA's focus on social justice and inclusivity is designed to attract voters who feel marginalised. Their promises to address agrarian distress and safeguard democratic values are aimed at rural voters, farmers and the educated urban electorate. Who really touched people’s hearts, we shall get to know on June 4.</p><br><p><strong>Which slogan focuses on boosting local industries and reducing dependency on foreign goods?</strong></p>", "options": ["<p>Abki baar 400 paar</p>", "<p>Jai jawan, Jai kisan, Jai samvidhan</p>", "<p>Nyay</p>", "<p>Aatmanirbhar Bharat</p>", "<p>Sabka Saath, Sabka Vikas, Sabka Vishwas</p>"], "correctIndex": 3, "solution": "<p><strong>Answer:</strong><strong> D</strong></p>\n<p>The passage states that \"Aatmanirbhar Bharat\" reflects the NDA’s focus on boosting local industries and reducing dependency on foreign goods.</p>\n<p>The slogan \"Aatmanirbhar Bharat\" directly translates to \"Self-reliant India\" and is explicitly mentioned in the passage in the context of boosting local industries and reducing dependency on foreign goods. The passage states: \"‘Aatmanirbhar Bharat’ (Self-reliant India) ... reflected the NDA’s focus on boosting local industries and reducing dependency on foreign goods.\"</p>\n<p>Aatmanirbhar Bharat (Self-reliant India): The passage explicitly mentions this slogan in the context of the NDA’s focus on boosting local industries and reducing dependency on foreign goods.</p>\n<p>Option a (Abki baar 400 paar): This slogan is used by the NDA but doesn't specifically focus on boosting local industries or reducing dependency on foreign goods.</p>\n<p>Option b (Jai jawan, Jai kisan, Jai samvidhan): This slogan emphasizes the importance of soldiers, farmers, and the Constitution but does not address economic policies regarding local industries or foreign dependency.</p>\n<p>Option c (Nyay): This slogan focuses on justice and equitable growth rather than economic policies related to local industries or foreign dependency.</p>\n<p>Option e (Sabka Saath, Sabka Vikas, Sabka Vishwas): While this slogan emphasizes inclusive development, it does not specifically address economic policies related to local industries or foreign dependency.</p>\n<p>Thus, Aatmanirbhar Bharat is the slogan that focuses on boosting local industries and reducing dependency on foreign goods, as mentioned in the passage.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>The biggest electoral contest in the world will conclude with the seventh phase of voting on June 1. It has been a dynamic election season; the battleground vibrant with slogans, promises and appeals. The major coalitions, the NDA and INDIA, have each deployed strategic messaging to galvanise voter support. When it comes to sloganeering, the BJP-led NDA has been a hands-down winner, coming up with not one but several catchy phrases to woo the electorate. ‘Sabka Saath, Sabka Vikas, Sabka Vishwas’ (Together with all, Development for all, Trust of all) has been a cornerstone of its campaign. ‘Naya Bharat’ (New India), aimed at portraying the vision for a progressive and self-reliant nation, was another NDA slogan. Along the same lines was ‘Aatmanirbhar Bharat’ (Self-reliant India) which reflected the NDA’s focus on boosting local industries and reducing dependency on foreign goods. But more interesting were its jumlas (catchy phrases) that were floated intermittently to give the NDA ‘top recall value’: ‘Abki baar 400 paar’ (this time, we will cross 400) and ‘Modi ki guarantee’. The major takeaways from the NDA’s election pitch were of course its ‘Sankalp Patra’, heavily focused on economic progress, showcasing initiatives like Make in India, Digital India and the push towards a $5 trillion economy. The NDA alliance also highlighted its efforts in strengthening national security. The message is clear — a strong leadership to safeguard the nation. Not to be outdone, the INDIA bloc also used several slogans to reach voters’ hearts. Prominence was given to slogans critical of the Modi Government’s unpopular policies and its actions to subvert democracy by sending Opposition leaders to jail. ‘Jai jawan, Jai kisan, Jai samvidhan’ (Hail the soldier, the farmer, the Constitution) drew heavily on this sentiment. ‘Bharat Jodo’ (Unite India), a call for unity across the nation's diverse fabric to counter divisive politics, was inspired by Rahul Gandhi’s pan-India foot march. Yet another slogan from the INDIA stable was ‘Nyay’ (Justice), a promise to address disparities and ensure equitable growth. The INDIA alliance has positioned itself as the protector of social justice, focusing on uplifting marginalised communities, ensuring minority rights and addressing caste-based and religious discrimination. The INDIA bloc has promised to tackle issues like farmer suicides, inadequate MSP (Minimum Support Price) and the need for comprehensive agrarian reforms. Of course, ‘Save democracy’ has been its main theme. The NDA’s pitch was more country-centric security, $5 trillion economy and so forth but INDIA’s pitch was more about people, their sufferings and plight due to economic hardships. INDIA's focus on social justice and inclusivity is designed to attract voters who feel marginalised. Their promises to address agrarian distress and safeguard democratic values are aimed at rural voters, farmers and the educated urban electorate. Who really touched people’s hearts, we shall get to know on June 4.</p><br><p><strong>What was the main theme of the INDIA alliance’s campaign according to the passage?</strong></p>", "options": ["<p>Economic progress</p>", "<p>National security</p>", "<p>Social justice and inclusivity</p>", "<p>Save democracy</p>", "<p>Self-reliant India</p>"], "correctIndex": 3, "solution": "<p><strong>Answer:</strong><strong> D</strong></p>\n<p>Save democracy</p>\n<p>The passage indicates that \"Save democracy\" was the main theme of the INDIA alliance’s campaign.</p>\n<p>The passage explicitly states that \"Save democracy\" was the main theme of the INDIA alliance’s campaign. It mentions: \"Of course, ‘Save democracy’ has been its main theme.\"</p>\n<p>Save democracy: The passage directly identifies \"Save democracy\" as the main theme of the INDIA alliance’s campaign.</p>\n<p>Option a (Economic progress): While economic progress is an important aspect of the INDIA alliance’s campaign, it is not highlighted as the main theme.</p>\n<p>Option b (National security): National security is more associated with the NDA’s campaign, as mentioned in the passage.</p>\n<p>Option c (Social justice and inclusivity): While social justice and inclusivity are key components of the INDIA alliance’s platform, the passage specifies \"Save democracy\" as the main theme.</p>\n<p>Option e (Self-reliant India): This theme is more aligned with the NDA’s campaign, particularly under the slogan \"Aatmanirbhar Bharat\", and is not specified as the main theme of the INDIA alliance.</p>\n<p>Thus, Save democracy is identified as the main theme of the INDIA alliance’s campaign according to the passage.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>The biggest electoral contest in the world will conclude with the seventh phase of voting on June 1. It has been a dynamic election season; the battleground vibrant with slogans, promises and appeals. The major coalitions, the NDA and INDIA, have each deployed strategic messaging to galvanise voter support. When it comes to sloganeering, the BJP-led NDA has been a hands-down winner, coming up with not one but several catchy phrases to woo the electorate. ‘Sabka Saath, Sabka Vikas, Sabka Vishwas’ (Together with all, Development for all, Trust of all) has been a cornerstone of its campaign. ‘Naya Bharat’ (New India), aimed at portraying the vision for a progressive and self-reliant nation, was another NDA slogan. Along the same lines was ‘Aatmanirbhar Bharat’ (Self-reliant India) which reflected the NDA’s focus on boosting local industries and reducing dependency on foreign goods. But more interesting were its jumlas (catchy phrases) that were floated intermittently to give the NDA ‘top recall value’: ‘Abki baar 400 paar’ (this time, we will cross 400) and ‘Modi ki guarantee’. The major takeaways from the NDA’s election pitch were of course its ‘Sankalp Patra’, heavily focused on economic progress, showcasing initiatives like Make in India, Digital India and the push towards a $5 trillion economy. The NDA alliance also highlighted its efforts in strengthening national security. The message is clear — a strong leadership to safeguard the nation. Not to be outdone, the INDIA bloc also used several slogans to reach voters’ hearts. Prominence was given to slogans critical of the Modi Government’s unpopular policies and its actions to subvert democracy by sending Opposition leaders to jail. ‘Jai jawan, Jai kisan, Jai samvidhan’ (Hail the soldier, the farmer, the Constitution) drew heavily on this sentiment. ‘Bharat Jodo’ (Unite India), a call for unity across the nation's diverse fabric to counter divisive politics, was inspired by Rahul Gandhi’s pan-India foot march. Yet another slogan from the INDIA stable was ‘Nyay’ (Justice), a promise to address disparities and ensure equitable growth. The INDIA alliance has positioned itself as the protector of social justice, focusing on uplifting marginalised communities, ensuring minority rights and addressing caste-based and religious discrimination. The INDIA bloc has promised to tackle issues like farmer suicides, inadequate MSP (Minimum Support Price) and the need for comprehensive agrarian reforms. Of course, ‘Save democracy’ has been its main theme. The NDA’s pitch was more country-centric security, $5 trillion economy and so forth but INDIA’s pitch was more about people, their sufferings and plight due to economic hardships. INDIA's focus on social justice and inclusivity is designed to attract voters who feel marginalised. Their promises to address agrarian distress and safeguard democratic values are aimed at rural voters, farmers and the educated urban electorate. Who really touched people’s hearts, we shall get to know on June 4.</p><br><p><strong>Which slogan was inspired by Rahul Gandhi’s pan-India foot march?</strong></p>", "options": ["<p>Nyay</p>", "<p>Bharat Jodo</p>", "<p>Save democracy</p>", "<p>Naya Bharat</p>", "<p>Modi ki guarantee</p>"], "correctIndex": 1, "solution": "<p><strong>Answer:</strong><strong> B</strong></p>\n<p>The passage notes that \"Bharat Jodo\" was inspired by Rahul Gandhi’s pan-India foot march.</p>\n<p>The passage mentions that the slogan \"Bharat Jodo\" was inspired by Rahul Gandhi’s pan-India foot march. It states: \"‘Bharat Jodo’ (Unite India), a call for unity across the nation's diverse fabric to counter divisive politics, was inspired by Rahul Gandhi’s pan-India foot march.\"</p>\n<p>Bharat Jodo: The passage explicitly states that this slogan was inspired by Rahul Gandhi’s pan-India foot march.</p>\n<p>Option a (Nyay): While Nyay is another slogan used by the INDIA alliance, it is not specifically mentioned as being inspired by Rahul Gandhi’s foot march.</p>\n<p>Option c (Save democracy): This slogan is associated with the main theme of the INDIA alliance’s campaign, but it is not mentioned as being inspired by Rahul Gandhi’s foot march.</p>\n<p>Option d (Naya Bharat): This slogan is associated with the NDA, not the INDIA alliance, and it is not mentioned as being inspired by Rahul Gandhi’s foot march.</p>\n<p>Option e (Modi ki guarantee): This slogan is associated with the NDA, specifically with catchy phrases floated intermittently, but it is not mentioned as being inspired by Rahul Gandhi’s foot march.</p>\n<p>Thus, Bharat Jodo is the slogan that was inspired by Rahul Gandhi’s pan-India foot march, according to the passage.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>The biggest electoral contest in the world will conclude with the seventh phase of voting on June 1. It has been a dynamic election season; the battleground vibrant with slogans, promises and appeals. The major coalitions, the NDA and INDIA, have each deployed strategic messaging to galvanise voter support. When it comes to sloganeering, the BJP-led NDA has been a hands-down winner, coming up with not one but several catchy phrases to woo the electorate. ‘Sabka Saath, Sabka Vikas, Sabka Vishwas’ (Together with all, Development for all, Trust of all) has been a cornerstone of its campaign. ‘Naya Bharat’ (New India), aimed at portraying the vision for a progressive and self-reliant nation, was another NDA slogan. Along the same lines was ‘Aatmanirbhar Bharat’ (Self-reliant India) which reflected the NDA’s focus on boosting local industries and reducing dependency on foreign goods. But more interesting were its jumlas (catchy phrases) that were floated intermittently to give the NDA ‘top recall value’: ‘Abki baar 400 paar’ (this time, we will cross 400) and ‘Modi ki guarantee’. The major takeaways from the NDA’s election pitch were of course its ‘Sankalp Patra’, heavily focused on economic progress, showcasing initiatives like Make in India, Digital India and the push towards a $5 trillion economy. The NDA alliance also highlighted its efforts in strengthening national security. The message is clear — a strong leadership to safeguard the nation. Not to be outdone, the INDIA bloc also used several slogans to reach voters’ hearts. Prominence was given to slogans critical of the Modi Government’s unpopular policies and its actions to subvert democracy by sending Opposition leaders to jail. ‘Jai jawan, Jai kisan, Jai samvidhan’ (Hail the soldier, the farmer, the Constitution) drew heavily on this sentiment. ‘Bharat Jodo’ (Unite India), a call for unity across the nation's diverse fabric to counter divisive politics, was inspired by Rahul Gandhi’s pan-India foot march. Yet another slogan from the INDIA stable was ‘Nyay’ (Justice), a promise to address disparities and ensure equitable growth. The INDIA alliance has positioned itself as the protector of social justice, focusing on uplifting marginalised communities, ensuring minority rights and addressing caste-based and religious discrimination. The INDIA bloc has promised to tackle issues like farmer suicides, inadequate MSP (Minimum Support Price) and the need for comprehensive agrarian reforms. Of course, ‘Save democracy’ has been its main theme. The NDA’s pitch was more country-centric security, $5 trillion economy and so forth but INDIA’s pitch was more about people, their sufferings and plight due to economic hardships. INDIA's focus on social justice and inclusivity is designed to attract voters who feel marginalised. Their promises to address agrarian distress and safeguard democratic values are aimed at rural voters, farmers and the educated urban electorate. Who really touched people’s hearts, we shall get to know on June 4.</p><br><p><strong>What is the tone of the passage?</strong></p>", "options": ["<p>Objective</p>", "<p>Critical</p>", "<p>Optimistic</p>", "<p>Satirical</p>", "<p>Ambivalent</p>"], "correctIndex": 2, "solution": "<p><strong>Answer:</strong><strong> C</strong></p>\n<p>The tone of a passage refers to the author's attitude or feelings towards the subject matter. In this passage, the author discusses the electoral contest and the strategies employed by both the NDA and INDIA alliances. Despite highlighting the differences in their approaches and focusing on various slogans and themes, the passage does not convey a negative or critical view. Instead, it portrays a sense of hope and positivity regarding the democratic process and the engagement of political parties in addressing key issues. Therefore, the tone of the passage can be considered optimistic.</p>\n<p>Option a (Objective): While the passage presents information in a factual manner, it also reflects the author's perspective, making it less purely objective.</p>\n<p>Option b (Critical): The passage does not critique or condemn either alliance but rather presents their strategies and themes.</p>\n<p>Option d (Satirical): There is no indication of satire in the passage; it presents the electoral contest and campaign themes seriously.</p>\n<p>Option e (Ambivalent): Ambivalence implies uncertainty or mixed feelings, which are not evident in the passage. The author's tone is more decisive and positive.</p>\n<p>Therefore, the most fitting tone for the passage is c) Optimistic.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-73)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-73)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

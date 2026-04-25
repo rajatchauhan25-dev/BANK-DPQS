@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-96)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>Match the columns I and II and choose the correct combination/filler that should be contextually and grammatically correct from the options given below. </strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/171396289014.png\" title=\"54.PNG\"/></p>", "options": ["<p>A-E &amp; B-F</p>", "<p>C-F &amp; A-D</p>", "<p>A-E &amp; B-D</p>", "<p>A-E, B-D &amp; C-F</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>A-E:</strong> NASA on Tuesday welcomed Sweden as the 38th country to <strong>sign</strong> the Artemis Accords.</p>\n<p><strong>B-D: </strong>The dichotomy between tradition and modernity is <strong>evident</strong> in many contemporary societies.</p>\n<p><strong>C-F: </strong>She meticulously analyzed the data to discern patterns and draw <strong>insightful</strong> conclusions. <strong>Insightfulness</strong> is a noun.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>Match the columns I and II and choose the correct combination/filler that should be contextually and grammatically correct from the options given below. </strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/171396294975.png\" title=\"55.PNG\"/></p>", "options": ["<p>A-E, B-F &amp; C-D</p>", "<p>C-F &amp; A-D</p>", "<p>A-E &amp; B-D</p>", "<p>A-E, B-D &amp; C-F</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>C-D: </strong>The anthropologist conducted ethnographic <strong>research</strong> to understand the cultural nuances of the community.</p>\n<p><strong>A-E: </strong>Cognitive dissonance often arises when individuals hold <strong>conflicting </strong>beliefs or values.</p>\n<p><strong>B-F: </strong>The entrepreneur demonstrated acumen by <strong>identifying</strong> a niche market for her innovative product.</p>\n<p>Therefore, option A is the correct answer.</p>"}, {"question": "<p><strong>Match the columns I and II and choose the correct combination/filler that should be contextually and grammatically correct from the options given below. </strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/171396306968.png\" title=\"56.PNG\"/></p>", "options": ["<p>A-E &amp; B-F</p>", "<p>C-F &amp; A-D</p>", "<p>A-E &amp; B-D</p>", "<p>A-E, B-D &amp; C-F</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>A-D: </strong>Quantum mechanics, a branch of physics, <strong>explores</strong> the behavior of subatomic particles.</p>\n<p><strong>B-E: </strong>The polymath was <strong>renowned</strong> for his erudition and contributions to various fields of study.</p>\n<p><strong>C-F: </strong>The economist <strong>postulated </strong>that inflationary pressures could destabilize the national economy.</p>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>Match the columns I and II and choose the correct combination/filler that should be contextually and grammatically correct from the options given below. </strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/171396312283.png\" title=\"57.PNG\"/></p>", "options": ["<p>A-E &amp; B-F</p>", "<p>C-F &amp; A-D</p>", "<p>A-E &amp; B-D</p>", "<p>A-E, B-D &amp; C-F</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>A-E:</strong> orchestra performed a <strong>symphony</strong> composed by a maestro, captivating the audience.</p>\n<p><strong>B-D: </strong>Philosophical discourse often delves into existential <strong>questions </strong>about the nature of existence.</p>\n<p><strong>C-F: </strong>The neuroscientist utilized <strong>advanced </strong>imaging techniques to map brain activity during tasks.</p>\n<p>Therefore, option D is the correct answer.</p>"}, {"question": "<p><strong>Match the columns I and II and choose the correct combination/filler that should be contextually and grammatically correct from the options given below. </strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/171396317790.png\" title=\"58.PNG\"/></p>", "options": ["<p>A-E, B-F &amp; C-D</p>", "<p>C-F &amp; A-D</p>", "<p>A-E &amp; B-D</p>", "<p>A-E, B-D &amp; C-F</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>A-E:</strong> The poet's verses were <strong>imbued</strong> with profound insights into the human condition.</p>\n<p><strong>B-D:</strong> The confluence of cultures in cosmopolitan cities <strong>creates</strong> a rich tapestry of traditions and customs.</p>\n<p><strong>C-F: </strong>The diplomat <strong>employed</strong> tact and diplomacy to navigate complex international relations.</p>\n<p>Therefore, option D is the correct answer.</p>"}, {"question": "<p><strong>In each question below, words have been highlighted. These words used might be correct or may be inappropriate in usage. You must read the given sentences carefully and choose the option with the incorrect used word as your answer.</strong></p><br><p><strong>Candid</strong></p>\n<p><strong>1).</strong> The interview was <strong>candid</strong>, with both the reporter and the subject openly discussing sensitive topics.</p>\n<p><strong>2).</strong> His <strong>candid</strong> remarks about the project showed his true feelings.</p>\n<p><strong>3).</strong> The <strong>candid </strong>photo captured a moment of joy among friends at the party.</p>", "options": ["<p>Only 1</p>", "<p>Only 2</p>", "<p>Only 3</p>", "<p>Only 1 and 2</p>", "<p>All 1, 2, and 3 are correct</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>In <strong>Sentence 1</strong>, \"Candid\" is used to describe an honest and open discussion.</p>\n<p>In <strong>Sentence 2</strong>, \"Candid\" is appropriate, as it describes frank and straightforward remarks.</p>\n<p>In <strong>Sentence 3</strong>, \"Candid\" is used correctly to refer to a natural, unposed photograph that captures genuine emotion.</p>"}, {"question": "<p><strong>In each question below, words have been highlighted. These words used might be correct or may be inappropriate in usage. You must read the given sentences carefully and choose the option with the incorrect used word as your answer.</strong></p><br><p><strong>Ominous</strong></p>\n<p><strong>1).</strong> The dark clouds in the sky created an <strong>ominous</strong> feeling of an impending storm.</p>\n<p><strong>2).</strong> The <strong>ominous</strong> warning from the doctor made her realize the seriousness of her condition.</p>\n<p><strong>3).</strong> His <strong>ominous</strong> laughter filled the room with joy and excitement.</p>", "options": ["<p>Only 1</p>", "<p>Only 2</p>", "<p>Only 3</p>", "<p>Only 1 and 2</p>", "<p>All 1, 2, and 3</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>In <strong>Sentence 1</strong>, \"Ominous\" is used properly to describe something that signals a negative event, like a storm.</p>\n<p>In <strong>Sentence 2</strong>, \"Ominous\" fits to describe a warning that signals something bad.</p>\n<p>In <strong>Sentence 3</strong>, \"Ominous\" suggests something threatening, which doesn’t fit the context of joy and excitement.</p>"}, {"question": "<p><strong>In each question below, words have been highlighted. These words used might be correct or may be inappropriate in usage. You must read the given sentences carefully and choose the option with the incorrect used word as your answer.</strong></p><br><p><strong>Scrutinize</strong></p>\n<p><strong>1).</strong> The detective <strong>scrutinized</strong> every detail of the crime scene for clues.</p>\n<p><strong>2).</strong> The CEO decided to <strong>scrutinize </strong>the company’s expenses by briefly skimming through the financial reports.</p>\n<p><strong>3).</strong> The teacher <strong>scrutinized </strong>the students' essays, offering detailed feedback on their work.</p>", "options": ["<p>Only 1</p>", "<p>Only 1 and 2</p>", "<p>Only 1 and 3</p>", "<p>Only 2</p>", "<p>All 1, 2, and 3</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>In <strong>Sentence 1</strong>, \"Scrutinize\" means to examine carefully, and it fits the context of a detective looking for clues.</p>\n<p>In <strong>Sentence 2</strong>, \"Scrutinize\" means to examine thoroughly, which contradicts the idea of skimming through something briefly.</p>\n<p>In <strong>Sentence 3</strong>, \"Scrutinize\" is used properly to describe a teacher giving detailed feedback.</p>"}, {"question": "<p><strong>In each question below, words have been highlighted. These words used might be correct or may be inappropriate in usage. You must read the given sentences carefully and choose the option with the incorrect used word as your answer.</strong></p><br><p><strong>Diligent</strong></p>\n<p><strong>1).</strong> The <strong>diligent </strong>student spent hours studying for the upcoming exam.</p>\n<p><strong>2).</strong> His <strong>diligent </strong>efforts to maintain the garden paid off with a beautiful display of flowers.</p>\n<p><strong>3).</strong> She was <strong>diligent</strong> in her approach to finding the quickest route to work, often ignoring traffic signs.</p>", "options": ["<p>Only 1</p>", "<p>Only 2</p>", "<p>Only 1 and 2</p>", "<p>Only 3</p>", "<p>All 1, 2, and 3</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>In <strong>Sentence 1</strong>, \"Diligent\" is properly used to describe a student who puts in a lot of effort.</p>\n<p>In <strong>Sentence 2</strong>, \"Diligent\" describes someone who works hard on maintaining the garden.</p>\n<p>In <strong>Sentence 3</strong>, \"Diligent\" implies carefulness and attention to detail, which conflicts with ignoring traffic signs.</p>"}, {"question": "<p><strong>In each question below, words have been highlighted. These words used might be correct or may be inappropriate in usage. You must read the given sentences carefully and choose the option with the incorrect used word as your answer.</strong></p><br><p><strong>Nostalgic</strong></p>\n<p><strong>1).</strong> The <strong>nostalgic </strong>song brought back memories of her childhood.</p>\n<p><strong>2).</strong> Watching old movies can evoke a <strong>nostalgic </strong>feeling for simpler times.</p>\n<p><strong>3).</strong> His <strong>nostalgic</strong> view on the future made him overly optimistic.</p>", "options": ["<p>Only 1</p>", "<p>Only 2</p>", "<p>Only 3</p>", "<p>Only 1 and 2</p>", "<p>All 1, 2, and 3</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>In <strong>Sentence 1</strong>, \"Nostalgic\" is used appropriately to describe a song that triggers memories.</p>\n<p>In <strong>Sentence 2</strong>, It fits well to describe the feeling associated with recalling the past.</p>\n<p>In <strong>Sentence 3</strong>, \"Nostalgic\" typically refers to longing for the past, not the future. The sentence implies a contradiction in its usage.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>As peace and tranquility envelop the sylvan slopes of Kashmir Valley in perfect harmony but civil unrest recoils with its squirming populace across the LoC in Pakistan-Occupied Kashmir (PoK), India’s Home Minister Amit Shah has iterated that the region “belongs to India and we will reclaim it”. Nothing new there, but the comment has reignited discussions on the disputed region and its intricate history, fraught as it is with serious ramifications. Following Partition, the princely State of Jammu and Kashmir, like other such States, had the option to accede to either India or Pakistan. Maharaja Hari Singh, then ruler of Jammu and Kashmir, initially sought to remain independent but, amid invasion by tribal militias supported by Pakistan, opted to accede to India in October 1947. It led to the first India-Pakistan War, which saw a United Nations-brokered ceasefire and establishment of the LoC, which divided the region into the Indian J&amp;K and PoK. While India gained control over most of the territory, Pakistan retained approximately its one-third, which it named Azad Jammu and Kashmir (AJK) and Gilgit-Baltistan. Therefore, from an Indian perspective, PoK is an integral part of J&amp;K and its inclusion in India’s territorial claims is based on historical, legal and moral grounds. However, the timing and practicality of the Home Minister’s claim are debatable: Bringing up such critical matters in public sphere, especially during elections and when they involve a neighbouring nuclear power, is not the best of ideas. For its part, Pakistan considers PoK as a “liberated territory” pending a plebiscite promised by the UN. In this given situation, the status quo maintained for over seven decades keeps the two countries from going to war. The larger question is, do we want to go to war with Pakistan and can we afford it when we have so much to sort out domestically? Should not the Home Minister be more cautious in raking up such contentious issues during elections? It is true that despite Pakistan’s hollow assertions, PoK has witnessed internal dissent and unrest over the years. The region has been marred by allegations of human rights abuses, lack of democratic freedoms and marginalisation of local voices by the Pakistani establishment. Civil society movements, such as the Gilgit-Baltistan Movement, have been advocating for the recognition of their rights and the restoration of genuine autonomy. If Amit Shah’s recent declaration reaffirming India’s claim over PoK is not a standalone Statement but reflects a broader strategic shift in India’s approach, it must be well articulated and a clear roadmap must be laid to approach the matter diplomatically or otherwise. If that is not the case, then it would pass off as another poll rhetoric or ‘jumla’. Indeed, diplomatic endeavours are most effectively conducted behind closed doors rather than at public rallies.</p><br><p><strong>What was the outcome of the first India-Pakistan War according to the passage?</strong></p>", "options": ["<p>India gained control over the entire Jammu and Kashmir region.</p>", "<p>Pakistan gained control over the entire Jammu and Kashmir region.</p>", "<p>A United Nations-brokered ceasefire and establishment of the LoC.</p>", "<p>India and Pakistan reached a permanent peace agreement.</p>", "<p>Jammu and Kashmir remained an independent state.</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: </strong><strong>C</strong></p>\n<p>The first India-Pakistan War led to a UN-brokered ceasefire and the establishment of the Line of Control (LoC).</p>\n<p>The passage explains that following the invasion by tribal militias supported by Pakistan, Maharaja Hari Singh decided to accede to India, which led to the first India-Pakistan War. The outcome of this war was not a complete victory for either side, but rather a United Nations-brokered ceasefire. This ceasefire resulted in the establishment of the Line of Control (LoC), which effectively divided the region into two parts: the Indian-administered Jammu and Kashmir and the Pakistan-occupied Kashmir (PoK), referred to as Azad Jammu and Kashmir (AJK) and Gilgit-Baltistan by Pakistan.</p>\n<p>a). India gained control over the entire Jammu and Kashmir region: This option is incorrect because India did not gain control over the entire region; instead, it only retained control over a portion of it.</p>\n<p>b). Pakistan gained control over the entire Jammu and Kashmir region: This option is incorrect because Pakistan did not gain control over the entire region; it retained control over a portion of it.</p>\n<p>c). A United Nations-brokered ceasefire and establishment of the LoC: This is the correct answer because the passage specifically mentions that the first India-Pakistan War led to a UN-brokered ceasefire and the establishment of the LoC, which divided the region.</p>\n<p>d). India and Pakistan reached a permanent peace agreement: This option is incorrect because the passage does not indicate that a permanent peace agreement was reached; it only mentions a ceasefire.</p>\n<p>e). Jammu and Kashmir remained an independent state: This option is incorrect because the passage clearly states that Jammu and Kashmir did not remain independent; it was divided between India and Pakistan following the ceasefire and establishment of the LoC.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>As peace and tranquility envelop the sylvan slopes of Kashmir Valley in perfect harmony but civil unrest recoils with its squirming populace across the LoC in Pakistan-Occupied Kashmir (PoK), India’s Home Minister Amit Shah has iterated that the region “belongs to India and we will reclaim it”. Nothing new there, but the comment has reignited discussions on the disputed region and its intricate history, fraught as it is with serious ramifications. Following Partition, the princely State of Jammu and Kashmir, like other such States, had the option to accede to either India or Pakistan. Maharaja Hari Singh, then ruler of Jammu and Kashmir, initially sought to remain independent but, amid invasion by tribal militias supported by Pakistan, opted to accede to India in October 1947. It led to the first India-Pakistan War, which saw a United Nations-brokered ceasefire and establishment of the LoC, which divided the region into the Indian J&amp;K and PoK. While India gained control over most of the territory, Pakistan retained approximately its one-third, which it named Azad Jammu and Kashmir (AJK) and Gilgit-Baltistan. Therefore, from an Indian perspective, PoK is an integral part of J&amp;K and its inclusion in India’s territorial claims is based on historical, legal and moral grounds. However, the timing and practicality of the Home Minister’s claim are debatable: Bringing up such critical matters in public sphere, especially during elections and when they involve a neighbouring nuclear power, is not the best of ideas. For its part, Pakistan considers PoK as a “liberated territory” pending a plebiscite promised by the UN. In this given situation, the status quo maintained for over seven decades keeps the two countries from going to war. The larger question is, do we want to go to war with Pakistan and can we afford it when we have so much to sort out domestically? Should not the Home Minister be more cautious in raking up such contentious issues during elections? It is true that despite Pakistan’s hollow assertions, PoK has witnessed internal dissent and unrest over the years. The region has been marred by allegations of human rights abuses, lack of democratic freedoms and marginalisation of local voices by the Pakistani establishment. Civil society movements, such as the Gilgit-Baltistan Movement, have been advocating for the recognition of their rights and the restoration of genuine autonomy. If Amit Shah’s recent declaration reaffirming India’s claim over PoK is not a standalone Statement but reflects a broader strategic shift in India’s approach, it must be well articulated and a clear roadmap must be laid to approach the matter diplomatically or otherwise. If that is not the case, then it would pass off as another poll rhetoric or ‘jumla’. Indeed, diplomatic endeavours are most effectively conducted behind closed doors rather than at public rallies.</p><br><p><strong>From an Indian perspective, why is PoK considered an integral part of Jammu and Kashmir?</strong></p>", "options": ["<p>Based on historical, legal, and moral grounds.</p>", "<p>Due to recent military conquests</p>", "<p>Because of international diplomatic agreements.</p>", "<p>Following a recent plebiscite.</p>", "<p>Due to economic benefits.</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: </strong><strong>A</strong></p>\n<p>India considers PoK an integral part of Jammu and Kashmir based on historical, legal, and moral grounds.</p>\n<p>The passage outlines the reasons why, from an Indian perspective, Pakistan-Occupied Kashmir (PoK) is considered an integral part of Jammu and Kashmir. It mentions historical, legal, and moral grounds as the basis for this perspective.</p>\n<p>a). Based on historical, legal, and moral grounds: This is the correct answer. The passage states that India's claim to PoK is rooted in historical context (the accession of Jammu and Kashmir to India by Maharaja Hari Singh), legal context (the formal agreement of accession), and moral grounds (the principle of integrating the region with India).</p>\n<p>b). Due to recent military conquests: This option is incorrect because the passage does not mention any recent military conquests as a reason for considering PoK part of Jammu and Kashmir. The context provided is based on historical events and agreements, not recent military actions.</p>\n<p>c). Because of international diplomatic agreements: This option is incorrect as the passage does not refer to any specific international diplomatic agreements that justify India's claim to PoK. The focus is on historical accession and moral arguments rather than external diplomatic accords.</p>\n<p>d). Following a recent plebiscite: This option is incorrect because there has been no recent plebiscite in PoK to determine its status. The passage does not mention a plebiscite as a reason for India's claim.</p>\n<p>e). Due to economic benefits: This option is incorrect because the passage does not discuss economic benefits as a reason for considering PoK an integral part of Jammu and Kashmir. The justification provided is primarily historical, legal, and moral.</p>\n<p>The correct answer encapsulates the reasons provided in the passage, highlighting the multifaceted basis for India's claim to PoK.</p>\n<p>Therefore, option A is the correct answer.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>As peace and tranquility envelop the sylvan slopes of Kashmir Valley in perfect harmony but civil unrest recoils with its squirming populace across the LoC in Pakistan-Occupied Kashmir (PoK), India’s Home Minister Amit Shah has iterated that the region “belongs to India and we will reclaim it”. Nothing new there, but the comment has reignited discussions on the disputed region and its intricate history, fraught as it is with serious ramifications. Following Partition, the princely State of Jammu and Kashmir, like other such States, had the option to accede to either India or Pakistan. Maharaja Hari Singh, then ruler of Jammu and Kashmir, initially sought to remain independent but, amid invasion by tribal militias supported by Pakistan, opted to accede to India in October 1947. It led to the first India-Pakistan War, which saw a United Nations-brokered ceasefire and establishment of the LoC, which divided the region into the Indian J&amp;K and PoK. While India gained control over most of the territory, Pakistan retained approximately its one-third, which it named Azad Jammu and Kashmir (AJK) and Gilgit-Baltistan. Therefore, from an Indian perspective, PoK is an integral part of J&amp;K and its inclusion in India’s territorial claims is based on historical, legal and moral grounds. However, the timing and practicality of the Home Minister’s claim are debatable: Bringing up such critical matters in public sphere, especially during elections and when they involve a neighbouring nuclear power, is not the best of ideas. For its part, Pakistan considers PoK as a “liberated territory” pending a plebiscite promised by the UN. In this given situation, the status quo maintained for over seven decades keeps the two countries from going to war. The larger question is, do we want to go to war with Pakistan and can we afford it when we have so much to sort out domestically? Should not the Home Minister be more cautious in raking up such contentious issues during elections? It is true that despite Pakistan’s hollow assertions, PoK has witnessed internal dissent and unrest over the years. The region has been marred by allegations of human rights abuses, lack of democratic freedoms and marginalisation of local voices by the Pakistani establishment. Civil society movements, such as the Gilgit-Baltistan Movement, have been advocating for the recognition of their rights and the restoration of genuine autonomy. If Amit Shah’s recent declaration reaffirming India’s claim over PoK is not a standalone Statement but reflects a broader strategic shift in India’s approach, it must be well articulated and a clear roadmap must be laid to approach the matter diplomatically or otherwise. If that is not the case, then it would pass off as another poll rhetoric or ‘jumla’. Indeed, diplomatic endeavours are most effectively conducted behind closed doors rather than at public rallies.</p><br><p><strong>What has PoK been marred by over the years according to the passage?</strong></p>", "options": ["<p>Economic prosperity and growth.</p>", "<p>Peaceful coexistence and stability.</p>", "<p>Internal dissent and unrest.</p>", "<p>Significant political autonomy</p>", "<p>High levels of democratic freedom</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: </strong><strong>C</strong><strong> </strong></p>\n<p>PoK has witnessed internal dissent and unrest over the years.</p>\n<p>The passage specifically mentions that PoK (Pakistan-Occupied Kashmir) has faced internal dissent and unrest over the years. It highlights the issues of human rights abuses, lack of democratic freedoms, and marginalization of local voices by the Pakistani establishment.</p>\n<p>a). Economic prosperity and growth: This option is incorrect because the passage does not mention economic prosperity and growth in PoK. Instead, it focuses on negative aspects such as unrest and human rights issues.</p>\n<p>b). Peaceful coexistence and stability: This option is incorrect as the passage does not describe PoK as experiencing peaceful coexistence and stability. On the contrary, it talks about dissent and unrest.</p>\n<p>c). Internal dissent and unrest: This is the correct answer. The passage explicitly states that PoK has been marred by internal dissent and unrest, mentioning civil society movements advocating for rights and autonomy and the ongoing issues faced by the region's populace.</p>\n<p>d). Significant political autonomy: This option is incorrect because the passage notes the lack of democratic freedoms and marginalization of local voices, indicating that significant political autonomy is not a characteristic of PoK.</p>\n<p>e). High levels of democratic freedom: This option is incorrect as the passage points out the lack of democratic freedoms in PoK, highlighting human rights abuses and the marginalization of local voices by the Pakistani establishment.</p>\n<p>The correct answer reflects the passage's emphasis on the persistent issues of dissent and unrest in PoK.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>As peace and tranquility envelop the sylvan slopes of Kashmir Valley in perfect harmony but civil unrest recoils with its squirming populace across the LoC in Pakistan-Occupied Kashmir (PoK), India’s Home Minister Amit Shah has iterated that the region “belongs to India and we will reclaim it”. Nothing new there, but the comment has reignited discussions on the disputed region and its intricate history, fraught as it is with serious ramifications. Following Partition, the princely State of Jammu and Kashmir, like other such States, had the option to accede to either India or Pakistan. Maharaja Hari Singh, then ruler of Jammu and Kashmir, initially sought to remain independent but, amid invasion by tribal militias supported by Pakistan, opted to accede to India in October 1947. It led to the first India-Pakistan War, which saw a United Nations-brokered ceasefire and establishment of the LoC, which divided the region into the Indian J&amp;K and PoK. While India gained control over most of the territory, Pakistan retained approximately its one-third, which it named Azad Jammu and Kashmir (AJK) and Gilgit-Baltistan. Therefore, from an Indian perspective, PoK is an integral part of J&amp;K and its inclusion in India’s territorial claims is based on historical, legal and moral grounds. However, the timing and practicality of the Home Minister’s claim are debatable: Bringing up such critical matters in public sphere, especially during elections and when they involve a neighbouring nuclear power, is not the best of ideas. For its part, Pakistan considers PoK as a “liberated territory” pending a plebiscite promised by the UN. In this given situation, the status quo maintained for over seven decades keeps the two countries from going to war. The larger question is, do we want to go to war with Pakistan and can we afford it when we have so much to sort out domestically? Should not the Home Minister be more cautious in raking up such contentious issues during elections? It is true that despite Pakistan’s hollow assertions, PoK has witnessed internal dissent and unrest over the years. The region has been marred by allegations of human rights abuses, lack of democratic freedoms and marginalisation of local voices by the Pakistani establishment. Civil society movements, such as the Gilgit-Baltistan Movement, have been advocating for the recognition of their rights and the restoration of genuine autonomy. If Amit Shah’s recent declaration reaffirming India’s claim over PoK is not a standalone Statement but reflects a broader strategic shift in India’s approach, it must be well articulated and a clear roadmap must be laid to approach the matter diplomatically or otherwise. If that is not the case, then it would pass off as another poll rhetoric or ‘jumla’. Indeed, diplomatic endeavours are most effectively conducted behind closed doors rather than at public rallies.</p><br><p><strong>What caution is advised regarding Amit Shah's statement on PoK?</strong></p>", "options": ["<p>It should be made more frequently.</p>", "<p>It should be followed by immediate military action.</p>", "<p>It should be part of a well-articulated strategic shift</p>", "<p>It should be ignored as mere rhetoric.</p>", "<p>It should be dismissed as irrelevant.</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: </strong><strong>C</strong></p>\n<p>If Amit Shah's statement reflects a broader strategic shift, it must be well-articulated.</p>\n<p>The passage discusses the need for caution regarding Amit Shah's statement on reclaiming Pakistan-Occupied Kashmir (PoK). It suggests that if this declaration is not just a standalone statement but reflects a broader strategic shift in India's approach, it must be well articulated and accompanied by a clear roadmap, whether diplomatically or otherwise.</p>\n<p>a). It should be made more frequently: This option is incorrect because the passage does not advocate for more frequent statements of this nature. Instead, it emphasizes careful consideration and strategic planning.</p>\n<p>b). It should be followed by immediate military action: This option is incorrect because the passage does not recommend immediate military action. It highlights the complexity and potential risks involved, especially considering the nuclear capabilities of both India and Pakistan.</p>\n<p>c). It should be part of a well-articulated strategic shift: This is the correct answer. The passage advises that if Amit Shah’s statement signifies a broader strategic approach, it needs to be clearly articulated with a detailed plan to handle the matter diplomatically or otherwise.</p>\n<p>d). It should be ignored as mere rhetoric: This option is incorrect because the passage does not suggest ignoring the statement. Instead, it calls for a cautious and strategic approach.</p>\n<p>e). It should be dismissed as irrelevant: This option is incorrect because the passage does not advocate dismissing the statement as irrelevant. It emphasizes the importance of handling such declarations carefully, especially in the context of international relations and domestic issues.</p>\n<p>The correct answer reflects the passage's recommendation for a thoughtful and strategic approach to Amit Shah's statement on PoK.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>As peace and tranquility envelop the sylvan slopes of Kashmir Valley in perfect harmony but civil unrest recoils with its squirming populace across the LoC in Pakistan-Occupied Kashmir (PoK), India’s Home Minister Amit Shah has iterated that the region “belongs to India and we will reclaim it”. Nothing new there, but the comment has reignited discussions on the disputed region and its intricate history, fraught as it is with serious ramifications. Following Partition, the princely State of Jammu and Kashmir, like other such States, had the option to accede to either India or Pakistan. Maharaja Hari Singh, then ruler of Jammu and Kashmir, initially sought to remain independent but, amid invasion by tribal militias supported by Pakistan, opted to accede to India in October 1947. It led to the first India-Pakistan War, which saw a United Nations-brokered ceasefire and establishment of the LoC, which divided the region into the Indian J&amp;K and PoK. While India gained control over most of the territory, Pakistan retained approximately its one-third, which it named Azad Jammu and Kashmir (AJK) and Gilgit-Baltistan. Therefore, from an Indian perspective, PoK is an integral part of J&amp;K and its inclusion in India’s territorial claims is based on historical, legal and moral grounds. However, the timing and practicality of the Home Minister’s claim are debatable: Bringing up such critical matters in public sphere, especially during elections and when they involve a neighbouring nuclear power, is not the best of ideas. For its part, Pakistan considers PoK as a “liberated territory” pending a plebiscite promised by the UN. In this given situation, the status quo maintained for over seven decades keeps the two countries from going to war. The larger question is, do we want to go to war with Pakistan and can we afford it when we have so much to sort out domestically? Should not the Home Minister be more cautious in raking up such contentious issues during elections? It is true that despite Pakistan’s hollow assertions, PoK has witnessed internal dissent and unrest over the years. The region has been marred by allegations of human rights abuses, lack of democratic freedoms and marginalisation of local voices by the Pakistani establishment. Civil society movements, such as the Gilgit-Baltistan Movement, have been advocating for the recognition of their rights and the restoration of genuine autonomy. If Amit Shah’s recent declaration reaffirming India’s claim over PoK is not a standalone Statement but reflects a broader strategic shift in India’s approach, it must be well articulated and a clear roadmap must be laid to approach the matter diplomatically or otherwise. If that is not the case, then it would pass off as another poll rhetoric or ‘jumla’. Indeed, diplomatic endeavours are most effectively conducted behind closed doors rather than at public rallies.</p><br><p><strong>What historical event led Maharaja Hari Singh to accede to India?</strong></p>", "options": ["<p>Pressure from the United Nations.</p>", "<p>Economic incentives from India.</p>", "<p>Invasion by tribal militias supported by Pakistan.</p>", "<p>Diplomatic negotiations with Pakistan.</p>", "<p>Popular demand from the people of Jammu and Kashmir.</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: </strong><strong>C</strong></p>\n<p>Maharaja Hari Singh opted to accede to India amid an invasion by tribal militias supported by Pakistan.</p>\n<p>The passage explains the historical context surrounding Maharaja Hari Singh's decision to accede to India. It mentions that initially, the Maharaja sought to maintain independence for the princely state of Jammu and Kashmir. However, when tribal militias supported by Pakistan invaded the region, Maharaja Hari Singh opted to accede to India. This invasion and subsequent threat to the sovereignty of the princely state compelled the Maharaja to seek assistance from India, leading to his decision to accede.</p>\n<p>a). Pressure from the United Nations: This option is incorrect because the United Nations did not exert pressure on Maharaja Hari Singh to accede to India. The UN's involvement came later, after the conflict between India and Pakistan over the region.</p>\n<p>b). Economic incentives from India: This option is incorrect because there is no mention in the passage of Maharaja Hari Singh being swayed by economic incentives from India to accede to the country. The decision was driven by the immediate threat posed by the invasion supported by Pakistan.</p>\n<p>c). Invasion by tribal militias supported by Pakistan: This is the correct answer. The passage explicitly states that the invasion by tribal militias supported by Pakistan prompted Maharaja Hari Singh to accede to India. This invasion threatened the sovereignty and stability of the princely state, leading to the decision to seek protection from India.</p>\n<p>d). Diplomatic negotiations with Pakistan: This option is incorrect because there is no indication in the passage that diplomatic negotiations with Pakistan influenced Maharaja Hari Singh's decision to accede to India. The invasion by tribal militias was the primary catalyst for his decision.</p>\n<p>e). Popular demand from the people of Jammu and Kashmir: This option is incorrect because there is no mention in the passage of popular demand from the people of Jammu and Kashmir influencing Maharaja Hari Singh's decision to accede to India. The decision was driven by the immediate threat of invasion and the need for protection.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>As peace and tranquility envelop the sylvan slopes of Kashmir Valley in perfect harmony but civil unrest recoils with its squirming populace across the LoC in Pakistan-Occupied Kashmir (PoK), India’s Home Minister Amit Shah has iterated that the region “belongs to India and we will reclaim it”. Nothing new there, but the comment has reignited discussions on the disputed region and its intricate history, fraught as it is with serious ramifications. Following Partition, the princely State of Jammu and Kashmir, like other such States, had the option to accede to either India or Pakistan. Maharaja Hari Singh, then ruler of Jammu and Kashmir, initially sought to remain independent but, amid invasion by tribal militias supported by Pakistan, opted to accede to India in October 1947. It led to the first India-Pakistan War, which saw a United Nations-brokered ceasefire and establishment of the LoC, which divided the region into the Indian J&amp;K and PoK. While India gained control over most of the territory, Pakistan retained approximately its one-third, which it named Azad Jammu and Kashmir (AJK) and Gilgit-Baltistan. Therefore, from an Indian perspective, PoK is an integral part of J&amp;K and its inclusion in India’s territorial claims is based on historical, legal and moral grounds. However, the timing and practicality of the Home Minister’s claim are debatable: Bringing up such critical matters in public sphere, especially during elections and when they involve a neighbouring nuclear power, is not the best of ideas. For its part, Pakistan considers PoK as a “liberated territory” pending a plebiscite promised by the UN. In this given situation, the status quo maintained for over seven decades keeps the two countries from going to war. The larger question is, do we want to go to war with Pakistan and can we afford it when we have so much to sort out domestically? Should not the Home Minister be more cautious in raking up such contentious issues during elections? It is true that despite Pakistan’s hollow assertions, PoK has witnessed internal dissent and unrest over the years. The region has been marred by allegations of human rights abuses, lack of democratic freedoms and marginalisation of local voices by the Pakistani establishment. Civil society movements, such as the Gilgit-Baltistan Movement, have been advocating for the recognition of their rights and the restoration of genuine autonomy. If Amit Shah’s recent declaration reaffirming India’s claim over PoK is not a standalone Statement but reflects a broader strategic shift in India’s approach, it must be well articulated and a clear roadmap must be laid to approach the matter diplomatically or otherwise. If that is not the case, then it would pass off as another poll rhetoric or ‘jumla’. Indeed, diplomatic endeavours are most effectively conducted behind closed doors rather than at public rallies.</p><br><p><strong>What recent statement did India's Home Minister Amit Shah make about Pakistan-Occupied Kashmir (PoK)?</strong></p>", "options": ["<p>PoK should hold a plebiscite to determine its future.</p>", "<p>PoK is independent and should be left alone.</p>", "<p>PoK belongs to India and will be reclaimed.</p>", "<p>India should give up its claims on PoK for peace.</p>", "<p>PoK should become an autonomous region within Pakistan.</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: </strong><strong>C</strong><strong> </strong></p>\n<p>Amit Shah reiterated that PoK belongs to India and India will reclaim it.</p>\n<p>The passage mentions that India's Home Minister Amit Shah made a statement asserting that Pakistan-Occupied Kashmir (PoK) belongs to India and that India will reclaim it. This statement has reignited discussions about the disputed region and its complex history.</p>\n<p>a). PoK should hold a plebiscite to determine its future: This option is incorrect because the passage does not mention Amit Shah advocating for a plebiscite to decide PoK's future. The focus of his statement is on reclaiming PoK as part of India.</p>\n<p>b). PoK is independent and should be left alone: This option is incorrect because Amit Shah did not suggest that PoK is independent or should be left alone. On the contrary, he stated that PoK is part of India.</p>\n<p>c). PoK belongs to India and will be reclaimed: This is the correct answer. The passage clearly states that Amit Shah reiterated India's claim over PoK, asserting that it belongs to India and that India will reclaim it.</p>\n<p>d). India should give up its claims on PoK for peace: This option is incorrect because Amit Shah's statement reinforces India's claim to PoK rather than suggesting that India should relinquish its claim for the sake of peace.</p>\n<p>e). PoK should become an autonomous region within Pakistan: This option is incorrect because Amit Shah's statement does not support PoK becoming an autonomous region within Pakistan. Instead, he asserts that PoK is an integral part of India.</p>\n<p>The correct answer accurately reflects the statement made by Amit Shah as described in the passage, emphasizing India's claim over PoK and the intention to reclaim it.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>As peace and tranquility envelop the sylvan slopes of Kashmir Valley in perfect harmony but civil unrest recoils with its squirming populace across the LoC in Pakistan-Occupied Kashmir (PoK), India’s Home Minister Amit Shah has iterated that the region “belongs to India and we will reclaim it”. Nothing new there, but the comment has reignited discussions on the disputed region and its intricate history, fraught as it is with serious ramifications. Following Partition, the princely State of Jammu and Kashmir, like other such States, had the option to accede to either India or Pakistan. Maharaja Hari Singh, then ruler of Jammu and Kashmir, initially sought to remain independent but, amid invasion by tribal militias supported by Pakistan, opted to accede to India in October 1947. It led to the first India-Pakistan War, which saw a United Nations-brokered ceasefire and establishment of the LoC, which divided the region into the Indian J&amp;K and PoK. While India gained control over most of the territory, Pakistan retained approximately its one-third, which it named Azad Jammu and Kashmir (AJK) and Gilgit-Baltistan. Therefore, from an Indian perspective, PoK is an integral part of J&amp;K and its inclusion in India’s territorial claims is based on historical, legal and moral grounds. However, the timing and practicality of the Home Minister’s claim are debatable: Bringing up such critical matters in public sphere, especially during elections and when they involve a neighbouring nuclear power, is not the best of ideas. For its part, Pakistan considers PoK as a “liberated territory” pending a plebiscite promised by the UN. In this given situation, the status quo maintained for over seven decades keeps the two countries from going to war. The larger question is, do we want to go to war with Pakistan and can we afford it when we have so much to sort out domestically? Should not the Home Minister be more cautious in raking up such contentious issues during elections? It is true that despite Pakistan’s hollow assertions, PoK has witnessed internal dissent and unrest over the years. The region has been marred by allegations of human rights abuses, lack of democratic freedoms and marginalisation of local voices by the Pakistani establishment. Civil society movements, such as the Gilgit-Baltistan Movement, have been advocating for the recognition of their rights and the restoration of genuine autonomy. If Amit Shah’s recent declaration reaffirming India’s claim over PoK is not a standalone Statement but reflects a broader strategic shift in India’s approach, it must be well articulated and a clear roadmap must be laid to approach the matter diplomatically or otherwise. If that is not the case, then it would pass off as another poll rhetoric or ‘jumla’. Indeed, diplomatic endeavours are most effectively conducted behind closed doors rather than at public rallies.</p><br><p><strong>Which of the following is NOT mentioned in the passage regarding the situation in Pakistan-Occupied Kashmir (PoK)?</strong></p>", "options": ["<p>Internal dissent and unrest within PoK.</p>", "<p>Allegations of human rights abuses in PoK.</p>", "<p>Economic prosperity and development in PoK.</p>", "<p>Marginalization of local voices by the Pakistani establishment.</p>", "<p>The role of civil society movements advocating for rights in PoK.</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: </strong><strong>C</strong></p>\n<p>a). Internal dissent and unrest within PoK: This is mentioned in the passage, which discusses the internal dissent and unrest in PoK.</p>\n<p>b). Allegations of human rights abuses in PoK: This is mentioned in the passage, which talks about human rights abuses in the region.</p>\n<p>c). Economic prosperity and development in PoK: This is not mentioned in the passage. The passage does not discuss economic prosperity or development in PoK; rather, it focuses on the negative aspects like unrest, human rights abuses, and marginalization.</p>\n<p>d). Marginalization of local voices by the Pakistani establishment: This is mentioned in the passage, which highlights the marginalization of local voices in PoK.</p>\n<p>e). The role of civil society movements advocating for rights in PoK: This is mentioned in the passage, which describes civil society movements like the Gilgit-Baltistan Movement advocating for rights and autonomy.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>Given below is a set of five sentences that, when properly sequenced, form a coherent paragraph. Arrange the sentences in the correct sequence and answer the questions that follow.</strong></p>\n<p><strong>A). </strong>Unlike autocratic regimes, India’s democratic structure encourages diverse industries, employment, and social mobility, increasing purchasing power and driving demand for products.<br/><strong>B). </strong>Visionaries like Narayana Murthy and Azim Premji, however, have exemplified corporate models that share wealth, contributing to India's growing economy and social equity.<br/><strong>C). </strong>India's path to becoming a global superpower is strengthened by its democratic governance, which fosters a welfare economy focused on inclusive development and human progress.<br/><strong>D). </strong>The future of economic growth lies in a balanced approach that integrates social welfare with entrepreneurship, promoting long-term, inclusive prosperity.<br/><strong>E). </strong>The capitalist economies of the West, though once dominant, now ________ with recurring recessions due to their dependence on arms, establishment costs, and limited wealth distribution.</p><br><p><strong>Which of the following conclusions can be drawn from the third sentence of the coherent paragraph?</strong></p>", "options": ["<p>Western capitalist economies face recurring recessions due to uneven wealth distribution and dependency</p>", "<p>India's democracy fosters economic growth through industry diversity, employment, and rising demand</p>", "<p>Sustainable growth stems from blending social welfare and entrepreneurship for inclusive prosperity</p>", "<p>Leaders like Murthy and Premji promote wealth-sharing, enhancing economic growth and equity</p>", "<p>Democratic governance supports India's rise by focusing on inclusive development and welfare</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The paragraph discusses India's potential to become a global superpower, focusing on its democratic governance and the integration of social welfare and entrepreneurship.<br/><strong>Sentence C is the first sentence</strong> as it introduces India's path to becoming a global superpower, emphasizing the role of democratic governance and inclusive development. <br/><strong>Sentence A follows as the second sentence</strong>, elaborating on how India's democratic structure promotes diverse industries, social mobility, and economic growth. <br/><strong><u>Sentence E comes next as the third sentence</u></strong>, highlighting the challenges faced by capitalist economies in the West due to their limited wealth distribution. <br/><strong>Sentence B is the fourth sentence</strong>, illustrating how leaders like Narayana Murthy and Azim Premji have exemplified corporate models that contribute to India's growing economy. <br/><strong>Sentence D concludes the paragraph</strong> by stressing the importance of a balanced approach that integrates social welfare with entrepreneurship for long-term prosperity. <br/><strong>The correct arrangement of the sentences is CAEBD.</strong><br/><strong>The third sentence is E:</strong><br/>The capitalist economies of the West, though once dominant, now ________ with recurring recessions due to their dependence on arms, establishment costs, and limited wealth distribution.<br/>This sentence focuses on the challenges faced by Western capitalist economies, particularly their struggles with recurring recessions caused by uneven wealth distribution and other financial dependencies.<br/><strong>Based on this, the correct conclusion that can be drawn from the third sentence is \"Western capitalist economies face recurring recessions due to uneven wealth distribution and dependency.\"</strong></p>"}, {"question": "<p><strong>Given below is a set of five sentences that, when properly sequenced, form a coherent paragraph. Arrange the sentences in the correct sequence and answer the questions that follow.</strong></p>\n<p><strong>A). </strong>Unlike autocratic regimes, India’s democratic structure encourages diverse industries, employment, and social mobility, increasing purchasing power and driving demand for products.<br/><strong>B). </strong>Visionaries like Narayana Murthy and Azim Premji, however, have exemplified corporate models that share wealth, contributing to India's growing economy and social equity.<br/><strong>C). </strong>India's path to becoming a global superpower is strengthened by its democratic governance, which fosters a welfare economy focused on inclusive development and human progress.<br/><strong>D). </strong>The future of economic growth lies in a balanced approach that integrates social welfare with entrepreneurship, promoting long-term, inclusive prosperity.<br/><strong>E). </strong>The capitalist economies of the West, though once dominant, now ________ with recurring recessions due to their dependence on arms, establishment costs, and limited wealth distribution.</p><br><p>Which pair represents the <strong>SECOND </strong>and <strong>FOURTH </strong>sentences of the coherent paragraph?</p>", "options": ["<p>A and B</p>", "<p>C and D</p>", "<p>B and A</p>", "<p>E and D</p>", "<p>C and A</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong><br/>The paragraph discusses India's potential to become a global superpower, focusing on its democratic governance and the integration of social welfare and entrepreneurship.<br/><strong>Sentence C is the first sentence</strong> as it introduces India's path to becoming a global superpower, emphasizing the role of democratic governance and inclusive development. <br/><strong><u>Sentence A follows as the second sentence</u></strong>, elaborating on how India's democratic structure promotes diverse industries, social mobility, and economic growth. <br/><strong>Sentence E comes next as the third sentence</strong>, highlighting the challenges faced by capitalist economies in the West due to their limited wealth distribution. <br/><strong><u>Sentence B is the fourth sentence</u></strong>, illustrating how leaders like Narayana Murthy and Azim Premji have exemplified corporate models that contribute to India's growing economy. <br/><strong>Sentence D concludes the paragraph</strong> by stressing the importance of a balanced approach that integrates social welfare with entrepreneurship for long-term prosperity. <br/><strong>The correct arrangement of the sentences is CAEBD.</strong><br/><strong>Therefore, the correct answer is \"A and B.\"</strong></p>"}, {"question": "<p><strong>Given below is a set of five sentences that, when properly sequenced, form a coherent paragraph. Arrange the sentences in the correct sequence and answer the questions that follow.</strong></p>\n<p><strong>A). </strong>Unlike autocratic regimes, India’s democratic structure encourages diverse industries, employment, and social mobility, increasing purchasing power and driving demand for products.<br/><strong>B). </strong>Visionaries like Narayana Murthy and Azim Premji, however, have exemplified corporate models that share wealth, contributing to India's growing economy and social equity.<br/><strong>C). </strong>India's path to becoming a global superpower is strengthened by its democratic governance, which fosters a welfare economy focused on inclusive development and human progress.<br/><strong>D). </strong>The future of economic growth lies in a balanced approach that integrates social welfare with entrepreneurship, promoting long-term, inclusive prosperity.<br/><strong>E). </strong>The capitalist economies of the West, though once dominant, now ________ with recurring recessions due to their dependence on arms, establishment costs, and limited wealth distribution.</p><br><p><strong>Which of the following words should fill in the blank in sentence E?</strong></p>", "options": ["<p>abjure</p>", "<p>prosper</p>", "<p>overlook</p>", "<p>berate</p>", "<p>grapple</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong><br/><strong>To answer this question, let's first understand the context of sentence E:</strong><br/>The capitalist economies of the West, though once dominant, now ________ with recurring recessions due to their dependence on arms, establishment costs, and limited wealth distribution.<br/>This sentence focuses on the challenges faced by Western capitalist economies, particularly their struggles with recurring recessions caused by uneven wealth distribution and other financial dependencies.<br/><u>Thus, the blank requires a verb that denotes a struggle or ongoing battle with recurring challenges</u>.<br/><strong>Now, let's understand the meanings of the words given as options to fill in the blank:</strong><br/><strong>Abjure:</strong> to formally reject or renounce something. <br/><strong>Prosper:</strong> to thrive or succeed, especially in terms of wealth or success. <br/><strong>Overlook:</strong> to fail to notice or ignore something. <br/><strong>Berate:</strong> to criticize or scold someone harshly. <br/><strong>Grapple:</strong> to struggle or wrestle with a difficult problem or situation.<br/><u>So, given the context of the sentence discussing how Western capitalist economies face recurring recessions and financial challenges, the word \"grapple\" fits best</u>. <u>It conveys the idea of struggling or wrestling with ongoing issues, such as economic recessions caused by dependence on arms, establishment costs, and limited wealth distribution</u>.<br/><strong>Therefore, the correct answer is \"grapple.\"</strong></p>"}, {"question": "<p><strong>Given below is a set of five sentences that, when properly sequenced, form a coherent paragraph. Arrange the sentences in the correct sequence and answer the questions that follow.</strong></p>\n<p><strong>A). </strong>Unlike autocratic regimes, India’s democratic structure encourages diverse industries, employment, and social mobility, increasing purchasing power and driving demand for products.<br/><strong>B). </strong>Visionaries like Narayana Murthy and Azim Premji, however, have exemplified corporate models that share wealth, contributing to India's growing economy and social equity.<br/><strong>C). </strong>India's path to becoming a global superpower is strengthened by its democratic governance, which fosters a welfare economy focused on inclusive development and human progress.<br/><strong>D). </strong>The future of economic growth lies in a balanced approach that integrates social welfare with entrepreneurship, promoting long-term, inclusive prosperity.<br/><strong>E). </strong>The capitalist economies of the West, though once dominant, now ________ with recurring recessions due to their dependence on arms, establishment costs, and limited wealth distribution.</p><br><p>Which pair represents the <strong>INTRODUCTORY</strong> and <strong>CONCLUDING</strong> sentences of the coherent paragraph?</p>", "options": ["<p>A and B</p>", "<p>C and D</p>", "<p>B and A</p>", "<p>E and D</p>", "<p>C and A</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong><br/>The paragraph discusses India's potential to become a global superpower, focusing on its democratic governance and the integration of social welfare and entrepreneurship.<br/><strong><u>Sentence C is the first sentence</u></strong> as it introduces India's path to becoming a global superpower, emphasizing the role of democratic governance and inclusive development. <br/><strong>Sentence A follows as the second sentence</strong>, elaborating on how India's democratic structure promotes diverse industries, social mobility, and economic growth. <br/><strong>Sentence E comes next as the third sentence</strong>, highlighting the challenges faced by capitalist economies in the West due to their limited wealth distribution. <br/><strong>Sentence B is the fourth sentence</strong>, illustrating how leaders like Narayana Murthy and Azim Premji have exemplified corporate models that contribute to India's growing economy. <br/><strong><u>Sentence D concludes the paragraph</u></strong> by stressing the importance of a balanced approach that integrates social welfare with entrepreneurship for long-term prosperity. <br/><strong>The correct arrangement of the sentences is CAEBD.</strong><br/><strong>Therefore, the correct answer is \"C and D.\"</strong></p>"}, {"question": "<p><strong>Given below is a set of five sentences that, when properly sequenced, form a coherent paragraph. Arrange the sentences in the correct sequence and answer the questions that follow.</strong></p>\n<p><strong>A). </strong>Unlike autocratic regimes, India’s democratic structure encourages diverse industries, employment, and social mobility, increasing purchasing power and driving demand for products.<br/><strong>B). </strong>Visionaries like Narayana Murthy and Azim Premji, however, have exemplified corporate models that share wealth, contributing to India's growing economy and social equity.<br/><strong>C). </strong>India's path to becoming a global superpower is strengthened by its democratic governance, which fosters a welfare economy focused on inclusive development and human progress.<br/><strong>D). </strong>The future of economic growth lies in a balanced approach that integrates social welfare with entrepreneurship, promoting long-term, inclusive prosperity.<br/><strong>E). </strong>The capitalist economies of the West, though once dominant, now ________ with recurring recessions due to their dependence on arms, establishment costs, and limited wealth distribution.</p><br><p>Which of the following is the <strong>correct arrangement</strong> of the sentences?</p>", "options": ["<p>ADBEC</p>", "<p>CBADE</p>", "<p>CAEBD</p>", "<p>DBAEC</p>", "<p>ECDAB</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong><br/>The paragraph discusses India's potential to become a global superpower, focusing on its democratic governance and the integration of social welfare and entrepreneurship.<br/><strong>Sentence C is the first sentence</strong> as it introduces India's path to becoming a global superpower, emphasizing the role of democratic governance and inclusive development. <br/><strong>Sentence A follows as the second sentence</strong>, elaborating on how India's democratic structure promotes diverse industries, social mobility, and economic growth. <br/><strong>Sentence E comes next as the third sentence</strong>, highlighting the challenges faced by capitalist economies in the West due to their limited wealth distribution. <br/><strong>Sentence B is the fourth sentence</strong>, illustrating how leaders like Narayana Murthy and Azim Premji have exemplified corporate models that contribute to India's growing economy. <br/><strong>Sentence D concludes the paragraph</strong> by stressing the importance of a balanced approach that integrates social welfare with entrepreneurship for long-term prosperity. <br/><strong>Therefore, the correct arrangement of the sentences is CAEBD.</strong></p>"}, {"question": "<p><strong>A passage is given below with some bold words numbered as A, B, C, D and E. Replace the bold words with suitable words from the options if they are incorrect to the context. If the bold words are correct, mark “no replacement” as your answer.</strong></p>\n<p>Good, affordable housing is the <strong>understone</strong> <strong>(A)</strong> of a sustainable and healthy city, but it also represents India’s weakest link. Unlike <strong>speculation (B) </strong>housing investments, well-designed rental housing that is key to protecting migrant labour and other less affluent sections remains poorly funded. Mumbai is estimated to have added only 5% of rental housing in new residential construction (1961-2000), and that too led by private funding. The post-COVID-19 era, therefore, presents an opportunity to make schemes such as the Centre’s Affordable Rental Housing Complexes deliver at scale, focusing on new good houses built by the state — on the lines of the post-war reconstruction in Europe, Japan and South Korea. The Ministry of Housing, which has thus far focused on a limited set of expensive showpiece smart cities, could work on this imperative with the States, digitally <strong>refurbishing (C)</strong> and transparently publishing data on demand and supply for each city. It is also an open secret that laws on air pollution, municipal solid waste management and water quality are hardly enforced, and tokenism marks the approach to urban mobility. Past <strong>accolades (D)</strong> such as cholera, the plague and the global flu pandemic a century ago led to change — as sewerage, waste handling, social housing and health care that reduced disease. Governments are now <strong>evaded (E)</strong> by the pandemic to show the political will to reinvent cities.</p><br><p><strong>Which of the following words can replace the word (A) in the passage?</strong></p>", "options": ["<p>middlestone</p>", "<p>overstone</p>", "<p>cornerstone</p>", "<p>abovestone</p>", "<p>None replacement</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>Cornerstone-</strong> an important quality or feature on which a particular thing depends or is based.</p>\n<p>In place of (A) we need a word that can give the sense of an important quality or feature.</p>\n<p>“understone” as well as the words given in the options make no sense.</p>\n<p>Hence (c) is correct.</p>"}, {"question": "<p><strong>A passage is given below with some bold words numbered as A, B, C, D and E. Replace the bold words with suitable words from the options if they are incorrect to the context. If the bold words are correct, mark “no replacement” as your answer.</strong></p>\n<p>Good, affordable housing is the <strong>understone</strong> <strong>(A)</strong> of a sustainable and healthy city, but it also represents India’s weakest link. Unlike <strong>speculation (B) </strong>housing investments, well-designed rental housing that is key to protecting migrant labour and other less affluent sections remains poorly funded. Mumbai is estimated to have added only 5% of rental housing in new residential construction (1961-2000), and that too led by private funding. The post-COVID-19 era, therefore, presents an opportunity to make schemes such as the Centre’s Affordable Rental Housing Complexes deliver at scale, focusing on new good houses built by the state — on the lines of the post-war reconstruction in Europe, Japan and South Korea. The Ministry of Housing, which has thus far focused on a limited set of expensive showpiece smart cities, could work on this imperative with the States, digitally <strong>refurbishing (C)</strong> and transparently publishing data on demand and supply for each city. It is also an open secret that laws on air pollution, municipal solid waste management and water quality are hardly enforced, and tokenism marks the approach to urban mobility. Past <strong>accolades (D)</strong> such as cholera, the plague and the global flu pandemic a century ago led to change — as sewerage, waste handling, social housing and health care that reduced disease. Governments are now <strong>evaded (E)</strong> by the pandemic to show the political will to reinvent cities.</p><br><p><strong>Which of the following words can replace the word (B) in the passage?</strong></p>", "options": ["<p>interest</p>", "<p>speculative</p>", "<p>informative</p>", "<p>none of these</p>", "<p>No replacement</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>Speculative (adjective)-</strong> engaged in, expressing, or based on conjecture rather than knowledge.</p>\n<p>In place of (B), we need an adjective.</p>\n<p>In the options “informative” is also an adjective, but it won't be correct.</p>\n<p>Hence (b) is the correct answer.</p>"}, {"question": "<p><strong>A passage is given below with some bold words numbered as A, B, C, D and E. Replace the bold words with suitable words from the options if they are incorrect to the context. If the bold words are correct, mark “no replacement” as your answer.</strong></p>\n<p>Good, affordable housing is the <strong>understone</strong> <strong>(A)</strong> of a sustainable and healthy city, but it also represents India’s weakest link. Unlike <strong>speculation (B) </strong>housing investments, well-designed rental housing that is key to protecting migrant labour and other less affluent sections remains poorly funded. Mumbai is estimated to have added only 5% of rental housing in new residential construction (1961-2000), and that too led by private funding. The post-COVID-19 era, therefore, presents an opportunity to make schemes such as the Centre’s Affordable Rental Housing Complexes deliver at scale, focusing on new good houses built by the state — on the lines of the post-war reconstruction in Europe, Japan and South Korea. The Ministry of Housing, which has thus far focused on a limited set of expensive showpiece smart cities, could work on this imperative with the States, digitally <strong>refurbishing (C)</strong> and transparently publishing data on demand and supply for each city. It is also an open secret that laws on air pollution, municipal solid waste management and water quality are hardly enforced, and tokenism marks the approach to urban mobility. Past <strong>accolades (D)</strong> such as cholera, the plague and the global flu pandemic a century ago led to change — as sewerage, waste handling, social housing and health care that reduced disease. Governments are now <strong>evaded (E)</strong> by the pandemic to show the political will to reinvent cities.</p><br><p><strong>Which of the following words can replace the word (C) in the passage?</strong></p>", "options": ["<p>nominating</p>", "<p>focusing</p>", "<p>scintillating</p>", "<p>aggregating</p>", "<p>No replacement</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>Aggregating-</strong> to combine into a single group or total</p>\n<p><strong>Refurbish</strong>- renovate, it doesn’t fit the context of the sentence.</p>\n<p>Options (a), (b), (c) make no sense.</p>\n<p>Therefore, option D is the correct answer.</p>"}, {"question": "<p><strong>A passage is given below with some bold words numbered as A, B, C, D and E. Replace the bold words with suitable words from the options if they are incorrect to the context. If the bold words are correct, mark “no replacement” as your answer.</strong></p>\n<p>Good, affordable housing is the <strong>understone</strong> <strong>(A)</strong> of a sustainable and healthy city, but it also represents India’s weakest link. Unlike <strong>speculation (B) </strong>housing investments, well-designed rental housing that is key to protecting migrant labour and other less affluent sections remains poorly funded. Mumbai is estimated to have added only 5% of rental housing in new residential construction (1961-2000), and that too led by private funding. The post-COVID-19 era, therefore, presents an opportunity to make schemes such as the Centre’s Affordable Rental Housing Complexes deliver at scale, focusing on new good houses built by the state — on the lines of the post-war reconstruction in Europe, Japan and South Korea. The Ministry of Housing, which has thus far focused on a limited set of expensive showpiece smart cities, could work on this imperative with the States, digitally <strong>refurbishing (C)</strong> and transparently publishing data on demand and supply for each city. It is also an open secret that laws on air pollution, municipal solid waste management and water quality are hardly enforced, and tokenism marks the approach to urban mobility. Past <strong>accolades (D)</strong> such as cholera, the plague and the global flu pandemic a century ago led to change — as sewerage, waste handling, social housing and health care that reduced disease. Governments are now <strong>evaded (E)</strong> by the pandemic to show the political will to reinvent cities.</p><br><p><strong>Which of the following pairs of words (the words should be synonymous to each other) can replace the word (D) in the passage?</strong></p>", "options": ["<p>amendments/ afflictions</p>", "<p>scourges/ developments</p>", "<p>scourges/ afflictions</p>", "<p>scourges/ remedies</p>", "<p>No replacement</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>Scourge-</strong> a whip used as an instrument of punishment.</p>\n<p><strong>Affliction-</strong> a cause of pain or harm.</p>\n<p>In place of (D) we need a negative word giving the sense of “punishment or pain”.</p>\n<p><strong>Accolade</strong>- an award or privilege granted as a special honour . (It doesn’t fit the context of the sentence)</p>\n<p>Hence, both the words in option (c) can fill the blank.</p>"}, {"question": "<p><strong>A passage is given below with some bold words numbered as A, B, C, D and E. Replace the bold words with suitable words from the options if they are incorrect to the context. If the bold words are correct, mark “no replacement” as your answer.</strong></p>\n<p>Good, affordable housing is the <strong>understone</strong> <strong>(A)</strong> of a sustainable and healthy city, but it also represents India’s weakest link. Unlike <strong>speculation (B) </strong>housing investments, well-designed rental housing that is key to protecting migrant labour and other less affluent sections remains poorly funded. Mumbai is estimated to have added only 5% of rental housing in new residential construction (1961-2000), and that too led by private funding. The post-COVID-19 era, therefore, presents an opportunity to make schemes such as the Centre’s Affordable Rental Housing Complexes deliver at scale, focusing on new good houses built by the state — on the lines of the post-war reconstruction in Europe, Japan and South Korea. The Ministry of Housing, which has thus far focused on a limited set of expensive showpiece smart cities, could work on this imperative with the States, digitally <strong>refurbishing (C)</strong> and transparently publishing data on demand and supply for each city. It is also an open secret that laws on air pollution, municipal solid waste management and water quality are hardly enforced, and tokenism marks the approach to urban mobility. Past <strong>accolades (D)</strong> such as cholera, the plague and the global flu pandemic a century ago led to change — as sewerage, waste handling, social housing and health care that reduced disease. Governments are now <strong>evaded (E)</strong> by the pandemic to show the political will to reinvent cities.</p><br><p><strong>Which of the following pairs of words (the words should be synonymous to each other) can replace the word (E) in the passage?</strong></p>", "options": ["<p>challenged/ confronted</p>", "<p>encouraged/ developed</p>", "<p>invited/ incarcerated</p>", "<p>dilapidated/ enigmatic</p>", "<p>No replacement</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>In blank (e) we need a word that can give the sense of “challenged”.</p>\n<p>“<strong>Confronted</strong>” is synonymous to “<strong>challenged</strong>”.</p>\n<p>Hence, (a) is correct.</p>\n<p><strong>Evade</strong>- escape or avoid. (It doesn’t fit the context of the sentence)</p>\n<p><strong>Incarcerate</strong> – Imprison</p>\n<p><strong>Dilapidated</strong> – damaged</p>\n<p><strong>Enigmatic</strong> – mysterious</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-96)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-96)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

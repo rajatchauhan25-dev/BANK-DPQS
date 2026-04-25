@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-7)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>U.S. Secretary of State Antony Blinken’s marathon talks with top officials in China, which includes President Xi Jinping, have underscored the desire of the two countries to stabilize their relationship and the resultant challenges. Mr. Blinken stressed that the U.S. would make sure that the competition between the world’s two largest economies “doesn’t veer into conflict”. Mr. Xi said they should seek common ground “rather than engage in vicious competition”. But the Blinken visit also exposed the structural fault lines in the Sino-American competition. He raised America’s concerns about what he called China’s “support for Russia’s defence industry” and threatened actions if Beijing “doesn’t address this problem”. China slammed the “hypocrisy and irresponsibility” of the U.S., which just decided to send military aid worth $61 billion to Ukraine and then made “groundless accusations” against normal economic and trade exchanges between China and Russia. China also attacked the U.S. policy towards Taiwan and the South China Sea and urged Washington to look at China’s development “in a positive light”.</p>\n<p>Both the U.S. and China have mutual deep misgivings. U.S. National Defence Strategy documents name China as a “revisionist power” and a pacing technological and military challenger. The U.S. has imposed export controls to limit China’s growth in strategic sectors, particularly semiconductors, and imposed high tariffs on Chinese goods. It has also doubled down on its support for Taiwan and bolstered defence cooperation with the Philippines, which has disputes with China in the South China Sea. Beijing has blamed the U.S. for South China Sea tensions and called Washington’s support for Taiwan as an intervention in its internal affairs. While it is practically impossible to reset ties given these structural challenges, there are areas of cooperation as well. In November 2023, when Presidents Xi and Biden met in California, both sides decided to resume bilateral military-to-military communication, cooperate in addressing the risks of artificial intelligence and launch efforts to control the production of fentanyl. Tackling climate change and global food security are also areas of cooperation. A key lesson from the Cold War is that if competition between superpowers turns ugly, it could affect the world through proxy conflicts, economic wars and diplomatic crises. As the two most powerful countries, they should stay away from repeating history. Even if they are not able to resolve their ideological and geopolitical differences, they should build the guardrails that could prevent the competition from turning ugly and stay focused on the areas of cooperation, addressing the common challenges of the world.</p><br><p><strong>What did U.S. Secretary of State Antony Blinken emphasize during his talks with Chinese officials?</strong></p>", "options": ["<p>The need for military confrontation between the two countries</p>", "<p>The importance of maintaining stable relations and avoiding conflict</p>", "<p>The superiority of the United States over China</p>", "<p>The necessity of dominating global markets</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>In the passage, Antony Blinken stressed the desire of the U.S. and China to <strong>stabilize their relationship</strong> and ensure that competition between them does not escalate into conflict.</p>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>U.S. Secretary of State Antony Blinken’s marathon talks with top officials in China, which includes President Xi Jinping, have underscored the desire of the two countries to stabilize their relationship and the resultant challenges. Mr. Blinken stressed that the U.S. would make sure that the competition between the world’s two largest economies “doesn’t veer into conflict”. Mr. Xi said they should seek common ground “rather than engage in vicious competition”. But the Blinken visit also exposed the structural fault lines in the Sino-American competition. He raised America’s concerns about what he called China’s “support for Russia’s defence industry” and threatened actions if Beijing “doesn’t address this problem”. China slammed the “hypocrisy and irresponsibility” of the U.S., which just decided to send military aid worth $61 billion to Ukraine and then made “groundless accusations” against normal economic and trade exchanges between China and Russia. China also attacked the U.S. policy towards Taiwan and the South China Sea and urged Washington to look at China’s development “in a positive light”.</p>\n<p>Both the U.S. and China have mutual deep misgivings. U.S. National Defence Strategy documents name China as a “revisionist power” and a pacing technological and military challenger. The U.S. has imposed export controls to limit China’s growth in strategic sectors, particularly semiconductors, and imposed high tariffs on Chinese goods. It has also doubled down on its support for Taiwan and bolstered defence cooperation with the Philippines, which has disputes with China in the South China Sea. Beijing has blamed the U.S. for South China Sea tensions and called Washington’s support for Taiwan as an intervention in its internal affairs. While it is practically impossible to reset ties given these structural challenges, there are areas of cooperation as well. In November 2023, when Presidents Xi and Biden met in California, both sides decided to resume bilateral military-to-military communication, cooperate in addressing the risks of artificial intelligence and launch efforts to control the production of fentanyl. Tackling climate change and global food security are also areas of cooperation. A key lesson from the Cold War is that if competition between superpowers turns ugly, it could affect the world through proxy conflicts, economic wars and diplomatic crises. As the two most powerful countries, they should stay away from repeating history. Even if they are not able to resolve their ideological and geopolitical differences, they should build the guardrails that could prevent the competition from turning ugly and stay focused on the areas of cooperation, addressing the common challenges of the world.</p><br><p><strong>What was one of the concerns raised by Antony Blinken during his talks with Chinese officials?</strong></p>", "options": ["<p>China's support for Russia's defense industry</p>", "<p>China's opposition to military aid to Ukraine</p>", "<p>China's refusal to engage in competition with the U.S.</p>", "<p>China's positive development in global trade</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Blinken raised concerns about <strong>China's support for Russia's defense</strong> industry and threatened actions if Beijing does not address this problem.</p>\n<p>Therefore, option A is the correct answer.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>U.S. Secretary of State Antony Blinken’s marathon talks with top officials in China, which includes President Xi Jinping, have underscored the desire of the two countries to stabilize their relationship and the resultant challenges. Mr. Blinken stressed that the U.S. would make sure that the competition between the world’s two largest economies “doesn’t veer into conflict”. Mr. Xi said they should seek common ground “rather than engage in vicious competition”. But the Blinken visit also exposed the structural fault lines in the Sino-American competition. He raised America’s concerns about what he called China’s “support for Russia’s defence industry” and threatened actions if Beijing “doesn’t address this problem”. China slammed the “hypocrisy and irresponsibility” of the U.S., which just decided to send military aid worth $61 billion to Ukraine and then made “groundless accusations” against normal economic and trade exchanges between China and Russia. China also attacked the U.S. policy towards Taiwan and the South China Sea and urged Washington to look at China’s development “in a positive light”.</p>\n<p>Both the U.S. and China have mutual deep misgivings. U.S. National Defence Strategy documents name China as a “revisionist power” and a pacing technological and military challenger. The U.S. has imposed export controls to limit China’s growth in strategic sectors, particularly semiconductors, and imposed high tariffs on Chinese goods. It has also doubled down on its support for Taiwan and bolstered defence cooperation with the Philippines, which has disputes with China in the South China Sea. Beijing has blamed the U.S. for South China Sea tensions and called Washington’s support for Taiwan as an intervention in its internal affairs. While it is practically impossible to reset ties given these structural challenges, there are areas of cooperation as well. In November 2023, when Presidents Xi and Biden met in California, both sides decided to resume bilateral military-to-military communication, cooperate in addressing the risks of artificial intelligence and launch efforts to control the production of fentanyl. Tackling climate change and global food security are also areas of cooperation. A key lesson from the Cold War is that if competition between superpowers turns ugly, it could affect the world through proxy conflicts, economic wars and diplomatic crises. As the two most powerful countries, they should stay away from repeating history. Even if they are not able to resolve their ideological and geopolitical differences, they should build the guardrails that could prevent the competition from turning ugly and stay focused on the areas of cooperation, addressing the common challenges of the world.</p><br><p><strong>What did China criticize about the U.S. policy towards Taiwan and the South China Sea?</strong></p>", "options": ["<p>Its support for Taiwan's independence</p>", "<p>Its intervention in China's internal affairs</p>", "<p>Its efforts to improve diplomatic relations</p>", "<p>Its cooperation with other Southeast Asian nations</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>China criticized the U.S. policy towards Taiwan and the South China Sea, labeling it as intervention in its <strong>internal affairs.</strong></p>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>U.S. Secretary of State Antony Blinken’s marathon talks with top officials in China, which includes President Xi Jinping, have underscored the desire of the two countries to stabilize their relationship and the resultant challenges. Mr. Blinken stressed that the U.S. would make sure that the competition between the world’s two largest economies “doesn’t veer into conflict”. Mr. Xi said they should seek common ground “rather than engage in vicious competition”. But the Blinken visit also exposed the structural fault lines in the Sino-American competition. He raised America’s concerns about what he called China’s “support for Russia’s defence industry” and threatened actions if Beijing “doesn’t address this problem”. China slammed the “hypocrisy and irresponsibility” of the U.S., which just decided to send military aid worth $61 billion to Ukraine and then made “groundless accusations” against normal economic and trade exchanges between China and Russia. China also attacked the U.S. policy towards Taiwan and the South China Sea and urged Washington to look at China’s development “in a positive light”.</p>\n<p>Both the U.S. and China have mutual deep misgivings. U.S. National Defence Strategy documents name China as a “revisionist power” and a pacing technological and military challenger. The U.S. has imposed export controls to limit China’s growth in strategic sectors, particularly semiconductors, and imposed high tariffs on Chinese goods. It has also doubled down on its support for Taiwan and bolstered defence cooperation with the Philippines, which has disputes with China in the South China Sea. Beijing has blamed the U.S. for South China Sea tensions and called Washington’s support for Taiwan as an intervention in its internal affairs. While it is practically impossible to reset ties given these structural challenges, there are areas of cooperation as well. In November 2023, when Presidents Xi and Biden met in California, both sides decided to resume bilateral military-to-military communication, cooperate in addressing the risks of artificial intelligence and launch efforts to control the production of fentanyl. Tackling climate change and global food security are also areas of cooperation. A key lesson from the Cold War is that if competition between superpowers turns ugly, it could affect the world through proxy conflicts, economic wars and diplomatic crises. As the two most powerful countries, they should stay away from repeating history. Even if they are not able to resolve their ideological and geopolitical differences, they should build the guardrails that could prevent the competition from turning ugly and stay focused on the areas of cooperation, addressing the common challenges of the world.</p><br><p><strong>What areas of cooperation were discussed during the meeting between President Xi and Biden in November 2023?</strong></p>", "options": ["<p>Military confrontation and territorial disputes</p>", "<p>Artificial intelligence, fentanyl control, and climate change</p>", "<p>Economic dominance and trade wars</p>", "<p>Ideological differences and geopolitical tensions</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>Both sides decided to cooperate in addressing the risks of artificial intelligence, <strong>controlling the production of fentanyl</strong>, and tackling climate change during the meeting between President Xi and Biden in November 2023.</p>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>U.S. Secretary of State Antony Blinken’s marathon talks with top officials in China, which includes President Xi Jinping, have underscored the desire of the two countries to stabilize their relationship and the resultant challenges. Mr. Blinken stressed that the U.S. would make sure that the competition between the world’s two largest economies “doesn’t veer into conflict”. Mr. Xi said they should seek common ground “rather than engage in vicious competition”. But the Blinken visit also exposed the structural fault lines in the Sino-American competition. He raised America’s concerns about what he called China’s “support for Russia’s defence industry” and threatened actions if Beijing “doesn’t address this problem”. China slammed the “hypocrisy and irresponsibility” of the U.S., which just decided to send military aid worth $61 billion to Ukraine and then made “groundless accusations” against normal economic and trade exchanges between China and Russia. China also attacked the U.S. policy towards Taiwan and the South China Sea and urged Washington to look at China’s development “in a positive light”.</p>\n<p>Both the U.S. and China have mutual deep misgivings. U.S. National Defence Strategy documents name China as a “revisionist power” and a pacing technological and military challenger. The U.S. has imposed export controls to limit China’s growth in strategic sectors, particularly semiconductors, and imposed high tariffs on Chinese goods. It has also doubled down on its support for Taiwan and bolstered defence cooperation with the Philippines, which has disputes with China in the South China Sea. Beijing has blamed the U.S. for South China Sea tensions and called Washington’s support for Taiwan as an intervention in its internal affairs. While it is practically impossible to reset ties given these structural challenges, there are areas of cooperation as well. In November 2023, when Presidents Xi and Biden met in California, both sides decided to resume bilateral military-to-military communication, cooperate in addressing the risks of artificial intelligence and launch efforts to control the production of fentanyl. Tackling climate change and global food security are also areas of cooperation. A key lesson from the Cold War is that if competition between superpowers turns ugly, it could affect the world through proxy conflicts, economic wars and diplomatic crises. As the two most powerful countries, they should stay away from repeating history. Even if they are not able to resolve their ideological and geopolitical differences, they should build the guardrails that could prevent the competition from turning ugly and stay focused on the areas of cooperation, addressing the common challenges of the world.</p><br><p><strong>According to the passage, what lesson should the U.S. and China learn from the Cold War?</strong></p>", "options": ["<p>The necessity of escalating military conflicts</p>", "<p>The importance of maintaining ideological differences</p>", "<p>The potential consequences of competition turning ugly</p>", "<p>The inevitability of proxy conflicts</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The passage suggests that the U.S. and China should learn from the Cold War that if competition between superpowers turns ugly, it could affect the world through proxy conflicts, economic wars, and diplomatic crises. Therefore, they should focus on building guardrails to prevent such escalation.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>In each of the questions given below, a sentence/ paragraph is given with few words highlighted. These words may not be placed correctly. Also, one of these words may be inappropriate in context of the sentence/ paragraph. Identify the most appropriate rearrangement of the words and the suitable replacement for the incorrect word.</strong></p><br><p>Article 239AA, which <strong>conferred</strong> <strong>(A)</strong> a special status on the National Capital Territory of Delhi and constitutionally <strong>governed (B)</strong> a representative form of government, was <strong>incorporated</strong> <strong>(C)</strong> in the Constitution in the spirit of federalism so that the residents of the capital city would have a voice in how they are <strong>inculcated</strong> <strong>(D)</strong>.</p>", "options": ["<p>ABCD; A-accorded</p>", "<p>DBCA; B-directed</p>", "<p>ADCB; D-<strong> </strong>entrenched</p>", "<p>BCAD; D-<strong> </strong>instilled</p>", "<p>No rearrangement required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer</strong><strong>: C</strong></p>\n<p>\"Entrenched\" specifically implies that something is firmly established within a system or structure, often with the implication that it is difficult to change or remove. In the context of Article 239AA, it emphasizes that the representative form of government for Delhi is firmly embedded within the constitutional framework.</p>\n<p>\"Inculcated\" generally means to instil or teach something persistently or repeatedly until it becomes a part of someone's habits, beliefs, or understanding. While it also implies a degree of permanence, it focuses more on the process of instilling or embedding something rather than its integration within a formal system or structure.</p>\n<p>So, in the context, \"entrenched\" would be more suitable because it directly conveys the idea of something being firmly established within the constitution, whereas \"inculcated\" might not fully capture the legal and institutional permanence implied by \"entrenched.\"</p>\n<p><strong>The Correct sentence will be: “</strong>Article 239AA, which <strong>conferred</strong> a special status on the National Capital Territory of Delhi and constitutionally <strong>entrenched</strong> a representative form of government, was <strong>incorporated</strong> in the Constitution in the spirit of federalism so that the residents of the capital city would have a voice in how they are <strong>governed</strong>.”</p>"}, {"question": "<p><strong>In each of the questions given below, a sentence/ paragraph is given with few words highlighted. These words may not be placed correctly. Also, one of these words may be inappropriate in context of the sentence/ paragraph. Identify the most appropriate rearrangement of the words and the suitable replacement for the incorrect word.</strong></p><br><p>When Israel’s war of <strong>amends</strong> <strong>(A)</strong> started, the silence of the PM and his government’s <strong>reluctance</strong> <strong>(B)</strong> to issue a similar statement of support for the <strong>beleaguered</strong> <strong>(C)</strong> people of Palestine marked a departure from our historical <strong>commitment</strong> <strong>(D)</strong> to the two-state solution for Israel and Palestine.</p>", "options": ["<p>ABCD; A-<strong> </strong>retribution</p>", "<p>DBCA; A-indemnity</p>", "<p>ADCB; B-assurance</p>", "<p>BACD; B-conviction</p>", "<p>No rearrangement required</p>"], "correctIndex": 0, "solution": "<p><strong>Answer</strong><strong>: A</strong></p>\n<p>\"Retribution\" refers to retaliatory or punitive action taken in response to a perceived offense, while \"amends\" typically refers to actions taken to make up for a mistake or wrongdoing.</p>\n<p>In the given context, \"retribution\" refers to a retaliatory or punitive action taken in response to a perceived offense or wrongdoing. Here, \"Israel’s war of retribution\" suggests that Israel initiated a military campaign as a form of retaliation or punishment in response to a perceived provocation or threat. It implies that Israel's actions were motivated by a desire to seek revenge or to respond to previous actions or events.</p>\n<p>The phrase \"war of retribution\" conveys the idea that the conflict was driven by a desire for vengeance or to right perceived wrongs, rather than solely for strategic or defensive purposes. It implies a cycle of violence or tit-for-tat actions rather than efforts towards resolution or peace.</p>\n<p><strong>The Correct sentence will be: “</strong>When Israel’s war of <strong>retribution</strong> started, the silence of the PM and his government’s <strong>reluctance</strong> to issue a similar statement of support for the <strong>beleaguered</strong> people of Palestine marked a departure from our historical <strong>commitment</strong> to the two-state solution for Israel and Palestine.”</p>"}, {"question": "<p><strong>In each of the questions given below, a sentence/ paragraph is given with few words highlighted. These words may not be placed correctly. Also, one of these words may be inappropriate in context of the sentence/ paragraph. Identify the most appropriate rearrangement of the words and the suitable replacement for the incorrect word.</strong></p><br><p>The <strong>unmindful</strong> <strong>(A)</strong> attempts by India’s largest bank, the State Bank of India (SBI), to keep the details of the electoral bonds from public eye <strong>futile</strong> <strong>(B)</strong> of an order of the Supreme Court of India are a sad <strong>speculation</strong> <strong>(C)</strong> of how the powers that be make historic institutions opt for <strong>indefensible</strong> <strong>(D)</strong> positions and in the process damage their own reputation.</p>", "options": ["<p>ABCD; A-imprudent</p>", "<p>BACD; C-<strong> </strong>reflection</p>", "<p>DBCA; B-delusive</p>", "<p>ADCB; B-abortive</p>", "<p>No rearrangement required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer</strong><strong>: B</strong></p>\n<p>In this context, \"reflection\" refers to a manifestation or representation of a particular situation or condition. Specifically, it suggests that the futile attempts by the State Bank of India (SBI) to keep the details of the electoral bonds from public view, despite a Supreme Court order, serve as a visible example or indication of a broader issue or trend. The sentence implies that the actions of the SBI are emblematic of a larger problem within institutions of power, where they may choose indefensible positions that damage their own reputation. Thus, \"reflection\" here highlights how the situation involving the SBI is illustrative of deeper issues within institutions and their decision-making processes.</p>\n<p>On the other hand, \"speculation\" refers to forming opinions or making guesses about something without having all the facts. The word \"speculation\" in place of \"reflection\" would suggest that the actions of the SBI are merely a subject of conjecture or guesswork, rather than being a visible representation of a broader problem. It would weaken the assertion made in the sentence about the significance of the SBI's actions.</p>\n<p>Therefore, \"speculation\" would not accurately convey the intended meaning in this context.</p>\n<p><strong>The Correct sentence will be: “</strong>The <strong>futile</strong> attempts by India’s largest bank, the State Bank of India (SBI), to keep the details of the electoral bonds from public eye <strong>unmindful</strong> of an order of the Supreme Court of India are a sad <strong>reflection</strong> of how the powers that be make historic institutions opt for <strong>indefensible</strong> positions and in the process damage their own reputation.”</p>"}, {"question": "<p><strong>Rearrange the following sentences in the proper sequence to form a meaningful paragraph and then answer the questions given below.</strong></p>\n<p><strong>A</strong><strong>).</strong> Moreover, salaries in public sector enterprises are not as competitive as those offered by private or foreign corporates.</p>\n<p><strong>B</strong><strong>).</strong> (a) companies in India and abroad /(b) are seeking better opportunities with private /(c) call for stakeholders to examine why employees /(d) this trend should be a wake-up.</p>\n<p><strong>C</strong><strong>).</strong> (a) retaining their key staff /(b) in attracting, motivating and /(c) have been experiencing severe challenges /(d) Public Sector Enterprises (PSEs).</p>\n<p><strong>D</strong><strong>).</strong> (a) empower stakeholders to /(b) employees leave PSEs, it is important to /(c) Having identified these as the reasons /(d) find ways to remedy the situation.</p>\n<p><strong>E</strong><strong>).</strong> One reason is that young employees lured away by private firms are more willing to undertake professional risks.</p>\n<p><strong>F</strong><strong>).</strong> Employees in specialist roles especially have become increasingly difficult to retain.</p><br><p><strong>Which of the following is the correct arrangement of sentence B?</strong></p>", "options": ["<p>acdb</p>", "<p>dcba</p>", "<p>dcab</p>", "<p>acbd</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>This trend should be a wake-up call for stakeholders to examine why employees are seeking better opportunities with private companies in India and abroad.</p>"}, {"question": "<p><strong>Rearrange the following sentences in the proper sequence to form a meaningful paragraph and then answer the questions given below.</strong></p>\n<p><strong>A</strong><strong>).</strong> Moreover, salaries in public sector enterprises are not as competitive as those offered by private or foreign corporates.</p>\n<p><strong>B</strong><strong>).</strong> (a) companies in India and abroad /(b) are seeking better opportunities with private /(c) call for stakeholders to examine why employees /(d) this trend should be a wake-up.</p>\n<p><strong>C</strong><strong>).</strong> (a) retaining their key staff /(b) in attracting, motivating and /(c) have been experiencing severe challenges /(d) Public Sector Enterprises (PSEs).</p>\n<p><strong>D</strong><strong>).</strong> (a) empower stakeholders to /(b) employees leave PSEs, it is important to /(c) Having identified these as the reasons /(d) find ways to remedy the situation.</p>\n<p><strong>E</strong><strong>).</strong> One reason is that young employees lured away by private firms are more willing to undertake professional risks.</p>\n<p><strong>F</strong><strong>).</strong> Employees in specialist roles especially have become increasingly difficult to retain.</p><br><p><strong>Which of the following is the correct arrangement of sentence C?</strong></p>", "options": ["<p>acdb</p>", "<p>dcba</p>", "<p>cbad</p>", "<p>abdc</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>Public Sector Enterprises (PSEs) have been experiencing severe challenges in attracting, motivating and retaining their key staff.</p>"}, {"question": "<p><strong>Rearrange the following sentences in the proper sequence to form a meaningful paragraph and then answer the questions given below.</strong></p>\n<p><strong>A</strong><strong>).</strong> Moreover, salaries in public sector enterprises are not as competitive as those offered by private or foreign corporates.</p>\n<p><strong>B</strong><strong>).</strong> (a) companies in India and abroad /(b) are seeking better opportunities with private /(c) call for stakeholders to examine why employees /(d) this trend should be a wake-up.</p>\n<p><strong>C</strong><strong>).</strong> (a) retaining their key staff /(b) in attracting, motivating and /(c) have been experiencing severe challenges /(d) Public Sector Enterprises (PSEs).</p>\n<p><strong>D</strong><strong>).</strong> (a) empower stakeholders to /(b) employees leave PSEs, it is important to /(c) Having identified these as the reasons /(d) find ways to remedy the situation.</p>\n<p><strong>E</strong><strong>).</strong> One reason is that young employees lured away by private firms are more willing to undertake professional risks.</p>\n<p><strong>F</strong><strong>).</strong> Employees in specialist roles especially have become increasingly difficult to retain.</p><br><p><strong>Which of the following is the correct arrangement of sentence D?</strong></p>", "options": ["<p>acdb</p>", "<p>dcba</p>", "<p>cbad</p>", "<p>abdc</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Having identified these as the reasons employees leave PSEs, it is important to empower stakeholders to find ways to remedy the situation.</p>"}, {"question": "<p><strong>Rearrange the following sentences in the proper sequence to form a meaningful paragraph and then answer the questions given below.</strong></p>\n<p><strong>A</strong><strong>).</strong> Moreover, salaries in public sector enterprises are not as competitive as those offered by private or foreign corporates.</p>\n<p><strong>B</strong><strong>).</strong> (a) companies in India and abroad /(b) are seeking better opportunities with private /(c) call for stakeholders to examine why employees /(d) this trend should be a wake-up.</p>\n<p><strong>C</strong><strong>).</strong> (a) retaining their key staff /(b) in attracting, motivating and /(c) have been experiencing severe challenges /(d) Public Sector Enterprises (PSEs).</p>\n<p><strong>D</strong><strong>).</strong> (a) empower stakeholders to /(b) employees leave PSEs, it is important to /(c) Having identified these as the reasons /(d) find ways to remedy the situation.</p>\n<p><strong>E</strong><strong>).</strong> One reason is that young employees lured away by private firms are more willing to undertake professional risks.</p>\n<p><strong>F</strong><strong>).</strong> Employees in specialist roles especially have become increasingly difficult to retain.</p><br><p><strong>Which of the following statement will be the second statement after rearrangement?</strong></p>", "options": ["<p>A</p>", "<p>C</p>", "<p>B</p>", "<p>F</p>", "<p>E</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The final arrangement is <strong>CFBEAD.</strong></p>\n<p><strong>C) </strong>Public Sector Enterprises (PSEs) have been experiencing severe challenges in attracting, motivating and retaining their key staff. This sentence introduces the main topic of the paragraph, which is the difficulties faced by public sector enterprises in retaining employees. <strong>F</strong>) Employees in specialist roles especially have become increasingly difficult to retain. This sentence provides a specific example of the challenges mentioned in the first sentence, further elaborating on the difficulties faced by public sector enterprises. <strong>B</strong>) This trend should be a wake-up call for stakeholders to examine why employees are seeking better opportunities with private companies in India and abroad. This sentence suggests that the identified trend of employees leaving PSEs for private companies should prompt stakeholders to investigate the reasons behind this trend. <strong>E</strong>) One reason is that young employees lured away by private firms are more willing to undertake professional risks. This sentence provides a possible explanation for why employees are leaving PSEs, namely, the allure of better opportunities and a willingness to take on professional risks. <strong>A</strong>) Moreover, salaries in public sector enterprises are not as competitive as those offered by private or foreign corporates. This sentence highlights one of the reasons why employees might be leaving PSEs, namely, the salary disparity compared to private or foreign companies. <strong>D</strong>) Having identified these as the reasons employees leave PSEs, it is important to empower stakeholders to find ways to remedy the situation. Finally, this sentence concludes the paragraph by emphasizing the importance of addressing the identified reasons for employee turnover in PSEs.</p>"}, {"question": "<p><strong>Rearrange the following sentences in the proper sequence to form a meaningful paragraph and then answer the questions given below.</strong></p>\n<p><strong>A</strong><strong>).</strong> Moreover, salaries in public sector enterprises are not as competitive as those offered by private or foreign corporates.</p>\n<p><strong>B</strong><strong>).</strong> (a) companies in India and abroad /(b) are seeking better opportunities with private /(c) call for stakeholders to examine why employees /(d) this trend should be a wake-up.</p>\n<p><strong>C</strong><strong>).</strong> (a) retaining their key staff /(b) in attracting, motivating and /(c) have been experiencing severe challenges /(d) Public Sector Enterprises (PSEs).</p>\n<p><strong>D</strong><strong>).</strong> (a) empower stakeholders to /(b) employees leave PSEs, it is important to /(c) Having identified these as the reasons /(d) find ways to remedy the situation.</p>\n<p><strong>E</strong><strong>).</strong> One reason is that young employees lured away by private firms are more willing to undertake professional risks.</p>\n<p><strong>F</strong><strong>).</strong> Employees in specialist roles especially have become increasingly difficult to retain.</p><br><p><strong>Which of the following statement will be the penultimate and antepenultimate statement after rearrangement?</strong></p>", "options": ["<p>AE</p>", "<p>CB</p>", "<p>BD</p>", "<p>FC</p>", "<p>EF</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The final arrangement is <strong>CFBEAD.</strong></p>\n<p><strong>C) </strong>Public Sector Enterprises (PSEs) have been experiencing severe challenges in attracting, motivating and retaining their key staff. This sentence introduces the main topic of the paragraph, which is the difficulties faced by public sector enterprises in retaining employees. <strong>F</strong>) Employees in specialist roles especially have become increasingly difficult to retain. This sentence provides a specific example of the challenges mentioned in the first sentence, further elaborating on the difficulties faced by public sector enterprises. <strong>B</strong>) This trend should be a wake-up call for stakeholders to examine why employees are seeking better opportunities with private companies in India and abroad. This sentence suggests that the identified trend of employees leaving PSEs for private companies should prompt stakeholders to investigate the reasons behind this trend. <strong>E</strong>) One reason is that young employees lured away by private firms are more willing to undertake professional risks. This sentence provides a possible explanation for why employees are leaving PSEs, namely, the allure of better opportunities and a willingness to take on professional risks. <strong>A</strong>) Moreover, salaries in public sector enterprises are not as competitive as those offered by private or foreign corporates. This sentence highlights one of the reasons why employees might be leaving PSEs, namely, the salary disparity compared to private or foreign companies. <strong>D</strong>) Having identified these as the reasons employees leave PSEs, it is important to empower stakeholders to find ways to remedy the situation. Finally, this sentence concludes the paragraph by emphasizing the importance of addressing the identified reasons for employee turnover in PSEs.</p>"}, {"question": "<p><strong>In the following passage, some of the words are missing. Find the suitable word from the options given below each question that makes the paragraph meaningful.</strong></p>\n<p>After a fleeting moment of camaraderie, political hostilities between Tamil Nadu Governor R.N. Ravi and Chief Minister M.K. Stalin are on the rise again, this time triggered by a <strong>(6) _____________________</strong> rendition of the State anthem at a Prasar Bharati event. The Tamil Thai Vazhthu, rendered as an invocation song at official functions since 1970, was declared the State anthem in December 2021. This followed a judge holding that there was no statutory or executive order requiring attendees to stand when the song is played, after a seer remained seated during its rendition. At the event that was attended by the Governor, a verse in this 55-second anthem hailing the ‘Dravidian land’ was <strong>(7) _____________________ </strong>omitted. Though it was described as inadvertent, no attempt was made to rectify it on stage. Most political parties were disapproving of the omission. Mr. Stalin asked whether Mr. Ravi was being a “Governor” or an “Aryan” and sought to know whether the Governor, “who suffers from Dravidian allergy”, would propose the deletion of the term “Dravida” from the national anthem.</p>\n<p>The Governor took umbrage at this and described the “Aryan” reference as “racist”. Such interpretation actually goes against the Governor’s theory that the concept of Aryans and Dravidians was mainly a geographical, “rather than racial”, division; he had expressed his belief that the British had made it “racial” to suit their needs. Mr. Ravi argued that the <strong>(8) _____________________</strong> against him lowered the dignity of the high constitutional office of the Chief Minister. True, it was far-fetched to link him directly to the singers’ omission of a verse. However, Mr. Ravi has consistently linked the ‘Dravidian’ concept to an “expired ideology” that has created an ecosystem that fosters “separatist sentiment”, and does not “relish the idea of ‘One India’”. He has also maintained that the State’s two-language policy resulted in linguistic <strong>(9) _____________________ .</strong> At the Prasar Bharati event, he had alleged that a lot of toxicity has been infused in the minds of the people of Tamil Nadu in the last 50 years. Such views engender the impression that he was against references to anything Dravidian. Even so, it was improper for Mr. Stalin to have waded into the controversy by directly blaming Mr. Ravi. But the larger issue is that governance becomes the casualty in tussles between the Governor and the Government. Given his <strong>(10) _____________________</strong> for political activism and his antagonism to the government’s policies, it is time Mr. Ravi is replaced. Equations between him and the Chief Minister are beyond redemption. The situation is unhealthy for the State and imperils democratic institutions.</p><br><p><strong>6). ?</strong></p>", "options": ["<p>hegemony</p>", "<p>bonafide</p>", "<p>clinch</p>", "<p>distorted</p>", "<p>seismic</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>Option A \"hegemony\" means \"supremacy\" which can be ruled out as it makes the sentence incoherent.</p>\n<p>Option B \"bonafide\" means \"genuine\", which can be excluded as it is not related to the context of the passage.</p>\n<p>Option C \"clinch\" means \"conclude\" which can be eliminated as it is not related to the context of the passage.</p>\n<p>Option E \"seismic\" means \"quaky\" which can be eliminated as it is not related to the context of the passage.</p>\n<p>Option D \"distorted\" means \"made to change, especially in a way that makes something worse than it was before\" which suitably fits the context and makes the sentence meaningful one as the sentence here indicates the triggered hostility between TN Governor R.N Ravi and CM M.K.Stalin by a changes rendered in an event at Prasar Bharathi. Therefore, Option D is the correct answer to this question.</p>"}, {"question": "<p><strong>In the following passage, some of the words are missing. Find the suitable word from the options given below each question that makes the paragraph meaningful.</strong></p>\n<p>After a fleeting moment of camaraderie, political hostilities between Tamil Nadu Governor R.N. Ravi and Chief Minister M.K. Stalin are on the rise again, this time triggered by a <strong>(6) _____________________</strong> rendition of the State anthem at a Prasar Bharati event. The Tamil Thai Vazhthu, rendered as an invocation song at official functions since 1970, was declared the State anthem in December 2021. This followed a judge holding that there was no statutory or executive order requiring attendees to stand when the song is played, after a seer remained seated during its rendition. At the event that was attended by the Governor, a verse in this 55-second anthem hailing the ‘Dravidian land’ was <strong>(7) _____________________ </strong>omitted. Though it was described as inadvertent, no attempt was made to rectify it on stage. Most political parties were disapproving of the omission. Mr. Stalin asked whether Mr. Ravi was being a “Governor” or an “Aryan” and sought to know whether the Governor, “who suffers from Dravidian allergy”, would propose the deletion of the term “Dravida” from the national anthem.</p>\n<p>The Governor took umbrage at this and described the “Aryan” reference as “racist”. Such interpretation actually goes against the Governor’s theory that the concept of Aryans and Dravidians was mainly a geographical, “rather than racial”, division; he had expressed his belief that the British had made it “racial” to suit their needs. Mr. Ravi argued that the <strong>(8) _____________________</strong> against him lowered the dignity of the high constitutional office of the Chief Minister. True, it was far-fetched to link him directly to the singers’ omission of a verse. However, Mr. Ravi has consistently linked the ‘Dravidian’ concept to an “expired ideology” that has created an ecosystem that fosters “separatist sentiment”, and does not “relish the idea of ‘One India’”. He has also maintained that the State’s two-language policy resulted in linguistic <strong>(9) _____________________ .</strong> At the Prasar Bharati event, he had alleged that a lot of toxicity has been infused in the minds of the people of Tamil Nadu in the last 50 years. Such views engender the impression that he was against references to anything Dravidian. Even so, it was improper for Mr. Stalin to have waded into the controversy by directly blaming Mr. Ravi. But the larger issue is that governance becomes the casualty in tussles between the Governor and the Government. Given his <strong>(10) _____________________</strong> for political activism and his antagonism to the government’s policies, it is time Mr. Ravi is replaced. Equations between him and the Chief Minister are beyond redemption. The situation is unhealthy for the State and imperils democratic institutions.</p><br><p><strong>7). ?</strong></p>", "options": ["<p>elusive</p>", "<p>conspicuously</p>", "<p>wrongdoing</p>", "<p>upend</p>", "<p>revelation</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>Option A \"elusive\" means \"difficult to find\" which can be ruled out as it makes the sentence incoherent.</p>\n<p>Option C \"wrongdoing\" means \"criminality\", and can be eliminated as it is not related to the context of the passage.</p>\n<p>Option E \"revelation\" means \"announcement\" which can be eliminated as it is not related to the context of the passage.</p>\n<p>Option D \"upend\" means \"overcome\" which can be excluded as it is not related to the context of the passage.</p>\n<p>Option B \"conspicuously\" means \"very noticeable or attracting attention, often in a way that is not wanted\" which suitably fits the context and makes the sentence meaningful one as the sentence here talks about the negligence of 55 second anthem which is hailing the dravidian land at the event attended by the Governor, which invites noticeable attention. Therefore, Option B is the correct answer to this question.</p>"}, {"question": "<p><strong>In the following passage, some of the words are missing. Find the suitable word from the options given below each question that makes the paragraph meaningful.</strong></p>\n<p>After a fleeting moment of camaraderie, political hostilities between Tamil Nadu Governor R.N. Ravi and Chief Minister M.K. Stalin are on the rise again, this time triggered by a <strong>(6) _____________________</strong> rendition of the State anthem at a Prasar Bharati event. The Tamil Thai Vazhthu, rendered as an invocation song at official functions since 1970, was declared the State anthem in December 2021. This followed a judge holding that there was no statutory or executive order requiring attendees to stand when the song is played, after a seer remained seated during its rendition. At the event that was attended by the Governor, a verse in this 55-second anthem hailing the ‘Dravidian land’ was <strong>(7) _____________________ </strong>omitted. Though it was described as inadvertent, no attempt was made to rectify it on stage. Most political parties were disapproving of the omission. Mr. Stalin asked whether Mr. Ravi was being a “Governor” or an “Aryan” and sought to know whether the Governor, “who suffers from Dravidian allergy”, would propose the deletion of the term “Dravida” from the national anthem.</p>\n<p>The Governor took umbrage at this and described the “Aryan” reference as “racist”. Such interpretation actually goes against the Governor’s theory that the concept of Aryans and Dravidians was mainly a geographical, “rather than racial”, division; he had expressed his belief that the British had made it “racial” to suit their needs. Mr. Ravi argued that the <strong>(8) _____________________</strong> against him lowered the dignity of the high constitutional office of the Chief Minister. True, it was far-fetched to link him directly to the singers’ omission of a verse. However, Mr. Ravi has consistently linked the ‘Dravidian’ concept to an “expired ideology” that has created an ecosystem that fosters “separatist sentiment”, and does not “relish the idea of ‘One India’”. He has also maintained that the State’s two-language policy resulted in linguistic <strong>(9) _____________________ .</strong> At the Prasar Bharati event, he had alleged that a lot of toxicity has been infused in the minds of the people of Tamil Nadu in the last 50 years. Such views engender the impression that he was against references to anything Dravidian. Even so, it was improper for Mr. Stalin to have waded into the controversy by directly blaming Mr. Ravi. But the larger issue is that governance becomes the casualty in tussles between the Governor and the Government. Given his <strong>(10) _____________________</strong> for political activism and his antagonism to the government’s policies, it is time Mr. Ravi is replaced. Equations between him and the Chief Minister are beyond redemption. The situation is unhealthy for the State and imperils democratic institutions.</p><br><p><strong>8). ?</strong></p>", "options": ["<p>wobble</p>", "<p>serene</p>", "<p>immanent</p>", "<p>contradiction</p>", "<p>imputations</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>Option A \"wobble\" means \"vibrating\" which can be ruled out as it makes the sentence incoherent.</p>\n<p>Option B \"serene\" means \"peaceful\", which can be eliminated as it is not related to the context of the passage.</p>\n<p>Option C \"immanent\" means \"inherent\" which can be ruled out as it makes the sentence incoherent.</p>\n<p>Option D \"contradiction\" means \"disagreement\" and though it seems to be in sync with the context, its usage makes the sentence grammatically incorrect.</p>\n<p>Option E \"imputations\" means \"a suggestion that someone is guilty of something or has a particular bad quality\" which aptly fits the context and makes the sentence meaningful one as the sentence here talks about the argument of Ravi that lowers the dignity of the Chief Minister's office, which is an omission of verse. Therefore, Option E is the correct answer to this question.</p>"}, {"question": "<p><strong>In the following passage, some of the words are missing. Find the suitable word from the options given below each question that makes the paragraph meaningful.</strong></p>\n<p>After a fleeting moment of camaraderie, political hostilities between Tamil Nadu Governor R.N. Ravi and Chief Minister M.K. Stalin are on the rise again, this time triggered by a <strong>(6) _____________________</strong> rendition of the State anthem at a Prasar Bharati event. The Tamil Thai Vazhthu, rendered as an invocation song at official functions since 1970, was declared the State anthem in December 2021. This followed a judge holding that there was no statutory or executive order requiring attendees to stand when the song is played, after a seer remained seated during its rendition. At the event that was attended by the Governor, a verse in this 55-second anthem hailing the ‘Dravidian land’ was <strong>(7) _____________________ </strong>omitted. Though it was described as inadvertent, no attempt was made to rectify it on stage. Most political parties were disapproving of the omission. Mr. Stalin asked whether Mr. Ravi was being a “Governor” or an “Aryan” and sought to know whether the Governor, “who suffers from Dravidian allergy”, would propose the deletion of the term “Dravida” from the national anthem.</p>\n<p>The Governor took umbrage at this and described the “Aryan” reference as “racist”. Such interpretation actually goes against the Governor’s theory that the concept of Aryans and Dravidians was mainly a geographical, “rather than racial”, division; he had expressed his belief that the British had made it “racial” to suit their needs. Mr. Ravi argued that the <strong>(8) _____________________</strong> against him lowered the dignity of the high constitutional office of the Chief Minister. True, it was far-fetched to link him directly to the singers’ omission of a verse. However, Mr. Ravi has consistently linked the ‘Dravidian’ concept to an “expired ideology” that has created an ecosystem that fosters “separatist sentiment”, and does not “relish the idea of ‘One India’”. He has also maintained that the State’s two-language policy resulted in linguistic <strong>(9) _____________________ .</strong> At the Prasar Bharati event, he had alleged that a lot of toxicity has been infused in the minds of the people of Tamil Nadu in the last 50 years. Such views engender the impression that he was against references to anything Dravidian. Even so, it was improper for Mr. Stalin to have waded into the controversy by directly blaming Mr. Ravi. But the larger issue is that governance becomes the casualty in tussles between the Governor and the Government. Given his <strong>(10) _____________________</strong> for political activism and his antagonism to the government’s policies, it is time Mr. Ravi is replaced. Equations between him and the Chief Minister are beyond redemption. The situation is unhealthy for the State and imperils democratic institutions.</p><br><p><strong>9). ?</strong></p>", "options": ["<p>apartheid</p>", "<p>coalition</p>", "<p>discord</p>", "<p>inopportune</p>", "<p>strife</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Option A \"apartheid\" means \"implementation and maintenance of a system of legalized racial segregation\", can be excluded as it is not related to the context of the passage &amp; its usage makes the sentence grammatically incorrect.</p>\n<p>Option B \"coalition\" means \"association\" which can be ruled out as it makes the sentence incoherent.</p>\n<p>Option D \"inopportune\" means \"mistimed\" which can be eliminated as it is not related to the context of the passage.</p>\n<p>Option E \"strife\" means \"conflict\" which can be eliminated as it is not related to the context of the passage.</p>\n<p>Option C \"discord\" means \"hostility “which suitably fits the context and makes the sentence meaningful as the sentence here indicates the accusations made by the TN Governor which shows the infusion of toxicity in the minds of people over the last 50 years. Therefore, Option A is the correct answer to this question.</p>"}, {"question": "<p><strong>In the following passage, some of the words are missing. Find the suitable word from the options given below each question that makes the paragraph meaningful.</strong></p>\n<p>After a fleeting moment of camaraderie, political hostilities between Tamil Nadu Governor R.N. Ravi and Chief Minister M.K. Stalin are on the rise again, this time triggered by a <strong>(6) _____________________</strong> rendition of the State anthem at a Prasar Bharati event. The Tamil Thai Vazhthu, rendered as an invocation song at official functions since 1970, was declared the State anthem in December 2021. This followed a judge holding that there was no statutory or executive order requiring attendees to stand when the song is played, after a seer remained seated during its rendition. At the event that was attended by the Governor, a verse in this 55-second anthem hailing the ‘Dravidian land’ was <strong>(7) _____________________ </strong>omitted. Though it was described as inadvertent, no attempt was made to rectify it on stage. Most political parties were disapproving of the omission. Mr. Stalin asked whether Mr. Ravi was being a “Governor” or an “Aryan” and sought to know whether the Governor, “who suffers from Dravidian allergy”, would propose the deletion of the term “Dravida” from the national anthem.</p>\n<p>The Governor took umbrage at this and described the “Aryan” reference as “racist”. Such interpretation actually goes against the Governor’s theory that the concept of Aryans and Dravidians was mainly a geographical, “rather than racial”, division; he had expressed his belief that the British had made it “racial” to suit their needs. Mr. Ravi argued that the <strong>(8) _____________________</strong> against him lowered the dignity of the high constitutional office of the Chief Minister. True, it was far-fetched to link him directly to the singers’ omission of a verse. However, Mr. Ravi has consistently linked the ‘Dravidian’ concept to an “expired ideology” that has created an ecosystem that fosters “separatist sentiment”, and does not “relish the idea of ‘One India’”. He has also maintained that the State’s two-language policy resulted in linguistic <strong>(9) _____________________ .</strong> At the Prasar Bharati event, he had alleged that a lot of toxicity has been infused in the minds of the people of Tamil Nadu in the last 50 years. Such views engender the impression that he was against references to anything Dravidian. Even so, it was improper for Mr. Stalin to have waded into the controversy by directly blaming Mr. Ravi. But the larger issue is that governance becomes the casualty in tussles between the Governor and the Government. Given his <strong>(10) _____________________</strong> for political activism and his antagonism to the government’s policies, it is time Mr. Ravi is replaced. Equations between him and the Chief Minister are beyond redemption. The situation is unhealthy for the State and imperils democratic institutions.</p><br><p><strong>10). ?</strong></p>", "options": ["<p>proclamation</p>", "<p>brightness</p>", "<p>penchant</p>", "<p>vernacular</p>", "<p>obviated</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Option A \"proclamation\" means \"decree\", which can be ruled out as it makes the sentence incoherent.</p>\n<p>Option B \"brightness\" means \"glaring\", which can be eliminated as it is not related to the context of the passage.</p>\n<p>Option E \"obviated\" means \"prevented\" which can be eliminated as it is not related to the context of the passage.</p>\n<p>Option D \"vernacular\" means \"informal\" which can be eliminated as it is not related to the context of the passage &amp; its usage makes the sentence grammatically incorrect.</p>\n<p>Option C \"penchant\" means \"a strong liking for something or a strong tendency to behave in a certain way\" which suitably fits to the context and makes the sentence meaningful one as the sentence here talks about the opinions of Ravi for political activism and his antagonism to the government's policies which invites the self replacement. Therefore, Option C is the correct answer to this question.</p>"}, {"question": "<p><strong>In each of the questions given below an incomplete sentence which must be filled/completed with one of the sentences given below.  Choose the correct option and complete the given sentences.</strong></p><br><p><strong>The Karnataka state is taking measures to mitigate the impact of drought by releasing relief funds, restricting lifting of water from rivers for irrigation, and imposing fines against the use of drinking water for _______________________.</strong></p>", "options": ["<p>Industrial activities</p>", "<p>Agricultural purposes</p>", "<p>Recreational activities</p>", "<p>Non-essential activities</p>", "<p>Non-consumptive purposes</p>"], "correctIndex": 4, "solution": "<p><strong>Answer:</strong><strong> E</strong></p>\n<p>Option e) is the correct answer. It completes the sentence by specifying that Karnataka state is taking measures to impose fines against the use of drinking water for non-consumptive purposes as part of mitigating the impact of drought.</p>\n<p><strong>a).</strong> Industrial activities (Not correct): This option suggests that fines are imposed against the use of drinking water for industrial activities. While industrial water usage is important, the sentence does not explicitly mention this as the focus of the fines imposed.</p>\n<p><strong>b).</strong> Agricultural purposes (Not correct): This option proposes fines against the use of drinking water for agricultural purposes. While agricultural water usage is significant, the sentence does not explicitly mention this as the focus of the fines imposed.</p>\n<p><strong>c).</strong> Recreational activities (Not correct): This option suggests that fines are imposed against the use of drinking water for recreational activities. While recreational water usage might be relevant, the sentence does not specify this as the focus of the fines imposed.</p>\n<p><strong>d).</strong> Non-essential activities (Not correct): This option proposes fines against the use of drinking water for non-essential activities. While non-essential water usage could be a concern, the sentence does not explicitly mention this as the focus of the fines imposed.</p>\n<p><strong>e).</strong> Non-consumptive purposes (Correct): This option is the correct and relevant answer. It aligns with the context of the sentence, specifying that fines are imposed against the use of drinking water for non-consumptive purposes, such as non-essential uses that do not involve consumption, as part of mitigating the impact of drought.</p>\n<p>Options a), b), c), and d) offer different activities or purposes for which water might be used, but they do not directly address the specific issue of imposing fines against the use of drinking water for non-consumptive purposes as mentioned in the sentence.</p>\n<p>In summary, option e) is the correct and relevant answer, as it aligns with the context of the sentence, focusing on the imposition of fines against the use of drinking water for non-consumptive purposes in drought mitigation measures by the Karnataka state.</p>"}, {"question": "<p><strong>In each of the questions given below an incomplete sentence which must be filled/completed with one of the sentences given below.  Choose the correct option and complete the given sentences.</strong></p><br><p><strong>Some recent events in India which attracted much criticism within the country have also _______________________.</strong></p>", "options": ["<p>Triggered widespread protests</p>", "<p>Resulted in international condemnation</p>", "<p>Led to significant policy changes</p>", "<p>Sparked diplomatic tensions</p>", "<p>Drawn the attention of other countries</p>"], "correctIndex": 4, "solution": "<p><strong>Answer:</strong><strong> E</strong></p>\n<p>Option e) is the correct answer. It completes the sentence by specifying that some recent events in India, which attracted criticism within the country, have also drawn the attention of other countries.</p>\n<p><strong>a).</strong> Triggered widespread protests (Not correct): This option suggests that the recent events triggered widespread protests. While protests could be a consequence of events, the sentence does not explicitly mention this as the focus of the events attracting criticism.</p>\n<p><strong>b).</strong> Resulted in international condemnation (Not correct): This option proposes that the recent events resulted in international condemnation. While condemnation could be a consequence, the sentence does not specify this as the focus of the events.</p>\n<p><strong>c).</strong> Led to significant policy changes (Not correct): This option suggests that the recent events led to significant policy changes. While policy changes might occur in response to events, the sentence does not explicitly mention this as the focus of the events attracting criticism.</p>\n<p><strong>d).</strong> Sparked diplomatic tensions (Not correct): This option proposes that the recent events sparked diplomatic tensions. While tensions could arise from events, the sentence does not specify this as the focus of the events.</p>\n<p><strong>e).</strong> Drawn the attention of other countries (Correct): This option is the correct and relevant answer. It aligns with the context of the sentence, specifying that some recent events in India, which attracted criticism within the country, have also drawn the attention of other countries.</p>\n<p>Options a), b), c), and d) offer different outcomes or consequences of the events, but they do not directly address the specific issue of drawing the attention of other countries as mentioned in the sentence.</p>\n<p>In summary, option e) is the correct and relevant answer, as it aligns with the context of the sentence, focusing on the events in India drawing the attention of other countries due to the criticism they received within the country.</p>"}, {"question": "<p><strong>In each of the questions given below an incomplete sentence which must be filled/completed with one of the sentences given below.  Choose the correct option and complete the given sentences.</strong></p><br><p><strong>The findings of the India Employment Report released by the International Labour Organisation (ILO) have again highlighted the problem of _______________________.</strong></p>", "options": ["<p>Insufficient workforce participation</p>", "<p>Skill gaps in the labour market</p>", "<p>Low wages and poor working conditions</p>", "<p>Continuing high unemployment in India</p>", "<p>Inadequate access to education and training</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>Option d) is the correct answer. It completes the sentence by specifying that the findings of the India Employment Report have again highlighted the problem of continuing high unemployment in India.</p>\n<p><strong>a). </strong>Insufficient workforce participation (Not correct): This option suggests that the problem highlighted is insufficient workforce participation. While this could be an issue, the sentence does not explicitly mention this as the problem highlighted by the India Employment Report.</p>\n<p><strong>b). </strong>Skill gaps in the labour market (Not correct): This option proposes that the problem highlighted is skill gaps in the labour market. While skill gaps are important, the sentence does not explicitly mention this as the problem highlighted by the report.</p>\n<p><strong>c).</strong> Low wages and poor working conditions (Not correct): This option suggests that the problem highlighted is low wages and poor working conditions. While these are significant issues, the sentence does not explicitly mention them as the problem highlighted by the report.</p>\n<p><strong>d).</strong> Continuing high unemployment in India (Correct): This option is the correct and relevant answer. It aligns with the context of the sentence, specifying that the findings of the India Employment Report have highlighted the problem of continuing high unemployment in India.</p>\n<p><strong>e). </strong>Inadequate access to education and training (Not correct): This option proposes that the problem highlighted is inadequate access to education and training. While education and training access are crucial, the sentence does not explicitly mention them as the problem highlighted by the report.</p>\n<p>Options a), b), c), and e) offer different aspects or factors related to employment issues, but they do not directly address the specific problem highlighted in the sentence, which is the continuing high unemployment in India.</p>\n<p>In summary, option d) is the correct and relevant answer, as it aligns with the context of the sentence, focusing on the problem of continuing high unemployment in India highlighted by the India Employment Report.</p>"}, {"question": "<p><strong>In each of the questions given below an incomplete sentence which must be filled/completed with one of the sentences given below.  Choose the correct option and complete the given sentences.</strong></p><br><p><strong>Israel’s refusal to call a halt to the assault on Gaza despite a UN Security Council resolution for an immediate ceasefire does not behove a country _______________________.</strong></p>", "options": ["<p>That champions human rights</p>", "<p>With a long history of conflict resolution</p>", "<p>That respects international law</p>", "<p>With a strong commitment to peace</p>", "<p>That has benefited from the UN from the get-go</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>Option e) is the correct answer. It completes the sentence by specifying that Israel's refusal to call a halt to the assault on Gaza does not behove a country that has benefited from the UN from the get-go.</p>\n<p><strong>a).</strong> That champions human rights (Not correct): This option suggests that the behaviour of Israel does not align with a country that champions human rights. While this may be relevant, the sentence does not explicitly mention human rights as the standard for the behaviour discussed.</p>\n<p><strong>b).</strong> With a long history of conflict resolution (Not correct): This option proposes that Israel's behaviour does not align with a country with a long history of conflict resolution. While conflict resolution history could be significant, the sentence does not explicitly mention this as the standard for the behaviour discussed.</p>\n<p><strong>c). </strong>That respects international law (Not correct): This option suggests that Israel's behaviour does not align with a country that respects international law. While adherence to international law is important, the sentence does not explicitly mention this as the standard for the behaviour discussed.</p>\n<p><strong>d).</strong> With a strong commitment to peace (Not correct): This option proposes that Israel's behaviour does not align with a country with a strong commitment to peace. While a commitment to peace is crucial, the sentence does not explicitly mention this as the standard for the behaviour discussed.</p>\n<p><strong>e). </strong>That has benefited from the UN from the get-go (Correct): This option is the correct and relevant answer. It aligns with the context of the sentence, specifying that Israel's behaviour does not align with a country that has benefited from the UN from the beginning, indicating that Israel's actions contradict its historical relationship with the UN.</p>\n<p>Options a), b), c), and d) offer different characteristics or expectations of countries, but they do not directly address the specific issue of benefiting from the UN from the beginning as mentioned in the sentence.</p>\n<p>In summary, option e) is the correct and relevant answer, as it aligns with the context of the sentence, focusing on Israel's actions conflicting with its historical relationship with the UN.</p>"}, {"question": "<p><strong>In each of the questions given below an incomplete sentence which must be filled/completed with one of the sentences given below.  Choose the correct option and complete the given sentences.</strong></p><br><p><strong>Governors in Opposition-ruled states have become obstructionist in many matters, claiming powers that they do not have, and _______________________.</strong></p>", "options": ["<p>Have adhered strictly to constitutional provisions</p>", "<p>Have maintained a neutral stance</p>", "<p>Have acted in accordance with legal precedents</p>", "<p>Have conducted themselves like politicians</p>", "<p>Have upheld the principles of federalism</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>Option d) is the correct answer. It completes the sentence by specifying that governors in Opposition-ruled states have conducted themselves like politicians.</p>\n<p><strong>a).</strong> Have adhered strictly to constitutional provisions (Not correct): This option suggests that governors have strictly followed constitutional provisions. While adherence to the constitution is important, the sentence implies the opposite, stating that governors are claiming powers they do not have.</p>\n<p><strong>b). </strong>Have maintained a neutral stance (Not correct): This option proposes that governors have maintained a neutral stance. While neutrality could be desirable, the sentence suggests that governors are obstructing matters, which implies they are not neutral.</p>\n<p><strong>c). </strong>Have acted in accordance with legal precedents (Not correct): This option suggests that governors have acted in accordance with legal precedents. While following legal precedents is important, the sentence implies that governors are claiming powers they do not have, which may not align with legal precedents.</p>\n<p><strong>d). </strong>Have conducted themselves like politicians (Correct): This option is the correct and relevant answer. It aligns with the context of the sentence, specifying that governors in Opposition-ruled states have conducted themselves like politicians, implying they prioritize political interests over their constitutional duties.</p>\n<p><strong>e). </strong>Have upheld the principles of federalism (Not correct): This option proposes that governors have upheld the principles of federalism. While upholding federalism is crucial, the sentence suggests that governors are obstructing matters, which may not align with the principles of federalism if they are overstepping their constitutional powers.</p>\n<p>Options a), b), c), and e) offer different behaviours or roles governors might adopt, but they do not directly address the specific behaviour mentioned in the sentence, which is conducting themselves like politicians.</p>\n<p>In summary, option d) is the correct and relevant answer, as it aligns with the context of the sentence, focusing on governors in Opposition-ruled states conducting themselves like politicians rather than impartial constitutional figures.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-7)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-7)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

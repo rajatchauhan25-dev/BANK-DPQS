@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-46)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>Below is a theme given in each question followed by four different statements. Read each statement carefully and determine which is/are not based on the stated title.</strong></p><br><p><strong>The Benefits of Volunteering</strong></p>", "options": ["<p>Volunteering can provide individuals with a sense of purpose and fulfillment, helping them feel more connected to their communities</p>", "<p>Many organizations rely on volunteers to assist with various tasks, ensuring that they can serve their missions effectively</p>", "<p>Some people argue that volunteering takes too much time and is not worth the effort when compared to paid work</p>", "<p>Volunteering can help individuals develop new skills, gain valuable experience, and enhance their resumes</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Statements a), b), and d) highlight the positive impacts of volunteering, such as community connection, skill development, and fostering empathy. Statement c) presents a negative view of volunteering that contradicts the overall theme of its benefits.</p>"}, {"question": "<p><strong>Below is a theme given in each question followed by four different statements. Read each statement carefully and determine which is/are not based on the stated title.</strong></p><br><p><strong>The Influence of Technology on Education</strong></p>", "options": ["<p>Some people believe that technology distracts students and detracts from traditional learning methods</p>", "<p>Many online courses offer flexibility, allowing learners to study at their own pace and balance their education with other responsibilities</p>", "<p>Technology in the classroom enhances the learning experience by providing interactive and engaging resources for students</p>", "<p>Virtual reality can provide immersive learning experiences that help students understand complex concepts more easily</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Statements b), c), and d) focus on the advantages of technology in education, such as engagement, flexibility, immersive experiences, and personalization. Statement a) introduces a criticism of technology's role in education, which does not align with the overall positive theme.</p>"}, {"question": "<p><strong>Below is a theme given in each question followed by four different statements. Read each statement carefully and determine which is/are not based on the stated title.</strong></p><br><p><strong>The Importance of Mental Health Awareness</strong></p>", "options": ["<p>Mental health awareness campaigns help reduce the stigma surrounding mental illness and encourage individuals to seek help</p>", "<p>Some individuals think that discussing mental health issues is unnecessary and that people should simply \"tough it out.\"</p>", "<p>Many people do not realize that mental health is just as important as physical health and deserves the same attention and care</p>", "<p>Support groups provide a safe space for individuals to share their experiences and learn coping strategies from one another</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>Statements a), c), and d) emphasize the importance of mental health awareness and the benefits of seeking help and support. Statement b) presents a harmful attitude toward mental health discussions, which contradicts the overall theme of promoting awareness.</p>"}, {"question": "<p><strong>Each of the following questions has a paragraph from which some part has been deleted at the end. From the given options, choose the one that completes the paragraph in the most appropriate way.</strong></p><br><p><strong>With the rise of fintech companies and digital banking platforms, traditional banks are facing increasing competition in the financial services landscape. Fintech innovations such as peer-to-peer lending, robo-advisors, and mobile payment apps offer customers new ways to manage their finances and access credit. To remain competitive, traditional banks are embracing ____________.</strong></p>", "options": ["<p>reducing customer service offerings to cut costs.</p>", "<p>partnering with fintech companies for innovative solutions.</p>", "<p>increasing fees for banking services to boost revenue.</p>", "<p>expanding physical branch networks to reach more customers</p>", "<p>limiting digital banking features to maintain traditional practices.</p>"], "correctIndex": 1, "solution": "<p><strong>Answer:</strong><strong> B</strong></p>\n<p>The correct option is: b) partnering with fintech companies for innovative solutions.</p>\n<p>This option aligns with the paragraph's emphasis on traditional banks adapting to the changing landscape by embracing fintech innovations. Partnering with fintech companies allows traditional banks to leverage innovative solutions and technologies to enhance their offerings and meet evolving customer needs. By collaborating with fintech firms, banks can access new technologies, improve efficiency, and expand their range of services without having to develop everything in-house. This approach enables traditional banks to remain competitive and relevant in a rapidly evolving financial services industry.</p>\n<p>The other options either involve counterproductive measures, such as reducing customer service offerings (a) or increasing fees (c), which could lead to customer dissatisfaction and push them towards fintech alternatives. Expanding physical branch networks (d) may not align with the trend towards digital banking, and limiting digital banking features (e) would hinder innovation and customer convenience.</p>"}, {"question": "<p><strong>Each of the following questions has a paragraph from which some part has been deleted at the end. From the given options, choose the one that completes the paragraph in the most appropriate way.</strong></p><br><p><strong>In recent years, financial institutions have increasingly embraced digital transformation to meet the evolving needs of customers in an interconnected world. Online banking platforms, mobile apps, and digital payment solutions have become integral parts of daily financial transactions, offering convenience and accessibility. However, as technology continues to advance, it is essential for banks to prioritize ____________.</strong></p>", "options": ["<p>improving customer service through human interactions.</p>", "<p>enhancing data privacy and security measures</p>", "<p>reducing the accessibility of digital banking services.</p>", "<p>increasing reliance on paper-based transactions.</p>", "<p>neglecting advancements in financial technology (fintech).</p>"], "correctIndex": 1, "solution": "<p><strong>Answer:</strong><strong> B</strong></p>\n<p>The correct option is: b) enhancing data privacy and security measures.</p>\n<p>This option aligns with the paragraph's emphasis on the importance of ensuring the security and privacy of financial transactions in the digital age. As banking services become increasingly digital, the protection of customer data becomes paramount. Enhancing data privacy and security measures is crucial for safeguarding sensitive information from cyber threats and unauthorized access. It ensures that customers can trust their financial institutions with their personal and financial data, contributing to a secure and reliable banking experience. The other options either involve counterproductive measures, such as reducing accessibility to digital banking services (c) or neglecting advancements in financial technology (e), or regressive practices, such as increasing reliance on paper-based transactions (d), which go against the trend of digital transformation in banking. Option (a), while important, does not address the overarching theme of technology and digital transformation highlighted in the paragraph.</p>"}, {"question": "<p><strong>Each of the following questions has a paragraph from which some part has been deleted at the end. From the given options, choose the one that completes the paragraph in the most appropriate way.</strong></p><br><p><strong>In recent years, the concept of open banking has gained traction, revolutionizing the way financial services are delivered and accessed. Open banking allows third-party financial service providers to access financial data from banks through APIs (Application Programming Interfaces), enabling innovative solutions such as budgeting apps, personalized financial advice, and seamless payment integrations. However, to fully realize the potential of open banking and ensure consumer protection, it is essential for regulatory authorities to establish ____________.</strong></p>", "options": ["<p>stringent data privacy regulations to safeguard consumer information.</p>", "<p>barriers to entry for new fintech startups to prevent competition.</p>", "<p>limitations on the types of financial services offered by third-party providers.</p>", "<p>exclusive partnerships between banks and third-party providers for data access.</p>", "<p>unrestricted access to consumer financial data for all third-party providers.</p>"], "correctIndex": 0, "solution": "<p><strong>Answer:</strong><strong> A</strong></p>\n<p>The correct option is: a) stringent data privacy regulations to safeguard consumer information.</p>\n<p>This option aligns with the paragraph's emphasis on ensuring consumer protection within the context of open banking. Stringent data privacy regulations are essential to safeguarding consumer information and maintaining trust in the financial system. By establishing robust privacy regulations, regulatory authorities can ensure that consumers' financial data is handled securely and ethically by third-party providers accessing banking data through APIs. This helps to address concerns related to data security, unauthorized access, and potential misuse of personal financial information. The other options either involve practices that hinder innovation and competition (b, c, d) or pose risks to consumer privacy and security (e).</p>"}, {"question": "<p><strong>Each of the following questions has a paragraph from which some part has been deleted at the end. From the given options, choose the one that completes the paragraph in the most appropriate way.</strong></p><br><p><strong>In today's dynamic financial landscape, investors face a multitude of options for building and diversifying their portfolios. With access to a wide range of investment vehicles, including stocks, bonds, mutual funds, and exchange-traded funds (ETFs), investors have the opportunity to tailor their investment strategies to align with their financial goals and risk tolerance. However, to navigate the complexities of the financial markets successfully, it is essential for investors to conduct thorough research and ____________.</strong></p>", "options": ["<p>consult with financial advisors for personalized investment advice.</p>", "<p>rely solely on past performance data for investment decisions.</p>", "<p>ignore market trends and economic indicators.</p>", "<p>invest impulsively without considering long-term goals.</p>", "<p>diversify their investment portfolios to manage risk effectively.</p>"], "correctIndex": 0, "solution": "<p><strong>Answer:</strong><strong> A</strong></p>\n<p>The correct option is: a) consult with financial advisors for personalized investment advice.</p>\n<p>This option aligns with the paragraph's emphasis on the importance of conducting thorough research and seeking guidance in navigating the financial markets successfully. Consulting with financial advisors allows investors to receive personalized investment advice tailored to their unique financial circumstances, goals, and risk tolerance. Financial advisors can provide valuable insights, expertise, and recommendations to help investors make informed decisions and optimize their investment strategies. In contrast, the other options (b, c, d, and e) advocate ineffective or risky approaches to investment decision-making, such as relying solely on past performance data, ignoring market trends, investing impulsively, or failing to diversify portfolios.</p>"}, {"question": "<p><strong>Each of the following questions has a paragraph from which some part has been deleted at the end. From the given options, choose the one that completes the paragraph in the most appropriate way.</strong></p><br><p><strong>The concept of risk is inherent in the field of finance, where investors weigh potential returns against the possibility of losses. Risk management strategies aim to identify, assess, and mitigate various types of risks, including market risk, credit risk, and operational risk. However, effective risk management goes beyond mere avoidance; it involves striking a balance between risk and reward. Therefore, it is essential for financial institutions to implement ____________.</strong></p>", "options": ["<p>rigid risk aversion policies to minimize potential losses.</p>", "<p>leveraging high-risk investments for maximum returns.</p>", "<p>comprehensive risk assessment frameworks and protocols.</p>", "<p>overlooking risk factors to prioritize short-term gains.</p>", "<p>relying solely on historical data for risk analysis.</p>"], "correctIndex": 2, "solution": "<p><strong>Answer:</strong><strong> C</strong></p>\n<p>The correct option is: c) comprehensive risk assessment frameworks and protocols.</p>\n<p>This option aligns with the paragraph's emphasis on effective risk management in finance. Comprehensive risk assessment frameworks and protocols enable financial institutions to systematically identify, assess, and manage various types of risks they face. By implementing such frameworks, institutions can better understand the nature and magnitude of risks, allowing them to make informed decisions and take appropriate actions to mitigate potential losses. This approach ensures a balanced approach to risk management, considering both risk and reward.</p>\n<p>The other options present strategies or approaches that are either too conservative (a), too risky (b), or outright negligent (d), and they do not contribute to effective risk management. Option (e) suggests relying solely on historical data, which may not capture emerging risks or changing market conditions adequately.</p>"}, {"question": "<p><strong>In the sentences, certain words are in bold and numbered from A to D, which are the possible pairs to be interchanged. Choose the pair(s) of words that need(s) to be interchanged to make the sentence grammatically correct and meaningful.</strong></p><br><p>A research team (A) <strong>documented</strong> by an Australian scientist has (B) <strong>led</strong> a remarkable (C) <strong>swim</strong> by two lion brothers across the (D) <strong>treacherous</strong> Kazinga Channel in Uganda.</p>", "options": ["<p>Only A-B</p>", "<p>B-C &amp; A-D</p>", "<p>Only A-D</p>", "<p>A-D &amp; B-C</p>", "<p>No correction required</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>The corrected sentence is:</strong></p>\n<p>A research team <strong>led</strong> by an Australian scientist has (A) <strong>documented</strong> a remarkable (B) <strong>swim</strong> by two lion brothers across the (C) <strong>treacherous</strong> Kazinga Channel in Uganda.</p>"}, {"question": "<p><strong>In the sentences, certain words are in bold and numbered from A to D, which are the possible pairs to be interchanged. Choose the pair(s) of words that need(s) to be interchanged to make the sentence grammatically correct and meaningful.</strong></p><br><p>With (A) <strong>competition</strong> for lionesses in the park being (B) <strong>lost</strong>, the two lions had recently (C) <strong>intense</strong> a battle for female (D) <strong>attention</strong>.</p>", "options": ["<p>Only A-B</p>", "<p>B-C &amp; A-D</p>", "<p>Only B-C</p>", "<p>A-D &amp; B-C</p>", "<p>No correction required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>The corrected sentence is:</strong></p>\n<p>With <strong>competition</strong> for lionesses in the park being <strong>intense</strong>, the two lions had recently <strong>lost</strong> a battle for female <strong>attention</strong>.</p>"}, {"question": "<p><strong>In the sentences, certain words are in bold and numbered from A to D, which are the possible pairs to be interchanged. Choose the pair(s) of words that need(s) to be interchanged to make the sentence grammatically correct and meaningful.</strong></p><br><p>The wildlife that (A) <strong>inhabits</strong> them are (B) <strong>crafted </strong>intricately by the process of (C) <strong>evolution</strong>, responding to extreme (D) <strong>altitudes</strong> and temperatures.</p>", "options": ["<p>Only A-B</p>", "<p>B-C &amp; A-D</p>", "<p>Only A-D</p>", "<p>A-D &amp; B-C</p>", "<p>No correction required</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p><strong>The corrected sentence is:</strong></p>\n<p>The wildlife that <strong>inhabits</strong> them are <strong>crafted </strong>intricately by the process of <strong>evolution</strong>, responding to extreme <strong>altitudes</strong> and temperatures.</p>"}, {"question": "<p><strong>In the sentences, certain words are in bold and numbered from A to D, which are the possible pairs to be interchanged. Choose the pair(s) of words that need(s) to be interchanged to make the sentence grammatically correct and meaningful.</strong></p><br><p>In the early 2000s, I had (A) <strong>earned</strong> the Tibetan gazelle, an animal that (B) <strong>studied</strong> the epithet ‘ping-pong ball’ because of its (C) <strong>running</strong> gait while (D) <strong>bouncing</strong>.</p>", "options": ["<p>Only A-B</p>", "<p>B-C &amp; A-D</p>", "<p>Only A-D</p>", "<p>A-B &amp; C-D</p>", "<p>No correction required</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>The corrected sentence is:</strong></p>\n<p>In the early 2000s, I had <strong>studied</strong> the Tibetan gazelle, an animal that <strong>earned</strong> the epithet ‘ping-pong ball’ because of its <strong>bouncing</strong> gait while <strong>running</strong>.</p>"}, {"question": "<p><strong>In the sentences, certain words are in bold and numbered from A to D, which are the possible pairs to be interchanged. Choose the pair(s) of words that need(s) to be interchanged to make the sentence grammatically correct and meaningful.</strong></p><br><p>Over the years, IIA (A) <strong>installed</strong> its project, and several other (B) <strong>institutes</strong>, including the Bhabha Atomic Research Centre, (C) <strong>expanded</strong> telescopes to (D) <strong>study</strong> gamma rays.</p>", "options": ["<p>Only A-B</p>", "<p>B-C &amp; A-D</p>", "<p>Only A-C</p>", "<p>A-D &amp; B-C</p>", "<p>No correction required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>The corrected sentence is:</strong></p>\n<p>Over the years, IIA <strong>expanded</strong> its project, and several other <strong>institutes</strong>, including the Bhabha Atomic Research Centre, <strong>installed</strong> telescopes to <strong>study</strong> gamma rays. </p>"}, {"question": "<p><strong>Read the given passage and answer the questions that follow. Some words and phrases have been highlighted for you to answer better</strong></p>\n<p>The lower-than-expected GDP numbers for the third quarter (Q3) of the ongoing fiscal, combined with some early indicators for the final quarter, confirm the fears that the third wave of the pandemic may have had a bigger impact on growth than was earlier expected. According to data released by the National Statistical Office on Monday, the GDP grew by 5.4 per cent during Q3 of 2021-22. For the full financial year, GDP growth is now estimated to hit 8.9 per cent, lower than the 9.2 per cent projected earlier. While this is not bad news – after all, the economy actually shrunk by 6.6 per cent in 2020-21 – the slower than expected growth rate poses a question mark over the Budget estimates. What is worrying is the sharp slowdown in growth momentum. GDP growth clocked a scorching 20.3 per cent in Q1 (April-June), fell sharply to 8.5 per cent in Q2 (July-September) and has fallen further.</p>\n<p>Sectoral data show up other worrying indicators. Construction, which not only carries significant weight in the economy, but also is a big generator of jobs, contracted by 2.8 per cent. Manufacturing growth was nearly stagnant at 0.2 per cent. Sectors like automobiles – a good indicator of consumer sentiment – are stagnating. The Q3 growth was <strong><em>disincentivised</em></strong> by the “relief rally” in private consumptions, as Covid-induced restrictions eased. While private final consumption grew 7 per cent in Q3, it is expected to drop to just 1.5 per cent in Q4 (January to March). The government’s capital expenditure also has slowed sharply, with gross fixed capital formation growing by just 2 per cent in Q3. This raises question marks over the government’s massive capital expenditure plans for 2022-23. That momentum could drop further as indicated by the slide in GST collections, which fell to 1.33 lakh crore in February 2022 from 1.40 lakh crore in January, although the Finance Ministry has pointed out that February is a shorter month.</p>\n<p>More worrying is the steady rise in inflation. Which has been at the top end of the RBI’s “comfort band” for months now. Overall retail (consumer inflation) is at 6 per cent for January, although separate indices compiled by the Labour Ministry for industrial workers and agriculture and farm workers came in at 5.8 and 5.5 per cent, respectively. Worryingly, food inflation is over 6.22 per cent, while the less-used Wholesale Price Index has been in double-digit territory for 10 months now. With the strife in Ukraine sending energy prices soaring, and sanctions adding to the existing supply chain disruptions, a number of sectors are likely to feel the hit in the coming months. The Centre and the RBI <strong><em>have their task cut out </em></strong>to maintain some sort of fiscal and monetary support for growth while ensuring that prices do not go out of control. A cut in fuel taxes – despite revenue implications – may be the only option to curb the impact of soaring oil prices. Further, the RBI will have to manage the rupee to ensure imports – essential for growth – do not get priced out of hand by a strengthening dollar.</p><br><p><strong>Why does the author feel that a number of sectors would feel the heat in the coming days?</strong></p>\n<p><strong>(i) </strong>The construction sector has contracted by 2.8 percent.</p>\n<p><strong>(ii) </strong>The energy prices are at an all time high due to the rampaging war</p>\n<p><strong>(iii)</strong> Innumerable sanctions have been imposed which disrupts the supply chain</p>", "options": ["<p>Only (i)</p>", "<p>Only (ii)</p>", "<p>Only (iii)</p>", "<p>Both (ii) and (iii)</p>", "<p>Both (i) and (iii)</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The construction and the manufacturing sectors have been mentioned to have witnessed a downfall but, the actual question is about the reason due to which the author feels that there would be a further visible impact. For the same, only (ii) and (iii) have been cited as the reasons and not (i).</p>\n<p>Therefore, the best option is (d).</p>"}, {"question": "<p><strong>Read the given passage and answer the questions that follow. Some words and phrases have been highlighted for you to answer better</strong></p>\n<p>The lower-than-expected GDP numbers for the third quarter (Q3) of the ongoing fiscal, combined with some early indicators for the final quarter, confirm the fears that the third wave of the pandemic may have had a bigger impact on growth than was earlier expected. According to data released by the National Statistical Office on Monday, the GDP grew by 5.4 per cent during Q3 of 2021-22. For the full financial year, GDP growth is now estimated to hit 8.9 per cent, lower than the 9.2 per cent projected earlier. While this is not bad news – after all, the economy actually shrunk by 6.6 per cent in 2020-21 – the slower than expected growth rate poses a question mark over the Budget estimates. What is worrying is the sharp slowdown in growth momentum. GDP growth clocked a scorching 20.3 per cent in Q1 (April-June), fell sharply to 8.5 per cent in Q2 (July-September) and has fallen further.</p>\n<p>Sectoral data show up other worrying indicators. Construction, which not only carries significant weight in the economy, but also is a big generator of jobs, contracted by 2.8 per cent. Manufacturing growth was nearly stagnant at 0.2 per cent. Sectors like automobiles – a good indicator of consumer sentiment – are stagnating. The Q3 growth was <strong><em>disincentivised</em></strong> by the “relief rally” in private consumptions, as Covid-induced restrictions eased. While private final consumption grew 7 per cent in Q3, it is expected to drop to just 1.5 per cent in Q4 (January to March). The government’s capital expenditure also has slowed sharply, with gross fixed capital formation growing by just 2 per cent in Q3. This raises question marks over the government’s massive capital expenditure plans for 2022-23. That momentum could drop further as indicated by the slide in GST collections, which fell to 1.33 lakh crore in February 2022 from 1.40 lakh crore in January, although the Finance Ministry has pointed out that February is a shorter month.</p>\n<p>More worrying is the steady rise in inflation. Which has been at the top end of the RBI’s “comfort band” for months now. Overall retail (consumer inflation) is at 6 per cent for January, although separate indices compiled by the Labour Ministry for industrial workers and agriculture and farm workers came in at 5.8 and 5.5 per cent, respectively. Worryingly, food inflation is over 6.22 per cent, while the less-used Wholesale Price Index has been in double-digit territory for 10 months now. With the strife in Ukraine sending energy prices soaring, and sanctions adding to the existing supply chain disruptions, a number of sectors are likely to feel the hit in the coming months. The Centre and the RBI <strong><em>have their task cut out </em></strong>to maintain some sort of fiscal and monetary support for growth while ensuring that prices do not go out of control. A cut in fuel taxes – despite revenue implications – may be the only option to curb the impact of soaring oil prices. Further, the RBI will have to manage the rupee to ensure imports – essential for growth – do not get priced out of hand by a strengthening dollar.</p><br><p><strong>Which of the following can be inferred from the first few lines of the passage?</strong></p>", "options": ["<p>The pandemic has a significant impact on the growth estimates and the GDP numbers</p>", "<p>The capex of the government affects the GST collections evidently</p>", "<p>The government had expected the GDP numbers to fall in the third quarter</p>", "<p>The impact of the pandemic was perceived to be lethal but the estimates have been calming</p>", "<p>Both (a) and (d)</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The second option is being discussed towards the end of the second paragraph while the question is about the first few lines so it can be eliminated.</p>\n<p>The third option is a may be may not be. Though the lines convey that the numbers were lower than expected yet we can’t assume the government to have predicted a downfall only. This can be eliminated due to the ambiguity.</p>\n<p>The fourth option is wrong as, the fact in the passage is exactly the opposite.</p>\n<p>Therefore, the best answer is the first one ie; (a).</p>"}, {"question": "<p><strong>Read the given passage and answer the questions that follow. Some words and phrases have been highlighted for you to answer better</strong></p>\n<p>The lower-than-expected GDP numbers for the third quarter (Q3) of the ongoing fiscal, combined with some early indicators for the final quarter, confirm the fears that the third wave of the pandemic may have had a bigger impact on growth than was earlier expected. According to data released by the National Statistical Office on Monday, the GDP grew by 5.4 per cent during Q3 of 2021-22. For the full financial year, GDP growth is now estimated to hit 8.9 per cent, lower than the 9.2 per cent projected earlier. While this is not bad news – after all, the economy actually shrunk by 6.6 per cent in 2020-21 – the slower than expected growth rate poses a question mark over the Budget estimates. What is worrying is the sharp slowdown in growth momentum. GDP growth clocked a scorching 20.3 per cent in Q1 (April-June), fell sharply to 8.5 per cent in Q2 (July-September) and has fallen further.</p>\n<p>Sectoral data show up other worrying indicators. Construction, which not only carries significant weight in the economy, but also is a big generator of jobs, contracted by 2.8 per cent. Manufacturing growth was nearly stagnant at 0.2 per cent. Sectors like automobiles – a good indicator of consumer sentiment – are stagnating. The Q3 growth was <strong><em>disincentivised</em></strong> by the “relief rally” in private consumptions, as Covid-induced restrictions eased. While private final consumption grew 7 per cent in Q3, it is expected to drop to just 1.5 per cent in Q4 (January to March). The government’s capital expenditure also has slowed sharply, with gross fixed capital formation growing by just 2 per cent in Q3. This raises question marks over the government’s massive capital expenditure plans for 2022-23. That momentum could drop further as indicated by the slide in GST collections, which fell to 1.33 lakh crore in February 2022 from 1.40 lakh crore in January, although the Finance Ministry has pointed out that February is a shorter month.</p>\n<p>More worrying is the steady rise in inflation. Which has been at the top end of the RBI’s “comfort band” for months now. Overall retail (consumer inflation) is at 6 per cent for January, although separate indices compiled by the Labour Ministry for industrial workers and agriculture and farm workers came in at 5.8 and 5.5 per cent, respectively. Worryingly, food inflation is over 6.22 per cent, while the less-used Wholesale Price Index has been in double-digit territory for 10 months now. With the strife in Ukraine sending energy prices soaring, and sanctions adding to the existing supply chain disruptions, a number of sectors are likely to feel the hit in the coming months. The Centre and the RBI <strong><em>have their task cut out </em></strong>to maintain some sort of fiscal and monetary support for growth while ensuring that prices do not go out of control. A cut in fuel taxes – despite revenue implications – may be the only option to curb the impact of soaring oil prices. Further, the RBI will have to manage the rupee to ensure imports – essential for growth – do not get priced out of hand by a strengthening dollar.</p><br><p><strong> </strong><strong>What according to the author can be the only solution to curb the rising oil prices?</strong></p>\n<p><strong>(i) </strong>To regulate the value of rupee with respect to the dollar</p>\n<p><strong>(ii) </strong>Maintaining a concessionary attitude towards the revenues earned from fuel taxes</p>\n<p><strong>(iii) </strong>By mediating between the countries at war so that the strife over the exports can end</p>", "options": ["<p>Only (i)</p>", "<p>Only (ii)</p>", "<p>Only (iii)</p>", "<p>Both (i) and (iii)</p>", "<p>All (i), (ii) and (iii)</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>Refer to the lines from the last paragraph given below:</strong></p>\n<p><strong><em>A cut in fuel taxes</em></strong> – despite revenue implications – <strong><em>may be the only option to curb the impact</em></strong> of soaring oil prices.</p>\n<p>It is very clear that the author feels that the government should reduce the tax on the petrol although it would affect its collections but that seems to be the only way out for now.</p>\n<p>Therefore, the best answer is option (b).</p>"}, {"question": "<p><strong>Read the given passage and answer the questions that follow. Some words and phrases have been highlighted for you to answer better</strong></p>\n<p>The lower-than-expected GDP numbers for the third quarter (Q3) of the ongoing fiscal, combined with some early indicators for the final quarter, confirm the fears that the third wave of the pandemic may have had a bigger impact on growth than was earlier expected. According to data released by the National Statistical Office on Monday, the GDP grew by 5.4 per cent during Q3 of 2021-22. For the full financial year, GDP growth is now estimated to hit 8.9 per cent, lower than the 9.2 per cent projected earlier. While this is not bad news – after all, the economy actually shrunk by 6.6 per cent in 2020-21 – the slower than expected growth rate poses a question mark over the Budget estimates. What is worrying is the sharp slowdown in growth momentum. GDP growth clocked a scorching 20.3 per cent in Q1 (April-June), fell sharply to 8.5 per cent in Q2 (July-September) and has fallen further.</p>\n<p>Sectoral data show up other worrying indicators. Construction, which not only carries significant weight in the economy, but also is a big generator of jobs, contracted by 2.8 per cent. Manufacturing growth was nearly stagnant at 0.2 per cent. Sectors like automobiles – a good indicator of consumer sentiment – are stagnating. The Q3 growth was <strong><em>disincentivised</em></strong> by the “relief rally” in private consumptions, as Covid-induced restrictions eased. While private final consumption grew 7 per cent in Q3, it is expected to drop to just 1.5 per cent in Q4 (January to March). The government’s capital expenditure also has slowed sharply, with gross fixed capital formation growing by just 2 per cent in Q3. This raises question marks over the government’s massive capital expenditure plans for 2022-23. That momentum could drop further as indicated by the slide in GST collections, which fell to 1.33 lakh crore in February 2022 from 1.40 lakh crore in January, although the Finance Ministry has pointed out that February is a shorter month.</p>\n<p>More worrying is the steady rise in inflation. Which has been at the top end of the RBI’s “comfort band” for months now. Overall retail (consumer inflation) is at 6 per cent for January, although separate indices compiled by the Labour Ministry for industrial workers and agriculture and farm workers came in at 5.8 and 5.5 per cent, respectively. Worryingly, food inflation is over 6.22 per cent, while the less-used Wholesale Price Index has been in double-digit territory for 10 months now. With the strife in Ukraine sending energy prices soaring, and sanctions adding to the existing supply chain disruptions, a number of sectors are likely to feel the hit in the coming months. The Centre and the RBI <strong><em>have their task cut out </em></strong>to maintain some sort of fiscal and monetary support for growth while ensuring that prices do not go out of control. A cut in fuel taxes – despite revenue implications – may be the only option to curb the impact of soaring oil prices. Further, the RBI will have to manage the rupee to ensure imports – essential for growth – do not get priced out of hand by a strengthening dollar.</p><br><p><strong>Which of the following can be the best title for the passage given above?</strong></p>", "options": ["<p>A tumultuous world order and its impacts</p>", "<p>The road ahead for India: growth and economy</p>", "<p>The double-whammy: slowing GDP; rising inflation</p>", "<p>Pandemic debacle hovering high</p>", "<p>Other than the given options</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Options (a) and (d) are too general as the passage discusses specifically about the impact of the inflation etc over the Indian economy. So, these options can be eliminated.</p>\n<p>Now, as the third option is specific and better than the second, even that can be cancelled.</p>\n<p>Therefore, the best answer is option (c).</p>"}, {"question": "<p><strong>Read the given passage and answer the questions that follow. Some words and phrases have been highlighted for you to answer better</strong></p>\n<p>The lower-than-expected GDP numbers for the third quarter (Q3) of the ongoing fiscal, combined with some early indicators for the final quarter, confirm the fears that the third wave of the pandemic may have had a bigger impact on growth than was earlier expected. According to data released by the National Statistical Office on Monday, the GDP grew by 5.4 per cent during Q3 of 2021-22. For the full financial year, GDP growth is now estimated to hit 8.9 per cent, lower than the 9.2 per cent projected earlier. While this is not bad news – after all, the economy actually shrunk by 6.6 per cent in 2020-21 – the slower than expected growth rate poses a question mark over the Budget estimates. What is worrying is the sharp slowdown in growth momentum. GDP growth clocked a scorching 20.3 per cent in Q1 (April-June), fell sharply to 8.5 per cent in Q2 (July-September) and has fallen further.</p>\n<p>Sectoral data show up other worrying indicators. Construction, which not only carries significant weight in the economy, but also is a big generator of jobs, contracted by 2.8 per cent. Manufacturing growth was nearly stagnant at 0.2 per cent. Sectors like automobiles – a good indicator of consumer sentiment – are stagnating. The Q3 growth was <strong><em>disincentivised</em></strong> by the “relief rally” in private consumptions, as Covid-induced restrictions eased. While private final consumption grew 7 per cent in Q3, it is expected to drop to just 1.5 per cent in Q4 (January to March). The government’s capital expenditure also has slowed sharply, with gross fixed capital formation growing by just 2 per cent in Q3. This raises question marks over the government’s massive capital expenditure plans for 2022-23. That momentum could drop further as indicated by the slide in GST collections, which fell to 1.33 lakh crore in February 2022 from 1.40 lakh crore in January, although the Finance Ministry has pointed out that February is a shorter month.</p>\n<p>More worrying is the steady rise in inflation. Which has been at the top end of the RBI’s “comfort band” for months now. Overall retail (consumer inflation) is at 6 per cent for January, although separate indices compiled by the Labour Ministry for industrial workers and agriculture and farm workers came in at 5.8 and 5.5 per cent, respectively. Worryingly, food inflation is over 6.22 per cent, while the less-used Wholesale Price Index has been in double-digit territory for 10 months now. With the strife in Ukraine sending energy prices soaring, and sanctions adding to the existing supply chain disruptions, a number of sectors are likely to feel the hit in the coming months. The Centre and the RBI <strong><em>have their task cut out </em></strong>to maintain some sort of fiscal and monetary support for growth while ensuring that prices do not go out of control. A cut in fuel taxes – despite revenue implications – may be the only option to curb the impact of soaring oil prices. Further, the RBI will have to manage the rupee to ensure imports – essential for growth – do not get priced out of hand by a strengthening dollar.</p><br><p><strong>Which of the given options should replace the word <em>‘disincentivised’</em> as used in the passage?</strong></p>", "options": ["<p>Spurred</p>", "<p>Halt</p>", "<p>Dissuade</p>", "<p>Acclimatised</p>", "<p>Estimated</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The Q3 growth happened as a result of improvement in private consumption which shows that a positive word should be used in place of ‘disincentivise’.</p>\n<p>Halt and Dissuade have negative tones and mean to stop and discourage respectively so these can be ruled out.</p>\n<p>Estimated and Acclimatised are out of context.</p>\n<p>The word that hints at growth and increase is therefore, ‘spurred’.</p>\n<p>Therefore, the best answer is option (a).</p>"}, {"question": "<p><strong>Read the given passage and answer the questions that follow. Some words and phrases have been highlighted for you to answer better</strong></p>\n<p>The lower-than-expected GDP numbers for the third quarter (Q3) of the ongoing fiscal, combined with some early indicators for the final quarter, confirm the fears that the third wave of the pandemic may have had a bigger impact on growth than was earlier expected. According to data released by the National Statistical Office on Monday, the GDP grew by 5.4 per cent during Q3 of 2021-22. For the full financial year, GDP growth is now estimated to hit 8.9 per cent, lower than the 9.2 per cent projected earlier. While this is not bad news – after all, the economy actually shrunk by 6.6 per cent in 2020-21 – the slower than expected growth rate poses a question mark over the Budget estimates. What is worrying is the sharp slowdown in growth momentum. GDP growth clocked a scorching 20.3 per cent in Q1 (April-June), fell sharply to 8.5 per cent in Q2 (July-September) and has fallen further.</p>\n<p>Sectoral data show up other worrying indicators. Construction, which not only carries significant weight in the economy, but also is a big generator of jobs, contracted by 2.8 per cent. Manufacturing growth was nearly stagnant at 0.2 per cent. Sectors like automobiles – a good indicator of consumer sentiment – are stagnating. The Q3 growth was <strong><em>disincentivised</em></strong> by the “relief rally” in private consumptions, as Covid-induced restrictions eased. While private final consumption grew 7 per cent in Q3, it is expected to drop to just 1.5 per cent in Q4 (January to March). The government’s capital expenditure also has slowed sharply, with gross fixed capital formation growing by just 2 per cent in Q3. This raises question marks over the government’s massive capital expenditure plans for 2022-23. That momentum could drop further as indicated by the slide in GST collections, which fell to 1.33 lakh crore in February 2022 from 1.40 lakh crore in January, although the Finance Ministry has pointed out that February is a shorter month.</p>\n<p>More worrying is the steady rise in inflation. Which has been at the top end of the RBI’s “comfort band” for months now. Overall retail (consumer inflation) is at 6 per cent for January, although separate indices compiled by the Labour Ministry for industrial workers and agriculture and farm workers came in at 5.8 and 5.5 per cent, respectively. Worryingly, food inflation is over 6.22 per cent, while the less-used Wholesale Price Index has been in double-digit territory for 10 months now. With the strife in Ukraine sending energy prices soaring, and sanctions adding to the existing supply chain disruptions, a number of sectors are likely to feel the hit in the coming months. The Centre and the RBI <strong><em>have their task cut out </em></strong>to maintain some sort of fiscal and monetary support for growth while ensuring that prices do not go out of control. A cut in fuel taxes – despite revenue implications – may be the only option to curb the impact of soaring oil prices. Further, the RBI will have to manage the rupee to ensure imports – essential for growth – do not get priced out of hand by a strengthening dollar.</p><br><p><strong>What is the tone of the passage?</strong></p>", "options": ["<p>Assertive</p>", "<p>Apprehensive</p>", "<p>Enthusiastic</p>", "<p>Evasive</p>", "<p>Grim</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>Assertive tone is when the author is forceful and aggressively clear in what he has to say.</p>\n<p>Apprehensive is when there is an uncertainty or alarm over the situation in the future</p>\n<p>Evasive is when the author is not willing to be clear about what he intends to present (about an issue or so)</p>\n<p>Grim is sad and all pessimistic.</p>\n<p>When we look at the meaning carefully, we understand that, the word apprehensive fits better than the rest.</p>\n<p>So, option (b) is the correct answer.</p>"}, {"question": "<p><strong>Read the given passage and answer the questions that follow. Some words and phrases have been highlighted for you to answer better</strong></p>\n<p>The lower-than-expected GDP numbers for the third quarter (Q3) of the ongoing fiscal, combined with some early indicators for the final quarter, confirm the fears that the third wave of the pandemic may have had a bigger impact on growth than was earlier expected. According to data released by the National Statistical Office on Monday, the GDP grew by 5.4 per cent during Q3 of 2021-22. For the full financial year, GDP growth is now estimated to hit 8.9 per cent, lower than the 9.2 per cent projected earlier. While this is not bad news – after all, the economy actually shrunk by 6.6 per cent in 2020-21 – the slower than expected growth rate poses a question mark over the Budget estimates. What is worrying is the sharp slowdown in growth momentum. GDP growth clocked a scorching 20.3 per cent in Q1 (April-June), fell sharply to 8.5 per cent in Q2 (July-September) and has fallen further.</p>\n<p>Sectoral data show up other worrying indicators. Construction, which not only carries significant weight in the economy, but also is a big generator of jobs, contracted by 2.8 per cent. Manufacturing growth was nearly stagnant at 0.2 per cent. Sectors like automobiles – a good indicator of consumer sentiment – are stagnating. The Q3 growth was <strong><em>disincentivised</em></strong> by the “relief rally” in private consumptions, as Covid-induced restrictions eased. While private final consumption grew 7 per cent in Q3, it is expected to drop to just 1.5 per cent in Q4 (January to March). The government’s capital expenditure also has slowed sharply, with gross fixed capital formation growing by just 2 per cent in Q3. This raises question marks over the government’s massive capital expenditure plans for 2022-23. That momentum could drop further as indicated by the slide in GST collections, which fell to 1.33 lakh crore in February 2022 from 1.40 lakh crore in January, although the Finance Ministry has pointed out that February is a shorter month.</p>\n<p>More worrying is the steady rise in inflation. Which has been at the top end of the RBI’s “comfort band” for months now. Overall retail (consumer inflation) is at 6 per cent for January, although separate indices compiled by the Labour Ministry for industrial workers and agriculture and farm workers came in at 5.8 and 5.5 per cent, respectively. Worryingly, food inflation is over 6.22 per cent, while the less-used Wholesale Price Index has been in double-digit territory for 10 months now. With the strife in Ukraine sending energy prices soaring, and sanctions adding to the existing supply chain disruptions, a number of sectors are likely to feel the hit in the coming months. The Centre and the RBI <strong><em>have their task cut out </em></strong>to maintain some sort of fiscal and monetary support for growth while ensuring that prices do not go out of control. A cut in fuel taxes – despite revenue implications – may be the only option to curb the impact of soaring oil prices. Further, the RBI will have to manage the rupee to ensure imports – essential for growth – do not get priced out of hand by a strengthening dollar.</p><br><p><strong>In what context has the phrase ‘<em>have their task cut out’ </em>been used in the last paragraph?</strong></p>", "options": ["<p>Some work that is not required to be done now</p>", "<p>The work of RBI has already been accomplished</p>", "<p>It is getting really tough and the RBI needs to work very hard</p>", "<p>The RBI is going to need assistance for the tough task</p>", "<p>None of the above</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The above idiom is generally found as: <strong><em>have one's work cut out </em></strong>and it means that a task too difficult to be accomplished without hell lot of an effort being put in.</p>\n<p>In the passage, the author uses the same to emphasise how difficult it is for the RBI to handle the situation.</p>\n<p>Therefore, the best option is (c).</p>"}, {"question": "<p><strong>In the following questions, five parts are given as A, B, C, D and E. You have to identify the incorrect part for each of the following questions.</strong></p><br><p>The philosopher’s soliloquy on <strong>(A)/</strong>existentialism ventured into the labyrinthine depths <strong>(B)/</strong>of human consciousness, exploring the <strong>(C)/</strong>juxtaposition of nihilism and transcendence <strong>(D)/</strong> No error <strong>(E)</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>The philosopher’s soliloquy on existentialism ventured into the labyrinthine depths of human consciousness, exploring the juxtaposition of nihilism and transcendence.</p>"}, {"question": "<p><strong>In the following questions, five parts are given as A, B, C, D and E. You have to identify the incorrect part for each of the following questions.</strong></p><br><p>Her ineffable charm and subtle allure <strong>(A)/</strong>made her an enigmatic figure in social circles, <strong>(B)/</strong>where his presence was both <strong>(C)/</strong>magnetically captivating and elusive <strong>(D)/</strong> No error <strong>(E)</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>No error</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The pronoun \"his\" is incorrect because it does not match the gender of the subject described earlier in the sentence (\"Her ineffable charm and subtle allure\"). The correct pronoun should be \"her\" to maintain consistency.</p>\n<p><strong>The corrected sentence is:</strong></p>\n<p>Her ineffable charm and subtle allure made her an enigmatic figure in social circles, where her presence was both magnetically captivating and elusive.</p>"}, {"question": "<p><strong>In the following questions, five parts are given as A, B, C, D and E. You have to identify the incorrect part for each of the following questions.</strong></p><br><p>The historian's meticulous exegesis of <strong>(A)/</strong>medieval manuscripts revealed previous obscure <strong>(B)/</strong>insights into the sociopolitical dynamics <strong>(C)/</strong>of the era, reshaping contemporary understanding <strong>(D)/</strong> No error <strong>(E)</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>No error</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The phrase \"previous obscure insights\" should be \"previously obscure insights.\" The adverb \"previously\" correctly modifies \"obscure,\" indicating that the insights were obscure in the past.</p>\n<p><strong>The corrected sentence is:</strong></p>\n<p>The historian's meticulous exegesis of medieval manuscripts revealed previously obscure insights into the sociopolitical dynamics of the era, reshaping contemporary understanding.</p>"}, {"question": "<p><strong>In the following questions, five parts are given as A, B, C, D and E. You have to identify the incorrect part for each of the following questions.</strong></p><br><p>The symphony’s orchestration, <strong>(A)/</strong>replete with contrapuntal harmonies and chromatic (<strong>B)/</strong>modulations, created an auditory experience <strong>(C)/</strong>that were both transcendent and sublime <strong>(D)/</strong> No error <strong>(E)</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>No error</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The verb \"were\" should be \"was\" to agree with the singular noun \"experience.\"</p>\n<p><strong>The corrected sentence is:</strong></p>\n<p>The symphony’s orchestration, replete with contrapuntal harmonies and chromatic modulations, created an auditory experience that was both transcendent and sublime.</p>"}, {"question": "<p><strong>In the following questions, five parts are given as A, B, C, D and E. You have to identify the incorrect part for each of the following questions.</strong></p><br><p>The diplomat’s sagacious interventions <strong>(A)/</strong>deftly navigated the diplomatic quagmire, fostering <strong>(B)/</strong>an environment of construction dialogue <strong>(C)/</strong>and mutual understanding amidst international discord <strong>(D)/</strong> No error <strong>(E)</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>No error</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The phrase \"construction dialogue\" should be \"constructive dialogue.\"</p>\n<p><strong>The corrected sentence is:</strong></p>\n<p>The diplomat’s sagacious interventions deftly navigated the diplomatic quagmire, fostering an environment of constructive dialogue and mutual understanding amidst international discord.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-46)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-46)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

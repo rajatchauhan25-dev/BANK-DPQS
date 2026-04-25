@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-100)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>In each question below, words have been highlighted. These words used might be correct or may be opposite/wrong in usage. You must read the given sentences carefully and choose the option with the opposite used word as your answer.</strong></p><br><p><strong>A).</strong> The chef's <strong>receipt</strong> for the cake was a closely guarded secret.</p>\n<p><strong>B).</strong> The soldier received a medal for his <strong>bravery</strong> during the battle.</p>\n<p><strong>C).</strong> The architect presented a detailed <strong>blueprint</strong> of the new building.</p>\n<p><strong>D).</strong> The student asked the librarian for a <strong>recommendation</strong> for a good book.</p>\n<p><strong>E).</strong> None of these</p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The correct word is \"<strong>recipe</strong>,\" which refers to a set of instructions for preparing a particular dish. The word \"receipt\" refers to a written acknowledgment that something has been received, which doesn't fit the context of instructions for making a cake.</p>"}, {"question": "<p><strong>In each question below, words have been highlighted. These words used might be correct or may be opposite/wrong in usage. You must read the given sentences carefully and choose the option with the opposite used word as your answer.</strong></p><br><p><strong>A).</strong> The farmer used a <strong>hoe</strong> to till the soil before planting seeds.</p>\n<p><strong>B). </strong>The writer felt a <strong>sense</strong> of accomplishment after finishing the novel.</p>\n<p><strong>C).</strong> The teacher handed out a <strong>sheet</strong> of paper for the exam.</p>\n<p><strong>D).</strong> The climber reached the <strong>peek </strong>of the mountain at dawn.</p>\n<p><strong>E).</strong> None of these</p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The correct word is \"<strong>peak</strong>,\" which refers to the pointed top of a mountain. The word \"peek\" means to look quickly or furtively, which doesn't fit the context of reaching the top of a mountain.</p>"}, {"question": "<p><strong>In each question below, words have been highlighted. These words used might be correct or may be opposite/wrong in usage. You must read the given sentences carefully and choose the option with the opposite used word as your answer.</strong></p><br><p><strong>A).</strong> The detective found a <strong>clue</strong> that led to solving the case.</p>\n<p><strong>B).</strong> The artist used <strong>stationery </strong>to create a new sculpture.</p>\n<p><strong>C).</strong> The company announced its <strong>annual</strong> meeting for shareholders.</p>\n<p><strong>D).</strong> The musician performed a beautiful <strong>piece</strong> on the piano.</p>\n<p><strong>E).</strong> None of these</p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The correct word is \"<strong>materials</strong>\" or a specific art medium (like \"clay,\" \"wood,\" etc.), depending on the context. The word \"stationery\" refers to writing materials, especially paper and envelopes, which doesn't fit the context of creating a sculpture.</p>"}, {"question": "<p><strong>In each question below, words have been highlighted. These words used might be correct or may be opposite/wrong in usage. You must read the given sentences carefully and choose the option with the opposite used word as your answer.</strong></p><br><p><strong>A).</strong> The gardener planted a variety of <strong>herbs</strong> in the garden.</p>\n<p><strong>B).</strong> The author wrote a compelling <strong>tale</strong> about adventure and friendship.</p>\n<p><strong>C).</strong> The scientist presented the <strong>data</strong> collected from the experiment.</p>\n<p><strong>D).</strong> The athlete wore a special <strong>suite</strong> designed for maximum comfort.</p>\n<p><strong>E).</strong> None of these</p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The correct word is \"<strong>suit</strong>,\" which refers to a set of clothes designed to be worn together. The word \"suite\" refers to a set of rooms designated for one person's or family's use or for a particular purpose, which doesn't fit the context of clothing for an athlete.</p>"}, {"question": "<p><strong>In each question below, words have been highlighted. These words used might be correct or may be opposite/wrong in usage. You must read the given sentences carefully and choose the option with the opposite used word as your answer.</strong></p><br><p><strong>A).</strong> The lawyer provided sound <strong>counsel</strong> to her clients during the trial.</p>\n<p><strong>B).</strong> The child asked for <strong>dessert</strong> after finishing his meal.</p>\n<p><strong>C).</strong> The engineer created a new <strong>device</strong> to improve efficiency in the factory.</p>\n<p><strong>D).</strong> The musician composed a beautiful <strong>piece</strong> for the wedding ceremony.</p>\n<p><strong>E).</strong> None of these</p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>All the highlighted words are used correctly in their contexts.</p>"}, {"question": "<p><strong>In the following questions three columns are given containing three Sentences/phrases each. In first column, sentences/phrases are A, B and C, in the third column the sentences/phrases are D, E and F and in the second column sentences/phrases 1,2 and 3 are given. The sentence/phrase from the first column may or may not</strong> <strong>connect with another sentence/phrase from the second or third column to make a grammatically and contextually correct sentence. Each question has five options, four of which display the sequence(s) in which the sentences/phrases can be joined to form a grammatically and contextually correct sentence. If none of the options given forms a correct sentence after combination, mark (e), i.e. “None of these” as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172925009341.png\" title=\"29.png\"/></p>", "options": ["<p>A2D, B3E and C1F</p>", "<p>only B2E &amp; C2F</p>", "<p>A2D, B1E and C3F</p>", "<p>A1F, B3D and C2E</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>A2D:</strong> The advent of renewable energy sources, such as solar and wind, presents a sustainable alternative to fossil fuels, addressing the urgent need for environmental conservation.</p>\n<p><strong>B1E:</strong> Interdisciplinary collaboration among scientists, engineers, and policymakers is crucial for developing innovative solutions to combat climate change effectively.</p>\n<p><strong>C3F:</strong> The cultural significance of indigenous art forms is increasingly recognized as essential for preserving heritage and fostering community identity in a rapidly globalizing world.</p>"}, {"question": "<p><strong>In the following questions three columns are given containing three Sentences/phrases each. In first column, sentences/phrases are A, B and C, in the third column the sentences/phrases are D, E and F and in the second column sentences/phrases 1,2 and 3 are given. The sentence/phrase from the first column may or may not</strong> <strong>connect with another sentence/phrase from the second or third column to make a grammatically and contextually correct sentence. Each question has five options, four of which display the sequence(s) in which the sentences/phrases can be joined to form a grammatically and contextually correct sentence. If none of the options given forms a correct sentence after combination, mark (e), i.e. “None of these” as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172925037460.png\" title=\"30.png\"/></p>", "options": ["<p>A2D, B3E and C1F</p>", "<p>only B2E &amp; C2F</p>", "<p>A2D, B1E and C2F</p>", "<p>A1F, B3D and C2E</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>A1F:</strong> A comprehensive understanding of economic principles is vital for policymakers to design effective strategies that promote sustainable growth and social equity.</p>\n<p><strong>B3D:</strong> As technological advancements continue to reshape communication; the importance of digital literacy becomes paramount for navigating the modern information landscape.</p>\n<p><strong>C2E:</strong> The integration of artificial intelligence in healthcare systems has the potential to revolutionize patient care and improve diagnostic accuracy through data analysis.</p>"}, {"question": "<p><strong>In the following questions three columns are given containing three Sentences/phrases each. In first column, sentences/phrases are A, B and C, in the third column the sentences/phrases are D, E and F and in the second column sentences/phrases 1,2 and 3 are given. The sentence/phrase from the first column may or may not</strong> <strong>connect with another sentence/phrase from the second or third column to make a grammatically and contextually correct sentence. Each question has five options, four of which display the sequence(s) in which the sentences/phrases can be joined to form a grammatically and contextually correct sentence. If none of the options given forms a correct sentence after combination, mark (e), i.e. “None of these” as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172925085074.png\" title=\"31.png\"/></p>", "options": ["<p>A2D, B3E and C1F</p>", "<p>only B2E &amp; C2F</p>", "<p>A2D, B1E and C2F</p>", "<p>A1F, B3D and C2E</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>A2D:</strong> A robust education system that emphasizes critical thinking and creativity is essential for preparing students to thrive in a complex and evolving job market.</p>\n<p><strong>B3E:</strong> The proliferation of misinformation on social media platforms has raised significant concerns about its impact on public opinion and democratic processes.</p>\n<p><strong>C1F:</strong> Corporate social responsibility initiatives are increasingly viewed as integral to business success, aligning profit motives with ethical considerations and community welfare.</p>"}, {"question": "<p><strong>In the following questions three columns are given containing three Sentences/phrases each. In first column, sentences/phrases are A, B and C, in the third column the sentences/phrases are D, E and F and in the second column sentences/phrases 1,2 and 3 are given. The sentence/phrase from the first column may or may not</strong> <strong>connect with another sentence/phrase from the second or third column to make a grammatically and contextually correct sentence. Each question has five options, four of which display the sequence(s) in which the sentences/phrases can be joined to form a grammatically and contextually correct sentence. If none of the options given forms a correct sentence after combination, mark (e), i.e. “None of these” as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172925097673.png\" title=\"32.png\"/></p>", "options": ["<p>A2D, B3E and C1F</p>", "<p>only B2E &amp; C2F</p>", "<p>A2D, B1E and C2F</p>", "<p>A1F, B3D and C2E</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>A1F:</strong> The psychological effects of prolonged isolation during the pandemic have prompted mental health professionals to advocate for enhanced support systems.</p>\n<p><strong>B3D:</strong> Understanding the intricate relationship between culture and politics is essential for comprehending contemporary global conflicts and power dynamics.</p>\n<p><strong>C2E:</strong> The exploration of outer space has not only expanded our scientific knowledge but also inspired generations to pursue careers in science and technology.</p>"}, {"question": "<p><strong>In the following questions three columns are given containing three Sentences/phrases each. In first column, sentences/phrases are A, B and C, in the third column the sentences/phrases are D, E and F and in the second column sentences/phrases 1,2 and 3 are given. The sentence/phrase from the first column may or may not</strong> <strong>connect with another sentence/phrase from the second or third column to make a grammatically and contextually correct sentence. Each question has five options, four of which display the sequence(s) in which the sentences/phrases can be joined to form a grammatically and contextually correct sentence. If none of the options given forms a correct sentence after combination, mark (e), i.e. “None of these” as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172925133911.png\" title=\"33.png\"/></p>", "options": ["<p>A2D, B3E and C1F</p>", "<p>only B2E &amp; C2F</p>", "<p>A2D, B1E and C2F</p>", "<p>A1F, B3D and C2E</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>A2D:</strong> The historical analysis of social movements reveals patterns of resilience and adaptation that inform current efforts for social justice and reform.</p>\n<p><strong>B3E:</strong> Economic disparities between urban and rural areas highlight the need for targeted policies that promote equitable development and access to resources.</p>\n<p><strong>C1F:</strong> The increasing reliance on technology in education necessitates ongoing evaluation of its effectiveness and potential impacts on learning outcomes and student engagement.</p>"}, {"question": "<p><strong>Read the paragraph carefully and answer the following questions: </strong></p>\n<p>In a landmark ruling, the Supreme Court has declared regulations mandating the dismissal of women from jobs upon marriage as “archaic, discriminatory and in violation of constitutional principles.” The judgment marks another significant step towards gender equality and the protection of women's rights. For decades, countless women across job sectors have faced the harsh reality of being forced out of employment solely because of their marital status or family obligations. Such discriminatory practices not only <strong>(__A__)</strong> gender inequality but also hinder women's economic independence and professional growth. The Supreme Court’s decision to strike down these rules is a resounding victory for gender justice and workplace equality, besides reaffirming the constitutional guarantee of equality before the law and non-discrimination on the grounds of gender. It is also a stride towards ensuring a society that typically takes the fair sex as unreliable and untrustworthy who would leave their work midway to tend to their families. The <strong>(__B__)</strong> of such regressive rules extend far beyond individual women; they contribute to a culture of inequality and reinforce harmful stereotypes. By dismantling these barriers, the judiciary has taken a significant step towards dismantling systemic gender discrimination and promoting a more inclusive and equitable society. Of course, changes that stand the test of time must come from within a society but legal protection is also necessary to ensure a progressive society. The judgment underscores the importance of upholding women's right to work and pursue career opportunities without facing arbitrary restrictions. Women should not have to choose between their personal lives and professional aspirations; they deserve the freedom to navigate both spheres on their own terms. Besides, the economic implications of <strong>(C) </strong><strong>bereaving </strong>women of employment opportunities are profound. Gender equality at the workforce is not just a matter of principle but also a crucial factor in promoting economic growth and social development. By <strong>(D) </strong><strong>exploiting</strong> the talent and potential of all individuals, irrespective of their gender, societies can foster innovation, productivity and prosperity. Additionally, efforts to combat gender-based discrimination must extend beyond legal frameworks to encompass broader societal attitudes and norms. Education, awareness campaigns and <strong>(__E__)</strong> are essential tools in challenging deep-rooted biases and promoting gender equality. While the apex court's decision represents a significant milestone in the fight for women's rights, it is only the beginning of a broader movement towards gender equality. Sustained efforts from all stakeholders, including Governments, employers, civil society and individuals, are necessary to create a truly inclusive and equitable society. For the moment, however, we can cherish that one more glass ceiling has been <strong>(__F__)</strong> and the court deserves a round of applause.</p><br><p><strong>Which of the following words can fit in the blank A?</strong></p>", "options": ["<p>observe</p>", "<p>secure</p>", "<p>propagate</p>", "<p>spread</p>", "<p>perpetuate</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>perpetuate</p>\n<p>The word that most appropriately fits in the blank labelled (A) is: e) perpetuate</p>\n<p><strong>a).</strong> observe: This doesn't fit in the context. The sentence is discussing the negative impact of discriminatory practices, and \"observe\" doesn't convey the idea of actively continuing or maintaining these practices.</p>\n<p><strong>b).</strong> secure: This doesn't fit the context either. The sentence is describing the negative consequences of discriminatory practices, and \"secure\" does not convey the idea of causing or perpetuating those consequences.</p>\n<p><strong>c).</strong> propagate: While \"propagate\" can mean to spread or promote, it is not the best fit in this context. The sentence is emphasizing the continuation of gender inequality, and \"propagate\" may not fully capture the negative consequences of discriminatory practices.</p>\n<p><strong>d).</strong> spread: This is a close contender, but \"spread\" might not fully convey the idea of maintaining or continuing the discriminatory practices over time. The word \"perpetuate,\" more precisely captures the notion of sustained and prolonged existence.</p>\n<p><strong>e).</strong> perpetuate: This is the correct answer. \"Perpetuate\" means to make something continue indefinitely, which fits well in the context of the sentence discussing the ongoing nature of gender inequality resulting from discriminatory practices.</p>\n<p>In summary, \"perpetuate\" is the most suitable choice as it conveys the idea that these discriminatory practices not only contribute to but actively maintain or continue gender inequality.</p>\n<p>Therefore, \" e) perpetuate \" is the word that most appropriately fits the blank (A).</p>"}, {"question": "<p><strong>Read the paragraph carefully and answer the following questions: </strong></p>\n<p>In a landmark ruling, the Supreme Court has declared regulations mandating the dismissal of women from jobs upon marriage as “archaic, discriminatory and in violation of constitutional principles.” The judgment marks another significant step towards gender equality and the protection of women's rights. For decades, countless women across job sectors have faced the harsh reality of being forced out of employment solely because of their marital status or family obligations. Such discriminatory practices not only <strong>(__A__)</strong> gender inequality but also hinder women's economic independence and professional growth. The Supreme Court’s decision to strike down these rules is a resounding victory for gender justice and workplace equality, besides reaffirming the constitutional guarantee of equality before the law and non-discrimination on the grounds of gender. It is also a stride towards ensuring a society that typically takes the fair sex as unreliable and untrustworthy who would leave their work midway to tend to their families. The <strong>(__B__)</strong> of such regressive rules extend far beyond individual women; they contribute to a culture of inequality and reinforce harmful stereotypes. By dismantling these barriers, the judiciary has taken a significant step towards dismantling systemic gender discrimination and promoting a more inclusive and equitable society. Of course, changes that stand the test of time must come from within a society but legal protection is also necessary to ensure a progressive society. The judgment underscores the importance of upholding women's right to work and pursue career opportunities without facing arbitrary restrictions. Women should not have to choose between their personal lives and professional aspirations; they deserve the freedom to navigate both spheres on their own terms. Besides, the economic implications of <strong>(C) </strong><strong>bereaving </strong>women of employment opportunities are profound. Gender equality at the workforce is not just a matter of principle but also a crucial factor in promoting economic growth and social development. By <strong>(D) </strong><strong>exploiting</strong> the talent and potential of all individuals, irrespective of their gender, societies can foster innovation, productivity and prosperity. Additionally, efforts to combat gender-based discrimination must extend beyond legal frameworks to encompass broader societal attitudes and norms. Education, awareness campaigns and <strong>(__E__)</strong> are essential tools in challenging deep-rooted biases and promoting gender equality. While the apex court's decision represents a significant milestone in the fight for women's rights, it is only the beginning of a broader movement towards gender equality. Sustained efforts from all stakeholders, including Governments, employers, civil society and individuals, are necessary to create a truly inclusive and equitable society. For the moment, however, we can cherish that one more glass ceiling has been <strong>(__F__)</strong> and the court deserves a round of applause.</p><br><p><strong>Which of the following words can fit in the blank B?</strong></p>", "options": ["<p>nuances</p>", "<p>imputations</p>", "<p>suggestions</p>", "<p>repercussions</p>", "<p>significations</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>repercussions</p>\n<p>The word that most appropriately fits in the blank labelled (B) is: d) repercussions.</p>\n<p><strong>a).</strong> nuances - Nuances refer to subtle differences or distinctions. In this context, it doesn't fit well because the sentence is talking about the broader and more significant impacts of the rules, not subtle distinctions.</p>\n<p><strong>b).</strong> imputations - Imputations involve attributing something to someone. However, in this context, it doesn't convey the idea of the wide-ranging effects or consequences that the sentence is discussing.</p>\n<p><strong>c).</strong> suggestions - Suggestions typically refer to proposals or ideas. While the sentence is discussing the effects of the rules, \"suggestions\" doesn't capture the idea of the consequences or outcomes in the same way that \"repercussions\" does.</p>\n<p><strong>d).</strong> repercussions - This is the correct answer. \"Repercussions\" refers to the often-unintended consequences or effects of an action. In the context of the sentence, it conveys the idea that the negative effects of the regressive rules extend beyond individual women.</p>\n<p><strong>e).</strong> significations - \"Significations\" refers to meanings or interpretations. Like \"nuances,\" it doesn't capture the sense of broader, tangible impacts that the sentence is conveying.</p>\n<p>In summary, \"repercussions\" best fits the context of the sentence, as it conveys the broader and often negative consequences of the regressive rules discussed in the passage.</p>\n<p>Therefore, \" d) repercussions\" is the word that most appropriately fits in the blank (B).</p>"}, {"question": "<p><strong>Read the paragraph carefully and answer the following questions: </strong></p>\n<p>In a landmark ruling, the Supreme Court has declared regulations mandating the dismissal of women from jobs upon marriage as “archaic, discriminatory and in violation of constitutional principles.” The judgment marks another significant step towards gender equality and the protection of women's rights. For decades, countless women across job sectors have faced the harsh reality of being forced out of employment solely because of their marital status or family obligations. Such discriminatory practices not only <strong>(__A__)</strong> gender inequality but also hinder women's economic independence and professional growth. The Supreme Court’s decision to strike down these rules is a resounding victory for gender justice and workplace equality, besides reaffirming the constitutional guarantee of equality before the law and non-discrimination on the grounds of gender. It is also a stride towards ensuring a society that typically takes the fair sex as unreliable and untrustworthy who would leave their work midway to tend to their families. The <strong>(__B__)</strong> of such regressive rules extend far beyond individual women; they contribute to a culture of inequality and reinforce harmful stereotypes. By dismantling these barriers, the judiciary has taken a significant step towards dismantling systemic gender discrimination and promoting a more inclusive and equitable society. Of course, changes that stand the test of time must come from within a society but legal protection is also necessary to ensure a progressive society. The judgment underscores the importance of upholding women's right to work and pursue career opportunities without facing arbitrary restrictions. Women should not have to choose between their personal lives and professional aspirations; they deserve the freedom to navigate both spheres on their own terms. Besides, the economic implications of <strong>(C) </strong><strong>bereaving </strong>women of employment opportunities are profound. Gender equality at the workforce is not just a matter of principle but also a crucial factor in promoting economic growth and social development. By <strong>(D) </strong><strong>exploiting</strong> the talent and potential of all individuals, irrespective of their gender, societies can foster innovation, productivity and prosperity. Additionally, efforts to combat gender-based discrimination must extend beyond legal frameworks to encompass broader societal attitudes and norms. Education, awareness campaigns and <strong>(__E__)</strong> are essential tools in challenging deep-rooted biases and promoting gender equality. While the apex court's decision represents a significant milestone in the fight for women's rights, it is only the beginning of a broader movement towards gender equality. Sustained efforts from all stakeholders, including Governments, employers, civil society and individuals, are necessary to create a truly inclusive and equitable society. For the moment, however, we can cherish that one more glass ceiling has been <strong>(__F__)</strong> and the court deserves a round of applause.</p><br><p><strong>Which of the following words can replace “</strong><strong>bereaving” used in the Passage?</strong></p>", "options": ["<p>diminishing</p>", "<p>depriving</p>", "<p>expelling</p>", "<p>ousting</p>", "<p>losing</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>depriving</p>\n<p>The word that can replace \"bereaving\" in the given sentence is: b) depriving.</p>\n<p><strong>a).</strong> diminishing: While \"diminishing\" implies a reduction, it doesn't fully capture the idea of actively taking away opportunities, as in the context of depriving someone of employment.</p>\n<p><strong>b).</strong> depriving: This is the correct answer. \"Depriving\" aligns closely with the idea of taking away or denying someone of something, in this case, employment opportunities.</p>\n<p><strong>c).</strong> expelling: \"Expelling\" typically refers to being forced to leave or ejecting someone from a place, like a school or organization. It doesn't quite convey the nuance of taking away opportunities.</p>\n<p><strong>d).</strong> ousting: Similar to \"expelling,\" \"ousting\" refers to forcefully removing someone from a position or place. It doesn't specifically address the idea of denying employment opportunities.</p>\n<p><strong>e).</strong> losing: While \"losing\" is related to deprivation, it is a more general term and might not convey the deliberate action of taking away opportunities as explicitly as \"depriving.\"</p>\n<p>In the context of the passage, the word \"depriving\" best captures the sense of actively denying women employment opportunities based on their marital status, making it the most appropriate replacement for \"bereaving.\"</p>\n<p>Therefore, \"b) depriving \" is the word that can appropriately replace \" bereaving \" in the passage.</p>"}, {"question": "<p><strong>Read the paragraph carefully and answer the following questions: </strong></p>\n<p>In a landmark ruling, the Supreme Court has declared regulations mandating the dismissal of women from jobs upon marriage as “archaic, discriminatory and in violation of constitutional principles.” The judgment marks another significant step towards gender equality and the protection of women's rights. For decades, countless women across job sectors have faced the harsh reality of being forced out of employment solely because of their marital status or family obligations. Such discriminatory practices not only <strong>(__A__)</strong> gender inequality but also hinder women's economic independence and professional growth. The Supreme Court’s decision to strike down these rules is a resounding victory for gender justice and workplace equality, besides reaffirming the constitutional guarantee of equality before the law and non-discrimination on the grounds of gender. It is also a stride towards ensuring a society that typically takes the fair sex as unreliable and untrustworthy who would leave their work midway to tend to their families. The <strong>(__B__)</strong> of such regressive rules extend far beyond individual women; they contribute to a culture of inequality and reinforce harmful stereotypes. By dismantling these barriers, the judiciary has taken a significant step towards dismantling systemic gender discrimination and promoting a more inclusive and equitable society. Of course, changes that stand the test of time must come from within a society but legal protection is also necessary to ensure a progressive society. The judgment underscores the importance of upholding women's right to work and pursue career opportunities without facing arbitrary restrictions. Women should not have to choose between their personal lives and professional aspirations; they deserve the freedom to navigate both spheres on their own terms. Besides, the economic implications of <strong>(C) </strong><strong>bereaving </strong>women of employment opportunities are profound. Gender equality at the workforce is not just a matter of principle but also a crucial factor in promoting economic growth and social development. By <strong>(D) </strong><strong>exploiting</strong> the talent and potential of all individuals, irrespective of their gender, societies can foster innovation, productivity and prosperity. Additionally, efforts to combat gender-based discrimination must extend beyond legal frameworks to encompass broader societal attitudes and norms. Education, awareness campaigns and <strong>(__E__)</strong> are essential tools in challenging deep-rooted biases and promoting gender equality. While the apex court's decision represents a significant milestone in the fight for women's rights, it is only the beginning of a broader movement towards gender equality. Sustained efforts from all stakeholders, including Governments, employers, civil society and individuals, are necessary to create a truly inclusive and equitable society. For the moment, however, we can cherish that one more glass ceiling has been <strong>(__F__)</strong> and the court deserves a round of applause.</p><br><p><strong>Which of the following words can replace “</strong><strong>exploiting” used in the Passage?</strong></p>", "options": ["<p>guiding</p>", "<p>harnessing</p>", "<p>handling</p>", "<p>adopting</p>", "<p>directing</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>harnessing</p>\n<p>The word that can replace \"exploiting\" in the given sentence is: b) harnessing.</p>\n<p><strong>a).</strong> Guiding: This word refers to providing direction or guidance. While it has a positive connotation, it doesn't convey the idea of utilizing or making use of someone's talent or potential, which is the context in the passage.</p>\n<p><strong>b).</strong> Harnessing: This word means to utilize or make use of something, often implying a positive and productive use. In the context of the passage, it aligns well with the idea of utilizing the talent and potential of all individuals, irrespective of their gender.</p>\n<p><strong>c).</strong> Handling: While \"handling\" can mean dealing with or managing, it doesn't capture the sense of utilizing someone's talents or potential for a positive outcome.</p>\n<p><strong>d).</strong> Adopting: This word typically means to take up or accept, and in the context of the passage, it doesn't convey the idea of making use of someone's talent or potential.</p>\n<p><strong>e).</strong> Directing: This word involves giving guidance or instructions, but it doesn't precisely convey the sense of utilizing someone's talent or potential for a positive purpose.</p>\n<p>In the context of the passage, \"harnessing\" is the most appropriate choice as it emphasizes making productive use of the talent and potential of all individuals.</p>\n<p>Therefore, \"b) harnessing\" is the word that can appropriately replace \" exploiting \" in the passage.</p>"}, {"question": "<p><strong>Read the paragraph carefully and answer the following questions: </strong></p>\n<p>In a landmark ruling, the Supreme Court has declared regulations mandating the dismissal of women from jobs upon marriage as “archaic, discriminatory and in violation of constitutional principles.” The judgment marks another significant step towards gender equality and the protection of women's rights. For decades, countless women across job sectors have faced the harsh reality of being forced out of employment solely because of their marital status or family obligations. Such discriminatory practices not only <strong>(__A__)</strong> gender inequality but also hinder women's economic independence and professional growth. The Supreme Court’s decision to strike down these rules is a resounding victory for gender justice and workplace equality, besides reaffirming the constitutional guarantee of equality before the law and non-discrimination on the grounds of gender. It is also a stride towards ensuring a society that typically takes the fair sex as unreliable and untrustworthy who would leave their work midway to tend to their families. The <strong>(__B__)</strong> of such regressive rules extend far beyond individual women; they contribute to a culture of inequality and reinforce harmful stereotypes. By dismantling these barriers, the judiciary has taken a significant step towards dismantling systemic gender discrimination and promoting a more inclusive and equitable society. Of course, changes that stand the test of time must come from within a society but legal protection is also necessary to ensure a progressive society. The judgment underscores the importance of upholding women's right to work and pursue career opportunities without facing arbitrary restrictions. Women should not have to choose between their personal lives and professional aspirations; they deserve the freedom to navigate both spheres on their own terms. Besides, the economic implications of <strong>(C) </strong><strong>bereaving </strong>women of employment opportunities are profound. Gender equality at the workforce is not just a matter of principle but also a crucial factor in promoting economic growth and social development. By <strong>(D) </strong><strong>exploiting</strong> the talent and potential of all individuals, irrespective of their gender, societies can foster innovation, productivity and prosperity. Additionally, efforts to combat gender-based discrimination must extend beyond legal frameworks to encompass broader societal attitudes and norms. Education, awareness campaigns and <strong>(__E__)</strong> are essential tools in challenging deep-rooted biases and promoting gender equality. While the apex court's decision represents a significant milestone in the fight for women's rights, it is only the beginning of a broader movement towards gender equality. Sustained efforts from all stakeholders, including Governments, employers, civil society and individuals, are necessary to create a truly inclusive and equitable society. For the moment, however, we can cherish that one more glass ceiling has been <strong>(__F__)</strong> and the court deserves a round of applause.</p><br><p><strong>Which of the following words cannot fit in the blank E?</strong></p>", "options": ["<p>censure</p>", "<p>advancement</p>", "<p>assistance</p>", "<p>encouragement</p>", "<p>none of the above</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>censure</p>\n<p>The word that cannot fit in the blank labelled (E) is: a) censure</p>\n<p>The sentence suggests that education, awareness campaigns, and positive support like encouragement are essential tools in challenging deep-rooted biases and promoting gender equality. \"Censure\" typically refers to strong criticism or disapproval, and it does not fit the context of supporting and promoting gender equality in this sentence.</p>\n<p><strong>a).</strong> Censure: This word means strong criticism or disapproval. In the context of the sentence, the blank is looking for a word that represents a positive and supportive action. \"Censure\" does not align with the idea of providing positive tools for challenging biases and promoting gender equality.</p>\n<p><strong>b).</strong> Advancement: This word fits well in the blank. The sentence is discussing the importance of efforts beyond legal frameworks, and \"advancement\" suggests progress and forward movement, which aligns with the context.</p>\n<p><strong>c).</strong> Assistance: This word also fits well in the blank. The sentence is emphasizing the need for tools like education and awareness campaigns, and \"assistance\" implies support and help in challenging biases and promoting gender equality.</p>\n<p><strong>d).</strong> Encouragement: This word fits well in the blank. The sentence is highlighting the need for positive tools, and \"encouragement\" aligns perfectly with the idea of supporting and motivating individuals to challenge biases and promote gender equality.</p>\n<p>In summary, options b), c), and d) fit well in the blank, aligning with the positive and supportive tone of the sentence. Option a) is not suitable because \"censure\" implies criticism, which is not the intended meaning in this context.</p>\n<p>Therefore, \" a) censure \" is the word that cannot fit in the blank (E).</p>"}, {"question": "<p><strong>Read the paragraph carefully and answer the following questions: </strong></p>\n<p>In a landmark ruling, the Supreme Court has declared regulations mandating the dismissal of women from jobs upon marriage as “archaic, discriminatory and in violation of constitutional principles.” The judgment marks another significant step towards gender equality and the protection of women's rights. For decades, countless women across job sectors have faced the harsh reality of being forced out of employment solely because of their marital status or family obligations. Such discriminatory practices not only <strong>(__A__)</strong> gender inequality but also hinder women's economic independence and professional growth. The Supreme Court’s decision to strike down these rules is a resounding victory for gender justice and workplace equality, besides reaffirming the constitutional guarantee of equality before the law and non-discrimination on the grounds of gender. It is also a stride towards ensuring a society that typically takes the fair sex as unreliable and untrustworthy who would leave their work midway to tend to their families. The <strong>(__B__)</strong> of such regressive rules extend far beyond individual women; they contribute to a culture of inequality and reinforce harmful stereotypes. By dismantling these barriers, the judiciary has taken a significant step towards dismantling systemic gender discrimination and promoting a more inclusive and equitable society. Of course, changes that stand the test of time must come from within a society but legal protection is also necessary to ensure a progressive society. The judgment underscores the importance of upholding women's right to work and pursue career opportunities without facing arbitrary restrictions. Women should not have to choose between their personal lives and professional aspirations; they deserve the freedom to navigate both spheres on their own terms. Besides, the economic implications of <strong>(C) </strong><strong>bereaving </strong>women of employment opportunities are profound. Gender equality at the workforce is not just a matter of principle but also a crucial factor in promoting economic growth and social development. By <strong>(D) </strong><strong>exploiting</strong> the talent and potential of all individuals, irrespective of their gender, societies can foster innovation, productivity and prosperity. Additionally, efforts to combat gender-based discrimination must extend beyond legal frameworks to encompass broader societal attitudes and norms. Education, awareness campaigns and <strong>(__E__)</strong> are essential tools in challenging deep-rooted biases and promoting gender equality. While the apex court's decision represents a significant milestone in the fight for women's rights, it is only the beginning of a broader movement towards gender equality. Sustained efforts from all stakeholders, including Governments, employers, civil society and individuals, are necessary to create a truly inclusive and equitable society. For the moment, however, we can cherish that one more glass ceiling has been <strong>(__F__)</strong> and the court deserves a round of applause.</p><br><p><strong>Which of the following words cannot fit in the blank F?</strong></p>", "options": ["<p>infringed</p>", "<p>flouted</p>", "<p>contravened</p>", "<p>breached</p>", "<p>followed</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>followed</p>\n<p>The word that cannot fit in the blank (F) is: e) followed</p>\n<p>The other options (infringed, flouted, contravened, breached) are synonyms that convey the idea of breaking or violating rules or regulations, which aligns with the context of the sentence. \"Followed\" suggests compliance rather than violation.</p>\n<p><strong>a).</strong> infringed: This word means to actively break or violate a law, right, or agreement. It fits the context as it conveys the idea of going against the regulations mandating the dismissal of women from jobs upon marriage.</p>\n<p><strong>b).</strong> flouted: Flouting means openly disregarding or disobeying a rule or law. It is suitable in this context as it emphasizes the act of defying or ignoring the discriminatory regulations.</p>\n<p><strong>c).</strong> contravened: Contravening means to violate or act against a law, rule, or principle. This word is appropriate in the sentence to indicate the Supreme Court's stance against regulations that mandate the dismissal of women from jobs upon marriage.</p>\n<p><strong>d).</strong> breached: To breach means to break or violate a law, agreement, or code of conduct. This word accurately captures the essence of the Supreme Court's decision to declare the discriminatory regulations as \"archaic, discriminatory and in violation of constitutional principles.\"</p>\n<p><strong>e).</strong> followed: This word does not fit in the blank because it suggests compliance or adherence to rules, whereas the sentence is emphasizing the Supreme Court's decision to strike down, oppose, or go against the discriminatory regulations. The other options convey the idea of breaking or violating rules, which aligns with the context.</p>\n<p>In summary, the correct answer is \"e) followed\" because it does not convey the idea of opposing or violating rules, which is the focus of the sentence in the given context.</p>\n<p>Therefore, \" e) followed \" is the word that cannot fit in the blank (F).</p>"}, {"question": "<p><strong>In the following questions, a sentence with four words printed in bold is given. These words are numbered as (1), (2), (3) and (4). One of these four words may either be misspelt or inappropriate in the context of the sentence. Find out the word(s) that is/are wrongly spelt or inappropriate and mark the relevant option as your answer. If all the words are correct, mark (E), i.e. “All are correct” as your answer.</strong></p><br><p>The SPV could sell its <strong>stakes(1)</strong> in the future, when these <strong>company(2)</strong> turn <strong>profitable(3),</strong> and their <strong>valuations(4)</strong> go up.</p>", "options": ["<p>1</p>", "<p>2</p>", "<p>3</p>", "<p>4</p>", "<p>All are correct</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>“company” should be replaced with “companies” as after “these” we need a plural noun.</p>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, a sentence with four words printed in bold is given. These words are numbered as (1), (2), (3) and (4). One of these four words may either be misspelt or inappropriate in the context of the sentence. Find out the word(s) that is/are wrongly spelt or inappropriate and mark the relevant option as your answer. If all the words are correct, mark (E), i.e. “All are correct” as your answer.</strong></p><br><p><strong>Breaking(1</strong>)off a link in the chain will <strong>impaire(2)</strong> the financial system that <strong>hinges(3)</strong> on debts being <strong>honoured (4)</strong>and serviced.</p>", "options": ["<p>1</p>", "<p>2</p>", "<p>3</p>", "<p>4</p>", "<p>All are correct</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>“impaire” is wrongly spelt, the correct spelling is “impair”, it means “damage or weaken”.</p>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, a sentence with four words printed in bold is given. These words are numbered as (1), (2), (3) and (4). One of these four words may either be misspelt or inappropriate in the context of the sentence. Find out the word(s) that is/are wrongly spelt or inappropriate and mark the relevant option as your answer. If all the words are correct, mark (E), i.e. “All are correct” as your answer.</strong></p><br><p>Mercifully, the court <strong>refrained(1</strong>) from reaching an impetuous conclusion on whether <strong>spectrum(2) </strong>can be treated as an asset owned by a telco when it <strong>undergoes(3)</strong> insolvency resolution, leaving that to the National Company Law Tribunal to <strong>decide(4).</strong></p>", "options": ["<p>1</p>", "<p>2</p>", "<p>3</p>", "<p>4</p>", "<p>All are correct</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>All the words are grammatically and contextually correct. Therefore, option E is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, a sentence with four words printed in bold is given. These words are numbered as (1), (2), (3) and (4). One of these four words may either be misspelt or inappropriate in the context of the sentence. Find out the word(s) that is/are wrongly spelt or inappropriate and mark the relevant option as your answer. If all the words are correct, mark (E), i.e. “All are correct” as your answer.</strong></p><br><p>The high <strong>revenue(1)</strong> share for licence fee and spectrum usage was <strong>justified(2)</strong> when the spectrum was allocated <strong>adminestratively(3)</strong>, bundled with the licence, but not after <strong>auctions(4)</strong> were introduced.</p>", "options": ["<p>1</p>", "<p>2</p>", "<p>3</p>", "<p>4</p>", "<p>All are correct</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>“adminestratively” is wrongly spelt, the correct spelling is “administratively”.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, a sentence with four words printed in bold is given. These words are numbered as (1), (2), (3) and (4). One of these four words may either be misspelt or inappropriate in the context of the sentence. Find out the word(s) that is/are wrongly spelt or inappropriate and mark the relevant option as your answer. If all the words are correct, mark (E), i.e. “All are correct” as your answer.</strong></p><br><p>US Federal Reserve chairman Jerome Powell has <strong>announced(1)</strong> a new monetary policy <strong>stance(2)</strong> that would keep interest rates <strong>low(3)</strong> and push capital into <strong>emerging(4) </strong>markets like India.</p>", "options": ["<p>1</p>", "<p>2</p>", "<p>3</p>", "<p>4</p>", "<p>All are correct</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>All the words are grammatically and contextually correct.</p>\n<p>Therefore, option E is the correct answer.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions given below</strong>.</p>\n<p>The Centre’s move to create a ‘fact-checking unit’ empowered to order the removal of ‘fake or false or misleading’ information from digital and social media platforms was never likely to succeed. Justice A.S. Chandurkar of the Bombay High Court struck down the amended rule, in a tie-breaking ruling after a two-judge Bench, in January, was split over its constitutional validity. In an opinion that makes it a 2:1 decision, he agreed with the view of Justice G.S. Patel, who had held that the provision violated the right to freedom of expression and sought to coercively classify speech as true or false based on <strong><u>vague</u></strong> and undefined terms.</p>\n<p>The rule, introduced as an amendment in 2023 to the rules governing information technology intermediaries and digital media ethics, meant that once the fact checking unit flagged a piece of information on a social media platform as fake, false or misleading, </p>\n<p>the platform was bound to take it down. Failure to do so would result in losing its ‘safe harbour’ protection, or exemption from legal action for third party content hosted on a platform. Editors and publishers rightly saw the creation of a fact-checking unit in the Press Information Bureau as a mechanism by which the Centre could censor anything that it disputes. Political satirists will be forced into self-censorship, argued comedian Kunal Kamra. The government contended that recklessly published material that was contrary to truth cannot have constitutional protection and that aggrieved platforms were free to approach the courts for remedy. However, two of the three judges have found the rule unconstitutional, noting that the terms ‘fake’, 'false’ or ‘misleading’ were not defined and there was no scope for redress provided in the rules.</p>\n<p>Another point that went against the government was that the restriction was applied only to information about the Centre, and not other kinds of information. Justice Chandurkar also agreed with Justice Patel that a restriction on free speech based on whether something is true or false was not one of the circumstances listed in Article 19(2) of the Constitution for imposing reasonable restrictions. The other judge on the Bench, Justice Neela Gokhale, had upheld the rule, holding that it was not vaguely worded and that there was no bar on a platform publishing a disclaimer to retain its safe harbour protection. She also rejected the idea that such a rule would have a chilling effect on free speech. The <strong><u>prevalence</u></strong> of misinformation or false information is a problem that undoubtedly requires to be tackled, but it cannot be an excuse to create a mechanism by which the government becomes a judge in its own cause or the sole arbiter of what information about itself is misleading.</p><br><p><strong>Which constitutional right was considered violated by the fact-checking unit according to the Bombay High Court’s ruling?</strong></p>", "options": ["<p>Right to privacy</p>", "<p>Right to freedom of expression</p>", "<p>Right to property</p>", "<p>Right to equality</p>", "<p>Right to poverty</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The fact-checking unit was ruled unconstitutional because it violated the right to freedom of expression. Justice Patel noted that the provision sought to coerce speech into categories of \"true\" or \"false\" based on vague terms, which can stifle free speech. A: This right concerns the protection of personal data and privacy, not freedom of expression in the media context. C: This relates to ownership rights, which are unrelated to media censorship or speech. D: This refers to equal treatment under the law, not the specific issue of speech classification. E: This is not mentioned in the passage. Therefore, Option B would be the best choice.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions given below</strong>.</p>\n<p>The Centre’s move to create a ‘fact-checking unit’ empowered to order the removal of ‘fake or false or misleading’ information from digital and social media platforms was never likely to succeed. Justice A.S. Chandurkar of the Bombay High Court struck down the amended rule, in a tie-breaking ruling after a two-judge Bench, in January, was split over its constitutional validity. In an opinion that makes it a 2:1 decision, he agreed with the view of Justice G.S. Patel, who had held that the provision violated the right to freedom of expression and sought to coercively classify speech as true or false based on <strong><u>vague</u></strong> and undefined terms.</p>\n<p>The rule, introduced as an amendment in 2023 to the rules governing information technology intermediaries and digital media ethics, meant that once the fact checking unit flagged a piece of information on a social media platform as fake, false or misleading, </p>\n<p>the platform was bound to take it down. Failure to do so would result in losing its ‘safe harbour’ protection, or exemption from legal action for third party content hosted on a platform. Editors and publishers rightly saw the creation of a fact-checking unit in the Press Information Bureau as a mechanism by which the Centre could censor anything that it disputes. Political satirists will be forced into self-censorship, argued comedian Kunal Kamra. The government contended that recklessly published material that was contrary to truth cannot have constitutional protection and that aggrieved platforms were free to approach the courts for remedy. However, two of the three judges have found the rule unconstitutional, noting that the terms ‘fake’, 'false’ or ‘misleading’ were not defined and there was no scope for redress provided in the rules.</p>\n<p>Another point that went against the government was that the restriction was applied only to information about the Centre, and not other kinds of information. Justice Chandurkar also agreed with Justice Patel that a restriction on free speech based on whether something is true or false was not one of the circumstances listed in Article 19(2) of the Constitution for imposing reasonable restrictions. The other judge on the Bench, Justice Neela Gokhale, had upheld the rule, holding that it was not vaguely worded and that there was no bar on a platform publishing a disclaimer to retain its safe harbour protection. She also rejected the idea that such a rule would have a chilling effect on free speech. The <strong><u>prevalence</u></strong> of misinformation or false information is a problem that undoubtedly requires to be tackled, but it cannot be an excuse to create a mechanism by which the government becomes a judge in its own cause or the sole arbiter of what information about itself is misleading.</p><br><p><strong>What is the tone of the passage?</strong></p>", "options": ["<p>Critical</p>", "<p>Objective</p>", "<p>Optimistic</p>", "<p>Neutral</p>", "<p>Sarcastic</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The tone of the passage is critical because the author critiques the Centre's move to create a fact- checking unit as a mechanism that may lead to censorship. The passage raises concerns about the violation of free speech and constitutional issues with the rule. B: The passage does not simply present facts without judgment; it critiques the Centre's actions, indicating a critical tone. C: The passage does not express hope or positivity about the fact-checking unit or its consequences. Instead, it highlights concerns. D: The passage takes a stance against the fact-checking unit, which rules out neutrality. E: The passage does not express any sarcastic actions. Hence, Option A is the most suitable answer.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions given below</strong>.</p>\n<p>The Centre’s move to create a ‘fact-checking unit’ empowered to order the removal of ‘fake or false or misleading’ information from digital and social media platforms was never likely to succeed. Justice A.S. Chandurkar of the Bombay High Court struck down the amended rule, in a tie-breaking ruling after a two-judge Bench, in January, was split over its constitutional validity. In an opinion that makes it a 2:1 decision, he agreed with the view of Justice G.S. Patel, who had held that the provision violated the right to freedom of expression and sought to coercively classify speech as true or false based on <strong><u>vague</u></strong> and undefined terms.</p>\n<p>The rule, introduced as an amendment in 2023 to the rules governing information technology intermediaries and digital media ethics, meant that once the fact checking unit flagged a piece of information on a social media platform as fake, false or misleading, </p>\n<p>the platform was bound to take it down. Failure to do so would result in losing its ‘safe harbour’ protection, or exemption from legal action for third party content hosted on a platform. Editors and publishers rightly saw the creation of a fact-checking unit in the Press Information Bureau as a mechanism by which the Centre could censor anything that it disputes. Political satirists will be forced into self-censorship, argued comedian Kunal Kamra. The government contended that recklessly published material that was contrary to truth cannot have constitutional protection and that aggrieved platforms were free to approach the courts for remedy. However, two of the three judges have found the rule unconstitutional, noting that the terms ‘fake’, 'false’ or ‘misleading’ were not defined and there was no scope for redress provided in the rules.</p>\n<p>Another point that went against the government was that the restriction was applied only to information about the Centre, and not other kinds of information. Justice Chandurkar also agreed with Justice Patel that a restriction on free speech based on whether something is true or false was not one of the circumstances listed in Article 19(2) of the Constitution for imposing reasonable restrictions. The other judge on the Bench, Justice Neela Gokhale, had upheld the rule, holding that it was not vaguely worded and that there was no bar on a platform publishing a disclaimer to retain its safe harbour protection. She also rejected the idea that such a rule would have a chilling effect on free speech. The <strong><u>prevalence</u></strong> of misinformation or false information is a problem that undoubtedly requires to be tackled, but it cannot be an excuse to create a mechanism by which the government becomes a judge in its own cause or the sole arbiter of what information about itself is misleading.</p><br><p><strong>Why were editors and publishers concerned about the fact-checking unit? </strong></p>", "options": ["<p>It would help promote truth and transparency</p>", "<p>It would improve the quality of journalism</p>", "<p>It would censor content arbitrarily based on government disagreement</p>", "<p>It would remove offensive content from social media platforms</p>", "<p>It would decipher the codings of journalism</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Editors and publishers viewed the fact-checking unit as a tool for censorship, where the government could order the removal of content it disagreed with, rather than genuinely fact-checking for truth. A: While fact-checking can aim to promote truth, the passage clearly states concerns about censorship, not transparency. B: The focus here is not on journalism quality but on freedom of speech and potential suppression. D: The passage does not discuss offensive content; it emphasizes the risk of removing content arbitrarily labeled as false. E: The passage does not discuss the focus on deciphering the codings of journalism. Thus, Option C is the best suitable choice.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions given below</strong>.</p>\n<p>The Centre’s move to create a ‘fact-checking unit’ empowered to order the removal of ‘fake or false or misleading’ information from digital and social media platforms was never likely to succeed. Justice A.S. Chandurkar of the Bombay High Court struck down the amended rule, in a tie-breaking ruling after a two-judge Bench, in January, was split over its constitutional validity. In an opinion that makes it a 2:1 decision, he agreed with the view of Justice G.S. Patel, who had held that the provision violated the right to freedom of expression and sought to coercively classify speech as true or false based on <strong><u>vague</u></strong> and undefined terms.</p>\n<p>The rule, introduced as an amendment in 2023 to the rules governing information technology intermediaries and digital media ethics, meant that once the fact checking unit flagged a piece of information on a social media platform as fake, false or misleading, </p>\n<p>the platform was bound to take it down. Failure to do so would result in losing its ‘safe harbour’ protection, or exemption from legal action for third party content hosted on a platform. Editors and publishers rightly saw the creation of a fact-checking unit in the Press Information Bureau as a mechanism by which the Centre could censor anything that it disputes. Political satirists will be forced into self-censorship, argued comedian Kunal Kamra. The government contended that recklessly published material that was contrary to truth cannot have constitutional protection and that aggrieved platforms were free to approach the courts for remedy. However, two of the three judges have found the rule unconstitutional, noting that the terms ‘fake’, 'false’ or ‘misleading’ were not defined and there was no scope for redress provided in the rules.</p>\n<p>Another point that went against the government was that the restriction was applied only to information about the Centre, and not other kinds of information. Justice Chandurkar also agreed with Justice Patel that a restriction on free speech based on whether something is true or false was not one of the circumstances listed in Article 19(2) of the Constitution for imposing reasonable restrictions. The other judge on the Bench, Justice Neela Gokhale, had upheld the rule, holding that it was not vaguely worded and that there was no bar on a platform publishing a disclaimer to retain its safe harbour protection. She also rejected the idea that such a rule would have a chilling effect on free speech. The <strong><u>prevalence</u></strong> of misinformation or false information is a problem that undoubtedly requires to be tackled, but it cannot be an excuse to create a mechanism by which the government becomes a judge in its own cause or the sole arbiter of what information about itself is misleading.</p><br><p><strong>Which of the following can be inferred from the passage regarding the issue of fact-checking units?</strong></p>", "options": ["<p>The fact-checking unit gives the government more power over public opinion</p>", "<p>Fact-checking can be used to suppress criticism of the government</p>", "<p>The judiciary supports fact-checking units as long as they are used responsibly</p>", "<p>The problem of misinformation can be solved by letting the government control it</p>", "<p>All of the above options are inferred</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage states that the government should not use fact-checking as an excuse to impose censorship. This implies that fact-checking, if controlled by the government, could be used to suppress speech or criticism that the government deems as misleading, thereby restricting free speech. A: While the passage discusses concerns about government control, it does not explicitly state that the fact-checking unit gives the government more power over public opinion, but rather over \"information about itself.\" C: The judiciary is divided in opinion, with two judges finding the rule unconstitutional, which shows mixed judicial support. D: The passage does not suggest that government control is a viable solution for misinformation; instead, it warns against the government becoming the sole arbiter of truth. Therefore, Option B would be the best choice.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions given below</strong>.</p>\n<p>The Centre’s move to create a ‘fact-checking unit’ empowered to order the removal of ‘fake or false or misleading’ information from digital and social media platforms was never likely to succeed. Justice A.S. Chandurkar of the Bombay High Court struck down the amended rule, in a tie-breaking ruling after a two-judge Bench, in January, was split over its constitutional validity. In an opinion that makes it a 2:1 decision, he agreed with the view of Justice G.S. Patel, who had held that the provision violated the right to freedom of expression and sought to coercively classify speech as true or false based on <strong><u>vague</u></strong> and undefined terms.</p>\n<p>The rule, introduced as an amendment in 2023 to the rules governing information technology intermediaries and digital media ethics, meant that once the fact checking unit flagged a piece of information on a social media platform as fake, false or misleading, </p>\n<p>the platform was bound to take it down. Failure to do so would result in losing its ‘safe harbour’ protection, or exemption from legal action for third party content hosted on a platform. Editors and publishers rightly saw the creation of a fact-checking unit in the Press Information Bureau as a mechanism by which the Centre could censor anything that it disputes. Political satirists will be forced into self-censorship, argued comedian Kunal Kamra. The government contended that recklessly published material that was contrary to truth cannot have constitutional protection and that aggrieved platforms were free to approach the courts for remedy. However, two of the three judges have found the rule unconstitutional, noting that the terms ‘fake’, 'false’ or ‘misleading’ were not defined and there was no scope for redress provided in the rules.</p>\n<p>Another point that went against the government was that the restriction was applied only to information about the Centre, and not other kinds of information. Justice Chandurkar also agreed with Justice Patel that a restriction on free speech based on whether something is true or false was not one of the circumstances listed in Article 19(2) of the Constitution for imposing reasonable restrictions. The other judge on the Bench, Justice Neela Gokhale, had upheld the rule, holding that it was not vaguely worded and that there was no bar on a platform publishing a disclaimer to retain its safe harbour protection. She also rejected the idea that such a rule would have a chilling effect on free speech. The <strong><u>prevalence</u></strong> of misinformation or false information is a problem that undoubtedly requires to be tackled, but it cannot be an excuse to create a mechanism by which the government becomes a judge in its own cause or the sole arbiter of what information about itself is misleading.</p><br><p><strong>According to Justice Patel and Justice Chandurkar, restricting free speech based on whether something is true or false is unconstitutional because of which of the following options ?</strong></p>", "options": ["<p>There is no definition provided for 'fake', 'false', or 'misleading' in the rules</p>", "<p>It creates an unfair bias in favor of the government</p>", "<p>It infringes on individual rights that are protected under Article 19(1)(a)</p>", "<p>Article 19(2) does not permit restrictions based on the truthfulness of statements</p>", "<p>Not mentioned in the passage</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The judges ruled that restricting free speech based on whether something is true or false is unconstitutional because such a restriction is not listed in Article 19(2) of the Constitution, which outlines specific conditions under which free speech can be reasonably restricted. A: Although this is mentioned in the passage, it is not the core reason why restricting speech based on truthfulness is unconstitutional. B: This statement is partially true but focuses on bias, which is not the main point of unconstitutionality. C: While it infringes on rights, the passage clearly emphasizes the constitutional issue with Article 19(2), not just a general infringement on rights. Thus, Option D would be the best choice.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions given below</strong>.</p>\n<p>The Centre’s move to create a ‘fact-checking unit’ empowered to order the removal of ‘fake or false or misleading’ information from digital and social media platforms was never likely to succeed. Justice A.S. Chandurkar of the Bombay High Court struck down the amended rule, in a tie-breaking ruling after a two-judge Bench, in January, was split over its constitutional validity. In an opinion that makes it a 2:1 decision, he agreed with the view of Justice G.S. Patel, who had held that the provision violated the right to freedom of expression and sought to coercively classify speech as true or false based on <strong><u>vague</u></strong> and undefined terms.</p>\n<p>The rule, introduced as an amendment in 2023 to the rules governing information technology intermediaries and digital media ethics, meant that once the fact checking unit flagged a piece of information on a social media platform as fake, false or misleading, </p>\n<p>the platform was bound to take it down. Failure to do so would result in losing its ‘safe harbour’ protection, or exemption from legal action for third party content hosted on a platform. Editors and publishers rightly saw the creation of a fact-checking unit in the Press Information Bureau as a mechanism by which the Centre could censor anything that it disputes. Political satirists will be forced into self-censorship, argued comedian Kunal Kamra. The government contended that recklessly published material that was contrary to truth cannot have constitutional protection and that aggrieved platforms were free to approach the courts for remedy. However, two of the three judges have found the rule unconstitutional, noting that the terms ‘fake’, 'false’ or ‘misleading’ were not defined and there was no scope for redress provided in the rules.</p>\n<p>Another point that went against the government was that the restriction was applied only to information about the Centre, and not other kinds of information. Justice Chandurkar also agreed with Justice Patel that a restriction on free speech based on whether something is true or false was not one of the circumstances listed in Article 19(2) of the Constitution for imposing reasonable restrictions. The other judge on the Bench, Justice Neela Gokhale, had upheld the rule, holding that it was not vaguely worded and that there was no bar on a platform publishing a disclaimer to retain its safe harbour protection. She also rejected the idea that such a rule would have a chilling effect on free speech. The <strong><u>prevalence</u></strong> of misinformation or false information is a problem that undoubtedly requires to be tackled, but it cannot be an excuse to create a mechanism by which the government becomes a judge in its own cause or the sole arbiter of what information about itself is misleading.</p><br><p>Which of the following will be the <strong>synonym</strong> of the boldened word \"<strong>vague</strong>\" ?</p>", "options": ["<p>curtain</p>", "<p>victorious</p>", "<p>perceptive</p>", "<p>quick</p>", "<p>ambiguous</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>According to the context of the sentence, the word \"vague\" refers to \"not clearly expressed, known, described, or decided\". Of the given options, the word provided in Option E makes the most sense and fits perfectly. Therefore, Option E is the correct answer.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions given below</strong>.</p>\n<p>The Centre’s move to create a ‘fact-checking unit’ empowered to order the removal of ‘fake or false or misleading’ information from digital and social media platforms was never likely to succeed. Justice A.S. Chandurkar of the Bombay High Court struck down the amended rule, in a tie-breaking ruling after a two-judge Bench, in January, was split over its constitutional validity. In an opinion that makes it a 2:1 decision, he agreed with the view of Justice G.S. Patel, who had held that the provision violated the right to freedom of expression and sought to coercively classify speech as true or false based on <strong><u>vague</u></strong> and undefined terms.</p>\n<p>The rule, introduced as an amendment in 2023 to the rules governing information technology intermediaries and digital media ethics, meant that once the fact checking unit flagged a piece of information on a social media platform as fake, false or misleading, </p>\n<p>the platform was bound to take it down. Failure to do so would result in losing its ‘safe harbour’ protection, or exemption from legal action for third party content hosted on a platform. Editors and publishers rightly saw the creation of a fact-checking unit in the Press Information Bureau as a mechanism by which the Centre could censor anything that it disputes. Political satirists will be forced into self-censorship, argued comedian Kunal Kamra. The government contended that recklessly published material that was contrary to truth cannot have constitutional protection and that aggrieved platforms were free to approach the courts for remedy. However, two of the three judges have found the rule unconstitutional, noting that the terms ‘fake’, 'false’ or ‘misleading’ were not defined and there was no scope for redress provided in the rules.</p>\n<p>Another point that went against the government was that the restriction was applied only to information about the Centre, and not other kinds of information. Justice Chandurkar also agreed with Justice Patel that a restriction on free speech based on whether something is true or false was not one of the circumstances listed in Article 19(2) of the Constitution for imposing reasonable restrictions. The other judge on the Bench, Justice Neela Gokhale, had upheld the rule, holding that it was not vaguely worded and that there was no bar on a platform publishing a disclaimer to retain its safe harbour protection. She also rejected the idea that such a rule would have a chilling effect on free speech. The <strong><u>prevalence</u></strong> of misinformation or false information is a problem that undoubtedly requires to be tackled, but it cannot be an excuse to create a mechanism by which the government becomes a judge in its own cause or the sole arbiter of what information about itself is misleading.</p><br><p>Which of the following will be the <strong>antonym</strong> of the boldened word \"<strong>prevalence</strong>\" ?</p>", "options": ["<p>dodge</p>", "<p>arrange</p>", "<p>foreseen</p>", "<p>narrow-minded</p>", "<p>downgrade</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>According to the context of the sentence, the word \"prevalence\" refers to \"the quality of prevailing generally; being widespread; superiority in numbers or amount\". Of the given options, the word given in Option D provides the most opposite meaning. Therefore, Option D is the correct answer.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-100)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-100)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

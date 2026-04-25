@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-65)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>Below, a passage is given with five blanks labelled (A-E). Below the passage, five options are given for each blank. Choose the phrasal verb that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>The rapid advancement of technology has dramatically changed the way we communicate, leading to a multitude of new phrases and expressions. As more people engage with digital platforms, traditional communication methods have started to <strong>(A) __________.</strong> Many individuals find themselves relying heavily on texting and social media, often <strong>(B) __________</strong> face-to-face interactions in favor of virtual connections. This shift has sparked debates about the quality of human interaction, with some arguing that it has <strong>(C) __________</strong> our ability to engage in meaningful conversations. However, others believe that technology can enhance relationships by allowing people to <strong>(D) __________</strong> with friends and family across great distances. Ultimately, as we navigate this evolving landscape, it is essential to <strong>(E) __________</strong> a balance between online and offline interactions to foster genuine connections.</p><br><p><strong>Which word comes in the blank labelled A?</strong></p>", "options": ["<p>fade away</p>", "<p>hold up</p>", "<p>break down</p>", "<p>give in</p>", "<p>set up</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>hold up:</strong> to support or maintain something.</p>\n<p><strong>break down:</strong> to stop functioning or to collapse.</p>\n<p><strong>give in:</strong> to yield or surrender.</p>\n<p><strong>set up:</strong> to arrange or establish something.</p>\n<p>\"Fade away\" fits the context as it suggests that traditional communication methods are gradually diminishing due to the rise of technology.</p>"}, {"question": "<p><strong>Below, a passage is given with five blanks labelled (A-E). Below the passage, five options are given for each blank. Choose the phrasal verb that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>The rapid advancement of technology has dramatically changed the way we communicate, leading to a multitude of new phrases and expressions. As more people engage with digital platforms, traditional communication methods have started to <strong>(A) __________.</strong> Many individuals find themselves relying heavily on texting and social media, often <strong>(B) __________</strong> face-to-face interactions in favor of virtual connections. This shift has sparked debates about the quality of human interaction, with some arguing that it has <strong>(C) __________</strong> our ability to engage in meaningful conversations. However, others believe that technology can enhance relationships by allowing people to <strong>(D) __________</strong> with friends and family across great distances. Ultimately, as we navigate this evolving landscape, it is essential to <strong>(E) __________</strong> a balance between online and offline interactions to foster genuine connections.</p><br><p><strong>Which word comes in the blank labelled B?</strong></p>", "options": ["<p>cutting out</p>", "<p>putting off</p>", "<p>running into</p>", "<p>giving up</p>", "<p>making up</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>cut out:</strong> to stop doing something or eliminate it completely.</p>\n<p><strong>run into:</strong> to unexpectedly encounter someone.</p>\n<p><strong>give up:</strong> to stop trying; to surrender.</p>\n<p><strong>make up:</strong> to reconcile or become friends again after a disagreement.</p>\n<p>\"Putting off\" is appropriate here because it implies that people are postponing or avoiding face-to-face interactions in favor of digital communication.</p>"}, {"question": "<p><strong>Below, a passage is given with five blanks labelled (A-E). Below the passage, five options are given for each blank. Choose the phrasal verb that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>The rapid advancement of technology has dramatically changed the way we communicate, leading to a multitude of new phrases and expressions. As more people engage with digital platforms, traditional communication methods have started to <strong>(A) __________.</strong> Many individuals find themselves relying heavily on texting and social media, often <strong>(B) __________</strong> face-to-face interactions in favor of virtual connections. This shift has sparked debates about the quality of human interaction, with some arguing that it has <strong>(C) __________</strong> our ability to engage in meaningful conversations. However, others believe that technology can enhance relationships by allowing people to <strong>(D) __________</strong> with friends and family across great distances. Ultimately, as we navigate this evolving landscape, it is essential to <strong>(E) __________</strong> a balance between online and offline interactions to foster genuine connections.</p><br><p><strong>Which word comes in the blank labelled C?</strong></p>", "options": ["<p>built up</p>", "<p>caught up</p>", "<p>taken away</p>", "<p>turned down</p>", "<p>thrown out</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>build up:</strong> to accumulate or increase something over time.</p>\n<p><strong>catch up:</strong> to reach the same standard or level as someone else.</p>\n<p><strong>turn down:</strong> to reject or decline something.</p>\n<p><strong>throw out:</strong> to discard or eliminate.</p>\n<p>\"Taken away\" accurately reflects the idea that technology has diminished or removed our capacity for meaningful conversations.</p>"}, {"question": "<p><strong>Below, a passage is given with five blanks labelled (A-E). Below the passage, five options are given for each blank. Choose the phrasal verb that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>The rapid advancement of technology has dramatically changed the way we communicate, leading to a multitude of new phrases and expressions. As more people engage with digital platforms, traditional communication methods have started to <strong>(A) __________.</strong> Many individuals find themselves relying heavily on texting and social media, often <strong>(B) __________</strong> face-to-face interactions in favor of virtual connections. This shift has sparked debates about the quality of human interaction, with some arguing that it has <strong>(C) __________</strong> our ability to engage in meaningful conversations. However, others believe that technology can enhance relationships by allowing people to <strong>(D) __________</strong> with friends and family across great distances. Ultimately, as we navigate this evolving landscape, it is essential to <strong>(E) __________</strong> a balance between online and offline interactions to foster genuine connections.</p><br><p><strong>Which word comes in the blank labelled D?</strong></p>", "options": ["<p>catch up</p>", "<p>break down</p>", "<p>hold back</p>", "<p>look forward</p>", "<p>keep on</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>break down:</strong> to stop functioning or to collapse.</p>\n<p><strong>hold back:</strong> to restrain or prevent something from happening.</p>\n<p><strong>look forward:</strong> to anticipate something positively.</p>\n<p><strong>keep on:</strong> to continue doing something.</p>\n<p>\"Catch up\" indicates maintaining or renewing relationships with friends and family, which aligns with the passage’s theme of using technology to connect over distances.</p>"}, {"question": "<p><strong>Below, a passage is given with five blanks labelled (A-E). Below the passage, five options are given for each blank. Choose the phrasal verb that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>The rapid advancement of technology has dramatically changed the way we communicate, leading to a multitude of new phrases and expressions. As more people engage with digital platforms, traditional communication methods have started to <strong>(A) __________.</strong> Many individuals find themselves relying heavily on texting and social media, often <strong>(B) __________</strong> face-to-face interactions in favor of virtual connections. This shift has sparked debates about the quality of human interaction, with some arguing that it has <strong>(C) __________</strong> our ability to engage in meaningful conversations. However, others believe that technology can enhance relationships by allowing people to <strong>(D) __________</strong> with friends and family across great distances. Ultimately, as we navigate this evolving landscape, it is essential to <strong>(E) __________</strong> a balance between online and offline interactions to foster genuine connections.</p><br><p><strong>Which word comes in the blank labelled E?</strong></p>", "options": ["<p>come across</p>", "<p>carry on</p>", "<p>get along</p>", "<p>strike up</p>", "<p>work out</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>come across:</strong> to find or discover something by chance.</p>\n<p><strong>carry on:</strong> to continue.</p>\n<p><strong>get along:</strong> to have a harmonious relationship with someone.</p>\n<p><strong>work out:</strong> to resolve a problem or situation.</p>\n<p>\"Strike up\" is suitable as it means to initiate or foster connections, emphasizing the need to balance online and offline interactions.</p>"}, {"question": "<p><strong>In each of the following questions a sentence is divided into five parts. Out of these five parts a combination of two parts is erroneous, remaining are error free. You are required to find out which combination is erroneous from the given options.</strong></p><br><p>As Earth continue to spiral into a climate crisis, <strong>(A)/</strong> the recently revelation of March 2024 <strong>(B)/</strong> marking the 10th consecutive <strong>(C)/</strong> month of record-breaking heat <strong>(D)/</strong> should serve as an unignorable wake-up call <strong>(E). </strong></p>", "options": ["<p>A and B</p>", "<p>B and C</p>", "<p>C and D</p>", "<p>D and E</p>", "<p>A and D</p>"], "correctIndex": 0, "solution": "<p><strong>Answer</strong><strong>: A</strong></p>\n<p>Part A: \"As Earth continue to spiral into a climate crisis...\"</p>\n<p>The subject \"Earth\" is singular, so the verb should be in the singular form \"continues.\"</p>\n<p>Corrected: \"As Earth continues to spiral into a climate crisis...\"</p>\n<p>Part B: \"...the recently revelation of March 2024...\"</p>\n<p>The correct term is \"recent revelation\" instead of \"recently revelation.\"</p>\n<p>Corrected: \"...the recent revelation of March 2024...\"</p>\n<p>After these corrections, the sentence reads:</p>\n<p>\"As Earth <strong>continues</strong> to spiral into a climate crisis, the<strong> recent</strong> revelation of March 2024 marking the 10th consecutive month of record-breaking heat should serve as an unignorable wake-up call.\"</p>\n<p>Therefore, option A is the correct answer.</p>"}, {"question": "<p><strong>In each of the following questions a sentence is divided into five parts. Out of these five parts a combination of two parts is erroneous, remaining are error free. You are required to find out which combination is erroneous from the given options.</strong></p><br><p>Amidst the shifting tides of geopolitics <strong>(A)/</strong> and supply chain diversification<strong>, (B)/</strong> India find itself at a critical juncture, <strong>(C)/</strong> grappling with the implications of its FDI <strong>(D)/</strong> performances vis-à-vis the China-plus one strategy <strong>(E).</strong></p>", "options": ["<p>A and C</p>", "<p>B and D</p>", "<p>C and E</p>", "<p>D and E</p>", "<p>A and D</p>"], "correctIndex": 2, "solution": "<p><strong>Answer</strong><strong>: C</strong></p>\n<p>Part C: \"India find itself at a critical juncture...\"</p>\n<p>The verb should agree with the subject \"India,\" which is singular. Therefore, it should be \"finds\" instead of \"find.\"</p>\n<p>Corrected: \"India finds itself at a critical juncture...\"</p>\n<p>Part E: \"...performances vis-à-vis the China-plus one strategy...\"</p>\n<p>The error in Part E involves the incorrect plural form \"performances.\" The correct form should be the singular \"performance\" to match the singular subject \"India's FDI\" and maintain grammatical agreement.</p>\n<p>Part E Correction: \"...performance vis-à-vis the China-plus one strategy...\"</p>\n<p>After these corrections, the sentence reads:</p>\n<p>\"Amidst the shifting tides of geopolitics and supply chain diversification, India <strong>finds</strong> itself at a critical juncture, grappling with the implications of its FDI <strong>performance</strong> vis-à-vis the China-plus one strategy.\"</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>In each of the following questions a sentence is divided into five parts. Out of these five parts a combination of two parts is erroneous, remaining are error free. You are required to find out which combination is erroneous from the given options.</strong></p><br><p>The recent developments in key constituencies highlights <strong>(A)/</strong> the complexities and challenges <strong>(B)/</strong> faced by opposition parties <strong>(C)/</strong> in navigate the intricate social and political <strong>(D)/</strong> dynamics of India’s most populous state <strong>(E).</strong></p>", "options": ["<p>A and B</p>", "<p>B and C</p>", "<p>C and D</p>", "<p>D and E</p>", "<p>A and D</p>"], "correctIndex": 4, "solution": "<p><strong>Answer</strong><strong>: E</strong></p>\n<p>Part A: \"The recent developments in key constituencies highlights...\"</p>\n<p>The error in Part A involves subject-verb agreement. The subject \"developments\" is plural, but the verb \"highlights\" is singular. Therefore, the verb should be plural to match the subject.</p>\n<p>Correction: \"The recent developments in key constituencies highlight...\"</p>\n<p>Part D: \"...opposition parties in navigate the intricate social and political...\"The error in Part D is the use of \"in navigate.\" The correct form should be the gerund form \"navigating.\" (Gerund): \"...opposition parties in navigating the intricate social and political...\"</p>\n<p>using the gerund form \"navigating\" may make the sentence flow more smoothly.</p>\n<p>After these corrections, the sentence reads:</p>\n<p>The recent developments in key constituencies <strong>highlight</strong> the complexities and challenges faced by opposition parties in <strong>navigating</strong> the intricate social and political dynamics of India’s most populous state.</p>\n<p>Therefore, option E is the correct answer.</p>"}, {"question": "<p><strong>In each of the following questions a sentence is divided into five parts. Out of these five parts a combination of two parts is erroneous, remaining are error free. You are required to find out which combination is erroneous from the given options.</strong></p><br><p>Organs of the deceased donor are anonymously <strong>(A)/</strong> allocated to people waiting for a transplant, <strong>(B)/</strong> while an organ can be donate by a living person <strong>(C)/</strong> only if they (donor and recipient) are close relatives or <strong>(D)/</strong> share a close bond and wants to donate altruistically <strong>(E).</strong></p>", "options": ["<p>A and D</p>", "<p>B and E</p>", "<p>A and C</p>", "<p>C and E</p>", "<p>A and B</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D</strong></p>\n<p>Part C: \"...an organ can be donate by a living person...\"The error in Part C is the incorrect verb form \"donate.\" The correct form should be \"donated\" to match the passive voice structure of the sentence.</p>\n<p>Corrected: \"...an organ can be donated by a living person...\"</p>\n<p>Part E: \"...share a close bond and wants to donate altruistically...\"The error in Part E involves subject-verb agreement. The subject \"they\" is plural, but the verb \"wants\" is singular. Therefore, the verb should be plural to match the subject.</p>\n<p>Corrected: \"...share a close bond and want to donate altruistically...\"</p>\n<p>After correction, the sentence reads:</p>\n<p>\"Organs of the deceased donor are anonymously allocated to people waiting for a transplant, while an organ can be <strong>donated</strong> by a living person only if they (donor and recipient) are close relatives or share a close bond and<strong> want</strong> to donate altruistically.\"</p>\n<p>Therefore, option D is the correct answer.</p>"}, {"question": "<p><strong>In each of the following questions a sentence is divided into five parts. Out of these five parts a combination of two parts is erroneous, remaining are error free. You are required to find out which combination is erroneous from the given options.</strong></p><br><p>Reliance Industries Ltd (RIL) plans to disrupt <strong>(A)/ </strong>the dominant of multinationals <strong>(B)/</strong> in the local consumer electronics <strong>(C)/</strong> and home appliances market <strong>(D)/</strong> with the introduction of it’s new brand 'Wyzr' <strong>(E).</strong></p>", "options": ["<p>A and D</p>", "<p>B and E</p>", "<p>B and C</p>", "<p>D and E</p>", "<p>A and C</p>"], "correctIndex": 1, "solution": "<p><strong>Answer</strong><strong>: B</strong></p>\n<p>Part B: \"...the dominant of multinationals...\"The error in Part B involves the incorrect use of the noun \"dominant.\" It seems like the intended word is \"dominance,\" which is the noun form. Corrected: \"...the dominance of multinationals...\"</p>\n<p>Part E: \"...with the introduction of it’s new brand 'Wyzr'.\"</p>\n<p>The error in Part E involves the misuse of the possessive pronoun \"it’s.\" The correct form should be the possessive determiner \"its\" without an apostrophe.</p>\n<p>Corrected: \"...with the introduction of its new brand 'Wyzr'.\"</p>\n<p>After correction, the sentence reads:</p>\n<p>Reliance Industries Ltd (RIL) plans to disrupt the dominance of multinationals in the local consumer electronics and home appliances market with the introduction of its new brand 'Wyzr'.</p>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>Read the sentence given below carefully. It has three blanks labelled as l, ll, and lll. Below the sentence, you will find a table with three columns (l, ll, and lll), each containing three words. Choose the correct combination of words from the three columns that will fit into their corresponding blanks to make the sentence grammatically correct and contextually meaningful. Select the correct combination and mark it as your answer.</strong></p><br><p>In the era of social media, the allure of an ___<strong>(I)</strong>___ virtual network can ___<strong>(II)</strong>___ genuine relationships, resulting in ___<strong>(III)</strong>___ connections that foster anxiety and emotional toxicity.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/173148133452.png\" title=\"46.PNG\"/></p>", "options": ["<p>C + D + I</p>", "<p>B + D + G</p>", "<p>C + F + H</p>", "<p>B + E + H</p>", "<p>A + D + G</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p><strong>To fill in the blanks in the sentence meaningfully, we need to choose words that logically connect and enhance the overall context.</strong></p>\n<p><strong>First Blank (I):</strong> The phrase \"allure of an ___(I)___ virtual network\" suggests a network that is attractive but not substantial. The word \"expansive\" (A) fits this context best, implying a broad and appealing network.</p>\n<p><strong>Second Blank (II):</strong> The phrase \"can ___(II)___ genuine relationships\" indicates that the virtual network might negatively affect real connections. The word \"dilute\" (D) is appropriate here, as it means to weaken or lessen the strength of something.</p>\n<p><strong>Third Blank (III):</strong> The phrase \"resulting in ___(III)___ connections\" refers to the type of connections that are created. The word \"superficial\" (G) works well, as it describes connections that are shallow and lack depth, leading to anxiety and emotional toxicity.</p>\n<p><strong>Therefore, the correct answer is \"A + D + G.\"</strong></p>"}, {"question": "<p><strong>Read the sentence given below carefully. It has three blanks labelled as l, ll, and lll. Below the sentence, you will find a table with three columns (l, ll, and lll), each containing three words. Choose the correct combination of words from the three columns that will fit into their corresponding blanks to make the sentence grammatically correct and contextually meaningful. Select the correct combination and mark it as your answer.</strong></p><br><p>Her ___<strong>(I)</strong>___ sanguine outlook helped her navigate the ___<strong>(II)</strong>___ twists of fate that life threw her way, allowing her to remain steadfastly optimistic in the face of ___<strong>(III)</strong>___.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/173148150556.png\" title=\"47.PNG\"/></p>", "options": ["<p>B + E + H</p>", "<p>C + D + I</p>", "<p>B + D + G</p>", "<p>A + D + G</p>", "<p>A + F + I</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>To fill in the blanks in the sentence meaningfully, we need to choose words that logically connect and enhance the overall context.</strong></p>\n<p><strong>First Blank (I):</strong> The phrase \"Her ___(I)___ sanguine outlook\" suggests a positive and cheerful mindset. The word \"unwaveringly\" (B) fits this context best, indicating that her optimistic perspective remains strong and constant.</p>\n<p><strong>Second Blank (II):</strong> The phrase \"navigate the ___(II)___ twists of fate\" implies that life presents unpredictable challenges. The word \"bizarre\" (E) is appropriate here, as it describes something strange and unexpected, which aligns with the unusual nature of life's twists.</p>\n<p><strong>Third Blank (III):</strong> The phrase \"in the face of ___(III)___\" suggests dealing with difficulties. The word \"adversity\" (H) works well, as it refers to hardships and challenges, reinforcing the idea of resilience.</p>\n<p><strong>Therefore, the correct answer is \"B + E + H.\"</strong></p>"}, {"question": "<p><strong>Read the sentence given below carefully. It has three blanks labelled as l, ll, and lll. Below the sentence, you will find a table with three columns (l, ll, and lll), each containing three words. Choose the correct combination of words from the three columns that will fit into their corresponding blanks to make the sentence grammatically correct and contextually meaningful. Select the correct combination and mark it as your answer.</strong></p><br><p>The ___<strong>(I)</strong>___ plastic waste crisis stems from rapid urbanization, ___<strong>(II)</strong>___ consumption patterns, and a surge in tourism, ___<strong>(III)</strong>___ local waste management systems.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/173148169976.png\" title=\"48.PNG\"/></p>", "options": ["<p>C + F + I</p>", "<p>A + E + H</p>", "<p>B + D + G</p>", "<p>A + F + H</p>", "<p>C + F + G</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>To fill in the blanks in the sentence meaningfully, we need to choose words that logically connect and enhance the overall context.</strong></p>\n<p><strong>First Blank (I):</strong> The phrase \"The ___(I)___ plastic waste crisis\" suggests a crisis that is increasing in scope and urgency. The word \"burgeoning\" (C) fits this context best, as it implies that the crisis is rapidly expanding and becoming more significant.</p>\n<p><strong>Second Blank (II):</strong> The phrase \"___(II)___ consumption patterns\" indicates that these patterns are unsustainable or problematic. The word \"erratic\" (F) is appropriate here, as it suggests inconsistency in consumption, which can contribute to the waste crisis.</p>\n<p><strong>Third Blank (III):</strong> The phrase \"___(III)___ local waste management systems\" refers to the impact of the crisis on these systems. The word \"overwhelming\" (I) works well, as it describes how the volume of plastic waste can exceed the capacity of local systems to manage it effectively.</p>\n<p><strong>Therefore, the correct answer is \"C + F + I.\"</strong></p>"}, {"question": "<p><strong>Read the sentence given below carefully. It has three blanks labelled as l, ll, and lll. Below the sentence, you will find a table with three columns (l, ll, and lll), each containing three words. Choose the correct combination of words from the three columns that will fit into their corresponding blanks to make the sentence grammatically correct and contextually meaningful. Select the correct combination and mark it as your answer.</strong></p><br><p>Thrifting, an emerging trend among the youth, seamlessly ___<strong>(I)</strong>___ fashion with sustainability, mitigating the environmental ___<strong>(II)</strong>___ of the fashion industry's ___<strong>(III)</strong>___ waste generation.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/173148179542.png\" title=\"49.PNG\"/></p>", "options": ["<p>C + F + G</p>", "<p>A + E + H</p>", "<p>A + D + H</p>", "<p>B + D + G</p>", "<p>B + E + I</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p><strong>To fill in the blanks in the sentence meaningfully, we need to choose words that logically connect and enhance the overall context.</strong></p>\n<p><strong>First Blank (I):</strong> The phrase \"seamlessly ___(I)___ fashion with sustainability\" suggests a combination of two concepts. The word \"intertwines\" (B) fits this context best, as it means to connect or mix together, which aligns with the idea of merging fashion and sustainability.</p>\n<p><strong>Second Blank (II):</strong> The phrase \"mitigating the environmental ___(II)___ of the fashion industry's\" indicates a negative consequence. The word \"repercussions\" (E) is appropriate here, as it refers to the effects or consequences that arise from the fashion industry's activities.</p>\n<p><strong>Third Blank (III):</strong> The phrase \" ___(III)___ waste generation\" refers to the amount of waste produced. The word \"colossal\" (I) works well, as it describes something very large or significant, which emphasizes the extent of waste generation in the fashion industry.</p>\n<p><strong>Therefore, the correct answer is \"B + E + I.\"</strong></p>"}, {"question": "<p><strong>Read the sentence given below carefully. It has three blanks labelled as l, ll, and lll. Below the sentence, you will find a table with three columns (l, ll, and lll), each containing three words. Choose the correct combination of words from the three columns that will fit into their corresponding blanks to make the sentence grammatically correct and contextually meaningful. Select the correct combination and mark it as your answer.</strong></p><br><p>In a world increasingly governed by technology, the art of ___<strong>(I)</strong>___ conversation has been relegated to ___<strong>(II)</strong>___, prompting a ___<strong>(III)</strong>___ of interest in interpersonal communication.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/1731481932100.png\" title=\"50.PNG\"/></p>", "options": ["<p>B + E + I</p>", "<p>A + D + G</p>", "<p>C + D + I</p>", "<p>C + F + H</p>", "<p>A + E + H</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong><br/><strong>To fill in the blanks in the sentence meaningfully, we need to choose words that logically connect and enhance the overall context.</strong></p>\n<p><strong>First Blank (I):</strong> The phrase \"the art of ___(I)___ conversation\" implies a conversation that is meaningful and sincere. The word \"genuine\" (C) fits this context best, suggesting authenticity in conversation.</p>\n<p><strong>Second Blank (II):</strong> The phrase \"has been relegated to ___(II)___\" indicates that genuine conversation is being pushed aside or diminished. The word \"obsolescence\" (F) is appropriate here, as it refers to something becoming outdated or no longer used.</p>\n<p><strong>Third Blank (III):</strong> The phrase \"prompting a ___(III)___ of interest in interpersonal communication\" refers to a revival or increase in interest. The word \"resurgence\" (H) works well, as it describes a renewed interest in interpersonal communication.</p>\n<p><strong>Therefore, the correct answer is \"C + F + H.\"</strong></p>"}, {"question": "<p><strong>In each of the following questions, a highlighted word is given and used in the three statements. You have to identify in which of the following statements the word is incorrectly used, and mark it as your answer.</strong></p><br><p><strong>DECIMATION</strong></p>\n<p><strong>I).</strong> The <strong>decimation</strong> of the forest by deforestation has led to the loss of countless species and habitats.</p>\n<p><strong>II).</strong> The company's new marketing strategy led to a <strong>decimation</strong> in sales, resulting in a significant increase in revenue.</p>\n<p><strong>III).</strong> The hurricane caused the <strong>decimation</strong> of the coastal town, leaving only a few buildings standing amidst widespread destruction.</p>", "options": ["<p>Only I</p>", "<p>Only II</p>", "<p>Only III</p>", "<p>Both I and II</p>", "<p>Both II and III</p>"], "correctIndex": 1, "solution": "<p><strong>Answer</strong><strong>: B</strong></p>\n<p><strong>I).</strong> In this sentence, \"decimation\" is used correctly to describe the severe destruction or reduction of the forest due to deforestation, resulting in significant loss of biodiversity and habitats.</p>\n<p><strong>II).</strong> In this sentence, \"decimation\" is used incorrectly. Decimation typically refers to the destruction or elimination of a large proportion of something, often implying a reduction by one-tenth. However, the sentence suggests the opposite—an increase in revenue, which contradicts the usual meaning of \"decimation.\" A more appropriate term might be \"boost\" or \"growth.\"</p>\n<p><strong>III).</strong> In this sentence, \"decimation\" is correctly used to describe the severe destruction or devastation inflicted upon the coastal town by the hurricane.</p>\n<p>So, Sentences I and III use <strong>decimation</strong> in a grammatically correct and contextually meaningful manner.</p>\n<p>Therefore, option b) Only II is the correct choice.</p>"}, {"question": "<p><strong>In each of the following questions, a highlighted word is given and used in the three statements. You have to identify in which of the following statements the word is incorrectly used, and mark it as your answer.</strong></p><br><p><strong>ASSIDUOUSLY</strong></p>\n<p><strong>I).</strong> She worked <strong>assiduously</strong> on her research project, spending countless hours in the library gathering data and analysing results.</p>\n<p><strong>II).</strong> The chef <strong>assiduously</strong> prepared each dish, ensuring every detail was perfect before it left the kitchen.</p>\n<p><strong>III).</strong> He <strong>assiduously</strong> avoided studying for the exam, spending most of his time playing video games instead.</p>", "options": ["<p>Only I</p>", "<p>Only II</p>", "<p>Only III</p>", "<p>Both I and II</p>", "<p>Both II and III</p>"], "correctIndex": 2, "solution": "<p><strong>Answer</strong><strong>: C</strong></p>\n<p><strong>I).</strong> In this sentence, \"assiduously\" is correctly used to describe how diligently and with great care she worked on her research project.</p>\n<p><strong>II).</strong> In this sentence, \"assiduously\" is used correctly to describe the chef's meticulous and thorough approach to preparing each dish.</p>\n<p><strong>III).</strong> In this sentence, \"assiduously\" is used incorrectly. \"Assiduously\" means with great care, attention, and diligence, often in the context of hard work or dedication. However, in this sentence, it suggests the opposite—an avoidance of studying and a focus on leisure activities. A more suitable term might be \"diligently\" or \"thoroughly.\"</p>\n<p>So, Sentences I and II use <strong>assiduously</strong> in a grammatically correct and contextually meaningful manner.</p>\n<p>Therefore, option c) Only III is the correct choice.</p>"}, {"question": "<p><strong>In each of the following questions, a highlighted word is given and used in the three statements. You have to identify in which of the following statements the word is incorrectly used, and mark it as your answer.</strong></p><br><p><strong>REORIENT</strong></p>\n<p><strong>I).</strong> After the team's victory, they decided to <strong>reorient</strong> their strategy, sticking to the same tactics that led them to success.</p>\n<p><strong>II).</strong> The company's <strong>reorientation</strong> towards sustainable practices led to increased efficiency and reduced environmental impact.</p>\n<p><strong>III).</strong> After facing setbacks, the team decided to <strong>reorient</strong> their strategy towards a more customer-centric approach.</p>", "options": ["<p>Only I</p>", "<p>Only II</p>", "<p>Only III</p>", "<p>Both I and II</p>", "<p>Both II and III</p>"], "correctIndex": 0, "solution": "<p><strong>Answer</strong><strong>: A</strong></p>\n<p><strong>I).</strong> In this sentence, \"reorient\" is used incorrectly. \"Reorient\" typically means to change or adjust the direction or focus of something. However, in the sentence, it implies maintaining the same direction or focus, which contradicts the usual meaning of the word. A more suitable term might be \"maintain\" or \"continue with.\"</p>\n<p><strong>II).</strong> In this sentence, \"reorientation\" is correctly used to describe the company's shift or adjustment towards sustainable practices, resulting in positive outcomes.</p>\n<p><strong>III).</strong> In this sentence, \"reorient\" is correctly used to indicate the team's decision to adjust or change their strategy towards a new direction or focus.</p>\n<p>So, Sentences II and III use <strong>reorient</strong> in a grammatically correct and contextually meaningful manner.</p>\n<p>Therefore, option a) Only I is the correct choice.</p>"}, {"question": "<p><strong>In each of the following questions, a highlighted word is given and used in the three statements. You have to identify in which of the following statements the word is incorrectly used, and mark it as your answer.</strong></p><br><p><strong>STEADFAST</strong></p>\n<p><strong>I).</strong> Despite facing numerous challenges, Julie remained <strong>steadfast</strong> in her commitment to completing the project on time.</p>\n<p><strong>II).</strong> Despite his <strong>steadfast</strong> commitment to his diet, he frequently indulged in unhealthy snacks and desserts.</p>\n<p><strong>III).</strong> Her <strong>steadfast</strong> loyalty to the company wavered when she considered a job offer from a competitor.</p>", "options": ["<p>Only I</p>", "<p>Only II</p>", "<p>Only III</p>", "<p>Both I and II</p>", "<p>Both II and III</p>"], "correctIndex": 4, "solution": "<p><strong>Answer</strong><strong>: E</strong></p>\n<p><strong>I).</strong> In this sentence, \"steadfast\" is correctly used to describe Julie's unwavering determination and loyalty to her commitment despite difficulties.</p>\n<p><strong>II).</strong> In this sentence, \"steadfast\" is used incorrectly. \"Steadfast\" typically means resolutely or unwaveringly loyal or committed. However, the sentence suggests inconsistency or wavering commitment, as the person frequently indulges in unhealthy snacks and desserts, which contradicts the usual meaning of \"steadfast.\" A more suitable term might be \"intermittent\" or \"inconsistent.\"</p>\n<p><strong>III).</strong> In this sentence, \"steadfast\" is used incorrectly. \"Steadfast\" typically means resolutely or unwaveringly loyal or committed. However, the sentence suggests a wavering or changing loyalty, as the person considers a job offer from a competitor, which contradicts the usual meaning of \"steadfast.\" A more suitable term might be \"wavering\" or \"compromised.\"</p>\n<p>So, Sentence I use <strong>steadfast</strong> in a grammatically correct and contextually meaningful manner.</p>\n<p>Therefore, option e) Both II and III is the correct choice.</p>"}, {"question": "<p><strong>In each of the following questions, a highlighted word is given and used in the three statements. You have to identify in which of the following statements the word is incorrectly used, and mark it as your answer.</strong></p><br><p><strong>CLAMOUR</strong></p>\n<p><strong>I).</strong> The <strong>clamour</strong> of the crowd outside the stadium could be heard from miles away, echoing their excitement for the upcoming match.</p>\n<p><strong>II).</strong> As the deadline approached, there was a <strong>clamour</strong> among the employees for clarification on the new company policies.</p>\n<p><strong>III).</strong> The serene atmosphere was disrupted by the <strong>clamour</strong> of birds chirping harmoniously in the trees.</p>", "options": ["<p>Only I</p>", "<p>Only II</p>", "<p>Only III</p>", "<p>Both I and II</p>", "<p>Both II and III</p>"], "correctIndex": 2, "solution": "<p><strong>Answer</strong><strong>: C</strong></p>\n<p><strong>I).</strong> In this sentence, \"clamour\" is correctly used to describe the loud and enthusiastic noise made by the crowd.</p>\n<p><strong>II).</strong> In this sentence, \"clamour\" is appropriately used to depict a loud and persistent demand or outcry from the employees seeking clarification on the new policies.</p>\n<p><strong>III).</strong> In this sentence, \"clamour\" is used incorrectly. \"Clamour\" typically refers to a loud and noisy outcry or uproar, often made by a group of people. Here, it's used to describe the pleasant sounds of birds chirping, which doesn't convey the usual meaning of the word. A more appropriate term might be \"cacophony\" or \"discord.\"</p>\n<p>So, Sentences I and II use <strong>“clamour”</strong> in a grammatically correct and contextually meaningful manner.</p>\n<p>Therefore, option c) Only III is the correct choice.</p>"}, {"question": "<p><strong>Read the following passage and answer the questions that follow based on the information provided in the passage.</strong></p>\n<p>With the Reserve Bank of India's Inter-Departmental Group having expressed the view that the rupee possesses the potential of evolving into a global currency in the wake of India's <strong>resilient </strong>economic growth amid global challenges, the potential of such a development is significant for India's economic growth and international standing. If the rupee becomes a global currency, India can benefit in several ways. It can be used for international trade transactions, reducing dependence on other currencies and lowering exchange rate risks. A global rupee could attract more foreign investors as they can hold and transact in the currency without facing conversion costs. India can potentially borrow funds from international markets at favourable interest rates, as the global acceptance of the currency may increase demand in bond markets. If its currency goes global, India's influence in international financial matters could increase, leading to a stronger position in global economic and geopolitical discussions. Easier accessibility and acceptance of the rupee in other countries could encourage more tourists to visit India, stimulating the sector. However, it's essential to note that becoming a global currency requires sound economic policies, stability, and investor confidence. The RBI and the Centre would need to work on maintaining a robust and stable economy to fully harness the advantages of a global rupee. Governments, both at the Centre and in states, need to implement prudent fiscal policies, maintain balanced budgets, and manage public debt effectively to ensure the stability of the economy. But they are hardly doing enough on these fronts to be able to take advantage of a global rupee. These inadequacies could pull India down along with the rupee. Addressing the inadequacies in fiscal policies, budget management, and public debt is crucial for India. Failure to do so could indeed <strong>undermine</strong> the potential benefits and lead to economic challenges. It is essential for all governments to take decisive actions to improve these areas to ensure a stable and sustainable economy that can support the aspiration of the rupee becoming a global currency. Given the monumental debts of the central and state governments, they need to reduce government spending and increase revenue generation to gradually bring down fiscal deficits. This may involve rationalising subsidies, optimising expenditure, and enhancing tax collection efficiency. The Centre needs to explore options for debt restructuring, such as refinancing or rescheduling debt payments, to manage the debt burden more effectively and alleviate short-term financial pressure. Divestment of non -strategic assets and privatisation of state-owned enterprises can help generate funds to repay debts and improve the overall financial health of the government. Both Central and state governments must develop robust debt management strategies that include prudent borrowing practices, effective debt monitoring, and proactive risk management. Ensuring ___________________ in government finances and public spending is important to build trust and confidence among investors and creditors. A lot will have to be done to realise the rupee’s potential.</p><br><p><strong>Choose the word that is most SIMILAR to the highlighted word RESILIENT in the passage.</strong></p>", "options": ["<p>Fragile</p>", "<p>Sensitive</p>", "<p>Vulnerable</p>", "<p>Adoptable</p>", "<p>None of these.</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>Resilient – </strong>able to withstand.</p>\n<p>The word <strong>“adoptable”</strong> is the synonym of the highlighted word <strong>“resilient” </strong>in the passage. Therefore, <strong>option D</strong> is the correct answer.</p>"}, {"question": "<p><strong>Read the following passage and answer the questions that follow based on the information provided in the passage.</strong></p>\n<p>With the Reserve Bank of India's Inter-Departmental Group having expressed the view that the rupee possesses the potential of evolving into a global currency in the wake of India's <strong>resilient </strong>economic growth amid global challenges, the potential of such a development is significant for India's economic growth and international standing. If the rupee becomes a global currency, India can benefit in several ways. It can be used for international trade transactions, reducing dependence on other currencies and lowering exchange rate risks. A global rupee could attract more foreign investors as they can hold and transact in the currency without facing conversion costs. India can potentially borrow funds from international markets at favourable interest rates, as the global acceptance of the currency may increase demand in bond markets. If its currency goes global, India's influence in international financial matters could increase, leading to a stronger position in global economic and geopolitical discussions. Easier accessibility and acceptance of the rupee in other countries could encourage more tourists to visit India, stimulating the sector. However, it's essential to note that becoming a global currency requires sound economic policies, stability, and investor confidence. The RBI and the Centre would need to work on maintaining a robust and stable economy to fully harness the advantages of a global rupee. Governments, both at the Centre and in states, need to implement prudent fiscal policies, maintain balanced budgets, and manage public debt effectively to ensure the stability of the economy. But they are hardly doing enough on these fronts to be able to take advantage of a global rupee. These inadequacies could pull India down along with the rupee. Addressing the inadequacies in fiscal policies, budget management, and public debt is crucial for India. Failure to do so could indeed <strong>undermine</strong> the potential benefits and lead to economic challenges. It is essential for all governments to take decisive actions to improve these areas to ensure a stable and sustainable economy that can support the aspiration of the rupee becoming a global currency. Given the monumental debts of the central and state governments, they need to reduce government spending and increase revenue generation to gradually bring down fiscal deficits. This may involve rationalising subsidies, optimising expenditure, and enhancing tax collection efficiency. The Centre needs to explore options for debt restructuring, such as refinancing or rescheduling debt payments, to manage the debt burden more effectively and alleviate short-term financial pressure. Divestment of non -strategic assets and privatisation of state-owned enterprises can help generate funds to repay debts and improve the overall financial health of the government. Both Central and state governments must develop robust debt management strategies that include prudent borrowing practices, effective debt monitoring, and proactive risk management. Ensuring ___________________ in government finances and public spending is important to build trust and confidence among investors and creditors. A lot will have to be done to realise the rupee’s potential.</p><br><p><strong>Choose the word that is most OPPOSITE to the highlighted word UNDERMINE in the passage.</strong></p>", "options": ["<p>Exacerbate</p>", "<p>Admonish</p>", "<p>Resort</p>", "<p>Thrive</p>", "<p>None of these.</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>Undermine – </strong>lessen the effectiveness.</p>\n<p><strong>Exacerbate – </strong>Make something worse.</p>\n<p><strong>Admonish – </strong>warn or reprimand severely.</p>\n<p><strong>Thrive – </strong>prosper; flourish.</p>\n<p>The word <strong>“exacerbate”</strong> is the antonym of the highlighted word <strong>“undermine” </strong>in the passage. Therefore, <strong>option A</strong> is the correct answer.</p>"}, {"question": "<p><strong>Read the following passage and answer the questions that follow based on the information provided in the passage.</strong></p>\n<p>With the Reserve Bank of India's Inter-Departmental Group having expressed the view that the rupee possesses the potential of evolving into a global currency in the wake of India's <strong>resilient </strong>economic growth amid global challenges, the potential of such a development is significant for India's economic growth and international standing. If the rupee becomes a global currency, India can benefit in several ways. It can be used for international trade transactions, reducing dependence on other currencies and lowering exchange rate risks. A global rupee could attract more foreign investors as they can hold and transact in the currency without facing conversion costs. India can potentially borrow funds from international markets at favourable interest rates, as the global acceptance of the currency may increase demand in bond markets. If its currency goes global, India's influence in international financial matters could increase, leading to a stronger position in global economic and geopolitical discussions. Easier accessibility and acceptance of the rupee in other countries could encourage more tourists to visit India, stimulating the sector. However, it's essential to note that becoming a global currency requires sound economic policies, stability, and investor confidence. The RBI and the Centre would need to work on maintaining a robust and stable economy to fully harness the advantages of a global rupee. Governments, both at the Centre and in states, need to implement prudent fiscal policies, maintain balanced budgets, and manage public debt effectively to ensure the stability of the economy. But they are hardly doing enough on these fronts to be able to take advantage of a global rupee. These inadequacies could pull India down along with the rupee. Addressing the inadequacies in fiscal policies, budget management, and public debt is crucial for India. Failure to do so could indeed <strong>undermine</strong> the potential benefits and lead to economic challenges. It is essential for all governments to take decisive actions to improve these areas to ensure a stable and sustainable economy that can support the aspiration of the rupee becoming a global currency. Given the monumental debts of the central and state governments, they need to reduce government spending and increase revenue generation to gradually bring down fiscal deficits. This may involve rationalising subsidies, optimising expenditure, and enhancing tax collection efficiency. The Centre needs to explore options for debt restructuring, such as refinancing or rescheduling debt payments, to manage the debt burden more effectively and alleviate short-term financial pressure. Divestment of non -strategic assets and privatisation of state-owned enterprises can help generate funds to repay debts and improve the overall financial health of the government. Both Central and state governments must develop robust debt management strategies that include prudent borrowing practices, effective debt monitoring, and proactive risk management. Ensuring ___________________ in government finances and public spending is important to build trust and confidence among investors and creditors. A lot will have to be done to realise the rupee’s potential.</p><br><p><strong>A blank is given in the passage which indicates that an appropriate word is omitted. You are required to find the appropriate word from the options given below and mark the same as your answer.</strong></p>", "options": ["<p>Incumbency</p>", "<p>Transparency</p>", "<p>Festering</p>", "<p>Autocracy</p>", "<p>None of these.</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>Festering – </strong>becoming worse or more intense.</p>\n<p><strong>Incumbency – </strong>the holding of an office or the period during which one is held.</p>\n<p><strong>Autocracy – </strong>a system of government by one person with absolute power.</p>\n<p>The passage is about the discussion of making rupee a global currency. To build trust something should be <strong>transparent (clear about doing something).</strong> So, the word <strong>“transparency”</strong> should be used in the blank. Therefore, <strong>option B</strong> is the correct answer.</p>"}, {"question": "<p><strong>Read the following passage and answer the questions that follow based on the information provided in the passage.</strong></p>\n<p>With the Reserve Bank of India's Inter-Departmental Group having expressed the view that the rupee possesses the potential of evolving into a global currency in the wake of India's <strong>resilient </strong>economic growth amid global challenges, the potential of such a development is significant for India's economic growth and international standing. If the rupee becomes a global currency, India can benefit in several ways. It can be used for international trade transactions, reducing dependence on other currencies and lowering exchange rate risks. A global rupee could attract more foreign investors as they can hold and transact in the currency without facing conversion costs. India can potentially borrow funds from international markets at favourable interest rates, as the global acceptance of the currency may increase demand in bond markets. If its currency goes global, India's influence in international financial matters could increase, leading to a stronger position in global economic and geopolitical discussions. Easier accessibility and acceptance of the rupee in other countries could encourage more tourists to visit India, stimulating the sector. However, it's essential to note that becoming a global currency requires sound economic policies, stability, and investor confidence. The RBI and the Centre would need to work on maintaining a robust and stable economy to fully harness the advantages of a global rupee. Governments, both at the Centre and in states, need to implement prudent fiscal policies, maintain balanced budgets, and manage public debt effectively to ensure the stability of the economy. But they are hardly doing enough on these fronts to be able to take advantage of a global rupee. These inadequacies could pull India down along with the rupee. Addressing the inadequacies in fiscal policies, budget management, and public debt is crucial for India. Failure to do so could indeed <strong>undermine</strong> the potential benefits and lead to economic challenges. It is essential for all governments to take decisive actions to improve these areas to ensure a stable and sustainable economy that can support the aspiration of the rupee becoming a global currency. Given the monumental debts of the central and state governments, they need to reduce government spending and increase revenue generation to gradually bring down fiscal deficits. This may involve rationalising subsidies, optimising expenditure, and enhancing tax collection efficiency. The Centre needs to explore options for debt restructuring, such as refinancing or rescheduling debt payments, to manage the debt burden more effectively and alleviate short-term financial pressure. Divestment of non -strategic assets and privatisation of state-owned enterprises can help generate funds to repay debts and improve the overall financial health of the government. Both Central and state governments must develop robust debt management strategies that include prudent borrowing practices, effective debt monitoring, and proactive risk management. Ensuring ___________________ in government finances and public spending is important to build trust and confidence among investors and creditors. A lot will have to be done to realise the rupee’s potential.</p><br><p><strong>What are the benefits stated below can be achieved when Indian rupee becomes global currency?</strong></p>", "options": ["<p>Exchange rate risks are lower</p>", "<p>Conversion costs is not negligible.</p>", "<p>International trade transactions will be easier.</p>", "<p>Both A and C.</p>", "<p>All A, B and C.</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>Statement B is incorrect, </strong>according to the passage if rupee becomes a global currency then there will not be any need to face the conversion costs, it can be neglected.</p>\n<p>Therefore, <strong>option D</strong> is the correct answer.</p>"}, {"question": "<p><strong>Read the following passage and answer the questions that follow based on the information provided in the passage.</strong></p>\n<p>With the Reserve Bank of India's Inter-Departmental Group having expressed the view that the rupee possesses the potential of evolving into a global currency in the wake of India's <strong>resilient </strong>economic growth amid global challenges, the potential of such a development is significant for India's economic growth and international standing. If the rupee becomes a global currency, India can benefit in several ways. It can be used for international trade transactions, reducing dependence on other currencies and lowering exchange rate risks. A global rupee could attract more foreign investors as they can hold and transact in the currency without facing conversion costs. India can potentially borrow funds from international markets at favourable interest rates, as the global acceptance of the currency may increase demand in bond markets. If its currency goes global, India's influence in international financial matters could increase, leading to a stronger position in global economic and geopolitical discussions. Easier accessibility and acceptance of the rupee in other countries could encourage more tourists to visit India, stimulating the sector. However, it's essential to note that becoming a global currency requires sound economic policies, stability, and investor confidence. The RBI and the Centre would need to work on maintaining a robust and stable economy to fully harness the advantages of a global rupee. Governments, both at the Centre and in states, need to implement prudent fiscal policies, maintain balanced budgets, and manage public debt effectively to ensure the stability of the economy. But they are hardly doing enough on these fronts to be able to take advantage of a global rupee. These inadequacies could pull India down along with the rupee. Addressing the inadequacies in fiscal policies, budget management, and public debt is crucial for India. Failure to do so could indeed <strong>undermine</strong> the potential benefits and lead to economic challenges. It is essential for all governments to take decisive actions to improve these areas to ensure a stable and sustainable economy that can support the aspiration of the rupee becoming a global currency. Given the monumental debts of the central and state governments, they need to reduce government spending and increase revenue generation to gradually bring down fiscal deficits. This may involve rationalising subsidies, optimising expenditure, and enhancing tax collection efficiency. The Centre needs to explore options for debt restructuring, such as refinancing or rescheduling debt payments, to manage the debt burden more effectively and alleviate short-term financial pressure. Divestment of non -strategic assets and privatisation of state-owned enterprises can help generate funds to repay debts and improve the overall financial health of the government. Both Central and state governments must develop robust debt management strategies that include prudent borrowing practices, effective debt monitoring, and proactive risk management. Ensuring ___________________ in government finances and public spending is important to build trust and confidence among investors and creditors. A lot will have to be done to realise the rupee’s potential.</p><br><p><strong>Which of the following should be kept in mind when making rupee as a global currency?</strong></p>", "options": ["<p>Prudent fiscal policies should be implemented.</p>", "<p>To ensure the stability of the economy, we need to maintain balanced budgets.</p>", "<p>More policies should be implemented so that foreign tourist can come India.</p>", "<p>All of these.</p>", "<p>Both A and B.</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p><strong>Statement C is incorrect, </strong>the passage is about rupee and its consideration to become the global currency, not about implementing policies to attract foreigners.</p>\n<p>Therefore, <strong>option E</strong> is the correct answer.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-65)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-65)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

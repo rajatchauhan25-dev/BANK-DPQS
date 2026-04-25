@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-31)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>In the following questions two columns are given containing three sentences/phrases each. In the first column, sentences/phrases are A, B and C and in the second column the sentences/phrases are D, E and F. Each question has five options which display the sequence(s) in which the sentences/phrases can be joined to form a grammatically and contextually correct sentence. Choose the pair(s) which make(s) a grammatically meaningful sentence.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/173217941195.png\" title=\"17.PNG\"/></p>", "options": ["<p>AF</p>", "<p>BD</p>", "<p>CE, AE</p>", "<p>BF, CD</p>", "<p>None matches</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>Among the given alternatives, None of the phrases matches with each other. Hence, Option E is the best choice. Even though the combination of AE, BD &amp; CF provides meaningful sentences, as per grammatical rules it doesn't match with each other.</p>\n<p>The following amendments have to be made which make the sentences grammatically correct. In Fragment E \"say\" has to be replaced with \"said\" and \"between\" must be replaced with \"among\" in Fragment D as it indicates more than two members &amp; indefinite article \"a\" should be replaced with \"an\" in Fragment F.</p>"}, {"question": "<p><strong>In the following questions two columns are given containing three sentences/phrases each. In the first column, sentences/phrases are A, B and C and in the second column the sentences/phrases are D, E and F. Each question has five options which display the sequence(s) in which the sentences/phrases can be joined to form a grammatically and contextually correct sentence. Choose the pair(s) which make(s) a grammatically meaningful sentence.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/173217978587.png\" title=\"18.PNG\"/></p>", "options": ["<p>AF, BD, CE</p>", "<p>BE, AF</p>", "<p>CD, AE, BF</p>", "<p>BF, AD</p>", "<p>None matches</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Fragments A,B &amp; C of Column 1 are matched with Fragments F,D &amp; E of Column 2 respectively to make the sentence contextually &amp; grammatically correct. AF pair mentions the requisition made to the central government by Sikhs, BD pair shows about an effect of COVID 19 pandemic. CE mentions about the case filed against his wife by a common man for a medical examination. Hence, Option A is the most suitable answer.</p>\n<p><strong>After combination the sentences will be as given,</strong></p>\n<p><strong>A-F:</strong> Many delegations of Sikhs have requested the central government to take the issue of abolishing the USD 20 fee charged by Pakistan with them.</p>\n<p><strong>B-D: </strong>After becoming functional, the corridor remained closed during the COVID-19 pandemic and reopened after a gap of one-and-a-half years in November 2021.</p>\n<p><strong>C-E:</strong> In a unique legal battle, a husband has moved the Delhi High Court, requesting a medical examination of his wife at a Central Government hospital to verify her gender.</p>"}, {"question": "<p><strong>In the following questions two columns are given containing three sentences/phrases each. In the first column, sentences/phrases are A, B and C and in the second column the sentences/phrases are D, E and F. Each question has five options which display the sequence(s) in which the sentences/phrases can be joined to form a grammatically and contextually correct sentence. Choose the pair(s) which make(s) a grammatically meaningful sentence.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/173217998588.png\" title=\"19.PNG\"/></p>", "options": ["<p>AF, CD</p>", "<p>CE, BD, AF</p>", "<p>AE</p>", "<p>BF, AE</p>", "<p>None Matches</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Among the given alternatives, Fragment A of Column 1 is matched with Fragment E of Column 2 respectively to make the sentence contextually &amp; grammatically correct. AE pair explains about the victory of Rahul Gandhi in Lok Sabha polls from Wayanad but the combination of BF &amp; CD is grammatically wrong., in which \"eatingly\" must be replaced with \"eating\" in Fragment F &amp; \"are\" should be replaced instead of \"is\" in Fragment D to make those sentences grammatically correct. Hence, Option C is the most appropriate answer.</p>\n<p><strong>After combination the sentences will be as given,</strong></p>\n<p><strong>A-E:</strong> The by-election was necessitated after Rahul Gandhi, who won the Lok Sabha polls from Wayanad and Rae Bareli constituencies, decided to vacate the Kerala Lokh Sabha seat.</p>"}, {"question": "<p><strong>In the following questions two columns are given containing three sentences/phrases each. In the first column, sentences/phrases are A, B and C and in the second column the sentences/phrases are D, E and F. Each question has five options which display the sequence(s) in which the sentences/phrases can be joined to form a grammatically and contextually correct sentence. Choose the pair(s) which make(s) a grammatically meaningful sentence.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/173218014554.png\" title=\"20.PNG\"/></p>", "options": ["<p>AF</p>", "<p>CD, BF</p>", "<p>CD, AE</p>", "<p>BE</p>", "<p>CE, BF</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>Fragments B &amp; C of Column 1 are matched with Fragments F &amp; D of Column 2 respectively to make the sentence contextually and grammatically correct. BF pair interprets the statement of a common man about an action that will be taken by the police. CD pair explains the senior officer's statement which speaks about a realtor from Andhra Pradesh who was absconded at present. In AE pair, \"raisen\" must be replaced with \"risen\" which makes the sentence contextually incorrect. Therefore BF &amp; CD makes a valid combination. Hence Option B is the best choice.</p>\n<p><strong>After combination the sentences will be as given,</strong></p>\n<p><strong>B-F:</strong> He stated that the police will take appropriate action based on the complaints from the injured once the rescue operations are completed.</p>\n<p><strong>C-D:</strong> The senior officer added that the building belonged to Muniraju Reddy, a realtor from Andhra Pradesh, who is currently absconding with his mobile phone switched off.</p>"}, {"question": "<p><strong>In the following questions two columns are given containing three sentences/phrases each. In the first column, sentences/phrases are A, B and C and in the second column the sentences/phrases are D, E and F. Each question has five options which display the sequence(s) in which the sentences/phrases can be joined to form a grammatically and contextually correct sentence. Choose the pair(s) which make(s) a grammatically meaningful sentence.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/173218030595.png\" title=\"21.PNG\"/></p>", "options": ["<p>CF, BD</p>", "<p>BD, CE, AF</p>", "<p>AF, CD, BE</p>", "<p>AD</p>", "<p>None matches</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>Among the given alternatives, Fragment A of Column 1 is connected well with Fragments E of Column 2 perfectly. AD pair defines about the man who fell through the window. In CE pair, present form of verb \"find\" must be replaced with \"found\" as the sentence is in past tense and in BF pair preposition \"against\" must be replaced with \"with\" which makes the sentences grammatically incorrect. Hence, Option D is the best answer.</p>\n<p><strong>After combination the sentences will be as given,</strong></p>\n<p><strong>A-D:</strong> He lost control while trying to make a turn at the end of the lobby and fell through the window that was propped open for ventilation, the police added.</p>"}, {"question": "<p><strong>Each of the following questions has a paragraph from which some part has been deleted at the end. From the given options, choose the one that completes the paragraph in the most appropriate way.</strong></p><br><p><strong>The advent of financial technology (fintech) has brought about transformative changes in the banking landscape. Fintech innovations, such as mobile banking apps and peer-to-peer payment platforms, have empowered customers with greater control over their finances. As the industry embraces these digital advancements, it becomes imperative for banks to focus on ____________.</strong></p>", "options": ["<p>fostering collaboration with fintech startups for innovation</p>", "<p>restricting access to digital banking for security reasons</p>", "<p>investing in outdated banking infrastructure for reliability</p>", "<p>maintaining traditional banking practices for stability</p>", "<p>discouraging customers from using digital banking services</p>"], "correctIndex": 0, "solution": "<p><strong>Answer:</strong><strong> A</strong></p>\n<p>fostering collaboration with fintech startups for innovation.</p>\n<p>The correct option is: <strong>a).</strong> fostering collaboration with fintech startups for innovation.</p>\n<p>This option aligns with the paragraph's emphasis on the transformative changes brought about by fintech in the banking landscape. Fostering collaboration with fintech startups allows traditional banks to tap into innovative technologies, services, and approaches that can enhance customer experiences and operational efficiency. As the industry evolves, collaborating with fintech innovators becomes crucial for staying competitive and meeting the evolving expectations of customers. The other options either involve counterproductive measures, such as investing in outdated infrastructure (c) or discouraging digital banking usage (e), or miss the opportunity for embracing innovation in the digital age.</p>\n<p><strong>b).</strong> Restricting access to digital banking for security reasons: While security is paramount, outright restricting access to digital banking is counterproductive. The focus should be on implementing robust security measures rather than limiting access, as digital banking has become an integral part of modern financial services.</p>\n<p><strong>c).</strong> Investing in outdated banking infrastructure for reliability: Investing in outdated infrastructure contradicts the need for modernization and innovation in the banking sector. Reliable and secure infrastructure can be achieved through modern technologies, making this option less suitable for the evolving landscape.</p>\n<p><strong>d).</strong> Maintaining traditional banking practices for stability: While stability is essential, maintaining only traditional practices may hinder a bank's ability to adapt to the rapidly changing financial landscape. Fintech innovations provide opportunities for increased efficiency and improved customer experiences.</p>\n<p><strong>e).</strong> Discouraging customers from using digital banking services: Discouraging customers from using digital banking services would neglect the benefits of convenience and accessibility that digital channels provide. Instead of discouraging use, the focus should be on promoting secure practices and educating customers about safe digital banking practices.</p>\n<p>In summary, the chosen completion (a) emphasizes the importance of fostering collaboration with fintech startups for innovation, aligning with the idea that collaboration with innovative entities can bring fresh ideas and advancements to the banking industry.</p>"}, {"question": "<p><strong>Each of the following questions has a paragraph from which some part has been deleted at the end. From the given options, choose the one that completes the paragraph in the most appropriate way.</strong></p><br><p><strong>In recent years, open banking has emerged as a transformative trend in the financial industry. Open banking involves the sharing of financial data between banks and third-party providers, fostering innovation and competition. While this collaborative approach enhances the range of financial services available to consumers, it also raises concerns about ____________.</strong></p>", "options": ["<p>compromising the security and privacy of customer information</p>", "<p>limiting access to financial data to maintain traditional banking practices</p>", "<p>discouraging technological advancements in the financial sector</p>", "<p>promoting a closed and less competitive banking environment</p>", "<p>increasing fees and reducing transparency in financial transactions</p>"], "correctIndex": 0, "solution": "<p><strong>Answer:</strong><strong> A</strong></p>\n<p>compromising the security and privacy of customer information.</p>\n<p>The correct option is: <strong>a).</strong> compromising the security and privacy of customer information.</p>\n<p>This option aligns with the paragraph's theme, highlighting the concerns associated with open banking. While open banking promotes innovation and competition, the sharing of financial data raises legitimate concerns about the security and privacy of customer information. The challenge is to strike a balance between fostering collaboration and ensuring robust security measures to protect sensitive financial data from unauthorized access or breaches.</p>\n<p>The other options present negative consequences that are not explicitly associated with the drawbacks of open banking:</p>\n<p><strong>b).</strong> Limiting access to financial data to maintain traditional banking practices: This option implies resistance to innovation and collaboration without specifically addressing the security and privacy concerns associated with open banking.</p>\n<p><strong>c).</strong> Discouraging technological advancements in the financial sector: This option is not directly related to the concerns raised by open banking but rather suggests a broader opposition to technological progress.</p>\n<p><strong>d).</strong> Promoting a closed and less competitive banking environment: While this may be a consequence of open banking, the primary focus of the paragraph is on the potential compromise of security and privacy.</p>\n<p><strong>e).</strong> Increasing fees and reducing transparency in financial transactions: This option introduces concerns related to fees and transparency, which, while valid, are not the primary concerns highlighted in the paragraph regarding the security and privacy of customer information.</p>"}, {"question": "<p><strong>Each of the following questions has a paragraph from which some part has been deleted at the end. From the given options, choose the one that completes the paragraph in the most appropriate way.</strong></p><br><p><strong>The rise of FinTech (Financial Technology) has brought about significant changes in the banking landscape. FinTech companies leverage technology to provide innovative financial services, from mobile payments to robo-advisors. While these advancements offer convenience and accessibility, traditional banks face the challenge of ____________.</strong></p>", "options": ["<p>increasing reliance on outdated banking infrastructure</p>", "<p>reducing customer engagement through digital channels</p>", "<p>adopting a conservative approach to technological integration</p>", "<p>embracing digital transformation to remain competitive</p>", "<p>promoting a shift towards manual and paper-based transactions</p>"], "correctIndex": 3, "solution": "<p><strong>Answer:</strong><strong> D</strong></p>\n<p>embracing digital transformation to remain competitive.</p>\n<p>This option aligns with the theme of the paragraph, which discusses the impact of FinTech on traditional banking. As FinTech companies leverage technology to provide innovative financial services, traditional banks face the challenge of staying competitive in the digital era. Embracing digital transformation is crucial for traditional banks to adapt to changing consumer preferences, improve efficiency, and remain relevant in the evolving banking landscape. The other options either suggest outdated or counterproductive approaches, such as increasing reliance on outdated infrastructure (a), reducing customer engagement through digital channels (b), adopting a conservative approach to technological integration (c), or promoting a shift towards manual and paper-based transactions (e), which are not aligned with the trend towards digital banking solutions.</p>"}, {"question": "<p><strong>Each of the following questions has a paragraph from which some part has been deleted at the end. From the given options, choose the one that completes the paragraph in the most appropriate way.</strong></p><br><p><strong>With the increasing popularity of online banking services, customers now have the flexibility to manage their finances from the comfort of their homes. Mobile banking apps offer features such as fund transfers, bill payments, and account monitoring at the fingertips of users. However, to foster financial inclusion and cater to a diverse customer base, it is essential for banks to invest in ____________.</strong></p>", "options": ["<p>traditional paper-based communication methods for a wider reach</p>", "<p>limiting digital services to ensure security</p>", "<p>offering exclusive services for a select demographic</p>", "<p>innovative and user-friendly accessibility features</p>", "<p>reducing customer support services for cost-effectiveness</p>"], "correctIndex": 3, "solution": "<p><strong>Answer:</strong><strong> D</strong></p>\n<p>innovative and user-friendly accessibility features.</p>\n<p>This option aligns with the paragraph's focus on the increasing popularity of online banking services and the need to foster financial inclusion. Investing in innovative and user-friendly accessibility features ensures that online banking services are accessible to a diverse customer base, including those who may have varying levels of digital literacy or face accessibility challenges. This approach promotes inclusivity and a positive user experience, making banking services more widely available and convenient. The other options either involve outdated practices (a), compromise security (b), limit accessibility (c), or reduce customer support services (e), which do not contribute to fostering financial inclusion and serving a diverse customer base.</p>"}, {"question": "<p><strong>Each of the following questions has a paragraph from which some part has been deleted at the end. From the given options, choose the one that completes the paragraph in the most appropriate way.</strong></p><br><p><strong>E-commerce has become an integral part of modern retail, providing consumers with the convenience of shopping online from the comfort of their homes. The growth of e-commerce platforms has been fuelled by technological advancements, secure payment gateways, and efficient logistics. However, to address the challenges of increasing competition and consumer expectations, it is crucial for e-commerce businesses to invest in ____________.</strong></p>", "options": ["<p>expanding brick-and-mortar stores for a hybrid shopping experience</p>", "<p>reducing investments in website security for cost-cutting</p>", "<p>implementing outdated payment processing systems</p>", "<p>artificial intelligence for personalized shopping recommendations</p>", "<p>relying solely on traditional advertising methods</p>"], "correctIndex": 3, "solution": "<p><strong>Answer:</strong><strong> D</strong></p>\n<p>artificial intelligence for personalized shopping recommendations.</p>\n<p>This option aligns with the paragraph's emphasis on addressing challenges and staying competitive in the e-commerce sector. Utilizing artificial intelligence (AI) for personalized shopping recommendations is a strategy that enhances the customer experience, increases engagement, and addresses the expectations of modern consumers. AI algorithms analyze user behavior, preferences, and purchase history to provide tailored product suggestions, contributing to higher customer satisfaction and potentially increased sales. The other options either involve outdated or counterproductive practices, such as relying solely on traditional advertising methods (e) or reducing investments in website security (b), which could compromise customer trust and data security.</p>\n<p><strong>a).</strong> Expanding brick-and-mortar stores for a hybrid shopping experience: While a hybrid shopping experience integrating physical and online stores can be beneficial, the paragraph focuses on addressing challenges and staying competitive in the e-commerce sector. This option suggests a shift away from pure e-commerce, which may not align with the current emphasis on online shopping convenience.</p>\n<p><strong>b).</strong> Reducing investments in website security for cost-cutting: Reducing investments in website security poses significant risks to the integrity of e-commerce platforms. In an era where cybersecurity is crucial, maintaining robust security measures is essential to protect customer data. This option could compromise the trust and confidence of online shoppers.</p>\n<p><strong>c).</strong> Implementing outdated payment processing systems: Implementing outdated payment processing systems could lead to inefficiencies, security vulnerabilities, and a suboptimal user experience. Modern e-commerce thrives on efficient and secure payment processing, and utilizing outdated systems may hinder transactions and expose the platform to potential risks.</p>\n<p><strong>e).</strong> Relying solely on traditional advertising methods: Relying solely on traditional advertising methods overlooks the digital landscape where e-commerce predominantly operates. In the online realm, digital marketing and advertising play a vital role in reaching a broader audience. This option may limit the visibility and reach of the e-commerce platform.</p>\n<p>In summary, the chosen completion (d) emphasizes the importance of leveraging artificial intelligence for personalized shopping recommendations, aligning with the trend of enhancing customer experience and addressing challenges in the e-commerce sector.</p>"}, {"question": "<p><strong>In the following question, you will be presented with three sentences (A, B, and C). Each sentence may either be grammatically correct or incorrect. Your task is to carefully read each sentence and determine which sentence(s) is/are grammatically correct. Mark the correct sentence(s) as your answer.</strong></p><br><p><strong>A). </strong>Many people are under the impression that they have thousands friends and followers on social media, not understanding that it is a mirage.</p>\n<p><strong>B).</strong> Recent genomic studies have shed light on the fundamental biological processes the X chromosome modulates and the genes it encodes.</p>\n<p><strong>C).</strong> If nuclear war floats above the battlefield, prioritizing war over deterrence and proliferation over disarmament may exacerbate nuclear instability.</p>", "options": ["<p>Only A</p>", "<p>Only B</p>", "<p>Only C</p>", "<p>All A, B, and C</p>", "<p>Both C and B</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p><strong>To answer this question, let's analyze each sentence for grammatical correctness:</strong></p>\n<p><strong>A).</strong> Many people are under the impression that they have thousands friends and followers on social media, not understanding that it is a mirage.</p>\n<p><u>This sentence contains a grammatical error</u>. The phrase \"thousands friends and followers\" should be corrected to \"thousands of friends and followers\" to properly indicate a quantity. The correct rule here is that when indicating a quantity, we typically use \"of\" after the number.</p>\n<p><strong>B).</strong> Recent genomic studies have shed light on the fundamental biological processes the X chromosome modulates and the genes it encodes.</p>\n<p><u>This sentence is grammatically correct</u>. It effectively conveys the subject matter of recent genomic studies and uses proper grammar and syntax.</p>\n<p><strong>C).</strong> If nuclear war floats above the battlefield, prioritizing war over deterrence and proliferation over disarmament may exacerbate nuclear instability.</p>\n<p><u>This sentence is grammatically correct</u>. It presents a conditional statement and maintains proper structure throughout.</p>\n<p><u>Given the analysis, sentences B and C are grammatically correct, while sentence A contains a grammatical error</u>.</p>\n<p><strong>Therefore, the correct answer is \"Both C and B.\"</strong></p>"}, {"question": "<p><strong>In the following question, you will be presented with three sentences (A, B, and C). Each sentence may either be grammatically correct or incorrect. Your task is to carefully read each sentence and determine which sentence(s) is/are grammatically correct. Mark the correct sentence(s) as your answer.</strong></p><br><p><strong>A). </strong>Indian political manifestos often prioritize short-term economic gains over long-term environmental sustainability, lacking detailed climate action plans as a result.</p>\n<p><strong>B).</strong> Despite its vast working-class population and industrial presence, North Chennai still has the poorest public transport system, especially the suburban train services.</p>\n<p><strong>C).</strong> Reducing democracy to a mere procedural tallying of votes lacks substance, especially when voters haven't had the opportunity to elevate themselves with dignity.</p>", "options": ["<p>Only A</p>", "<p>Only B</p>", "<p>Only C</p>", "<p>All A, B, and C</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>To answer this question, let's analyze each sentence for grammatical correctness:</strong></p>\n<p><strong>A).</strong> Indian political manifestos often prioritize short-term economic gains over long-term environmental sustainability, lacking detailed climate action plans as a result.</p>\n<p><u>This sentence is grammatically correct</u>. It effectively communicates the issue of prioritizing short-term economic gains over long-term environmental sustainability in Indian political manifestos.</p>\n<p><strong>B).</strong> Despite its vast working-class population and industrial presence, North Chennai still has the poorest public transport system, especially the suburban train services.</p>\n<p><u>This sentence is also grammatically correct</u>. It provides clear information about the poor state of the public transport system in North Chennai despite factors such as its working-class population and industrial presence.</p>\n<p><strong>C).</strong> Reducing democracy to a mere procedural tallying of votes lacks substance, especially when voters haven't had the opportunity to elevate themselves with dignity.</p>\n<p><u>This sentence is grammatically correct</u>. It effectively conveys the idea that reducing democracy to mere procedural processes without considering the dignity of voters lacks depth.</p>\n<p><u>Given the analysis, all sentences A, B, and C are grammatically correct</u>.</p>\n<p><strong>Therefore, the correct answer is \"All A, B, and C.\"</strong></p>"}, {"question": "<p><strong>In the following question, you will be presented with three sentences (A, B, and C). Each sentence may either be grammatically correct or incorrect. Your task is to carefully read each sentence and determine which sentence(s) is/are grammatically correct. Mark the correct sentence(s) as your answer.</strong></p><br><p><strong>A). </strong>Scientists have warned about rising temperatures long before recent floods devastated the region, highlighting the value of attributing extreme events to climate change.</p>\n<p><strong>B).</strong> No sooner the petty tiff begun than it turned fatal, underlining the narrow tolerance among youth in today’s increasingly volatile social climate.</p>\n<p><strong>C).</strong> Venus once possessed ample water, sufficient to submerge its surface under a 3 km deep ocean, but now retains only enough for a 3 cm deep ocean.</p>", "options": ["<p>Both A and B</p>", "<p>Both C and B</p>", "<p>Both C and A</p>", "<p>Only C</p>", "<p>Only B</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>To answer this question, let's analyze each sentence for grammatical correctness:</strong></p>\n<p><strong>A).</strong> Scientists have warned about rising temperatures long before recent floods devastated the region, highlighting the value of attributing extreme events to climate change.</p>\n<p><u>This sentence is grammatically incorrect</u>. It uses present perfect tense (\"have warned\") to indicate an action that occurred before another past action (\"devastated\"). According to English grammar rules, when describing two actions in the past, the action that occurred first is expressed using the past perfect tense, while the subsequent action is in the simple past tense.</p>\n<p><strong>B).</strong> No sooner had the petty tiff begun then it turned fatal, underlining the narrow tolerance among youth in today’s increasingly volatile social climate.</p>\n<p><u>This sentence is also grammatically incorrect</u>. The correct structure after \"No sooner\" is \"No sooner + HV+ ...+ than...\" The sentence should be corrected to \"No sooner had the petty tiff begun than it turned fatal,\" to maintain grammatical accuracy.</p>\n<p><strong>C).</strong> Venus once possessed ample water, sufficient to submerge its surface under a 3 km deep ocean, but now retains only enough for a 3 cm deep ocean.</p>\n<p><u>This sentence is grammatically correct</u>. It effectively communicates the change in Venus's water content over time.</p>\n<p><u>Given the analysis, sentences A and B contain a grammatical error, while sentence A is grammatically correct</u>.</p>\n<p><strong>Therefore, the correct answer is \"Only C.\"</strong></p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>India's economy likely <strong>expanded</strong> at 8% through fiscal year 2024, and growth in the current year is projected at 7%, V. Anantha Nageswaran, chief economic adviser to the government, said at an event organized by the think tank National Council of Applied Eco- nomic Research (NCAER) on Wednesday. Nageswaran said that for the Indian economy to register 7% or higher growth for the fourth consecutive year in FY25, \"a lot would depend on the monsoons\". \"Right now, the expectations are that we will have an above- normal monsoon. But, [its] spatial and temporal distribution will matter,\" he said.</p>\n<p>On inflation, Nageswaran said he doesn't foresee any significant upside risk for now and expects retail inflation to remain at the midpoint of the RBI's target range of 2-6% in FY25. \"There can always be scenarios on the geopolitical front that can cause inflation to be more than what we expect. But at this point, our baseline scenario is that inflation gradually <strong>converges</strong> towards the midpoint of the target range in FY25,\" he added. Though CPI inflation remains above the central bank's target of 4%, it has stayed within its tolerance range of 2-6% for the seventh consecutive month in March. Nageswaran also batted for growing small and medium enterprises to help increase the share of manufacturing in the country's overall GDP. \"Building blocks such as sup- ply-side infrastructure, physical connectivity, and financial inclusion are good work in progress. But compliance burdens and inspection burdens that businesses face at the subnational government level need to be addressed to grow the manufacturing share of GDP,\" he added. At the event, IMF economist Mehdi Benatiya Andaloussi said that global growth, estimated at 3.2% in calendar year 2023, is expected to remain at same levels in 2024 and 2025.</p><br><p><strong>What factor did V. Anantha Nageswaran mention as critical for the Indian economy to register 7% or higher growth in FY25?</strong></p>", "options": ["<p>Global trade policies</p>", "<p>foreign investments</p>", "<p>Monsoon distribution</p>", "<p>Technological advancements</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Nageswaran emphasized that the spatial and temporal <strong>distribution of the monsoon</strong> would be critical for the Indian economy to achieve 7% or higher growth in FY25.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>India's economy likely <strong>expanded</strong> at 8% through fiscal year 2024, and growth in the current year is projected at 7%, V. Anantha Nageswaran, chief economic adviser to the government, said at an event organized by the think tank National Council of Applied Eco- nomic Research (NCAER) on Wednesday. Nageswaran said that for the Indian economy to register 7% or higher growth for the fourth consecutive year in FY25, \"a lot would depend on the monsoons\". \"Right now, the expectations are that we will have an above- normal monsoon. But, [its] spatial and temporal distribution will matter,\" he said.</p>\n<p>On inflation, Nageswaran said he doesn't foresee any significant upside risk for now and expects retail inflation to remain at the midpoint of the RBI's target range of 2-6% in FY25. \"There can always be scenarios on the geopolitical front that can cause inflation to be more than what we expect. But at this point, our baseline scenario is that inflation gradually <strong>converges</strong> towards the midpoint of the target range in FY25,\" he added. Though CPI inflation remains above the central bank's target of 4%, it has stayed within its tolerance range of 2-6% for the seventh consecutive month in March. Nageswaran also batted for growing small and medium enterprises to help increase the share of manufacturing in the country's overall GDP. \"Building blocks such as sup- ply-side infrastructure, physical connectivity, and financial inclusion are good work in progress. But compliance burdens and inspection burdens that businesses face at the subnational government level need to be addressed to grow the manufacturing share of GDP,\" he added. At the event, IMF economist Mehdi Benatiya Andaloussi said that global growth, estimated at 3.2% in calendar year 2023, is expected to remain at same levels in 2024 and 2025.</p><br><p><strong>Based on Nageswaran's comments, which of the following scenarios could potentially cause retail inflation to exceed expectations?</strong></p>", "options": ["<p>Geopolitical developments</p>", "<p>Technological advancements</p>", "<p>Domestic policy changes</p>", "<p>Increase in foreign direct investment</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Nageswaran mentioned that <strong>geopolitical scenarios</strong> could cause inflation to be higher than expected, even though the current baseline scenario is that inflation will remain within the RBI's target range.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>India's economy likely <strong>expanded</strong> at 8% through fiscal year 2024, and growth in the current year is projected at 7%, V. Anantha Nageswaran, chief economic adviser to the government, said at an event organized by the think tank National Council of Applied Eco- nomic Research (NCAER) on Wednesday. Nageswaran said that for the Indian economy to register 7% or higher growth for the fourth consecutive year in FY25, \"a lot would depend on the monsoons\". \"Right now, the expectations are that we will have an above- normal monsoon. But, [its] spatial and temporal distribution will matter,\" he said.</p>\n<p>On inflation, Nageswaran said he doesn't foresee any significant upside risk for now and expects retail inflation to remain at the midpoint of the RBI's target range of 2-6% in FY25. \"There can always be scenarios on the geopolitical front that can cause inflation to be more than what we expect. But at this point, our baseline scenario is that inflation gradually <strong>converges</strong> towards the midpoint of the target range in FY25,\" he added. Though CPI inflation remains above the central bank's target of 4%, it has stayed within its tolerance range of 2-6% for the seventh consecutive month in March. Nageswaran also batted for growing small and medium enterprises to help increase the share of manufacturing in the country's overall GDP. \"Building blocks such as sup- ply-side infrastructure, physical connectivity, and financial inclusion are good work in progress. But compliance burdens and inspection burdens that businesses face at the subnational government level need to be addressed to grow the manufacturing share of GDP,\" he added. At the event, IMF economist Mehdi Benatiya Andaloussi said that global growth, estimated at 3.2% in calendar year 2023, is expected to remain at same levels in 2024 and 2025.</p><br><p><strong>According to Nageswaran, what is the expected trend for retail inflation in FY25?</strong></p>", "options": ["<p>Inflation will rise above the RBI's target range</p>", "<p>Inflation will remain above the midpoint of the target range</p>", "<p>Inflation will gradually converge towards the midpoint of the target range</p>", "<p>Inflation will fall below the RBI's target range</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Nageswaran expects retail inflation to gradually converge <strong>towards the midpoint </strong>of the RBI's target range of 2-6% in FY25.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>India's economy likely <strong>expanded</strong> at 8% through fiscal year 2024, and growth in the current year is projected at 7%, V. Anantha Nageswaran, chief economic adviser to the government, said at an event organized by the think tank National Council of Applied Eco- nomic Research (NCAER) on Wednesday. Nageswaran said that for the Indian economy to register 7% or higher growth for the fourth consecutive year in FY25, \"a lot would depend on the monsoons\". \"Right now, the expectations are that we will have an above- normal monsoon. But, [its] spatial and temporal distribution will matter,\" he said.</p>\n<p>On inflation, Nageswaran said he doesn't foresee any significant upside risk for now and expects retail inflation to remain at the midpoint of the RBI's target range of 2-6% in FY25. \"There can always be scenarios on the geopolitical front that can cause inflation to be more than what we expect. But at this point, our baseline scenario is that inflation gradually <strong>converges</strong> towards the midpoint of the target range in FY25,\" he added. Though CPI inflation remains above the central bank's target of 4%, it has stayed within its tolerance range of 2-6% for the seventh consecutive month in March. Nageswaran also batted for growing small and medium enterprises to help increase the share of manufacturing in the country's overall GDP. \"Building blocks such as sup- ply-side infrastructure, physical connectivity, and financial inclusion are good work in progress. But compliance burdens and inspection burdens that businesses face at the subnational government level need to be addressed to grow the manufacturing share of GDP,\" he added. At the event, IMF economist Mehdi Benatiya Andaloussi said that global growth, estimated at 3.2% in calendar year 2023, is expected to remain at same levels in 2024 and 2025.</p><br><p><strong>What is the tone of the passage regarding the future economic outlook of India?</strong></p>", "options": ["<p>Pessimistic</p>", "<p>Neutral</p>", "<p>Alarmist</p>", "<p>Optimistic</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The passage presents an <strong>optimistic tone</strong> about India's future economic outlook, projecting significant growth rates and a controlled inflation scenario, despite acknowledging certain challenges and dependencies.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>India's economy likely <strong>expanded</strong> at 8% through fiscal year 2024, and growth in the current year is projected at 7%, V. Anantha Nageswaran, chief economic adviser to the government, said at an event organized by the think tank National Council of Applied Eco- nomic Research (NCAER) on Wednesday. Nageswaran said that for the Indian economy to register 7% or higher growth for the fourth consecutive year in FY25, \"a lot would depend on the monsoons\". \"Right now, the expectations are that we will have an above- normal monsoon. But, [its] spatial and temporal distribution will matter,\" he said.</p>\n<p>On inflation, Nageswaran said he doesn't foresee any significant upside risk for now and expects retail inflation to remain at the midpoint of the RBI's target range of 2-6% in FY25. \"There can always be scenarios on the geopolitical front that can cause inflation to be more than what we expect. But at this point, our baseline scenario is that inflation gradually <strong>converges</strong> towards the midpoint of the target range in FY25,\" he added. Though CPI inflation remains above the central bank's target of 4%, it has stayed within its tolerance range of 2-6% for the seventh consecutive month in March. Nageswaran also batted for growing small and medium enterprises to help increase the share of manufacturing in the country's overall GDP. \"Building blocks such as sup- ply-side infrastructure, physical connectivity, and financial inclusion are good work in progress. But compliance burdens and inspection burdens that businesses face at the subnational government level need to be addressed to grow the manufacturing share of GDP,\" he added. At the event, IMF economist Mehdi Benatiya Andaloussi said that global growth, estimated at 3.2% in calendar year 2023, is expected to remain at same levels in 2024 and 2025.</p><br><p><strong>Which of the following is the most appropriate title for the passage?</strong></p>", "options": ["<p>\"Challenges Facing India's Manufacturing Sector\"</p>", "<p>\"India's Economic Growth and Inflation Outlook for FY24 and FY25\"</p>", "<p>\"The Impact of Monsoon on India's Economy\"</p>", "<p>\"Global Growth Trends and India's Response\"</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage primarily focuses on India's projected <strong>economic growth and inflation </strong>outlook for the upcoming fiscal years, making this title the most appropriate.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>India's economy likely <strong>expanded</strong> at 8% through fiscal year 2024, and growth in the current year is projected at 7%, V. Anantha Nageswaran, chief economic adviser to the government, said at an event organized by the think tank National Council of Applied Eco- nomic Research (NCAER) on Wednesday. Nageswaran said that for the Indian economy to register 7% or higher growth for the fourth consecutive year in FY25, \"a lot would depend on the monsoons\". \"Right now, the expectations are that we will have an above- normal monsoon. But, [its] spatial and temporal distribution will matter,\" he said.</p>\n<p>On inflation, Nageswaran said he doesn't foresee any significant upside risk for now and expects retail inflation to remain at the midpoint of the RBI's target range of 2-6% in FY25. \"There can always be scenarios on the geopolitical front that can cause inflation to be more than what we expect. But at this point, our baseline scenario is that inflation gradually <strong>converges</strong> towards the midpoint of the target range in FY25,\" he added. Though CPI inflation remains above the central bank's target of 4%, it has stayed within its tolerance range of 2-6% for the seventh consecutive month in March. Nageswaran also batted for growing small and medium enterprises to help increase the share of manufacturing in the country's overall GDP. \"Building blocks such as sup- ply-side infrastructure, physical connectivity, and financial inclusion are good work in progress. But compliance burdens and inspection burdens that businesses face at the subnational government level need to be addressed to grow the manufacturing share of GDP,\" he added. At the event, IMF economist Mehdi Benatiya Andaloussi said that global growth, estimated at 3.2% in calendar year 2023, is expected to remain at same levels in 2024 and 2025.</p><br><p><strong>What is the best synonym for the word \"expanded\" as used in the passage?</strong></p>", "options": ["<p>Contracted</p>", "<p>Diminished</p>", "<p>Grew</p>", "<p>Narrowed</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>In the context of the passage, \"expanded\" refers to the growth of India's economy. The best synonym for \"<strong>expanded</strong>\" in this context is \"<strong>grew</strong>.\"</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>India's economy likely <strong>expanded</strong> at 8% through fiscal year 2024, and growth in the current year is projected at 7%, V. Anantha Nageswaran, chief economic adviser to the government, said at an event organized by the think tank National Council of Applied Eco- nomic Research (NCAER) on Wednesday. Nageswaran said that for the Indian economy to register 7% or higher growth for the fourth consecutive year in FY25, \"a lot would depend on the monsoons\". \"Right now, the expectations are that we will have an above- normal monsoon. But, [its] spatial and temporal distribution will matter,\" he said.</p>\n<p>On inflation, Nageswaran said he doesn't foresee any significant upside risk for now and expects retail inflation to remain at the midpoint of the RBI's target range of 2-6% in FY25. \"There can always be scenarios on the geopolitical front that can cause inflation to be more than what we expect. But at this point, our baseline scenario is that inflation gradually <strong>converges</strong> towards the midpoint of the target range in FY25,\" he added. Though CPI inflation remains above the central bank's target of 4%, it has stayed within its tolerance range of 2-6% for the seventh consecutive month in March. Nageswaran also batted for growing small and medium enterprises to help increase the share of manufacturing in the country's overall GDP. \"Building blocks such as sup- ply-side infrastructure, physical connectivity, and financial inclusion are good work in progress. But compliance burdens and inspection burdens that businesses face at the subnational government level need to be addressed to grow the manufacturing share of GDP,\" he added. At the event, IMF economist Mehdi Benatiya Andaloussi said that global growth, estimated at 3.2% in calendar year 2023, is expected to remain at same levels in 2024 and 2025.</p><br><p><strong>What is the best antonym for the word \"converges\" as used in the passage?</strong></p>", "options": ["<p>Diverges</p>", "<p>Meets</p>", "<p>Aligns</p>", "<p>Joins</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>In the context of the passage, \"converges\" means to come together or move towards a common point. The best antonym for \"<strong>converges</strong>\" is \"<strong>diverges</strong>,\" which means to move apart in different directions.</p>"}, {"question": "<p><strong>In the following question, two sentences with five words are given in bold. These words may or may not be in their correct position. The sentence is then followed by options with the correct combination of words that should replace each other in order to make the sentence grammatically and contextually correct. Find the correct combination of words that replace each other. In case, none of the options seem to be correct, mark the option E i.e. 'None of these' as your answer.</strong></p><br><p>The government's fiscal policy has undergone a significant (A) <strong>transformation</strong>, aimed at ameliorating (B) <strong>competitive </strong>disparities and fostering inclusive growth across all demographics.</p>\n<p>In an era marked by technological (C) <strong>upheaval</strong>, businesses must (D) <strong>recalibrate</strong> their strategies to remain relevant in an increasingly (E) <strong>economic </strong>marketplace.</p>", "options": ["<p>Only A-D</p>", "<p>Both B-C &amp; A-D</p>", "<p>Only B-E</p>", "<p>Both A-C &amp; B-D</p>", "<p>No correction required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The government's fiscal policy has undergone a significant (A) <strong>transformation</strong>, aimed at ameliorating (B) <strong>economic</strong> disparities and fostering inclusive growth across all demographics.</p>\n<p>In an era marked by technological (C) <strong>upheaval</strong>, businesses must (D) <strong>recalibrate</strong> their strategies to remain relevant in an increasingly (E) <strong>competitive</strong> marketplace.</p>"}, {"question": "<p><strong>In the following question, two sentences with five words are given in bold. These words may or may not be in their correct position. The sentence is then followed by options with the correct combination of words that should replace each other in order to make the sentence grammatically and contextually correct. Find the correct combination of words that replace each other. In case, none of the options seem to be correct, mark the option E i.e. 'None of these' as your answer.</strong></p><br><p>The symposium attracted a (A) <strong>plethora</strong> of scholars and practitioners, (B) <strong>managed </strong>to engage in discourse on the ramifications of globalization on local economies.</p>\n<p>Despite the adverse (C) <strong>economic</strong> conditions, the corporation (D) <strong>eager </strong>to maintain its profitability through (E) <strong>strategic </strong>diversification and prudent financial management.</p>", "options": ["<p>Only B-D</p>", "<p>Both B-C &amp; A-D</p>", "<p>Only B-E</p>", "<p>Both A-C &amp; B-D</p>", "<p>No correction required</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The symposium attracted a <strong>plethora</strong> of scholars and practitioners, <strong>eager </strong>to engage in discourse on the ramifications of globalization on local economies.</p>\n<p>Despite the adverse <strong>economic</strong> conditions, the corporation <strong>managed</strong> to maintain its profitability through <strong>strategic </strong>diversification and prudent financial management.</p>"}, {"question": "<p><strong>In the following question, two sentences with five words are given in bold. These words may or may not be in their correct position. The sentence is then followed by options with the correct combination of words that should replace each other in order to make the sentence grammatically and contextually correct. Find the correct combination of words that replace each other. In case, none of the options seem to be correct, mark the option E i.e. 'None of these' as your answer.</strong></p><br><p>The artist's latest exhibition seeks to (A) <strong>apparent </strong>the complexities of urban life, inviting viewers to reflect on the juxtaposition of (B) <strong>essential </strong>and chaos in contemporary society.</p>\n<p>As the research unfolded, it became (C) <strong>elucidate </strong>that interdisciplinary collaboration was (D) <strong>beauty </strong>to uncovering (E) <strong>innovative</strong> solutions to global health challenges.</p>", "options": ["<p>Only A-D</p>", "<p>Both B-C &amp; A-D</p>", "<p>Only B-E</p>", "<p>Both A-C &amp; B-D</p>", "<p>No correction required</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The artist's latest exhibition seeks to <strong>elucidate</strong> the complexities of urban life, inviting viewers to reflect on the juxtaposition of <strong>beauty</strong> and chaos in contemporary society.</p>\n<p>As the research unfolded, it became <strong>apparent </strong>that interdisciplinary collaboration was <strong>essential</strong> to uncovering <strong>innovative</strong> solutions to global health challenges.</p>"}, {"question": "<p><strong>In the following question, two sentences with five words are given in bold. These words may or may not be in their correct position. The sentence is then followed by options with the correct combination of words that should replace each other in order to make the sentence grammatically and contextually correct. Find the correct combination of words that replace each other. In case, none of the options seem to be correct, mark the option E i.e. 'None of these' as your answer.</strong></p><br><p>The council's decision to implement (A) <strong>worldwide </strong>environmental regulations underscores a commitment to sustainable development and the (B) <strong>breakthroughs </strong>of natural resources for future generations.</p>\n<p>In light of recent scientific (C) <strong>preservation</strong>, the pharmaceutical industry is (D) <strong>poised</strong> to revolutionize treatment methodologies, offering new hope to patients (E) <strong>stringent</strong>.</p>", "options": ["<p>Only A-D</p>", "<p>Both B-C &amp; A-E</p>", "<p>Only B-E</p>", "<p>Both A-C &amp; B-D</p>", "<p>No correction required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The council's decision to implement <strong>stringent </strong>environmental regulations underscores a commitment to sustainable development and the <strong>preservation </strong>of natural resources for future generations.</p>\n<p>In light of recent scientific <strong>breakthroughs</strong>, the pharmaceutical industry is <strong>poised</strong> to revolutionize treatment methodologies, offering new hope to patients <strong>worldwide</strong>.</p>"}, {"question": "<p><strong>In the following question, two sentences with five words are given in bold. These words may or may not be in their correct position. The sentence is then followed by options with the correct combination of words that should replace each other in order to make the sentence grammatically and contextually correct. Find the correct combination of words that replace each other. In case, none of the options seem to be correct, mark the option E i.e. 'None of these' as your answer.</strong></p><br><p>The documentary poignantly captures the intricacies of cultural identity, weaving together (A) <strong>personal</strong> narratives that highlight the challenges and triumphs of (B) <strong>marginalized</strong> communities.</p>\n<p>To (C) <strong>mitigate</strong> the risks associated with climate change, governments must adopt (D) <strong>proactive </strong>measures that (E) <strong>encompass </strong>both adaptation and resilience strategies.</p>", "options": ["<p>Only A-D</p>", "<p>Both B-C &amp; A-D</p>", "<p>Only B-E</p>", "<p>Both A-C &amp; B-D</p>", "<p>No correction required</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>The documentary poignantly captures the intricacies of cultural identity, weaving together <strong>personal</strong> narratives that highlight the challenges and triumphs of <strong>marginalized</strong> communities.</p>\n<p>To <strong>mitigate</strong> the risks associated with climate change, governments must adopt <strong>proactive </strong>measures that <strong>encompass </strong>both adaptation and resilience strategies.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-31)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-31)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

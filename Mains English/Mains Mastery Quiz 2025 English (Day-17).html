@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-17)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>A passage is given below with multiple activities. Do as directed.</strong></p>\n<p>In the ongoing pandemic, Mr. Modi’s forecast, for<strong> resonance</strong> <strong>(A)</strong> adoption of<strong> priority</strong> <strong>(B)</strong> in health and education will have<strong> enhanced</strong> <strong>(C)</strong>,  although this was always a <strong>technology (D).</strong> In fact, successive governments failed to grasp the promise of achieving universal health coverage (UHC) by 2022, for which the erstwhile Planning Commission presented a road map a decade ago. Now, the nucleus plan is Ayushman Bharat, with a digital health identity for all. With the emphasis on digitalisation, it should be possible to achieve <strong>abominable (B)</strong> progress early on at least on one UHC component — access to free, essential prescription drugs. A digital health ID would help prescribe and dispense <strong>____________(C)</strong> medicines free. The Planning Commission <strong>____________(D)</strong> that the public procurement cost for this, in 2011, would be 0.1% to 0.5% of GDP. <strong>If this is a medium-term goal, the more (A)/ immediate task of (B)/distributing COVID-19 vaccines (C)/looms as a test for the government.(D)/</strong> At a broader level, efficient digital government depends on transforming internal processes, and fixing deadlines for service delivery. The UPA could not see its electronic delivery of services legislation through, and it remains forgotten. If digital has to become a way of life, <strong>____________________(E)</strong>, with deadlines for government departments.</p><br><p><strong>Four words have been marked in bold in the first sentence. Find, which of the words are to be exchanged with each other in order to make the sentence correct and meaningful.</strong></p>", "options": ["<p>A-B &amp; C-D</p>", "<p>A-D &amp; B-C</p>", "<p>A-C &amp; B-D</p>", "<p>A-D only</p>", "<p>No exchange is required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Before a noun we should place an adjective, here “adoption” is a noun before which we must place “enhanced” as it is an adjective. And the sentence is talking about adoption of technology.</p>\n<p>Hence, A should be exchanged with C and B should be exchanged with D.</p>\n<p>The correct sentence is “In the ongoing pandemic, Mr. Modi’s forecast for enhanced adoption of technology in health and education will have resonance, although this was always a priority”</p>"}, {"question": "<p><strong>A passage is given below with multiple activities. Do as directed.</strong></p>\n<p>In the ongoing pandemic, Mr. Modi’s forecast, for<strong> resonance</strong> <strong>(A)</strong> adoption of<strong> priority</strong> <strong>(B)</strong> in health and education will have<strong> enhanced</strong> <strong>(C)</strong>,  although this was always a <strong>technology (D).</strong> In fact, successive governments failed to grasp the promise of achieving universal health coverage (UHC) by 2022, for which the erstwhile Planning Commission presented a road map a decade ago. Now, the nucleus plan is Ayushman Bharat, with a digital health identity for all. With the emphasis on digitalisation, it should be possible to achieve <strong>abominable (B)</strong> progress early on at least on one UHC component — access to free, essential prescription drugs. A digital health ID would help prescribe and dispense <strong>____________(C)</strong> medicines free. The Planning Commission <strong>____________(D)</strong> that the public procurement cost for this, in 2011, would be 0.1% to 0.5% of GDP. <strong>If this is a medium-term goal, the more (A)/ immediate task of (B)/distributing COVID-19 vaccines (C)/looms as a test for the government.(D)/</strong> At a broader level, efficient digital government depends on transforming internal processes, and fixing deadlines for service delivery. The UPA could not see its electronic delivery of services legislation through, and it remains forgotten. If digital has to become a way of life, <strong>____________________(E)</strong>, with deadlines for government departments.</p><br><p><strong>Which of the following words can replace the word (B) in the passage?</strong></p>\n<p><strong>A). </strong>measurable</p>\n<p><strong>B). </strong>quantifiable</p>\n<p><strong>C). </strong>quantify</p>\n<p><strong>D). </strong>abominable</p>", "options": ["<p>measurable</p>", "<p>quantifiable</p>", "<p>both a and b</p>", "<p>iniimcal</p>", "<p>none of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Both (a) and (b) can fill the blank and match the context.</p>\n<p>Measurable/ Quantifiable- able to be measured.</p>\n<p>Abominable- Extremely bad</p>\n<p>Inimical- harmful</p>\n<p>Progress cannot be bad or harmful.</p>"}, {"question": "<p><strong>A passage is given below with multiple activities. Do as directed.</strong></p>\n<p>In the ongoing pandemic, Mr. Modi’s forecast, for<strong> resonance</strong> <strong>(A)</strong> adoption of<strong> priority</strong> <strong>(B)</strong> in health and education will have<strong> enhanced</strong> <strong>(C)</strong>,  although this was always a <strong>technology (D).</strong> In fact, successive governments failed to grasp the promise of achieving universal health coverage (UHC) by 2022, for which the erstwhile Planning Commission presented a road map a decade ago. Now, the nucleus plan is Ayushman Bharat, with a digital health identity for all. With the emphasis on digitalisation, it should be possible to achieve <strong>abominable (B)</strong> progress early on at least on one UHC component — access to free, essential prescription drugs. A digital health ID would help prescribe and dispense <strong>____________(C)</strong> medicines free. The Planning Commission <strong>____________(D)</strong> that the public procurement cost for this, in 2011, would be 0.1% to 0.5% of GDP. <strong>If this is a medium-term goal, the more (A)/ immediate task of (B)/distributing COVID-19 vaccines (C)/looms as a test for the government.(D)/</strong> At a broader level, efficient digital government depends on transforming internal processes, and fixing deadlines for service delivery. The UPA could not see its electronic delivery of services legislation through, and it remains forgotten. If digital has to become a way of life, <strong>____________________(E)</strong>, with deadlines for government departments.</p><br><p><strong>The antonym of which of the following words can fill the blank (C) in the passage?</strong></p>", "options": ["<p>inessential</p>", "<p>essential</p>", "<p>significant</p>", "<p>dilapidated</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>Inessential- not absolutely necessary.</strong></p>\n<p>In the blank we need “essential” which is the antonym of “inessential”</p>\n<p>Hence (a) is correct.</p>\n<p>Dilapidated- in a state of ruins.</p>"}, {"question": "<p><strong>A passage is given below with multiple activities. Do as directed.</strong></p>\n<p>In the ongoing pandemic, Mr. Modi’s forecast, for<strong> resonance</strong> <strong>(A)</strong> adoption of<strong> priority</strong> <strong>(B)</strong> in health and education will have<strong> enhanced</strong> <strong>(C)</strong>,  although this was always a <strong>technology (D).</strong> In fact, successive governments failed to grasp the promise of achieving universal health coverage (UHC) by 2022, for which the erstwhile Planning Commission presented a road map a decade ago. Now, the nucleus plan is Ayushman Bharat, with a digital health identity for all. With the emphasis on digitalisation, it should be possible to achieve <strong>abominable (B)</strong> progress early on at least on one UHC component — access to free, essential prescription drugs. A digital health ID would help prescribe and dispense <strong>____________(C)</strong> medicines free. The Planning Commission <strong>____________(D)</strong> that the public procurement cost for this, in 2011, would be 0.1% to 0.5% of GDP. <strong>If this is a medium-term goal, the more (A)/ immediate task of (B)/distributing COVID-19 vaccines (C)/looms as a test for the government.(D)/</strong> At a broader level, efficient digital government depends on transforming internal processes, and fixing deadlines for service delivery. The UPA could not see its electronic delivery of services legislation through, and it remains forgotten. If digital has to become a way of life, <strong>____________________(E)</strong>, with deadlines for government departments.</p><br><p><strong>Which of the following words can not fill the blank (D) in the passage?</strong></p>", "options": ["<p>estimate</p>", "<p>estimated</p>", "<p>estimates</p>", "<p>estimating</p>", "<p>(a), (c), (d)</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>Only “estimated” can fill the blank as the tense is simple past.</p>\n<p>Hence “estimate”, “estimates”, “estimating” cannot fill the blank.</p>"}, {"question": "<p><strong>A passage is given below with multiple activities. Do as directed.</strong></p>\n<p>In the ongoing pandemic, Mr. Modi’s forecast, for<strong> resonance</strong> <strong>(A)</strong> adoption of<strong> priority</strong> <strong>(B)</strong> in health and education will have<strong> enhanced</strong> <strong>(C)</strong>,  although this was always a <strong>technology (D).</strong> In fact, successive governments failed to grasp the promise of achieving universal health coverage (UHC) by 2022, for which the erstwhile Planning Commission presented a road map a decade ago. Now, the nucleus plan is Ayushman Bharat, with a digital health identity for all. With the emphasis on digitalisation, it should be possible to achieve <strong>abominable (B)</strong> progress early on at least on one UHC component — access to free, essential prescription drugs. A digital health ID would help prescribe and dispense <strong>____________(C)</strong> medicines free. The Planning Commission <strong>____________(D)</strong> that the public procurement cost for this, in 2011, would be 0.1% to 0.5% of GDP. <strong>If this is a medium-term goal, the more (A)/ immediate task of (B)/distributing COVID-19 vaccines (C)/looms as a test for the government.(D)/</strong> At a broader level, efficient digital government depends on transforming internal processes, and fixing deadlines for service delivery. The UPA could not see its electronic delivery of services legislation through, and it remains forgotten. If digital has to become a way of life, <strong>____________________(E)</strong>, with deadlines for government departments.</p><br><p><strong>Which of the following sentences can fill the blank (E) in the passage?</strong></p>", "options": ["<p>redefine the labyrinthine functioning of citizen-centric services would be a good place to start</p>", "<p>redefining the labyrinthine functioning of citizen-centric services would be a good place to start</p>", "<p>redefining the labyrinthine functioning of citizen-centric services would being a good place to start</p>", "<p>All of these</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>Only (b) fits the blank grammatically and contextually.</p>\n<p>(a) is wrong as we need a gerund “V+ing” “redefining”</p>\n<p>(c) is wrong as after the modal “would” we cannot use “being”</p>"}, {"question": "<p><strong>A passage is given below with multiple activities. Do as directed.</strong></p>\n<p>In the ongoing pandemic, Mr. Modi’s forecast, for<strong> resonance</strong> <strong>(A)</strong> adoption of<strong> priority</strong> <strong>(B)</strong> in health and education will have<strong> enhanced</strong> <strong>(C)</strong>,  although this was always a <strong>technology (D).</strong> In fact, successive governments failed to grasp the promise of achieving universal health coverage (UHC) by 2022, for which the erstwhile Planning Commission presented a road map a decade ago. Now, the nucleus plan is Ayushman Bharat, with a digital health identity for all. With the emphasis on digitalisation, it should be possible to achieve <strong>abominable (B)</strong> progress early on at least on one UHC component — access to free, essential prescription drugs. A digital health ID would help prescribe and dispense <strong>____________(C)</strong> medicines free. The Planning Commission <strong>____________(D)</strong> that the public procurement cost for this, in 2011, would be 0.1% to 0.5% of GDP. <strong>If this is a medium-term goal, the more (A)/ immediate task of (B)/distributing COVID-19 vaccines (C)/looms as a test for the government.(D)/</strong> At a broader level, efficient digital government depends on transforming internal processes, and fixing deadlines for service delivery. The UPA could not see its electronic delivery of services legislation through, and it remains forgotten. If digital has to become a way of life, <strong>____________________(E)</strong>, with deadlines for government departments.</p><br><p><strong>Find the grammatically wrong part in the sentence which is marked bold in the passage.</strong></p>\n<p>If this is a medium-term goal, the more <strong>(A)/ </strong>immediate task of <strong>(B)/</strong>distributing COVID-19 vaccines <strong>(C)/</strong>loom as a test for the government.<strong>(D)/</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>No error</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>In part D, we should use “looms” (V5) as with a singular subject V5 should be used and here the subject is “task”.</p>"}, {"question": "<p><strong>In each question below, words have been highlighted. These words used might be correct or may be inappropriate in usage. You must read the given sentences carefully and choose the option with the inappropriate usage.</strong></p><br><p><strong>Assertive</strong></p>\n<p><strong>1).</strong> Jane's <strong>assertive</strong> attitude in meetings has earned her respect from her colleagues.</p>\n<p><strong>2).</strong> Being <strong>assertive</strong> helps in expressing your needs and desires clearly and confidently.</p>\n<p><strong>3).</strong> His passive approach to conflicts made him seem anything but <strong>assertive</strong>.</p>", "options": ["<p>Only 1</p>", "<p>Only 2</p>", "<p>Only 3</p>", "<p>Both 1 &amp; 3</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Sentences 1 and 2 use \"assertive\" in a positive context, describing someone who is confident and clear in expressing their needs. However, sentence 3 uses \"assertive\" in an opposite context, describing a passive approach to conflicts, indicating a lack of assertiveness.</p>"}, {"question": "<p><strong>In each question below, words have been highlighted. These words used might be correct or may be inappropriate in usage. You must read the given sentences carefully and choose the option with the inappropriate usage.</strong></p><br><p><strong>Flexible</strong></p>\n<p><strong>1).</strong> His rigid thinking and inability to adapt showed that he was <strong>flexible</strong>.</p>\n<p><strong>2).</strong> Her <strong>flexible</strong> approach to problem-solving often led to innovative solutions.</p>\n<p><strong>3).</strong> The <strong>flexible</strong> schedule allowed employees to balance work and personal commitments effectively.</p>", "options": ["<p>Only 1</p>", "<p>Only 2</p>", "<p>Only 3</p>", "<p>Both 1 &amp; 3</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Sentences 2 and 3 use \"flexible\" in a positive context, describing a schedule or approach that allows for adaptation and change. In contrast, sentence 1 uses \"flexible\" in an opposite context, describing rigid thinking and an inability to adapt, indicating a lack of flexibility.</p>"}, {"question": "<p><strong>In each question below, words have been highlighted. These words used might be correct or may be inappropriate in usage. You must read the given sentences carefully and choose the option with the inappropriate usage.</strong></p><br><p><strong>Motivated</strong></p>\n<p><strong>1).</strong> The motivated team worked tirelessly to meet the project deadline.</p>\n<p><strong>2).</strong> Her self-motivation led her to achieve remarkable success in her career.</p>\n<p><strong>3).</strong> His interest and effort in his work showed that he was motivated.</p>", "options": ["<p>Only 1</p>", "<p>Only 2</p>", "<p>Only 3</p>", "<p>All 1, 2 &amp; 3</p>", "<p>None of these</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>Sentences 1, 2 and 3 use \"motivated\" in a positive context, describing individuals or teams that are driven, energetic and motivated.</p>"}, {"question": "<p><strong>In each question below, words have been highlighted. These words used might be correct or may be inappropriate in usage. You must read the given sentences carefully and choose the option with the inappropriate usage.</strong></p><br><p><strong>Persistent</strong></p>\n<p><strong>1).</strong> Her <strong>persistent</strong> efforts eventually led to the breakthrough she had been working towards.</p>\n<p><strong>2).</strong> Despite numerous rejections, his <strong>persistent</strong> pursuit of his goals never wavered.</p>\n<p><strong>3).</strong> His quick surrender at the first sign of difficulty showed that he was not <strong>persistent</strong>.</p>", "options": ["<p>Only 1</p>", "<p>Only 2</p>", "<p>Only 3</p>", "<p>Both 1 &amp; 3</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Sentences 1 and 2 use \"persistent\" in a positive context, describing efforts and pursuits that are continuous and unwavering. However, sentence 3 uses \"persistent\" in an opposite context, describing someone who gives up easily, indicating a lack of persistence.</p>"}, {"question": "<p><strong>In the following questions, a sentence is given with a highlighted word in it. It is then followed by four alternatives that represent the pair of words. Choose the option that represents the similar pair of words to that of the highlighted word. If none of the options represent the synonyms of the highlighted word, choose option E as your answer.</strong></p><br><p>The United Nations recently issued a warning about the humanitarian crisis in Yemen, citing <strong>escalating </strong>violence and a dire shortage of food and medical supplies.</p>", "options": ["<p>Intensifying: increasing</p>", "<p>Decreasing: stagnating</p>", "<p>Horryfying: derogating</p>", "<p>Stabilizing: fluctuating</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Among the given options, \"Intensifying: increasing\" represents a pair of words that are synonyms of \"escalating.\" </p>\n<p>Both \"escalating\" and \"intensifying\" convey the idea of something increasing or becoming more severe. </p>\n<p>Therefore, option A is the correct answer. </p>"}, {"question": "<p><strong>In the following questions, a sentence is given with a highlighted word in it. It is then followed by four alternatives that represent the pair of words. Choose the option that represents the similar pair of words to that of the highlighted word. If none of the options represent the synonyms of the highlighted word, choose option E as your answer.</strong></p><br><p>Global leaders convened at the COP26 summit in Glasgow to discuss urgent measures to <strong>address </strong>climate change and commit to reducing carbon emissions.</p>", "options": ["<p>Evade: avoid</p>", "<p>Exacerbate: worsen</p>", "<p>Tackle: deal with</p>", "<p>Procrastinate: handle</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Among the given options, \"Tackle: deal with\" represents a pair of words that are synonyms of \"address.\" </p>\n<p>Both the words convey the idea of confronting or dealing with a problem or issue.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, a sentence is given with a highlighted word in it. It is then followed by four alternatives that represent the pair of words. Choose the option that represents the similar pair of words to that of the highlighted word. If none of the options represent the synonyms of the highlighted word, choose option E as your answer.</strong></p><br><p>The World Health Organization declared a new variant of concern, named Omicron, prompting countries to <strong>implement </strong>travel restrictions and accelerate vaccination campaigns.</p>", "options": ["<p>Abandon: give up</p>", "<p>Hinder: obstruct</p>", "<p>Retreat: withdraw</p>", "<p>Execute: carry out</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>\"Execute: carry out\" represents a pair of words that are synonyms of \"implement.\" Both \"implement\" and \"execute\" convey the idea of putting something into action or carrying out a plan or decision</p>\n<p>Therefore, option D is the correct answer.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>India's golden boy Neeraj Chopra has claimed that cricket is still the most popular sport in India and he never tried to compare himself with India's legendary cricketers Virat Kohli or MS Dhoni. Neeraj Chopra won a historic gold medal for India in the Javelin throw in the Tokyo Olympics three years ago. He was given a <strong>heroic</strong> reception in the country for his unprecedented achievement. He became the third Indian after Norman Pritchard and Abhinav Bindra to win an individual medal in the Olympics. It was also India's first-ever medal in athletics in the history of the Olympics. Chopra will be in action in the upcoming Paris Olympics 2024 where he is India's biggest medal hope. It remains to be seen how the athlete delivers under the pressure of expectations from the whole country.</p>\n<p>Virat Kohli finally breaks silence on Gautam Gambhir's appointment!! Informs BCCI about his views after forced call up vs Sri Lanka. Neeraj Chopra speaks on cricket's huge popularity in India. During an interview with Sportstar, Neeraj Chopra was asked about cricket's popularity in India as compared to other sports. Chopra responded smartly by saying that he never compared himself to star Indian cricketers and feels <strong>satisfied</strong> with his sport. \"If you respect your sport and feel satisfied with it, then nothing else should matter. At the Doha Diamond League, I was asked how popular I was in India. I never tried to compare myself with the likes of Virat Kohli or MS Dhoni because I'm very well aware of the reality of what I am in India,\" Neeraj Chopra said.</p>\n<p>\"Yes, obviously, after the Olympics, people recognize me a lot more, but I know there is a stark difference in my popularity compared to that of a cricketer. Cricket is played in every single alley in the country. It's not like people practice javelin throw in the same way,\" he added. It is well known that cricket is a hugely popular game in India and its popularity has no limits in the country. Indian cricketers are treated like heroes across the country. The best example was seen recently when more than 1 lakh people gathered around Mumbai's Marine Drive to welcome the champion team when India won the T20 World Cup 2024. The Javelin ace also spoke about how other sports like the Javelin throw can become popular in India. He replied that India needs to have more javelin-based competitions in the country to make the sport popular. He wants more competitiveness in the sport which will bring more audience into the stadiums.</p>\n<p>\"I don't want any shortcuts to making my sport popular. I want my sport to become popular with my hard work and effort,\" Neeraj said. \"If there are more javelin-based competitions in India, like the Diamond League, people will become more interested in watching and following the sport. With talented javelin athletes in India, there should be national-level leagues to compete. This would help to boost the sport in India,\" the 26-year-old added.</p>\n<p>Neeraj Chopra will compete with the likes of world-class javelin throwers like Anderson Peters, Jakub Vadlejch, Arshad Nadeem, and many others in the upcoming Paris Olympics.</p><br><p><strong>Why does Neeraj Chopra not compare himself with cricketers like Virat Kohli or MS Dhoni?</strong></p>", "options": ["<p>He is not interested in cricket</p>", "<p>He is aware of the disparity in popularity between cricket and javelin throw</p>", "<p>He feels that cricket is less important than javelin throw</p>", "<p>He wants to avoid conflict with cricketers</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>Chopra mentions that he does not compare himself to cricket stars because he is aware of the difference in popularity between javelin throw and cricket.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>India's golden boy Neeraj Chopra has claimed that cricket is still the most popular sport in India and he never tried to compare himself with India's legendary cricketers Virat Kohli or MS Dhoni. Neeraj Chopra won a historic gold medal for India in the Javelin throw in the Tokyo Olympics three years ago. He was given a <strong>heroic</strong> reception in the country for his unprecedented achievement. He became the third Indian after Norman Pritchard and Abhinav Bindra to win an individual medal in the Olympics. It was also India's first-ever medal in athletics in the history of the Olympics. Chopra will be in action in the upcoming Paris Olympics 2024 where he is India's biggest medal hope. It remains to be seen how the athlete delivers under the pressure of expectations from the whole country.</p>\n<p>Virat Kohli finally breaks silence on Gautam Gambhir's appointment!! Informs BCCI about his views after forced call up vs Sri Lanka. Neeraj Chopra speaks on cricket's huge popularity in India. During an interview with Sportstar, Neeraj Chopra was asked about cricket's popularity in India as compared to other sports. Chopra responded smartly by saying that he never compared himself to star Indian cricketers and feels <strong>satisfied</strong> with his sport. \"If you respect your sport and feel satisfied with it, then nothing else should matter. At the Doha Diamond League, I was asked how popular I was in India. I never tried to compare myself with the likes of Virat Kohli or MS Dhoni because I'm very well aware of the reality of what I am in India,\" Neeraj Chopra said.</p>\n<p>\"Yes, obviously, after the Olympics, people recognize me a lot more, but I know there is a stark difference in my popularity compared to that of a cricketer. Cricket is played in every single alley in the country. It's not like people practice javelin throw in the same way,\" he added. It is well known that cricket is a hugely popular game in India and its popularity has no limits in the country. Indian cricketers are treated like heroes across the country. The best example was seen recently when more than 1 lakh people gathered around Mumbai's Marine Drive to welcome the champion team when India won the T20 World Cup 2024. The Javelin ace also spoke about how other sports like the Javelin throw can become popular in India. He replied that India needs to have more javelin-based competitions in the country to make the sport popular. He wants more competitiveness in the sport which will bring more audience into the stadiums.</p>\n<p>\"I don't want any shortcuts to making my sport popular. I want my sport to become popular with my hard work and effort,\" Neeraj said. \"If there are more javelin-based competitions in India, like the Diamond League, people will become more interested in watching and following the sport. With talented javelin athletes in India, there should be national-level leagues to compete. This would help to boost the sport in India,\" the 26-year-old added.</p>\n<p>Neeraj Chopra will compete with the likes of world-class javelin throwers like Anderson Peters, Jakub Vadlejch, Arshad Nadeem, and many others in the upcoming Paris Olympics.</p><br><p><strong>What does Neeraj Chopra suggest as a way to increase the popularity of javelin throw in India?</strong></p>", "options": ["<p>Decrease the number of javelin competitions</p>", "<p>Create more javelin-based competitions</p>", "<p>Discontinue national-level leagues</p>", "<p>Focus solely on international competitions</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>Chopra suggests that having more javelin-based competitions, like the Diamond League, would help boost the sport's popularity in India.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>India's golden boy Neeraj Chopra has claimed that cricket is still the most popular sport in India and he never tried to compare himself with India's legendary cricketers Virat Kohli or MS Dhoni. Neeraj Chopra won a historic gold medal for India in the Javelin throw in the Tokyo Olympics three years ago. He was given a <strong>heroic</strong> reception in the country for his unprecedented achievement. He became the third Indian after Norman Pritchard and Abhinav Bindra to win an individual medal in the Olympics. It was also India's first-ever medal in athletics in the history of the Olympics. Chopra will be in action in the upcoming Paris Olympics 2024 where he is India's biggest medal hope. It remains to be seen how the athlete delivers under the pressure of expectations from the whole country.</p>\n<p>Virat Kohli finally breaks silence on Gautam Gambhir's appointment!! Informs BCCI about his views after forced call up vs Sri Lanka. Neeraj Chopra speaks on cricket's huge popularity in India. During an interview with Sportstar, Neeraj Chopra was asked about cricket's popularity in India as compared to other sports. Chopra responded smartly by saying that he never compared himself to star Indian cricketers and feels <strong>satisfied</strong> with his sport. \"If you respect your sport and feel satisfied with it, then nothing else should matter. At the Doha Diamond League, I was asked how popular I was in India. I never tried to compare myself with the likes of Virat Kohli or MS Dhoni because I'm very well aware of the reality of what I am in India,\" Neeraj Chopra said.</p>\n<p>\"Yes, obviously, after the Olympics, people recognize me a lot more, but I know there is a stark difference in my popularity compared to that of a cricketer. Cricket is played in every single alley in the country. It's not like people practice javelin throw in the same way,\" he added. It is well known that cricket is a hugely popular game in India and its popularity has no limits in the country. Indian cricketers are treated like heroes across the country. The best example was seen recently when more than 1 lakh people gathered around Mumbai's Marine Drive to welcome the champion team when India won the T20 World Cup 2024. The Javelin ace also spoke about how other sports like the Javelin throw can become popular in India. He replied that India needs to have more javelin-based competitions in the country to make the sport popular. He wants more competitiveness in the sport which will bring more audience into the stadiums.</p>\n<p>\"I don't want any shortcuts to making my sport popular. I want my sport to become popular with my hard work and effort,\" Neeraj said. \"If there are more javelin-based competitions in India, like the Diamond League, people will become more interested in watching and following the sport. With talented javelin athletes in India, there should be national-level leagues to compete. This would help to boost the sport in India,\" the 26-year-old added.</p>\n<p>Neeraj Chopra will compete with the likes of world-class javelin throwers like Anderson Peters, Jakub Vadlejch, Arshad Nadeem, and many others in the upcoming Paris Olympics.</p><br><p><strong>What is a synonym for \"satisfied\" as used in the passage?</strong></p>", "options": ["<p>Displeased</p>", "<p>Content</p>", "<p>Anxious</p>", "<p>Indifferent</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>\"Satisfied\" means being content or pleased with something, so \"content\" is a suitable synonym.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>India's golden boy Neeraj Chopra has claimed that cricket is still the most popular sport in India and he never tried to compare himself with India's legendary cricketers Virat Kohli or MS Dhoni. Neeraj Chopra won a historic gold medal for India in the Javelin throw in the Tokyo Olympics three years ago. He was given a <strong>heroic</strong> reception in the country for his unprecedented achievement. He became the third Indian after Norman Pritchard and Abhinav Bindra to win an individual medal in the Olympics. It was also India's first-ever medal in athletics in the history of the Olympics. Chopra will be in action in the upcoming Paris Olympics 2024 where he is India's biggest medal hope. It remains to be seen how the athlete delivers under the pressure of expectations from the whole country.</p>\n<p>Virat Kohli finally breaks silence on Gautam Gambhir's appointment!! Informs BCCI about his views after forced call up vs Sri Lanka. Neeraj Chopra speaks on cricket's huge popularity in India. During an interview with Sportstar, Neeraj Chopra was asked about cricket's popularity in India as compared to other sports. Chopra responded smartly by saying that he never compared himself to star Indian cricketers and feels <strong>satisfied</strong> with his sport. \"If you respect your sport and feel satisfied with it, then nothing else should matter. At the Doha Diamond League, I was asked how popular I was in India. I never tried to compare myself with the likes of Virat Kohli or MS Dhoni because I'm very well aware of the reality of what I am in India,\" Neeraj Chopra said.</p>\n<p>\"Yes, obviously, after the Olympics, people recognize me a lot more, but I know there is a stark difference in my popularity compared to that of a cricketer. Cricket is played in every single alley in the country. It's not like people practice javelin throw in the same way,\" he added. It is well known that cricket is a hugely popular game in India and its popularity has no limits in the country. Indian cricketers are treated like heroes across the country. The best example was seen recently when more than 1 lakh people gathered around Mumbai's Marine Drive to welcome the champion team when India won the T20 World Cup 2024. The Javelin ace also spoke about how other sports like the Javelin throw can become popular in India. He replied that India needs to have more javelin-based competitions in the country to make the sport popular. He wants more competitiveness in the sport which will bring more audience into the stadiums.</p>\n<p>\"I don't want any shortcuts to making my sport popular. I want my sport to become popular with my hard work and effort,\" Neeraj said. \"If there are more javelin-based competitions in India, like the Diamond League, people will become more interested in watching and following the sport. With talented javelin athletes in India, there should be national-level leagues to compete. This would help to boost the sport in India,\" the 26-year-old added.</p>\n<p>Neeraj Chopra will compete with the likes of world-class javelin throwers like Anderson Peters, Jakub Vadlejch, Arshad Nadeem, and many others in the upcoming Paris Olympics.</p><br><p><strong>What is the antonym of \"heroic\" as used in the passage?</strong></p>", "options": ["<p>Brave</p>", "<p>Ordinary</p>", "<p>Gallant</p>", "<p>Courageous</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>\"Heroic\" refers to something grand or noble, so its antonym would be \"<strong>ordinary.</strong>\"</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>India's golden boy Neeraj Chopra has claimed that cricket is still the most popular sport in India and he never tried to compare himself with India's legendary cricketers Virat Kohli or MS Dhoni. Neeraj Chopra won a historic gold medal for India in the Javelin throw in the Tokyo Olympics three years ago. He was given a <strong>heroic</strong> reception in the country for his unprecedented achievement. He became the third Indian after Norman Pritchard and Abhinav Bindra to win an individual medal in the Olympics. It was also India's first-ever medal in athletics in the history of the Olympics. Chopra will be in action in the upcoming Paris Olympics 2024 where he is India's biggest medal hope. It remains to be seen how the athlete delivers under the pressure of expectations from the whole country.</p>\n<p>Virat Kohli finally breaks silence on Gautam Gambhir's appointment!! Informs BCCI about his views after forced call up vs Sri Lanka. Neeraj Chopra speaks on cricket's huge popularity in India. During an interview with Sportstar, Neeraj Chopra was asked about cricket's popularity in India as compared to other sports. Chopra responded smartly by saying that he never compared himself to star Indian cricketers and feels <strong>satisfied</strong> with his sport. \"If you respect your sport and feel satisfied with it, then nothing else should matter. At the Doha Diamond League, I was asked how popular I was in India. I never tried to compare myself with the likes of Virat Kohli or MS Dhoni because I'm very well aware of the reality of what I am in India,\" Neeraj Chopra said.</p>\n<p>\"Yes, obviously, after the Olympics, people recognize me a lot more, but I know there is a stark difference in my popularity compared to that of a cricketer. Cricket is played in every single alley in the country. It's not like people practice javelin throw in the same way,\" he added. It is well known that cricket is a hugely popular game in India and its popularity has no limits in the country. Indian cricketers are treated like heroes across the country. The best example was seen recently when more than 1 lakh people gathered around Mumbai's Marine Drive to welcome the champion team when India won the T20 World Cup 2024. The Javelin ace also spoke about how other sports like the Javelin throw can become popular in India. He replied that India needs to have more javelin-based competitions in the country to make the sport popular. He wants more competitiveness in the sport which will bring more audience into the stadiums.</p>\n<p>\"I don't want any shortcuts to making my sport popular. I want my sport to become popular with my hard work and effort,\" Neeraj said. \"If there are more javelin-based competitions in India, like the Diamond League, people will become more interested in watching and following the sport. With talented javelin athletes in India, there should be national-level leagues to compete. This would help to boost the sport in India,\" the 26-year-old added.</p>\n<p>Neeraj Chopra will compete with the likes of world-class javelin throwers like Anderson Peters, Jakub Vadlejch, Arshad Nadeem, and many others in the upcoming Paris Olympics.</p><br><p><strong>What might be a reason for the continued popularity of cricket in India despite the success of athletes like Neeraj Chopra?</strong></p>", "options": ["<p>Cricket has a long-standing tradition and widespread practice in India</p>", "<p>Cricket is less accessible than javelin throw</p>", "<p>Javelin throw has a higher cost of participation</p>", "<p>Cricket players receive less media coverage than athletes in other sports</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Cricket’s deep-rooted tradition and widespread practice contribute significantly to its continued popularity in India.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>India's golden boy Neeraj Chopra has claimed that cricket is still the most popular sport in India and he never tried to compare himself with India's legendary cricketers Virat Kohli or MS Dhoni. Neeraj Chopra won a historic gold medal for India in the Javelin throw in the Tokyo Olympics three years ago. He was given a <strong>heroic</strong> reception in the country for his unprecedented achievement. He became the third Indian after Norman Pritchard and Abhinav Bindra to win an individual medal in the Olympics. It was also India's first-ever medal in athletics in the history of the Olympics. Chopra will be in action in the upcoming Paris Olympics 2024 where he is India's biggest medal hope. It remains to be seen how the athlete delivers under the pressure of expectations from the whole country.</p>\n<p>Virat Kohli finally breaks silence on Gautam Gambhir's appointment!! Informs BCCI about his views after forced call up vs Sri Lanka. Neeraj Chopra speaks on cricket's huge popularity in India. During an interview with Sportstar, Neeraj Chopra was asked about cricket's popularity in India as compared to other sports. Chopra responded smartly by saying that he never compared himself to star Indian cricketers and feels <strong>satisfied</strong> with his sport. \"If you respect your sport and feel satisfied with it, then nothing else should matter. At the Doha Diamond League, I was asked how popular I was in India. I never tried to compare myself with the likes of Virat Kohli or MS Dhoni because I'm very well aware of the reality of what I am in India,\" Neeraj Chopra said.</p>\n<p>\"Yes, obviously, after the Olympics, people recognize me a lot more, but I know there is a stark difference in my popularity compared to that of a cricketer. Cricket is played in every single alley in the country. It's not like people practice javelin throw in the same way,\" he added. It is well known that cricket is a hugely popular game in India and its popularity has no limits in the country. Indian cricketers are treated like heroes across the country. The best example was seen recently when more than 1 lakh people gathered around Mumbai's Marine Drive to welcome the champion team when India won the T20 World Cup 2024. The Javelin ace also spoke about how other sports like the Javelin throw can become popular in India. He replied that India needs to have more javelin-based competitions in the country to make the sport popular. He wants more competitiveness in the sport which will bring more audience into the stadiums.</p>\n<p>\"I don't want any shortcuts to making my sport popular. I want my sport to become popular with my hard work and effort,\" Neeraj said. \"If there are more javelin-based competitions in India, like the Diamond League, people will become more interested in watching and following the sport. With talented javelin athletes in India, there should be national-level leagues to compete. This would help to boost the sport in India,\" the 26-year-old added.</p>\n<p>Neeraj Chopra will compete with the likes of world-class javelin throwers like Anderson Peters, Jakub Vadlejch, Arshad Nadeem, and many others in the upcoming Paris Olympics.</p><br><p><strong>What is the likely effect of increasing javelin-based competitions on the sport’s popularity in India?</strong></p>", "options": ["<p>Decreased interest due to oversaturation</p>", "<p>Increased visibility and interest in the sport</p>", "<p>Lowered quality of the sport</p>", "<p>Increased costs for participants</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>More javelin-based competitions would likely lead to increased visibility and interest in javelin throw.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>India's golden boy Neeraj Chopra has claimed that cricket is still the most popular sport in India and he never tried to compare himself with India's legendary cricketers Virat Kohli or MS Dhoni. Neeraj Chopra won a historic gold medal for India in the Javelin throw in the Tokyo Olympics three years ago. He was given a <strong>heroic</strong> reception in the country for his unprecedented achievement. He became the third Indian after Norman Pritchard and Abhinav Bindra to win an individual medal in the Olympics. It was also India's first-ever medal in athletics in the history of the Olympics. Chopra will be in action in the upcoming Paris Olympics 2024 where he is India's biggest medal hope. It remains to be seen how the athlete delivers under the pressure of expectations from the whole country.</p>\n<p>Virat Kohli finally breaks silence on Gautam Gambhir's appointment!! Informs BCCI about his views after forced call up vs Sri Lanka. Neeraj Chopra speaks on cricket's huge popularity in India. During an interview with Sportstar, Neeraj Chopra was asked about cricket's popularity in India as compared to other sports. Chopra responded smartly by saying that he never compared himself to star Indian cricketers and feels <strong>satisfied</strong> with his sport. \"If you respect your sport and feel satisfied with it, then nothing else should matter. At the Doha Diamond League, I was asked how popular I was in India. I never tried to compare myself with the likes of Virat Kohli or MS Dhoni because I'm very well aware of the reality of what I am in India,\" Neeraj Chopra said.</p>\n<p>\"Yes, obviously, after the Olympics, people recognize me a lot more, but I know there is a stark difference in my popularity compared to that of a cricketer. Cricket is played in every single alley in the country. It's not like people practice javelin throw in the same way,\" he added. It is well known that cricket is a hugely popular game in India and its popularity has no limits in the country. Indian cricketers are treated like heroes across the country. The best example was seen recently when more than 1 lakh people gathered around Mumbai's Marine Drive to welcome the champion team when India won the T20 World Cup 2024. The Javelin ace also spoke about how other sports like the Javelin throw can become popular in India. He replied that India needs to have more javelin-based competitions in the country to make the sport popular. He wants more competitiveness in the sport which will bring more audience into the stadiums.</p>\n<p>\"I don't want any shortcuts to making my sport popular. I want my sport to become popular with my hard work and effort,\" Neeraj said. \"If there are more javelin-based competitions in India, like the Diamond League, people will become more interested in watching and following the sport. With talented javelin athletes in India, there should be national-level leagues to compete. This would help to boost the sport in India,\" the 26-year-old added.</p>\n<p>Neeraj Chopra will compete with the likes of world-class javelin throwers like Anderson Peters, Jakub Vadlejch, Arshad Nadeem, and many others in the upcoming Paris Olympics.</p><br><p><strong>How might Neeraj Chopra’s efforts to promote javelin throw affect future Olympic athletes from India?</strong></p>", "options": ["<p>They might face less recognition than current athletes</p>", "<p>They might benefit from increased infrastructure and competition opportunities</p>", "<p>They might experience a decline in support and resources</p>", "<p>They might receive less media coverage</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>Promoting the sport and increasing competition opportunities could lead to better infrastructure and support for future athletes.</p>"}, {"question": "<p><strong>In each of the following questions, a short paragraph is given with one sentence or a part of sentence missing from it, a blank is given in that place. Find the suitable sentence or phrase  from the options that can fit the blank both grammatically and contextually.</strong></p><br><p><strong>Proxgy, a first of its kind global service launched during the coronavirus pandemic which enables its users to book a real-world human avatar anytime at every serviceable place, and navigate the physical world through that proxy avatar while sitting at home with an immersive experience in a live manner. Proxgy aims to change the way people navigate through their daily outdoor tasks by hailing a Proxgy through the Proxgy user app which links the user to their Proxgy. _________</strong><strong>________________ .The camera access is controlled by the user via a multidirectional joystick control within the Proxgy user app, giving users a real-time immersive experience of the Proxgy’s surrounding.</strong></p>", "options": ["<p>However, in the prior cases of visa issuance bans, the nationals of a single country were not targeted in the way that Chinese citizens have been under this week&rsquo;s visa revocation</p>", "<p>Either way, China&rsquo;s economic aggression will continue to face pushback from a wounded and angry America</p>", "<p>Proxgy uses patent-pending technologies to provided live video and audio stream to users via a proprietary smart helmet which has a 360 degree rotatable camera mounted on top</p>", "<p>Proxgy uses patent-pending technologies to provide live video and audio stream to users via a proprietary smart helmet which has a 360 degree rotatable camera mounted on top</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The passage is about “Proxgy”, hence options (a) and (b) are out of context.</p>\n<p>Both (c) and (d) look similar and related to the context of the passage, but (c) is grammatically incorrect as after “to” we should use the base form “provide”.</p>\n<p>Hence (d) is the correct answer.</p>"}, {"question": "<p><strong>In each of the following questions, a short paragraph is given with one sentence or a part of sentence missing from it, a blank is given in that place. Find the suitable sentence or phrase  from the options that can fit the blank both grammatically and contextually.</strong></p><br><p><strong>Ozone is probably most associated with its high abundance in the Earth’s upper atmosphere. The ozone layer in the stratosphere absorbs much of the incoming solar ultraviolet radiation and came into the wider general consciousness in the 1980s with the discovery that it was seasonally thinning. This led to the 1987 Montreal Protocol on Substances that Deplete the Ozone Layer, an example of a successful international environmental protection agreement. _____________</strong><strong>___________ . These ozone-depleting substances (ODS) are themselves potent greenhouse gases and, with their atmospheric lifespan of 50–100 years, have contributed to global warming, but to what extent? In a Letter in this issue, Lorenzo Polvani and co-authors investigate the role that these ODS have played in Arctic warming from 1955 to 2015.</strong></p>", "options": ["<p>The phase-out of chlorofluorocarbons and halons, through the transition and eventual phase-out of less ozone-damaging substances such as hydrofluorocarbons, has seen declines in their emissions, with stabilization and now ongoing recovery of the ozone layer</p>", "<p>The phase-out of chlorofluorocarbons and halons, through the transition and eventual phase-out of less ozone-damaging substances such because hydrofluorocarbons, has seen declines in their emissions, with stabilization and now ongoing recovery of the ozone layer</p>", "<p>The phase-out of chlorofluorocarbons and halons, through the transition and eventual phase-out of less ozone-damaging substances such as hydrofluorocarbons, has saw declines in their emissions, with stabilization and now ongoing recovery of the ozone layer</p>", "<p>The phase-out of chlorofluorocarbons and halons, through the transition and eventual phase-out of less ozone-damaging substances such as hydrofluorocarbons, has seen declines in their emissions, with stabilization and now ongoing recovery for the ozone layer</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The passage is about the Ozone Layer. Hence all the options are related to the context, but (b), (c) and (d) are grammatically incorrect.</p>\n<p>In (b), “because” should be replaced with “as”.</p>\n<p>In (c), “saw” should be replaced with “seen” as after “has” we should use V3.</p>\n<p>In (d), “for the ozone layer” should be replaced with “of ozone layer” as we need a possessive sense.</p>\n<p>Therefore, option A is the correct answer.</p>"}, {"question": "<p><strong>In each of the following questions, a short paragraph is given with one sentence or a part of sentence missing from it, a blank is given in that place. Find the suitable sentence or phrase  from the options that can fit the blank both grammatically and contextually.</strong></p><br><p><strong>The central government on Thursday said it will borrow under a special Reserve Bank of India (RBI) window and lend the money to states that opt for debt to bridge their revenue gap this fiscal arising from the indirect tax reform three years ago. ___________. So far, 21 states and two Union territories—Delhi and Jammu and Kashmir—have opted for this option to bridge their GST revenue shortfall this year. An official statement issued by the finance ministry said the estimated shortfall of ₹1.1 trillion, assuming all states opt for borrowing, will be borrowed by central government in tranches and passed on to states “as a back-to-back loan in lieu of GST Compensation cess releases.\"</strong></p>", "options": ["<p>The Training of Trainers (TOT) Programme will be held in December 2018- January 2019 in the first phase. Here total of 160 trainers will be trained in 4 batches of 40 each in December-January period</p>", "<p>The borrowings will show as debt in the books of states and the centre&rsquo;s fiscal deficit will be unaffect</p>", "<p>The borrowings will show as debt in the books of states and the centre&rsquo;s fiscal deficit will be unaffected</p>", "<p>India&rsquo;s poor progress on nutritional indices must dispel the hubris surrounding strong economic growth for years, and turn national focus on persisting hunger, wasting and stunting among children</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Options (a) and (d) are out of context.</p>\n<p>Options (b) and (c) are related to the given passage and they look similar, but (b) is grammatically incorrect.</p>\n<p>In (b), “unaffect” should be replaced with “unaffected” as after “be” we should use V3.</p>\n<p>Hence (c) is correct.</p>"}, {"question": "<p><strong>In each of the following questions, a short paragraph is given with one sentence or a part of sentence missing from it, a blank is given in that place. Find the suitable sentence or phrase  from the options that can fit the blank both grammatically and contextually.</strong></p><br><p><strong>Nine straight months of contraction in passenger vehicle sales has also begun _______________________ and lay-offs at dealerships, component suppliers and vehicle makers themselves while the Federation of Automobile Dealers Associations recently warned of more jobs being at risk, on top of about two lakh positions that have already been shed, the Society of Indian Automobile Manufacturers admitted that the industry had laid off at least about 15,000 contract workers in the last three months.</strong></p>", "options": ["<p>Experiencing a serious slowdown which is evident for some time now</p>", "<p>Bedeviling demand in the auto sectors that are well established</p>", "<p>Extracting a toll in terms of showroom closures</p>", "<p>Setting up capacity, especially of fossil-fuel powered vehicles, has largely been overlooked</p>", "<p>To formulate policy interventions to address this sectoral crisis or risk wider contagion</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Option (c) seems to be logical according to the context and is the correct part to complete the incomplete sentence of the passage.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>In each of the following questions, a short paragraph is given with one sentence or a part of sentence missing from it, a blank is given in that place. Find the suitable sentence or phrase  from the options that can fit the blank both grammatically and contextually.</strong></p><br><p><strong>There were elaborate mentions of unitary schemes from the one nation one tax’ that is already in place, to a one nation, one poll plan that is in the making. Such overarching plans are central to _____________________ but if India is to be on a new course for the better, it needs more than grandstanding from the Red Fort.</strong></p>", "options": ["<p>Gathering clouds of a crisis in the economy</p>", "<p>His vision and the speech reflected that thinking</p>", "<p>Current slump in rural and urban demand and investment slowdown</p>", "<p>Hope and optimism, now more than at any moment in recent past</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>Option (b) seems to be logical to the context and is the correct part to complete the incomplete sentence of passage.</p>\n<p>Therefore, option B is the correct answer.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-17)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-17)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

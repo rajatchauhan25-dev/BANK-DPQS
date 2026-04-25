@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-2)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>Read the following passage and answer the questions as directed. There are some blanks given in the passage. You have to find the appropriate word for the given blank and mark the corresponding option as your answer.</strong></p>\n<p>The judicial intent of better informing voter choice through disclosures about electoral bonds (EBs) is obviously welcome. But here's the thing - could it lead to a <strong>__(1)__ </strong>outcome of driving corporate donations to political parties further underground during the upcoming elections? Corporate donations through EBs were premised upon a layer of anonymity by maintaining uncorrelated lists of donors and recipients. If this correlation is established through additional information provided by issuer of the bonds, SBI, companies face the prospect of loss of reputation, or even litigation. This makes the <strong>__(2)__ </strong> of half-hearted measures to increase transparency over political funding an unfortunate exercise. The effects could be felt during the course of this year's elections if corporate donors were to seek true anonymity over political donations. This could raise the level of cash - especially of the darker-hued variety that was the bane and raison d'etre of demonetisation - chasing ballots. The Indian voter may, thus, rather ironically, become better informed about political funding in the past but less informed in future. This does not serve the purpose of improving choice. Even as things stand, the voter is being exposed to <strong>__(3)__ </strong>  about quid pro quos with the information now available in the public domain about EBs. Extra disclosure will clear the air, but will not offer certainty. Judicial intervention would be needed to establish cause and effect. Where India's attempt at shining light on political funding went <strong>__(4)__ </strong> was in its incremental ambition. Half knowledge, as is becoming evident, can be dangerous. One way to go would be to legitimise lobbying, as in the US, and match it with full disclosure of political funding, irrespective of the source. Although not perfect, this approach is <strong>__(5)__ </strong> . And it is out there in the open. Both voters and shareholders benefit from transparency and are better placed to apply correctives to governance. GoI will be well advised to not settle for half measures when it gets down to reworking the EBs scheme, or devising alternative mechanisms. There is a very real risk of sliding back to old bad habits.</p><br><p><strong>Which of the following words most appropriately fits the blank labeled</strong> <strong>(1)?</strong></p>", "options": ["<p>vicious</p>", "<p>perverse</p>", "<p>iniquitous</p>", "<p>obstinate</p>", "<p>stubborn</p>"], "correctIndex": 1, "solution": "<p><strong>Answer</strong><strong>: B</strong></p>\n<p>In this context, the term \"perverse\" is used to describe an unintended and undesirable outcome that may arise from the disclosure of information about electoral bonds (EBs). The passage discusses the potential consequence of increased transparency leading to corporate donors seeking greater anonymity in their political contributions. This unintended consequence could be considered \"perverse\" because it goes against the intended goal of improving transparency in political funding.</p>\n<p><strong>a). vicious:</strong> While \"vicious\" can sometimes refer to something harmful or brutal, it doesn't quite capture the sense of unintended and undesirable consequences discussed in the passage.</p>\n<p><strong>c). iniquitous:</strong> \"Iniquitous\" means unjust or morally wrong, but it doesn't directly convey the idea of an unintended outcome resulting from increased transparency.</p>\n<p><strong>d). obstinate:</strong> \"Obstinate\" refers to stubbornness or resistance to change, which doesn't align with the context of unintended consequences resulting from disclosure of information about electoral bonds.</p>\n<p><strong>e). stubborn:</strong> Similar to \"obstinate,\" \"stubborn\" refers to a refusal to change one's position, which doesn't fit the context of discussing unintended outcomes of increased transparency.</p>\n<p>Overall, \"perverse\" best captures the idea of an unintended and undesirable outcome resulting from the disclosure of information about electoral bonds.</p>"}, {"question": "<p><strong>Read the following passage and answer the questions as directed. There are some blanks given in the passage. You have to find the appropriate word for the given blank and mark the corresponding option as your answer.</strong></p>\n<p>The judicial intent of better informing voter choice through disclosures about electoral bonds (EBs) is obviously welcome. But here's the thing - could it lead to a <strong>__(1)__ </strong>outcome of driving corporate donations to political parties further underground during the upcoming elections? Corporate donations through EBs were premised upon a layer of anonymity by maintaining uncorrelated lists of donors and recipients. If this correlation is established through additional information provided by issuer of the bonds, SBI, companies face the prospect of loss of reputation, or even litigation. This makes the <strong>__(2)__ </strong> of half-hearted measures to increase transparency over political funding an unfortunate exercise. The effects could be felt during the course of this year's elections if corporate donors were to seek true anonymity over political donations. This could raise the level of cash - especially of the darker-hued variety that was the bane and raison d'etre of demonetisation - chasing ballots. The Indian voter may, thus, rather ironically, become better informed about political funding in the past but less informed in future. This does not serve the purpose of improving choice. Even as things stand, the voter is being exposed to <strong>__(3)__ </strong>  about quid pro quos with the information now available in the public domain about EBs. Extra disclosure will clear the air, but will not offer certainty. Judicial intervention would be needed to establish cause and effect. Where India's attempt at shining light on political funding went <strong>__(4)__ </strong> was in its incremental ambition. Half knowledge, as is becoming evident, can be dangerous. One way to go would be to legitimise lobbying, as in the US, and match it with full disclosure of political funding, irrespective of the source. Although not perfect, this approach is <strong>__(5)__ </strong> . And it is out there in the open. Both voters and shareholders benefit from transparency and are better placed to apply correctives to governance. GoI will be well advised to not settle for half measures when it gets down to reworking the EBs scheme, or devising alternative mechanisms. There is a very real risk of sliding back to old bad habits.</p><br><p><strong>Which of the following words most appropriately fits the blank labeled</strong> <strong>(2)?</strong></p>", "options": ["<p>deducing</p>", "<p>envisaging</p>", "<p>discerning</p>", "<p>unravelling</p>", "<p>deciphering</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D</strong></p>\n<p>The word \"unravelling\" is the most suitable choice for the blank labelled (2) because it conveys the idea of exposing or revealing the inadequacies or inefficiencies of something. In the context of the sentence, it implies that the half-hearted measures taken to increase transparency over political funding may not achieve their intended goal and could instead lead to unintended consequences, such as driving corporate donations further underground.</p>\n<p><strong>a). \"Deducing\":</strong> This word implies reaching a conclusion based on evidence or reasoning, which doesn't quite fit the context of exposing the shortcomings of measures.</p>\n<p><strong>b). \"Envisaging\":</strong> This word means to imagine or visualize something in the future, which doesn't fit the context of revealing the inadequacies of current measures.</p>\n<p><strong>c). \"Discerning\":</strong> This word means to perceive or recognize something, usually something subtle or obscure. While it could work in a different context, it doesn't quite capture the sense of uncovering the flaws in existing measures.</p>\n<p><strong>e). \"Deciphering\":</strong> This word means to interpret or understand something that is difficult or mysterious, usually involving decoding symbols or messages. While it implies uncovering hidden meanings, it doesn't quite fit the context of revealing the shortcomings of measures related to political funding.</p>\n<p>Therefore, \"unravelling\" is the most appropriate choice as it accurately conveys the idea of exposing or revealing the inadequacies or inefficiencies of half-hearted measures aimed at increasing transparency over political funding.</p>"}, {"question": "<p><strong>Read the following passage and answer the questions as directed. There are some blanks given in the passage. You have to find the appropriate word for the given blank and mark the corresponding option as your answer.</strong></p>\n<p>The judicial intent of better informing voter choice through disclosures about electoral bonds (EBs) is obviously welcome. But here's the thing - could it lead to a <strong>__(1)__ </strong>outcome of driving corporate donations to political parties further underground during the upcoming elections? Corporate donations through EBs were premised upon a layer of anonymity by maintaining uncorrelated lists of donors and recipients. If this correlation is established through additional information provided by issuer of the bonds, SBI, companies face the prospect of loss of reputation, or even litigation. This makes the <strong>__(2)__ </strong> of half-hearted measures to increase transparency over political funding an unfortunate exercise. The effects could be felt during the course of this year's elections if corporate donors were to seek true anonymity over political donations. This could raise the level of cash - especially of the darker-hued variety that was the bane and raison d'etre of demonetisation - chasing ballots. The Indian voter may, thus, rather ironically, become better informed about political funding in the past but less informed in future. This does not serve the purpose of improving choice. Even as things stand, the voter is being exposed to <strong>__(3)__ </strong>  about quid pro quos with the information now available in the public domain about EBs. Extra disclosure will clear the air, but will not offer certainty. Judicial intervention would be needed to establish cause and effect. Where India's attempt at shining light on political funding went <strong>__(4)__ </strong> was in its incremental ambition. Half knowledge, as is becoming evident, can be dangerous. One way to go would be to legitimise lobbying, as in the US, and match it with full disclosure of political funding, irrespective of the source. Although not perfect, this approach is <strong>__(5)__ </strong> . And it is out there in the open. Both voters and shareholders benefit from transparency and are better placed to apply correctives to governance. GoI will be well advised to not settle for half measures when it gets down to reworking the EBs scheme, or devising alternative mechanisms. There is a very real risk of sliding back to old bad habits.</p><br><p><strong>Which of the following words most appropriately fits the blank labeled</strong> <strong>(3)?</strong></p>", "options": ["<p>reckon</p>", "<p>deduce</p>", "<p>prognostic</p>", "<p>conjecture</p>", "<p>ambivalence</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D</strong></p>\n<p>The most appropriate word to fill in the blank labelled (3) is \"conjecture.\"</p>\n<p>\"Conjecture\" means forming an opinion or conclusion based on incomplete information or guesswork. In the context of the sentence, it suggests that voters are exposed to speculation or guesses about quid pro quos (favourable actions in return for something) concerning electoral bonds due to the information available in the public domain.</p>\n<p><strong>a).</strong> \"Reckon\" means to calculate or estimate, but it doesn't convey the sense of speculation or guesswork implied in the context.</p>\n<p><strong>b).</strong> \"Deduce\" means to derive a conclusion logically from given information, which is not exactly synonymous with speculation or guesswork.</p>\n<p><strong>c).</strong> \"Prognostic\" means predictive or forecasting, which doesn't fit the context of exposure to uncertain information.</p>\n<p><strong>e).</strong> \"Ambivalence\" refers to uncertainty or mixed feelings about something, which doesn't convey the idea of speculation or guesswork regarding quid pro quos.</p>\n<p>Therefore, \"conjecture\" is the best choice as it accurately reflects the notion of voters being exposed to speculation or guesses about quid pro quos concerning electoral bonds.</p>"}, {"question": "<p><strong>Read the following passage and answer the questions as directed. There are some blanks given in the passage. You have to find the appropriate word for the given blank and mark the corresponding option as your answer.</strong></p>\n<p>The judicial intent of better informing voter choice through disclosures about electoral bonds (EBs) is obviously welcome. But here's the thing - could it lead to a <strong>__(1)__ </strong>outcome of driving corporate donations to political parties further underground during the upcoming elections? Corporate donations through EBs were premised upon a layer of anonymity by maintaining uncorrelated lists of donors and recipients. If this correlation is established through additional information provided by issuer of the bonds, SBI, companies face the prospect of loss of reputation, or even litigation. This makes the <strong>__(2)__ </strong> of half-hearted measures to increase transparency over political funding an unfortunate exercise. The effects could be felt during the course of this year's elections if corporate donors were to seek true anonymity over political donations. This could raise the level of cash - especially of the darker-hued variety that was the bane and raison d'etre of demonetisation - chasing ballots. The Indian voter may, thus, rather ironically, become better informed about political funding in the past but less informed in future. This does not serve the purpose of improving choice. Even as things stand, the voter is being exposed to <strong>__(3)__ </strong>  about quid pro quos with the information now available in the public domain about EBs. Extra disclosure will clear the air, but will not offer certainty. Judicial intervention would be needed to establish cause and effect. Where India's attempt at shining light on political funding went <strong>__(4)__ </strong> was in its incremental ambition. Half knowledge, as is becoming evident, can be dangerous. One way to go would be to legitimise lobbying, as in the US, and match it with full disclosure of political funding, irrespective of the source. Although not perfect, this approach is <strong>__(5)__ </strong> . And it is out there in the open. Both voters and shareholders benefit from transparency and are better placed to apply correctives to governance. GoI will be well advised to not settle for half measures when it gets down to reworking the EBs scheme, or devising alternative mechanisms. There is a very real risk of sliding back to old bad habits.</p><br><p><strong>Which of the following words most appropriately fits the blank labeled</strong> <strong>(4)?</strong></p>", "options": ["<p>awry</p>", "<p>crooked</p>", "<p>oblique</p>", "<p>spurious</p>", "<p>fallacious</p>"], "correctIndex": 0, "solution": "<p><strong>Answer</strong><strong>: A</strong></p>\n<p>The most appropriate word to fill in the blank labelled (4) is \"awry.\"</p>\n<p>The phrase \"went awry\" means to go wrong or not as planned. In the context of the sentence, it suggests that India's attempt at shining light on political funding didn't go as planned due to its incremental ambition.</p>\n<p><strong>b).</strong> \"Crooked\" means dishonest or fraudulent, but it doesn't convey the idea of something going wrong or off course as directly as \"awry\" does.</p>\n<p><strong>c).</strong> \"Oblique\" means indirect or not straightforward, which doesn't fit the context of something going wrong or not as planned.</p>\n<p><strong>d).</strong> \"Spurious\" means false or counterfeit, which doesn't convey the sense of something going wrong or off course.</p>\n<p><strong>e).</strong> \"Fallacious\" means based on a mistaken belief, but it doesn't directly convey the idea of something going wrong or not as planned.</p>\n<p>Therefore, \"awry\" is the best choice as it accurately reflects the notion that India's attempt at shining light on political funding didn't go as planned due to its incremental ambition.</p>"}, {"question": "<p><strong>Read the following passage and answer the questions as directed. There are some blanks given in the passage. You have to find the appropriate word for the given blank and mark the corresponding option as your answer.</strong></p>\n<p>The judicial intent of better informing voter choice through disclosures about electoral bonds (EBs) is obviously welcome. But here's the thing - could it lead to a <strong>__(1)__ </strong>outcome of driving corporate donations to political parties further underground during the upcoming elections? Corporate donations through EBs were premised upon a layer of anonymity by maintaining uncorrelated lists of donors and recipients. If this correlation is established through additional information provided by issuer of the bonds, SBI, companies face the prospect of loss of reputation, or even litigation. This makes the <strong>__(2)__ </strong> of half-hearted measures to increase transparency over political funding an unfortunate exercise. The effects could be felt during the course of this year's elections if corporate donors were to seek true anonymity over political donations. This could raise the level of cash - especially of the darker-hued variety that was the bane and raison d'etre of demonetisation - chasing ballots. The Indian voter may, thus, rather ironically, become better informed about political funding in the past but less informed in future. This does not serve the purpose of improving choice. Even as things stand, the voter is being exposed to <strong>__(3)__ </strong>  about quid pro quos with the information now available in the public domain about EBs. Extra disclosure will clear the air, but will not offer certainty. Judicial intervention would be needed to establish cause and effect. Where India's attempt at shining light on political funding went <strong>__(4)__ </strong> was in its incremental ambition. Half knowledge, as is becoming evident, can be dangerous. One way to go would be to legitimise lobbying, as in the US, and match it with full disclosure of political funding, irrespective of the source. Although not perfect, this approach is <strong>__(5)__ </strong> . And it is out there in the open. Both voters and shareholders benefit from transparency and are better placed to apply correctives to governance. GoI will be well advised to not settle for half measures when it gets down to reworking the EBs scheme, or devising alternative mechanisms. There is a very real risk of sliding back to old bad habits.</p><br><p><strong>Which of the following words most appropriately fits the blank labeled</strong> <strong>(5)?</strong></p>", "options": ["<p>expedient</p>", "<p>sagacious</p>", "<p>pragmatic</p>", "<p>propitious</p>", "<p>efficacious</p>"], "correctIndex": 2, "solution": "<p><strong>Answer</strong><strong>: C</strong></p>\n<p>The most appropriate word to fill in the blank labelled (5) is \"pragmatic.\"</p>\n<p>The word \"pragmatic\" means dealing with things sensibly and realistically in a way that is based on practical rather than theoretical considerations. In the context of the sentence, it suggests that although the approach of legitimizing lobbying and matching it with full disclosure of political funding might not be perfect, it is sensible and realistic.</p>\n<p><strong>a).</strong> \"Expedient\" means convenient and practical, but it often carries the connotation of being self-serving or motivated by immediate gain, which may not accurately capture the intended meaning in this context.</p>\n<p><strong>b).</strong> \"Sagacious\" means having or showing keen mental discernment and good judgment, which, while positive, doesn't quite capture the practical, down-to-earth nature implied by the sentence.</p>\n<p><strong>d).</strong> \"Propitious\" means indicating a good chance of success; favourable, but it doesn't convey the practical, realistic approach suggested by the sentence.</p>\n<p><strong>e).</strong> \"Efficacious\" means effective or capable of producing the desired outcome, but it doesn't directly convey the idea of being practical or sensible in addressing the problem.</p>\n<p>Therefore, \"pragmatic\" is the best choice as it accurately reflects the idea of taking a sensible and realistic approach to the issue of political funding transparency and governance.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>For the first time in five months, India's re- tail inflation slid below the 5% mark in March, to 4.85%. While it constituted only a marginal <strong>easing</strong> from the 5.1% recorded in February, this was the lowest pace of price rise re- corded since May 2023. The average inflation of 5% clocked in the final quarter of 2023-24 is not just in line with Reserve Bank of India (RBI) pro- jections but also the slowest in three years. For the full year gone by, consumer price rise aver- aged 5.4%, as the RBI had forecast - a four-year low. Core inflation, excluding energy and food prices, has been under the 4% mark for four straight months. Quant Eco Research estimates that overall fuel inflation in India hit a four-year low of -2.7% in March, which was the seventh straight month of disinflation in the segment. No doubt, the 2 per liter cuts in petrol and diesel prices and the ₹100 drop in cylinder prices have helped, though the full impact of these pre-poll steps will be seen this month. Amid these pleasant portents, two critical problems <strong>persist</strong> food bills remain problematically high, even as overall inflation is rising for rural consumers, al- ready hit by a weak monsoon. Inflation, as measured by the Consumer Food.</p>\n<p>Price Index, has averaged an alarming 8% through 2023-24, and 8.5% in the January to March quarter. And while some government interventions have helped check a few items' prices and hopes of a normal monsoon this year could lift some pressure points, perhaps from July on- wards, the ongoing heat waves across large parts of the country remain a threat to perishable sup- plies. Moreover, some key items are seeing deep- ly entrenched inflation trends - double-digit inflation has now been seen for five months in vegetables, 10 months in pulses and a whopping 22 months in spices. Cereals inflation picked up pace in March, breaking a seven-month moderating streak, while eggs, meat and fish are also see- ing spikes. While the RBI expects inflation to cool to 4.5% this year, it is projected at 4.9% for the first quarter. A durable descent to its 4% target that has now been elusive for 54 months, remains tricky. For urban consumers, inflation eased tantalizingly close to the target in March at 4.14%, but it rose in rural India to 5.45% from 5.34% in January and February. While a prolonged phase of high prices is already hurting consumption, the resurgence in crude oil prices to a seven-month high of $90 a barrel this month, faltering hopes of interest rate cuts in the United States and the European Union, and strife-fueled shipping cost spikes, pose fresh worries on the inflation front in the months to come.</p><br><p><strong>Based on the passage, what is the primary cause of high inflation for rural consumers?</strong></p>", "options": ["<p>Weak monsoon</p>", "<p>Government interventions</p>", "<p>Rising crude oil prices</p>", "<p>Interest rate cuts</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The passage mentions that food bills remain problematically high for rural consumers, primarily <strong>due to a weak monsoon</strong>, which affects agricultural productivity and leads to higher prices for food items.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>For the first time in five months, India's re- tail inflation slid below the 5% mark in March, to 4.85%. While it constituted only a marginal <strong>easing</strong> from the 5.1% recorded in February, this was the lowest pace of price rise re- corded since May 2023. The average inflation of 5% clocked in the final quarter of 2023-24 is not just in line with Reserve Bank of India (RBI) pro- jections but also the slowest in three years. For the full year gone by, consumer price rise aver- aged 5.4%, as the RBI had forecast - a four-year low. Core inflation, excluding energy and food prices, has been under the 4% mark for four straight months. Quant Eco Research estimates that overall fuel inflation in India hit a four-year low of -2.7% in March, which was the seventh straight month of disinflation in the segment. No doubt, the 2 per liter cuts in petrol and diesel prices and the ₹100 drop in cylinder prices have helped, though the full impact of these pre-poll steps will be seen this month. Amid these pleasant portents, two critical problems <strong>persist</strong> food bills remain problematically high, even as overall inflation is rising for rural consumers, al- ready hit by a weak monsoon. Inflation, as measured by the Consumer Food.</p>\n<p>Price Index, has averaged an alarming 8% through 2023-24, and 8.5% in the January to March quarter. And while some government interventions have helped check a few items' prices and hopes of a normal monsoon this year could lift some pressure points, perhaps from July on- wards, the ongoing heat waves across large parts of the country remain a threat to perishable sup- plies. Moreover, some key items are seeing deep- ly entrenched inflation trends - double-digit inflation has now been seen for five months in vegetables, 10 months in pulses and a whopping 22 months in spices. Cereals inflation picked up pace in March, breaking a seven-month moderating streak, while eggs, meat and fish are also see- ing spikes. While the RBI expects inflation to cool to 4.5% this year, it is projected at 4.9% for the first quarter. A durable descent to its 4% target that has now been elusive for 54 months, remains tricky. For urban consumers, inflation eased tantalizingly close to the target in March at 4.14%, but it rose in rural India to 5.45% from 5.34% in January and February. While a prolonged phase of high prices is already hurting consumption, the resurgence in crude oil prices to a seven-month high of $90 a barrel this month, faltering hopes of interest rate cuts in the United States and the European Union, and strife-fueled shipping cost spikes, pose fresh worries on the inflation front in the months to come.</p><br><p><strong>What inference can be made about the impact of government interventions on inflation according to the passage?</strong></p>", "options": ["<p>Government interventions have successfully lowered overall inflation rates</p>", "<p>Government interventions have been ineffective in controlling inflation</p>", "<p>Government interventions have only targeted specific items, leaving overall inflation unaffected</p>", "<p>Government interventions have helped check a few items' prices but have not significantly impacted overall inflation</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The passage mentions that while some government interventions have <strong>helped check a few items'</strong> <strong>prices</strong>, overall inflation remains high, particularly in the context of food prices. This suggests that government interventions have had a limited impact on overall inflation.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>For the first time in five months, India's re- tail inflation slid below the 5% mark in March, to 4.85%. While it constituted only a marginal <strong>easing</strong> from the 5.1% recorded in February, this was the lowest pace of price rise re- corded since May 2023. The average inflation of 5% clocked in the final quarter of 2023-24 is not just in line with Reserve Bank of India (RBI) pro- jections but also the slowest in three years. For the full year gone by, consumer price rise aver- aged 5.4%, as the RBI had forecast - a four-year low. Core inflation, excluding energy and food prices, has been under the 4% mark for four straight months. Quant Eco Research estimates that overall fuel inflation in India hit a four-year low of -2.7% in March, which was the seventh straight month of disinflation in the segment. No doubt, the 2 per liter cuts in petrol and diesel prices and the ₹100 drop in cylinder prices have helped, though the full impact of these pre-poll steps will be seen this month. Amid these pleasant portents, two critical problems <strong>persist</strong> food bills remain problematically high, even as overall inflation is rising for rural consumers, al- ready hit by a weak monsoon. Inflation, as measured by the Consumer Food.</p>\n<p>Price Index, has averaged an alarming 8% through 2023-24, and 8.5% in the January to March quarter. And while some government interventions have helped check a few items' prices and hopes of a normal monsoon this year could lift some pressure points, perhaps from July on- wards, the ongoing heat waves across large parts of the country remain a threat to perishable sup- plies. Moreover, some key items are seeing deep- ly entrenched inflation trends - double-digit inflation has now been seen for five months in vegetables, 10 months in pulses and a whopping 22 months in spices. Cereals inflation picked up pace in March, breaking a seven-month moderating streak, while eggs, meat and fish are also see- ing spikes. While the RBI expects inflation to cool to 4.5% this year, it is projected at 4.9% for the first quarter. A durable descent to its 4% target that has now been elusive for 54 months, remains tricky. For urban consumers, inflation eased tantalizingly close to the target in March at 4.14%, but it rose in rural India to 5.45% from 5.34% in January and February. While a prolonged phase of high prices is already hurting consumption, the resurgence in crude oil prices to a seven-month high of $90 a barrel this month, faltering hopes of interest rate cuts in the United States and the European Union, and strife-fueled shipping cost spikes, pose fresh worries on the inflation front in the months to come.</p><br><p><strong>What does the passage suggest about the future trajectory of inflation?</strong></p>", "options": ["<p>Inflation is expected to decrease steadily over the next few months</p>", "<p>Inflation is expected to remain stable in the near future</p>", "<p>Inflation is expected to increase due to rising crude oil prices and other factors</p>", "<p>Inflation is expected to be unaffected by external factors</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The passage mentions various factors such as <strong>rising crude oil</strong> prices, faltering hopes of interest rate cuts, and shipping cost spikes, which pose fresh worries on the inflation front in the months to come, suggesting that inflation is expected to increase.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>For the first time in five months, India's re- tail inflation slid below the 5% mark in March, to 4.85%. While it constituted only a marginal <strong>easing</strong> from the 5.1% recorded in February, this was the lowest pace of price rise re- corded since May 2023. The average inflation of 5% clocked in the final quarter of 2023-24 is not just in line with Reserve Bank of India (RBI) pro- jections but also the slowest in three years. For the full year gone by, consumer price rise aver- aged 5.4%, as the RBI had forecast - a four-year low. Core inflation, excluding energy and food prices, has been under the 4% mark for four straight months. Quant Eco Research estimates that overall fuel inflation in India hit a four-year low of -2.7% in March, which was the seventh straight month of disinflation in the segment. No doubt, the 2 per liter cuts in petrol and diesel prices and the ₹100 drop in cylinder prices have helped, though the full impact of these pre-poll steps will be seen this month. Amid these pleasant portents, two critical problems <strong>persist</strong> food bills remain problematically high, even as overall inflation is rising for rural consumers, al- ready hit by a weak monsoon. Inflation, as measured by the Consumer Food.</p>\n<p>Price Index, has averaged an alarming 8% through 2023-24, and 8.5% in the January to March quarter. And while some government interventions have helped check a few items' prices and hopes of a normal monsoon this year could lift some pressure points, perhaps from July on- wards, the ongoing heat waves across large parts of the country remain a threat to perishable sup- plies. Moreover, some key items are seeing deep- ly entrenched inflation trends - double-digit inflation has now been seen for five months in vegetables, 10 months in pulses and a whopping 22 months in spices. Cereals inflation picked up pace in March, breaking a seven-month moderating streak, while eggs, meat and fish are also see- ing spikes. While the RBI expects inflation to cool to 4.5% this year, it is projected at 4.9% for the first quarter. A durable descent to its 4% target that has now been elusive for 54 months, remains tricky. For urban consumers, inflation eased tantalizingly close to the target in March at 4.14%, but it rose in rural India to 5.45% from 5.34% in January and February. While a prolonged phase of high prices is already hurting consumption, the resurgence in crude oil prices to a seven-month high of $90 a barrel this month, faltering hopes of interest rate cuts in the United States and the European Union, and strife-fueled shipping cost spikes, pose fresh worries on the inflation front in the months to come.</p><br><p><strong>How has core inflation behaved over the past four months according to the passage?</strong></p>", "options": ["<p>It has consistently remained above 4%</p>", "<p>It has fluctuated significantly</p>", "<p>It has steadily decreased</p>", "<p>It has remained below 4%</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The passage states that core inflation, excluding energy and food prices, has been <strong>under the 4%</strong> mark for four straight months.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>For the first time in five months, India's re- tail inflation slid below the 5% mark in March, to 4.85%. While it constituted only a marginal <strong>easing</strong> from the 5.1% recorded in February, this was the lowest pace of price rise re- corded since May 2023. The average inflation of 5% clocked in the final quarter of 2023-24 is not just in line with Reserve Bank of India (RBI) pro- jections but also the slowest in three years. For the full year gone by, consumer price rise aver- aged 5.4%, as the RBI had forecast - a four-year low. Core inflation, excluding energy and food prices, has been under the 4% mark for four straight months. Quant Eco Research estimates that overall fuel inflation in India hit a four-year low of -2.7% in March, which was the seventh straight month of disinflation in the segment. No doubt, the 2 per liter cuts in petrol and diesel prices and the ₹100 drop in cylinder prices have helped, though the full impact of these pre-poll steps will be seen this month. Amid these pleasant portents, two critical problems <strong>persist</strong> food bills remain problematically high, even as overall inflation is rising for rural consumers, al- ready hit by a weak monsoon. Inflation, as measured by the Consumer Food.</p>\n<p>Price Index, has averaged an alarming 8% through 2023-24, and 8.5% in the January to March quarter. And while some government interventions have helped check a few items' prices and hopes of a normal monsoon this year could lift some pressure points, perhaps from July on- wards, the ongoing heat waves across large parts of the country remain a threat to perishable sup- plies. Moreover, some key items are seeing deep- ly entrenched inflation trends - double-digit inflation has now been seen for five months in vegetables, 10 months in pulses and a whopping 22 months in spices. Cereals inflation picked up pace in March, breaking a seven-month moderating streak, while eggs, meat and fish are also see- ing spikes. While the RBI expects inflation to cool to 4.5% this year, it is projected at 4.9% for the first quarter. A durable descent to its 4% target that has now been elusive for 54 months, remains tricky. For urban consumers, inflation eased tantalizingly close to the target in March at 4.14%, but it rose in rural India to 5.45% from 5.34% in January and February. While a prolonged phase of high prices is already hurting consumption, the resurgence in crude oil prices to a seven-month high of $90 a barrel this month, faltering hopes of interest rate cuts in the United States and the European Union, and strife-fueled shipping cost spikes, pose fresh worries on the inflation front in the months to come.</p><br><p>What is the synonym of \"<strong>persist</strong>\" in the passage?</p>", "options": ["<p>Endure</p>", "<p>Terminate</p>", "<p>Discontinue</p>", "<p>Abandon</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>\"<strong>Persist</strong>\" in the passage means to continue to exist or endure despite difficulties or opposition. Therefore, its synonym is \"<strong>endure</strong>,\" which also means to continue to exist over a period of time.</p>"}, {"question": "<p><strong>In the following questions three words are highlighted and from the given options you have to identify the synonym for the highlighted word given in the sentence.</strong></p><br><p>Six months since Hamas gunmen <strong>stormed</strong> into southern Israel on a killing spree, Israel's ground campaign to <strong>annihilate</strong> the Islamist movement has turned much of the Gaza Strip into a wasteland with an unfolding humanitarian <strong>catastrophe</strong>.</p>", "options": ["<p>seethed, smother, calamity</p>", "<p>invaded, destroy, disaster</p>", "<p>steamed, obliterate, tragedy</p>", "<p>invaded, devastate, insurrection</p>", "<p>None of the above</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: </strong><strong>B</strong></p>\n<p>The word \"stormed\" means to move quickly and forcefully into a place, often with aggressive intent. The synonym for \"stormed\" in this context is \"invaded\" (option b).</p>\n<p>The word \"annihilate\" means to destroy or completely defeat something. The synonym for \"annihilate\" in this context is \"destroy\" (option b).</p>\n<p>The word \"catastrophe\" refers to a disastrous event causing great damage or suffering. The synonym for \"catastrophe\" in this context is \"disaster\" (option b).</p>\n<p>Therefore, option b) \"invaded, destroy, disaster\" provides synonyms for the highlighted words in the sentence.</p>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>In the following questions three words are highlighted and from the given options you have to identify the synonym for the highlighted word given in the sentence.</strong></p><br><p><strong>Impunity</strong> has a price for the <strong>perpetrator</strong> as well as the victim, and that price is that the state ceases to be able to regulate its own behaviour, and begins to <strong>self-sabotage.</strong></p>", "options": ["<p>permission, recitalist, thwart</p>", "<p>vindication, destroyer, inhibit</p>", "<p>immunity, offender, obstruct</p>", "<p>amnesty, swindler, vandalize</p>", "<p>None of the above</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: </strong><strong>C</strong></p>\n<p>The word \"impunity\" refers to exemption from punishment or freedom from the consequences of an action. A synonym for \"impunity\" is \"immunity\" (option c).</p>\n<p>The word \"perpetrator\" refers to a person who carries out a harmful, illegal, or immoral act. A synonym for \"perpetrator\" is \"offender\" (option c).</p>\n<p>The phrase \"self-sabotage\" means to undermine or obstruct one's own efforts. A synonym for \"self-sabotage\" is \" obstruct \" (option c).</p>\n<p>Therefore, option c) \"Immunity, Offender, obstruct \" provides synonyms for the highlighted words in the sentence.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>In the following questions three words are highlighted and from the given options you have to identify the synonym for the highlighted word given in the sentence.</strong></p><br><p>In the last few years, Indian citizens are increasingly facing an <strong>inexplicable</strong> set of problems on the foreign affairs front — problems that are a far cry from India’s socialist day narratives of how we are an underdeveloped-to-developing country, a <strong>victim</strong> of foreign rule and a happy hunting ground of an <strong>ominously</strong> conspiring “foreign hand”.</p>", "options": ["<p>mysterious, assailant, sinisterly</p>", "<p>abstruse, perpetrator, oppressively</p>", "<p>Unexplainable, Casualty, Menacingly</p>", "<p>luminous, mortality, propitiously</p>", "<p>None of the above</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: </strong><strong>C</strong></p>\n<p>The word \"inexplicable\" means unable to be explained or understood. A synonym for \"inexplicable\" is \"unexplainable\" (option c).</p>\n<p>The word \"victim\" refers to a person who suffers from a destructive or injurious action or situation. A synonym for \"victim\" is \"casualty\" (option c).</p>\n<p>The word \"ominously\" means in a way that suggests that something bad is going to happen. A synonym for \"ominously\" is \"menacingly\" (option c).</p>\n<p>Therefore, option c) \"Unexplainable, Casualty, Menacingly\" provides synonyms for the highlighted words in the sentence.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>In each of the questions given below an incomplete sentence which must be filled/completed with one of the sentences given below. Choose the correct option and complete the given sentences.</strong></p><br><p><strong>As the workforce continues to evolve, the traditional notion of a job is being redefined to ________________________, reflecting the changing needs and values of both employees and employers.</strong></p>", "options": ["<p>include flexibility and remote work options, which allow employees to balance their professional and personal lives more effectively than ever before</p>", "<p>emphasize the importance of job security and long-term employment, which many workers still value despite the gig economy's rise</p>", "<p>create a competitive landscape where individuals must constantly upskill, as technology changes the requirements of various professions</p>", "<p>represent a shift towards contract-based roles, which often lack benefits and security that were previously standard in full-time employment</p>", "<p>None of the above</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Option (a) reflects the contemporary shift in workplace values towards flexibility, aligning with the idea of redefining traditional job notions. The other options present valid points but do not capture the flexibility trend as directly.</p>"}, {"question": "<p><strong>In each of the questions given below an incomplete sentence which must be filled/completed with one of the sentences given below. Choose the correct option and complete the given sentences.</strong></p><br><p><strong>Despite the challenges posed by climate change, there is a growing recognition that _____________________ can play a critical role in mitigating its effects and promoting a sustainable future.</strong></p>", "options": ["<p>the private sector must take the lead, as businesses are in a unique position to drive innovation and implement sustainable practices</p>", "<p>international agreements must be enforced, as countries often fail to meet their commitments due to political and economic pressures</p>", "<p>technological advancements in renewable energy sources are necessary for transitioning away from fossil fuels, even if they require significant investment</p>", "<p>local initiatives and grassroots movements can mobilize communities to advocate for systemic changes that address environmental issues</p>", "<p>None of the above</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>Option (d) directly addresses the potential of community-driven solutions to combat climate change, fitting well with the overall message of recognizing various approaches to sustainability. The other options suggest important aspects but do not focus specifically on community involvement as a solution.</p>"}, {"question": "<p><strong>In each of the questions given below an incomplete sentence which must be filled/completed with one of the sentences given below. Choose the correct option and complete the given sentences.</strong></p><br><p><strong>In recent years, the concept of corporate social responsibility (CSR) has evolved from a mere marketing strategy to ____________________________, reflecting a genuine commitment to ethical business practices.</strong></p>", "options": ["<p>an integral part of a company&rsquo;s overall strategy, as stakeholders increasingly demand transparency and accountability from businesses</p>", "<p>a trend that many companies adopt to improve their public image, often without making substantial changes to their operations</p>", "<p>a compliance measure that organizations must adhere to, driven by regulatory frameworks rather than voluntary initiatives</p>", "<p>a complex framework for navigating ethical dilemmas in business, which often leads to confusion about best practices</p>", "<p>None of the above</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Option (a) emphasizes the shift in CSR to being a fundamental part of corporate strategy, aligning with the context of genuine commitment. The other options introduce skepticism or regulatory perspectives that do not reflect the positive evolution of CSR.</p>"}, {"question": "<p><strong>In each of the questions given below an incomplete sentence which must be filled/completed with one of the sentences given below. Choose the correct option and complete the given sentences.</strong></p><br><p><strong>The rapid digitization of financial services brings immense convenience to consumers; however, it also poses new challenges, particularly in ___________________________.</strong></p>", "options": ["<p>ensuring data security, preventing fraud, and maintaining customer privacy in an increasingly connected world</p>", "<p>ensuring the security of sensitive data while addressing evolving cyber threats, which continue to grow as technology advances</p>", "<p>maintaining consumer trust, which is vital to the success of any digital transformation, and simultaneously managing complex technological risks</p>", "<p>balancing the convenience provided by these services with the need to protect user data and prevent cyber-attacks in a highly digitalized economy</p>", "<p>None of the above</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>This answer highlights the tension between convenience and security, capturing the main concern of digital financial services. Other options either focus solely on security or introduce additional elements that go beyond the original context.</p>"}, {"question": "<p><strong>In each of the questions given below an incomplete sentence which must be filled/completed with one of the sentences given below. Choose the correct option and complete the given sentences.</strong></p><br><p><strong>In the healthcare sector, the integration of artificial intelligence has the potential to revolutionize patient care by improving diagnosis accuracy, reducing human error, and _________________________.</strong></p>", "options": ["<p>transforming the approach to medical research by analyzing vast amounts of data, which were previously too complex for traditional methods</p>", "<p>enable doctors to focus on patient relationships rather than administrative tasks, freeing up time for more efficient medical interventions</p>", "<p>enabling more personalized treatments based on an individual's genetic profile and medical history, thereby transforming modern healthcare</p>", "<p>lowering healthcare costs by automating routine tasks and improving operational efficiency, although it requires substantial upfront investments</p>", "<p>None of the above</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Option (c) directly ties into the core objective of AI in healthcare: personalizing treatments based on individual data. This captures the broader trend of precision medicine, which other options touch upon but do not focus on as clearly.</p>"}, {"question": "<p><strong>A sentence or a part of the sentence is highlighted. Four alternatives marked as (A), (B), (C) and (D) are given as substitutions for the highlighted part, one of which will improve the sentence. Choose the correct alternative. In case no improvement is needed, choose the option “No improvement is required” i.e. (E).</strong></p><br><p>After patiently waiting at the bus stop, it was finally <strong>time to get by the congested bus</strong> and embark on the journey home, finding an empty seat amidst the hustle and bustle of fellow commuters.</p>", "options": ["<p>time to get on the crowded bus</p>", "<p>time to get into the congested bus</p>", "<p>time to get over the crowded bus</p>", "<p>time to get through the overcrowded bus</p>", "<p>No improvement required</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The phrase \"time to get on the crowded bus\" is idiomatic and effectively conveys the idea of boarding the bus. \"Get on\" is a common expression used for entering a mode of transportation like a bus.</p>\n<p>Options (b), (c), and (d) introduce variations that either change the meaning or are less idiomatic:</p>\n<p>Option (b) \"time to get into the congested bus\" is acceptable, but \"get on\" is more commonly used for buses and other forms of transportation.</p>\n<p>Option (c) \"time to get over the crowded bus\" changes the meaning. \"Get over\" typically means to overcome a difficulty or obstacle, which is not applicable in the context of boarding a bus.</p>\n<p>Option (d) \"time to get through the overcrowded bus\" changes the meaning. \"Get through\" implies moving through a space, which is not the intended action here.</p>\n<p>Therefore, option (a) \"time to get on the crowded bus\" is the correct choice for maintaining proper grammar and conveying the intended meaning effectively.</p>"}, {"question": "<p><strong>A sentence or a part of the sentence is highlighted. Four alternatives marked as (A), (B), (C) and (D) are given as substitutions for the highlighted part, one of which will improve the sentence. Choose the correct alternative. In case no improvement is needed, choose the option “No improvement is required” i.e. (E).</strong></p><br><p>Before submitting the important document, <strong>she strictly checked over every aspect</strong>, ensuring that there were no errors or omissions that could potentially impact the accuracy and effectiveness of the information presented.</p>", "options": ["<p>she thoroughly checked out every item</p>", "<p>she accurately checked back every aspect</p>", "<p>she carefully checked in every component</p>", "<p>she meticulously checked over every detail</p>", "<p>No improvement required</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The phrase \"she meticulously checked over every detail\" is idiomatic and conveys the idea that she carefully examined each aspect or element of the document. \"Meticulously\" emphasizes a high level of attention to detail.</p>\n<p>Options (a), (b), and (c) introduce variations that either change the meaning or use less idiomatic expressions:</p>\n<p>Option (a) \"she thoroughly checked out every item\" changes the meaning by introducing the term \"checked out,\" which implies a different type of examination.</p>\n<p>Option (b) \"she accurately checked back every aspect\" introduces the term \"checked back,\" which is not idiomatic in this context.</p>\n<p>Option (c) \"she carefully checked in every component\" uses the term \"checked in,\" which is not idiomatic for examining details in this context.</p>\n<p>Therefore, option (d) \"she meticulously checked over every detail\" is the correct choice for maintaining proper grammar and conveying the intended meaning effectively.</p>"}, {"question": "<p><strong>A sentence or a part of the sentence is highlighted. Four alternatives marked as (A), (B), (C) and (D) are given as substitutions for the highlighted part, one of which will improve the sentence. Choose the correct alternative. In case no improvement is needed, choose the option “No improvement is required” i.e. (E).</strong></p><br><p>As the afternoon turned into evening, <strong>the group of friends</strong> <strong>decided to hang around</strong> the cozy coffee shop, sipping their drinks and engaging in animated conversations, reluctant to leave the comforting atmosphere of shared laughter and camaraderie.</p>", "options": ["<p>the batch of friends agreed to hang on</p>", "<p>the gang of friends decreed to hang out</p>", "<p>the cluster of friends arranged to hang on</p>", "<p>the community of friends concluded to hang around</p>", "<p>No improvement required</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: </strong><strong>E</strong></p>\n<p>The original sentence is well-phrased and effectively conveys the intended meaning. The phrase \"decided to hang around\" is idiomatic and suits the context of friends enjoying each other's company at a coffee shop.</p>\n<p>Options (a), (b), (c), and (d) introduce variations that are either less idiomatic, change the meaning, or use awkward phrasing:</p>\n<p>Option (a) \"the batch of friends agreed to hang on\" introduces a less common term for a group of friends (\"batch\") and disrupts the idiomatic expression.</p>\n<p>Option (b) \"the gang of friends decreed to hang out\" changes the tone and formality of the sentence, and \"decreed\" is too formal for this context.</p>\n<p>Option (c) \"the cluster of friends arranged to hang on\" uses an unusual term for a group of friends (\"cluster\") and disrupts the idiomatic expression.</p>\n<p>Option (d) \"the community of friends concluded to hang around\" introduces a more formal term for a group of friends (\"community\") and changes the tone.</p>\n<p>Therefore, option (e) \"No improvement required\" is the correct choice for maintaining proper grammar and conveying the intended meaning effectively.</p>"}, {"question": "<p><strong>A sentence or a part of the sentence is highlighted. Four alternatives marked as (A), (B), (C) and (D) are given as substitutions for the highlighted part, one of which will improve the sentence. Choose the correct alternative. In case no improvement is needed, choose the option “No improvement is required” i.e. (E).</strong></p><br><p>In the fast-paced world of business, the ambitious entrepreneur was <strong>committed to take on the market</strong>, strategically acquiring competitors and implementing innovative strategies to establish their company as the dominant force in the industry.</p>", "options": ["<p>decided to take up the market</p>", "<p>fixed to take out the market</p>", "<p>determined to take over the market</p>", "<p>approved to take on the market</p>", "<p>No improvement required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The phrase \"determined to take over the market\" is idiomatic and effectively conveys the entrepreneur's commitment to achieving dominance in the industry. \"Take over\" in this context means to gain control or become the dominant force.</p>\n<p>Options (a), (b), and (d) introduce variations that either change the meaning, use less idiomatic expressions, or disrupt the intended message:</p>\n<p>Option (a) \"decided to take up the market\" does not convey the same sense of gaining control or dominance as \"take over.\"</p>\n<p>Option (b) \"fixed to take out the market\" introduces a different meaning. \"Take out\" typically means to remove or eliminate, which is not suitable in this context.</p>\n<p>Option (d) \"approved to take on the market\" introduces a less idiomatic expression. \"Take on\" can mean to confront or challenge, but it doesn't convey the idea of establishing dominance.</p>\n<p>Therefore, option (c) \"determined to take over the market\" is the correct choice for maintaining proper grammar and conveying the intended meaning effectively.</p>"}, {"question": "<p><strong>A sentence or a part of the sentence is highlighted. Four alternatives marked as (A), (B), (C) and (D) are given as substitutions for the highlighted part, one of which will improve the sentence. Choose the correct alternative. In case no improvement is needed, choose the option “No improvement is required” i.e. (E).</strong></p><br><p>Realizing his dream of becoming an astronaut, Mark diligently pursued his education and training, <strong>controlling numerous criticisms to go ahead the opportunity</strong> to join a groundbreaking space mission that would take him beyond the confines of Earth's atmosphere.</p>", "options": ["<p>getting numerous disputes to go off the opportunity</p>", "<p>controlling numerous objections to go through the opportunity</p>", "<p>overcoming numerous challenges to go after the opportunity</p>", "<p>taking numerous exceptions to go over the opportunity</p>", "<p>No improvement required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The phrase \"overcoming numerous challenges\" is idiomatic and effectively conveys the idea that Mark faced and successfully dealt with various difficulties or obstacles. The word \"after\" in \"to go after the opportunity\" indicates that Mark pursued the opportunity, making the sentence clear and coherent.</p>\n<p>Options (a), (b), and (d) introduce variations that either change the meaning or use less idiomatic phrasing:</p>\n<p>Option (a) \"getting numerous disputes to go off the opportunity\" changes the meaning and is less clear.</p>\n<p>Option (b) \"controlling numerous objections to go through the opportunity\" introduces a different concept (\"controlling objections\") and is less idiomatic.</p>\n<p>Option (d) \"taking numerous exceptions to go over the opportunity\" changes the meaning and is less clear.</p>\n<p>Therefore, option (c) \"overcoming numerous challenges to go after the opportunity\" is the correct choice for maintaining proper grammar and conveying the intended meaning effectively.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-2)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-2)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

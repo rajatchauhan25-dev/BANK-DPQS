@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-36)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>Read the following sentence carefully. Two phrases are highlighted within the sentence which may or may not be grammatically correct. Select the correct replacements for the highlighted phrases from the options provided. If the highlighted parts of the sentence are already correct, mark \"No replacement required\" as your answer.</strong></p><br><p>China's advancements in nuclear capabilities, <strong>evidenced by its naval expansions</strong>, add another layer of complexity <strong>to the evolving global arms race</strong>, heightening concerns over nuclear proliferation.</p>", "options": ["<p>evidencing by its naval expansions, to the evolve global arms race</p>", "<p>evidenced of its naval expansions, to the evolving globally arms race</p>", "<p>evidenced by it's naval expansions, for an evolving global arms race</p>", "<p>evidenced by their naval expansions, to the evolving global arms racing</p>", "<p>No replacement required</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p><strong>The highlighted phrases \"evidenced by its naval expansions\" and \"to the evolving global arms race\" are error-free.</strong></p>\n<p>This sentence talks about China improving its nuclear weapons, making the world worry about more countries getting nuclear weapons.</p>\n<p><strong>Therefore, the correct answer is \"No replacement required.\"</strong></p>\n<p><strong>Now, let's understand the meanings of some important vocabulary from the given sentence:</strong></p>\n<p><strong>Advancements:</strong> progress or improvements made in a particular area, especially in technology or knowledge.</p>\n<p><strong>Capabilities:</strong> the power or ability to do something.</p>\n<p><strong>Complexity:</strong> the state or quality of being intricate or complicated.</p>\n<p><strong>Heightening: </strong>increasing or becoming more intense.</p>\n<p><strong>Proliferation:</strong> rapid increase in the number or amount of something.</p>"}, {"question": "<p><strong>Read the following sentence carefully. Two phrases are highlighted within the sentence which may or may not be grammatically correct. Select the correct replacements for the highlighted phrases from the options provided. If the highlighted parts of the sentence are already correct, mark \"No replacement required\" as your answer.</strong></p><br><p>Acknowledging women as wealth creators, <strong>specially in their roles of homemakers</strong>, underscores the immeasurable and <strong>invaluably value of their contributions</strong> beyond financial metrics.</p>", "options": ["<p>especially in their roles as homemakers, invaluable value of their contributions</p>", "<p>especially in their roles to homemakers, invaluable value in their contributions</p>", "<p>specially in her roles as homemaker, invaluably value of there contributions</p>", "<p>specially in there role's as homemakers, invaluable and value of there contributions</p>", "<p>No replacement required</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>The correct phrases are \"especially in their roles as homemakers\" and \"invaluable value of their contributions.\"</strong></p>\n<p><u>The highlighted phrase \"specially in their roles of homemakers\" contains two grammatical errors</u>. Firstly, \"specially\" should be replaced with \"especially\" as \"especially\" refers to a specific role, while \"specially\" means that something is done in a special manner. Secondly, the preposition \"of\" should be replaced with \"as\" to indicate that homemakers are being acknowledged for their roles. So, the corrected phrase is \"especially in their roles as homemakers.\"</p>\n<p><u>The highlighted phrase \"invaluably value of their contributions\" is grammatically incorrect</u> because \"invaluably\" is an adverb, and it's being used to modify the noun \"value.\" It should be replaced with \"invaluable,\" an adjective that properly describes the noun \"value.\" So, the corrected phrase should be \"invaluable value of their contributions.\"</p>\n<p><strong>The correct sentence after phrase replacement would be:</strong> \"Acknowledging women as wealth creators, <strong>especially in their roles as homemakers</strong>, underscores the immeasurable and <strong>invaluable value of their contributions</strong> beyond financial metrics.\"</p>"}, {"question": "<p><strong>Read the following sentence carefully. Two phrases are highlighted within the sentence which may or may not be grammatically correct. Select the correct replacements for the highlighted phrases from the options provided. If the highlighted parts of the sentence are already correct, mark \"No replacement required\" as your answer.</strong></p><br><p><strong>Guests would losing themselves in nostalgia</strong>, drawn to the living room's walls adorned with generations of family history, each photograph a portal to <strong>a time long gone but never forgot</strong>.</p>", "options": ["<p>Guests would losing themselves for nostalgia, a timely long gone but never forgot</p>", "<p>Guests will lost themselves in nostalgia, a time long gone but never to forgotten</p>", "<p>Guests would lose themself for nostalgia, a timely long gone but never forgetting</p>", "<p>Guests would lose themselves in nostalgia, a time long gone but never forgotten</p>", "<p>No replacement required</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>The correct phrases are \"Guests would lose themselves in nostalgia\" and \"a time long gone but never forgotten.\"</strong></p>\n<p><u>The highlighted phrase \"Guests would losing themselves in nostalgia\" is grammatically incorrect</u> because \"would\" is a modal verb that requires the base form of the verb to follow it. So, \"lose\" should be used instead of \"losing\" to maintain grammatical accuracy. Thus, the corrected phrase would be \"Guests would lose themselves in nostalgia.\"</p>\n<p><u>The highlighted phrase \"a time long gone but never forgot\" is grammatically incorrect</u> because it uses the past tense verb \"forgot\" instead of the past participle \"forgotten.\" To correct it, we need to use \"forgotten\" to maintain parallelism with \"gone\" and make the sentence grammatically accurate. Thus, the corrected phrase would be \"a time long gone but never forgotten.\"</p>\n<p><strong>The correct sentence after phrase replacement would be:</strong> \"<strong>Guests would lose themselves in nostalgia</strong>, drawn to the living room's walls adorned with generations of family history, each photograph a portal to <strong>a time long gone but never forgotten</strong>.\"</p>"}, {"question": "<p><strong>Read the following sentence carefully. Two phrases are highlighted within the sentence which may or may not be grammatically correct. Select the correct replacements for the highlighted phrases from the options provided. If the highlighted parts of the sentence are already correct, mark \"No replacement required\" as your answer.</strong></p><br><p>Biases and stereotypes pervade motivational content, <strong>blur the line in opinion and fact</strong>, often leading to unhealthy obsessions, mental strain, <strong>and distorting perceptions of success</strong>.</p>", "options": ["<p>blurring the line among opinions and fact, and distorting perceptions to success</p>", "<p>blurring the line between opinion and fact, and distorted perceptions of success</p>", "<p>blurring the line between opinions or fact, and distorted perceptions to successes</p>", "<p>blur the line over opinion and fact, and distort perceptions for success</p>", "<p>No replacement required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>The correct phrases are \"blurring the line between opinion and fact\" and \"and distorted perceptions of success.\"</strong></p>\n<p><u>The highlighted phrase \"blur the line in opinion and fact\" is grammatically incorrect</u> because \"blur\" should be changed to \"blurring\" to match the structure of the sentence. Additionally, \"in\" should be replaced with \"between\" to convey the relationship between the two entities being compared accurately. Thus, the corrected phrase should read, \"blurring the line between opinion and fact.\"</p>\n<p><u>The highlighted phrase \"and distorting perceptions of success\" is grammatically incorrect</u> because it incorrectly uses \"distorting\" instead of \"distorted.\" To correct this, we need to replace \"distorting\" with \"distorted\" as \"distorted\" is the appropriate adjective to modify the noun \"perceptions,\" ensuring coherence in the sentence's structure and clarity of meaning.</p>\n<p><strong>The correct sentence after phrase replacement would be:</strong> \"Biases and stereotypes pervade motivational content, <strong>blurring the line between opinion and fact</strong>, often leading to unhealthy obsessions, mental strain, <strong>and distorted perceptions of success</strong>.\"</p>"}, {"question": "<p><strong>Read the following sentence carefully. Two phrases are highlighted within the sentence which may or may not be grammatically correct. Select the correct replacements for the highlighted phrases from the options provided. If the highlighted parts of the sentence are already correct, mark \"No replacement required\" as your answer.</strong></p><br><p>Both urban and rural women face <strong>a knowledge gap effecting their capacity</strong> to make informed decisions during elections, <strong>necessitating targeted and comprehensively approach</strong> to women's empowerment.</p>", "options": ["<p>a knowledge gapping effecting their capacity, necessitate targeting and comprehensively approach</p>", "<p>a knowledge gap affects they capacity, necessitating targets and comprehensive approaches</p>", "<p>a knowledge gap effects their capacity, necessitate targeting and comprehensively approaches</p>", "<p>a knowledge gap affecting their capacity, necessitating targeted and comprehensive approach</p>", "<p>No replacement required</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>The correct phrases are \"a knowledge gap affecting their capacity\" and \"necessitating targeted and comprehensive approach.\"</strong></p>\n<p><u>The highlighted phrase \"a knowledge gap effecting their capacity\" is grammatically incorrect</u> and \"effecting\" should be replaced with \"affecting\" to make it error-free. \"Effecting\" means to bring about or cause something to happen, while \"affecting\" means to influence or have an impact on something. In this context, we're discussing how the knowledge gap influences or impacts their capacity to make informed decisions, so \"affecting\" is the correct choice.</p>\n<p><u>The highlighted phrase \"necessitating targeted and comprehensively approach\" is grammatically incorrect</u> because \"comprehensively\" is an adverb, not an adjective. It should be replaced with the adjective form \"comprehensive\" to modify the noun \"approach\" correctly. Thus, the corrected phrase would be \"necessitating targeted and comprehensive approach\" ensuring grammatical accuracy and clarity.</p>\n<p><strong>The correct sentence after phrase replacement would be:</strong> \"Both urban and rural women face <strong>a knowledge gap affecting their capacity</strong> to make informed decisions during elections, <strong>necessitating targeted and comprehensive approach</strong> to women's empowerment.\"</p>"}, {"question": "<p><strong>In each of the following questions, a sentence has been divided into five parts out of which one part is erroneous. You are required to choose the option which is grammatically or contextually incorrect.</strong></p><br><p><strong>a).</strong> The recent Cabinet Committee on Security decision</p>\n<p><strong>b).</strong> to green-light the development of a fifth-generation</p>\n<p><strong>c).</strong> stealth fighter is a crucial one intended to</p>\n<p><strong>d).</strong> significantly enhancing India's capacities in</p>\n<p><strong>e).</strong> developing aerial warfare platforms.</p>", "options": ["<p>a</p>", "<p>b</p>", "<p>c</p>", "<p>d</p>", "<p>e</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D</strong></p>\n<p>The error is in part (d). The error in the sentence is the use of the verb \"enhancing\" in its gerund form (\"-ing\" form). In this context, the verb should be in its infinitive form because it follows the phrase \"to\" (from \"intended to\"). Therefore, the correct form is \"enhance,\" which is the base form of the verb. The corrected phrase is \"significantly enhance India's capacities in,\" which maintains proper grammar and sentence structure.</p>\n<p><strong>So, the corrected sentence is: “</strong>The recent Cabinet Committee on Security decision to green-light the development of a fifth-generation stealth fighter is a crucial one intended to significantly enhance India's capacities in developing aerial warfare platforms.”</p>"}, {"question": "<p><strong>In each of the following questions, a sentence has been divided into five parts out of which one part is erroneous. You are required to choose the option which is grammatically or contextually incorrect.</strong></p><br><p><strong>a).</strong> For the past two decades, in response to the sensitivities</p>\n<p><strong>b).</strong> of those who are detached from the excitement</p>\n<p><strong>c).</strong> of choosing popular representatives,</p>\n<p><strong>d).</strong> the Election Commission has took many steps</p>\n<p><strong>e).</strong> to curb the fun and frolic associated with elections.</p>", "options": ["<p>a</p>", "<p>b</p>", "<p>c</p>", "<p>d</p>", "<p>e</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D</strong></p>\n<p>The error is in part (d), where \"took\" is corrected to \"taken\" for proper verb form. \"Taken\" is the past participle form of the verb \"take\" and is required here because it's used with the auxiliary verb \"has\" to form the present perfect tense. Therefore, the correct form is \"taken.\" The corrected phrase is \"has taken,\" which maintains proper verb tense agreement in the sentence.</p>\n<p><strong>So, the corrected sentence is: “</strong>For the past two decades, in response to the sensitivities of those who are detached from the excitement of choosing popular representatives, the Election Commission has taken many steps to curb the fun and frolic associated with elections.<strong>”</strong></p>"}, {"question": "<p><strong>In each of the following questions, a sentence has been divided into five parts out of which one part is erroneous. You are required to choose the option which is grammatically or contextually incorrect.</strong></p><br><p><strong>a).</strong> The Karnataka Government recently tabled</p>\n<p><strong>b).</strong> a bill that makes it compulsory</p>\n<p><strong>c).</strong> to shops and establishments</p>\n<p><strong>d).</strong> to have 60 percent of their</p>\n<p><strong>e).</strong> signboards in Kannada.</p>", "options": ["<p>a</p>", "<p>b</p>", "<p>c</p>", "<p>d</p>", "<p>e</p>"], "correctIndex": 2, "solution": "<p><strong>Answer</strong><strong>: C</strong></p>\n<p>The error is in part (c). The error in the sentence is the use of the preposition \"to\" before \"shops and establishments.\" In this context, the preposition \"for\" is more appropriate because it indicates the purpose or goal of the compulsion. The corrected phrase is \"for shops and establishments,\" which accurately conveys the intended meaning of the sentence.</p>\n<p><strong>So, the corrected sentence is: “</strong>The Karnataka Government recently tabled a bill that makes it compulsory for shops and establishments to have 60 per cent of their signboards in Kannada.<strong>”</strong></p>"}, {"question": "<p><strong>In each of the following questions, a sentence has been divided into five parts out of which one part is erroneous. You are required to choose the option which is grammatically or contextually incorrect.</strong></p><br><p><strong>a).</strong> India has the loudest voice in seeking</p>\n<p><strong>b).</strong> to lower the global average cost of money transfer,</p>\n<p><strong>c).</strong> being the largest contributor to the</p>\n<p><strong>d).</strong> international migrant workforce,</p>\n<p><strong>e).</strong> as well as the recipients of the biggest remittance inflow.</p>", "options": ["<p>a</p>", "<p>b</p>", "<p>c</p>", "<p>d</p>", "<p>e</p>"], "correctIndex": 4, "solution": "<p><strong>Answer</strong><strong>: E</strong></p>\n<p>The error is in part (e). The error in the sentence is the use of the plural noun \"recipients\" to refer to \"India.\" However, \"India\" is a singular entity, so it should be followed by a singular noun. Therefore, the corrected form is \"recipient,\" which matches the singular subject \"India.\" This adjustment ensures grammatical agreement within the sentence.</p>\n<p><strong>So, the corrected sentence is: “</strong>India has the loudest voice in seeking to lower the global average cost of money transfer, being the largest contributor to the international migrant workforce, as well as the recipient of the biggest remittance inflow.<strong>”</strong></p>"}, {"question": "<p><strong>In each of the following questions, a sentence has been divided into five parts out of which one part is erroneous. You are required to choose the option which is grammatically or contextually incorrect.</strong></p><br><p><strong>a).</strong> A study from Christian Medical College, Vellore, reveals that</p>\n<p><strong>b).</strong> Indians with Covid-19 are more likely to suffering from</p>\n<p><strong>c).</strong> lung function impairments compared to Europeans</p>\n<p><strong>d).</strong> and Chinese, possibly due to air pollution,</p>\n<p><strong>e).</strong> lack of physical activity, and high stress levels.</p>", "options": ["<p>a</p>", "<p>b</p>", "<p>c</p>", "<p>d</p>", "<p>e</p>"], "correctIndex": 1, "solution": "<p><strong>Answer</strong><strong>: B</strong></p>\n<p>The error is in part (b). The error in the sentence is the incorrect use of the verb \"suffering.\" In this context, the correct structure is \"to suffer from,\" where \"suffer\" is the infinitive form of the verb. Therefore, the corrected phrase is \"to suffer from,\" which maintains proper grammar and sentence structure.</p>\n<p><strong>So, the corrected sentence is: “</strong>A study from Christian Medical College, Vellore, reveals that Indians with COVID-19 are more likely to suffer from lung function impairments compared to Europeans and Chinese, possibly due to air pollution, lack of physical activity, and high stress levels.<strong>”</strong></p>"}, {"question": "<p><strong>In each question below, words have been highlighted. These words used might be correct or may be inappropriate in usage. You must read the given sentences carefully and choose the option with the incorrect used word as your answer.</strong></p><br><p><strong>A).</strong> Although the weather forecast predicted rain, the picnic went ahead as planned under the <strong>auspices </strong>of clear skies.</p>\n<p><strong>B).</strong> The committee members were tasked with conducting a <strong>thorough</strong> analysis of the financial report before making any decisions.</p>\n<p><strong>C).</strong> The CEO's speech was met with <strong>rapt</strong> attention from the audience, who were eager to hear the company's future plans.</p>\n<p><strong>D).</strong> After the storm, the community rallied together to rebuild the damaged infrastructure, demonstrating a remarkable <strong>complication</strong> of cooperation and resilience.</p>", "options": ["<p>Only A</p>", "<p>Only B</p>", "<p>Both A &amp; B</p>", "<p>Only D</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>In this context, the correct word is \"display,\" as it refers to showing qualities or traits. The other options are correct:</p>\n<p>\"Auspices\" means favorable conditions or divine protection.</p>\n<p>\"Thorough\" means complete with regard to every detail.</p>\n<p>\"Rapt\" means completely fascinated by what one is seeing or hearing.</p>"}, {"question": "<p><strong>In each question below, words have been highlighted. These words used might be correct or may be inappropriate in usage. You must read the given sentences carefully and choose the option with the incorrect used word as your answer.</strong></p><br><p><strong>A). </strong>The professor’s lecture was not only <strong>insightful</strong> but also thoroughly engaging, holding the students' attention for the entire duration of the class.</p>\n<p><strong>B).</strong> In the face of <strong>insurmountable</strong> challenges, the team displayed indomitable spirit, refusing to give up on their goals.</p>\n<p><strong>C).</strong> The artist’s workshop was filled with <strong>intriguing</strong> pieces that challenged conventional notions of beauty and art.</p>\n<p><strong>D).</strong> Despite the intense pressure, the negotiator remained <strong>composed</strong>, navigating the complex discussions with elegance and grace.</p>", "options": ["<p>Only A</p>", "<p>Only B</p>", "<p>Both A &amp; B</p>", "<p>Only D</p>", "<p>All correct</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>Each sentence uses the words \"Insightful\", \"Insurmountable\", \"intriguing\", \"Composed,\" appropriately within their contexts.</p>"}, {"question": "<p><strong>In each question below, words have been highlighted. These words used might be correct or may be inappropriate in usage. You must read the given sentences carefully and choose the option with the incorrect used word as your answer.</strong></p><br><p><strong>A).</strong> The detective's keen <strong>observational </strong>skills allowed her to notice subtle clues that others might have overlooked, ultimately solving the case.</p>\n<p><strong>B).</strong> The engineer's design incorporated a variety of <strong>innovative</strong> features, ensuring that the bridge would be both durable and aesthetically pleasing.</p>\n<p><strong>C).</strong> The novel's <strong>protagonist </strong>was faced with a series of moral dilemmas, each one more convoluted than the last.</p>\n<p><strong>D).</strong> The company's <strong>profits</strong> have been steadily diminishing, which has led to a great deal of concern among its stakeholders.</p>", "options": ["<p>Only A</p>", "<p>Only B</p>", "<p>Both A &amp; B</p>", "<p>Only D</p>", "<p>All correct</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>Each sentence uses the words appropriately within their contexts.</p>"}, {"question": "<p><strong>In each question below, words have been highlighted. These words used might be correct or may be inappropriate in usage. You must read the given sentences carefully and choose the option with the incorrect used word as your answer.</strong></p><br><p><strong>A).</strong> The artist's latest exhibit was a stunning array of <strong>perceptive </strong>paintings that captured the essence of human emotions.</p>\n<p><strong>B).</strong> Despite facing numerous <strong>obstacles</strong>, the entrepreneur's resolve remained unwavering, ultimately leading to the successful launch of the new product.</p>\n<p><strong>C).</strong> The committee's decision was influenced by a myriad of factors, including the economic <strong>forecast</strong> and public opinion.</p>\n<p><strong>D).</strong> The scientist's groundbreaking <strong>research</strong> was published in a prestigious journal, receiving accolades from the academic community.</p>", "options": ["<p>Only A</p>", "<p>Only B</p>", "<p>Both A &amp; B</p>", "<p>Only D</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>\"Research\" refers to systematic investigation to establish facts or principles.</p>\n<p>\"Obstacles\" refers to things that block one's way or prevent progress.</p>\n<p>\"Forecast\" refers to a prediction or estimate of future events, especially weather or financial trends.</p>\n<p>The word \"perceptive\" means having or showing sensitive insight. However, in the context of paintings, \"evocative\" (bringing strong images, memories, or feelings to mind) would be a better fit. The other options are correct.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>World immunization week occurs annually during the last week of April. The campaign aims to highlight the collective action needed and to promote the use of vaccines in all age groups in order to prevent disease and protect life. The ultimate goal is to raise awareness of the importance of immunization amongst the public, thereby increasing vaccination rates and reducing vaccine-<strong>preventable</strong> illnesses and deaths.</p>\n<p>The success of the first approved mRNA vaccines for coronavirus disease 2019 (COVID-19) showed promise for the utilization of this technology to reduce preventable illness across multiple disease areas, says Global Data, a data and analytics company.<br/>According to Global Data, there are currently 507 prophylactic vaccines currently in late-stage development for a wide range of infectious diseases. Of these, 88 are mRNA vaccines in late-stage development for the prevention of diseases such as tuberculosis, malaria, influenza, COVID-19, respiratory syncytial virus (RSV) and Lyme disease, amongst others. Anaelle Tannen, Infectious Disease Analyst at Global Data comments: “Vaccinations have heavily reduced the burden of disease in our society. We have already seen the <strong>eradication</strong> of smallpox and are very close to achieving the same with polio. Promoting immunization, improving vaccination schedules, and developing new vaccines are all methods that will contribute towards a decrease in morbidity mortality.”</p>\n<p>Global immunization has been one of humanity’s greatest achievements, with 3.5-5 million deaths averted each year from diseases such as diphtheria, tetanus, pertussis, influenza, and measles, according to the World Health Organization (WHO). There are now vaccines available to prevent over 20-life threatening diseases. In addition to this, novel mechanisms are expected to broaden the scope of available prophylactic vaccines in the near future.</p>\n<p>Tannen adds: “The recent COVID-19 pandemic has emphasized the need for effective vaccines, improving vaccination access and acceptance, in order to protect the health, wellness, and security of the world population”.</p>\n<p>According to key opinion leaders (KOLs) interviewed by Global Data, mRNA technology offers the advantage of rapid production and adaptability for evolving targets. However, vaccines based on this technology necessitate ultra-cold storage, and thus modifying this would make the vaccine even more desirable.</p>\n<p>Tannen concludes: “Whilst immunization is one of the cheapest and most effective public health interventions, enabling the eradication of disease, vaccine hesitancy is still very much present, and especially with the mRNA approach. Therefore, more work is needed to encourage acceptance of this immunization strategy among the public”.</p><br><p><strong>According to the passage, what is the ultimate goal of World Immunization Week?</strong></p>", "options": ["<p>To promote the use of traditional medicines</p>", "<p>To highlight the importance of physical exercise</p>", "<p>To raise awareness of the importance of immunization and increase vaccination rates</p>", "<p>To discourage the use of vaccines in all age groups</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The passage mentions that the ultimate goal of World Immunization Week is <strong>to</strong> <strong>raise awareness</strong> of the importance of immunization amongst the public, thereby increasing vaccination rates and reducing vaccine-preventable illnesses and deaths.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>World immunization week occurs annually during the last week of April. The campaign aims to highlight the collective action needed and to promote the use of vaccines in all age groups in order to prevent disease and protect life. The ultimate goal is to raise awareness of the importance of immunization amongst the public, thereby increasing vaccination rates and reducing vaccine-<strong>preventable</strong> illnesses and deaths.</p>\n<p>The success of the first approved mRNA vaccines for coronavirus disease 2019 (COVID-19) showed promise for the utilization of this technology to reduce preventable illness across multiple disease areas, says Global Data, a data and analytics company.<br/>According to Global Data, there are currently 507 prophylactic vaccines currently in late-stage development for a wide range of infectious diseases. Of these, 88 are mRNA vaccines in late-stage development for the prevention of diseases such as tuberculosis, malaria, influenza, COVID-19, respiratory syncytial virus (RSV) and Lyme disease, amongst others. Anaelle Tannen, Infectious Disease Analyst at Global Data comments: “Vaccinations have heavily reduced the burden of disease in our society. We have already seen the <strong>eradication</strong> of smallpox and are very close to achieving the same with polio. Promoting immunization, improving vaccination schedules, and developing new vaccines are all methods that will contribute towards a decrease in morbidity mortality.”</p>\n<p>Global immunization has been one of humanity’s greatest achievements, with 3.5-5 million deaths averted each year from diseases such as diphtheria, tetanus, pertussis, influenza, and measles, according to the World Health Organization (WHO). There are now vaccines available to prevent over 20-life threatening diseases. In addition to this, novel mechanisms are expected to broaden the scope of available prophylactic vaccines in the near future.</p>\n<p>Tannen adds: “The recent COVID-19 pandemic has emphasized the need for effective vaccines, improving vaccination access and acceptance, in order to protect the health, wellness, and security of the world population”.</p>\n<p>According to key opinion leaders (KOLs) interviewed by Global Data, mRNA technology offers the advantage of rapid production and adaptability for evolving targets. However, vaccines based on this technology necessitate ultra-cold storage, and thus modifying this would make the vaccine even more desirable.</p>\n<p>Tannen concludes: “Whilst immunization is one of the cheapest and most effective public health interventions, enabling the eradication of disease, vaccine hesitancy is still very much present, and especially with the mRNA approach. Therefore, more work is needed to encourage acceptance of this immunization strategy among the public”.</p><br><p><strong>According to Global Data, how many prophylactic vaccines are currently in late-stage development?</strong></p>", "options": ["<p>307</p>", "<p>407</p>", "<p>507</p>", "<p>607</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Global Data reports that there are currently <strong>507 </strong>prophylactic vaccines in late-stage development for a wide range of infectious diseases.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>World immunization week occurs annually during the last week of April. The campaign aims to highlight the collective action needed and to promote the use of vaccines in all age groups in order to prevent disease and protect life. The ultimate goal is to raise awareness of the importance of immunization amongst the public, thereby increasing vaccination rates and reducing vaccine-<strong>preventable</strong> illnesses and deaths.</p>\n<p>The success of the first approved mRNA vaccines for coronavirus disease 2019 (COVID-19) showed promise for the utilization of this technology to reduce preventable illness across multiple disease areas, says Global Data, a data and analytics company.<br/>According to Global Data, there are currently 507 prophylactic vaccines currently in late-stage development for a wide range of infectious diseases. Of these, 88 are mRNA vaccines in late-stage development for the prevention of diseases such as tuberculosis, malaria, influenza, COVID-19, respiratory syncytial virus (RSV) and Lyme disease, amongst others. Anaelle Tannen, Infectious Disease Analyst at Global Data comments: “Vaccinations have heavily reduced the burden of disease in our society. We have already seen the <strong>eradication</strong> of smallpox and are very close to achieving the same with polio. Promoting immunization, improving vaccination schedules, and developing new vaccines are all methods that will contribute towards a decrease in morbidity mortality.”</p>\n<p>Global immunization has been one of humanity’s greatest achievements, with 3.5-5 million deaths averted each year from diseases such as diphtheria, tetanus, pertussis, influenza, and measles, according to the World Health Organization (WHO). There are now vaccines available to prevent over 20-life threatening diseases. In addition to this, novel mechanisms are expected to broaden the scope of available prophylactic vaccines in the near future.</p>\n<p>Tannen adds: “The recent COVID-19 pandemic has emphasized the need for effective vaccines, improving vaccination access and acceptance, in order to protect the health, wellness, and security of the world population”.</p>\n<p>According to key opinion leaders (KOLs) interviewed by Global Data, mRNA technology offers the advantage of rapid production and adaptability for evolving targets. However, vaccines based on this technology necessitate ultra-cold storage, and thus modifying this would make the vaccine even more desirable.</p>\n<p>Tannen concludes: “Whilst immunization is one of the cheapest and most effective public health interventions, enabling the eradication of disease, vaccine hesitancy is still very much present, and especially with the mRNA approach. Therefore, more work is needed to encourage acceptance of this immunization strategy among the public”.</p><br><p><strong>What is one advantage of mRNA technology for vaccine development mentioned in the passage?</strong></p>", "options": ["<p>Requires no refrigeration</p>", "<p>Slow production process</p>", "<p>Rapid production and adaptability for evolving targets</p>", "<p>Limited effectiveness against infectious diseases</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>According to key leaders interviewed by Global Data, one advantage of mRNA technology is <strong>rapid production</strong> and adaptability for evolving targets.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>World immunization week occurs annually during the last week of April. The campaign aims to highlight the collective action needed and to promote the use of vaccines in all age groups in order to prevent disease and protect life. The ultimate goal is to raise awareness of the importance of immunization amongst the public, thereby increasing vaccination rates and reducing vaccine-<strong>preventable</strong> illnesses and deaths.</p>\n<p>The success of the first approved mRNA vaccines for coronavirus disease 2019 (COVID-19) showed promise for the utilization of this technology to reduce preventable illness across multiple disease areas, says Global Data, a data and analytics company.<br/>According to Global Data, there are currently 507 prophylactic vaccines currently in late-stage development for a wide range of infectious diseases. Of these, 88 are mRNA vaccines in late-stage development for the prevention of diseases such as tuberculosis, malaria, influenza, COVID-19, respiratory syncytial virus (RSV) and Lyme disease, amongst others. Anaelle Tannen, Infectious Disease Analyst at Global Data comments: “Vaccinations have heavily reduced the burden of disease in our society. We have already seen the <strong>eradication</strong> of smallpox and are very close to achieving the same with polio. Promoting immunization, improving vaccination schedules, and developing new vaccines are all methods that will contribute towards a decrease in morbidity mortality.”</p>\n<p>Global immunization has been one of humanity’s greatest achievements, with 3.5-5 million deaths averted each year from diseases such as diphtheria, tetanus, pertussis, influenza, and measles, according to the World Health Organization (WHO). There are now vaccines available to prevent over 20-life threatening diseases. In addition to this, novel mechanisms are expected to broaden the scope of available prophylactic vaccines in the near future.</p>\n<p>Tannen adds: “The recent COVID-19 pandemic has emphasized the need for effective vaccines, improving vaccination access and acceptance, in order to protect the health, wellness, and security of the world population”.</p>\n<p>According to key opinion leaders (KOLs) interviewed by Global Data, mRNA technology offers the advantage of rapid production and adaptability for evolving targets. However, vaccines based on this technology necessitate ultra-cold storage, and thus modifying this would make the vaccine even more desirable.</p>\n<p>Tannen concludes: “Whilst immunization is one of the cheapest and most effective public health interventions, enabling the eradication of disease, vaccine hesitancy is still very much present, and especially with the mRNA approach. Therefore, more work is needed to encourage acceptance of this immunization strategy among the public”.</p><br><p><strong>Based on the passage, why more work is needed to encourage the acceptance of mRNA immunization strategy among the public?</strong></p>", "options": ["<p>mRNA vaccines have proven to be less effective in preventing diseases</p>", "<p>Ultra-cold storage requirements for mRNA vaccines make them less desirable</p>", "<p>There is a lack of research supporting the safety and efficacy of mRNA vaccines</p>", "<p>Vaccine hesitancy, especially towards mRNA approach, still exists among the public</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The passage mentions that <strong>vaccine hesitancy</strong>, especially towards mRNA approach, is still present among the public, indicating the need for more work to encourage acceptance of this immunization strategy.</p>\n<p>Therefore, option D is the correct answer.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>World immunization week occurs annually during the last week of April. The campaign aims to highlight the collective action needed and to promote the use of vaccines in all age groups in order to prevent disease and protect life. The ultimate goal is to raise awareness of the importance of immunization amongst the public, thereby increasing vaccination rates and reducing vaccine-<strong>preventable</strong> illnesses and deaths.</p>\n<p>The success of the first approved mRNA vaccines for coronavirus disease 2019 (COVID-19) showed promise for the utilization of this technology to reduce preventable illness across multiple disease areas, says Global Data, a data and analytics company.<br/>According to Global Data, there are currently 507 prophylactic vaccines currently in late-stage development for a wide range of infectious diseases. Of these, 88 are mRNA vaccines in late-stage development for the prevention of diseases such as tuberculosis, malaria, influenza, COVID-19, respiratory syncytial virus (RSV) and Lyme disease, amongst others. Anaelle Tannen, Infectious Disease Analyst at Global Data comments: “Vaccinations have heavily reduced the burden of disease in our society. We have already seen the <strong>eradication</strong> of smallpox and are very close to achieving the same with polio. Promoting immunization, improving vaccination schedules, and developing new vaccines are all methods that will contribute towards a decrease in morbidity mortality.”</p>\n<p>Global immunization has been one of humanity’s greatest achievements, with 3.5-5 million deaths averted each year from diseases such as diphtheria, tetanus, pertussis, influenza, and measles, according to the World Health Organization (WHO). There are now vaccines available to prevent over 20-life threatening diseases. In addition to this, novel mechanisms are expected to broaden the scope of available prophylactic vaccines in the near future.</p>\n<p>Tannen adds: “The recent COVID-19 pandemic has emphasized the need for effective vaccines, improving vaccination access and acceptance, in order to protect the health, wellness, and security of the world population”.</p>\n<p>According to key opinion leaders (KOLs) interviewed by Global Data, mRNA technology offers the advantage of rapid production and adaptability for evolving targets. However, vaccines based on this technology necessitate ultra-cold storage, and thus modifying this would make the vaccine even more desirable.</p>\n<p>Tannen concludes: “Whilst immunization is one of the cheapest and most effective public health interventions, enabling the eradication of disease, vaccine hesitancy is still very much present, and especially with the mRNA approach. Therefore, more work is needed to encourage acceptance of this immunization strategy among the public”.</p><br><p><strong>What does the term \"prophylactic vaccines\" refer to in the passage?</strong></p>", "options": ["<p>Vaccines used to treat infectious diseases</p>", "<p>Vaccines administered during pregnancy</p>", "<p>Vaccines given to prevent diseases</p>", "<p>Vaccines used for emergency situations</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>\"<strong>Prophylactic vaccines</strong>\" are mentioned in the passage in the context of preventing diseases, indicating that they refer to <strong>vaccines given</strong> to prevent diseases.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>World immunization week occurs annually during the last week of April. The campaign aims to highlight the collective action needed and to promote the use of vaccines in all age groups in order to prevent disease and protect life. The ultimate goal is to raise awareness of the importance of immunization amongst the public, thereby increasing vaccination rates and reducing vaccine-<strong>preventable</strong> illnesses and deaths.</p>\n<p>The success of the first approved mRNA vaccines for coronavirus disease 2019 (COVID-19) showed promise for the utilization of this technology to reduce preventable illness across multiple disease areas, says Global Data, a data and analytics company.<br/>According to Global Data, there are currently 507 prophylactic vaccines currently in late-stage development for a wide range of infectious diseases. Of these, 88 are mRNA vaccines in late-stage development for the prevention of diseases such as tuberculosis, malaria, influenza, COVID-19, respiratory syncytial virus (RSV) and Lyme disease, amongst others. Anaelle Tannen, Infectious Disease Analyst at Global Data comments: “Vaccinations have heavily reduced the burden of disease in our society. We have already seen the <strong>eradication</strong> of smallpox and are very close to achieving the same with polio. Promoting immunization, improving vaccination schedules, and developing new vaccines are all methods that will contribute towards a decrease in morbidity mortality.”</p>\n<p>Global immunization has been one of humanity’s greatest achievements, with 3.5-5 million deaths averted each year from diseases such as diphtheria, tetanus, pertussis, influenza, and measles, according to the World Health Organization (WHO). There are now vaccines available to prevent over 20-life threatening diseases. In addition to this, novel mechanisms are expected to broaden the scope of available prophylactic vaccines in the near future.</p>\n<p>Tannen adds: “The recent COVID-19 pandemic has emphasized the need for effective vaccines, improving vaccination access and acceptance, in order to protect the health, wellness, and security of the world population”.</p>\n<p>According to key opinion leaders (KOLs) interviewed by Global Data, mRNA technology offers the advantage of rapid production and adaptability for evolving targets. However, vaccines based on this technology necessitate ultra-cold storage, and thus modifying this would make the vaccine even more desirable.</p>\n<p>Tannen concludes: “Whilst immunization is one of the cheapest and most effective public health interventions, enabling the eradication of disease, vaccine hesitancy is still very much present, and especially with the mRNA approach. Therefore, more work is needed to encourage acceptance of this immunization strategy among the public”.</p><br><p><strong>What is the antonym of \"preventable\" as used in the passage?</strong></p>", "options": ["<p>Avoidable</p>", "<p>Inevitable</p>", "<p>Curable</p>", "<p>Negligible</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>In the context of the passage, \"<strong>preventable</strong>\" refers to diseases that can be avoided through vaccination. The antonym of \"preventable\" would be \"<strong>inevitable</strong>,\" meaning diseases that cannot be avoided.</p>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>World immunization week occurs annually during the last week of April. The campaign aims to highlight the collective action needed and to promote the use of vaccines in all age groups in order to prevent disease and protect life. The ultimate goal is to raise awareness of the importance of immunization amongst the public, thereby increasing vaccination rates and reducing vaccine-<strong>preventable</strong> illnesses and deaths.</p>\n<p>The success of the first approved mRNA vaccines for coronavirus disease 2019 (COVID-19) showed promise for the utilization of this technology to reduce preventable illness across multiple disease areas, says Global Data, a data and analytics company.<br/>According to Global Data, there are currently 507 prophylactic vaccines currently in late-stage development for a wide range of infectious diseases. Of these, 88 are mRNA vaccines in late-stage development for the prevention of diseases such as tuberculosis, malaria, influenza, COVID-19, respiratory syncytial virus (RSV) and Lyme disease, amongst others. Anaelle Tannen, Infectious Disease Analyst at Global Data comments: “Vaccinations have heavily reduced the burden of disease in our society. We have already seen the <strong>eradication</strong> of smallpox and are very close to achieving the same with polio. Promoting immunization, improving vaccination schedules, and developing new vaccines are all methods that will contribute towards a decrease in morbidity mortality.”</p>\n<p>Global immunization has been one of humanity’s greatest achievements, with 3.5-5 million deaths averted each year from diseases such as diphtheria, tetanus, pertussis, influenza, and measles, according to the World Health Organization (WHO). There are now vaccines available to prevent over 20-life threatening diseases. In addition to this, novel mechanisms are expected to broaden the scope of available prophylactic vaccines in the near future.</p>\n<p>Tannen adds: “The recent COVID-19 pandemic has emphasized the need for effective vaccines, improving vaccination access and acceptance, in order to protect the health, wellness, and security of the world population”.</p>\n<p>According to key opinion leaders (KOLs) interviewed by Global Data, mRNA technology offers the advantage of rapid production and adaptability for evolving targets. However, vaccines based on this technology necessitate ultra-cold storage, and thus modifying this would make the vaccine even more desirable.</p>\n<p>Tannen concludes: “Whilst immunization is one of the cheapest and most effective public health interventions, enabling the eradication of disease, vaccine hesitancy is still very much present, and especially with the mRNA approach. Therefore, more work is needed to encourage acceptance of this immunization strategy among the public”.</p><br><p><strong>What is the synonym of \"eradication\" as used in the passage?</strong></p>", "options": ["<p>Creation</p>", "<p>Development</p>", "<p>Elimination</p>", "<p>Expansion</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>In the passage, \"<strong>eradication</strong>\" refers to the complete elimination or removal of diseases like smallpox and polio. A synonym for \"eradication\" is \"<strong>elimination,</strong>\" which also implies the removal or eradication of something.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>The following statement has three blanks which are to be filled with the options given below. Find the right combination of words which when placed in the same order as given in the option can most suitably complete the sentence without changing the meaning of the statement.</strong></p><br><p><strong>In light of recent technological advancements, it is imperative for educational institutions to ____________ their curricula, ensuring that they ____________ students with the skills necessary to ____________ in an increasingly digital world.</strong></p>", "options": ["<p>preserve, hinder, falter</p>", "<p>innovate, equip, thrive</p>", "<p>simplify, overlook, struggle</p>", "<p>stagnate, deprive, regress</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>Innovate:</strong> to introduce new ideas, methods, or products; to make changes in something established.</p>\n<p><strong>Equip:</strong> to provide someone with the necessary tools or skills for a particular purpose.</p>\n<p><strong>Thrive:</strong> to grow or develop well or vigorously; to prosper.</p>\n<p>The sentence emphasizes the need for educational institutions to change (innovate) their curricula to ensure they provide (equip) students with essential skills, allowing them to succeed (thrive) in a world that is increasingly driven by digital technology.</p>"}, {"question": "<p><strong>The following statement has three blanks which are to be filled with the options given below. Find the right combination of words which when placed in the same order as given in the option can most suitably complete the sentence without changing the meaning of the statement.</strong></p><br><p><strong>As organizations strive for excellence, they must ____________ a balance between achieving short-term goals and ____________ long-term sustainability, thereby ____________ a holistic approach to their operational strategies.</strong></p>", "options": ["<p>impose, sacrificing, undermining</p>", "<p>achieve, neglecting, maintaining</p>", "<p>strike, prioritizing, embracing</p>", "<p>eliminate, resisting, rejecting</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>Strike:</strong> to find or achieve something that is difficult to obtain; to reach a balance.</p>\n<p><strong>Prioritizing:</strong> to treat something as more important than other things.</p>\n<p><strong>Embracing:</strong> to accept or support something willingly or enthusiastically.</p>\n<p>The sentence conveys that organizations need to find (strike) a balance between meeting immediate goals and focusing on (prioritizing) long-term sustainability, which requires accepting (embracing) a comprehensive approach to their operational strategies.</p>"}, {"question": "<p><strong>The following statement has three blanks which are to be filled with the options given below. Find the right combination of words which when placed in the same order as given in the option can most suitably complete the sentence without changing the meaning of the statement.</strong></p><br><p><strong>The increasing complexity of global supply chains necessitates that companies ____________ their risk management strategies, taking into account not only ____________ disruptions but also ____________ opportunities for improvement.</strong></p>", "options": ["<p>obscure, minor, neglecting</p>", "<p>overhaul, potential, ignoring</p>", "<p>simplify, insignificant, avoiding</p>", "<p>reinforce, major, recognizing</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>Reinforce:</strong> to strengthen or support something.</p>\n<p><strong>Major:</strong> important or significant; having a great effect.</p>\n<p><strong>Recognizing:</strong> identifying or acknowledging something.</p>\n<p>The sentence indicates that due to the intricate nature of global supply chains, companies must strengthen (reinforce) their risk management strategies to address (major) disruptions and simultaneously acknowledge (recognizing) opportunities for improvement.</p>"}, {"question": "<p><strong>The following statement has three blanks which are to be filled with the options given below. Find the right combination of words which when placed in the same order as given in the option can most suitably complete the sentence without changing the meaning of the statement.</strong></p><br><p><strong>The recent study highlights that effective leadership is not merely about ____________ tasks but also about ____________ a vision that ____________ team members towards a common goal.</strong></p>", "options": ["<p>delegating, imposing, repels</p>", "<p>executing, articulating, aligns</p>", "<p>controlling, confusing, separates</p>", "<p>managing, neglecting, dissuades</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>Executing: </strong>carrying out or putting into effect; performing.</p>\n<p><strong>Articulating: </strong>expressing an idea or feeling fluently and coherently.</p>\n<p><strong>Aligns:</strong> to arrange or adjust in a line or to bring into agreement.</p>\n<p>The sentence suggests that effective leadership involves not only carrying out (executing) tasks but also clearly expressing (articulating) a vision that brings (aligns) team members together towards achieving a shared objective.</p>"}, {"question": "<p><strong>The following statement has three blanks which are to be filled with the options given below. Find the right combination of words which when placed in the same order as given in the option can most suitably complete the sentence without changing the meaning of the statement.</strong></p><br><p><strong>In order to combat the effects of climate change, policymakers must ____________ innovative policies that ____________ environmental protection while also ____________ economic development initiatives.</strong></p>", "options": ["<p>reject, hinder, ignoring</p>", "<p>formulate, prioritize, undermining</p>", "<p>dismiss, overlook, restricting</p>", "<p>devise, enhance, promoting</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>Devise: </strong>to plan or invent a complex procedure or system.</p>\n<p><strong>Enhance:</strong> to improve the quality or value of something.</p>\n<p><strong>Promoting: </strong>to support or actively encourage a cause or proposal.</p>\n<p>The sentence articulates that to effectively address climate change, policymakers need to create (devise) innovative policies that improve (enhance) environmental protection while actively encouraging (promoting) economic development initiatives.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-36)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-36)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-84)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>Below, a passage is given with five blanks labelled (A-E). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>The concept of economic globalization has been a subject of intense debate for decades. Supporters argue that it has led to the <strong>(A) __________</strong> of wealth and opportunities across the globe, with nations benefiting from increased trade and investment. However, critics claim that globalization has disproportionately favored developed countries while leaving many developing nations behind. One of the major criticisms is that globalization has intensified income <strong>(B) __________,</strong> with wealth increasingly concentrated in the hands of a few.</p>\n<p>In addition, the rise of multinational corporations has further complicated this issue. These entities often operate in a manner that allows them to <strong>(C) __________</strong> local regulations, exploiting gaps in labor and environmental laws in developing countries. This has resulted in significant environmental degradation and poor working conditions in many regions. As a result, there have been growing calls for stricter international regulations to ensure that economic development is both equitable and <strong>(D) __________.</strong></p>\n<p>Nevertheless, proponents maintain that globalization has provided unprecedented access to technology, education, and resources, fostering innovation and improving living standards for many. They argue that any challenges arising from globalization can be addressed through collaborative policymaking and sustainable development strategies, ensuring that future growth is more <strong>(E) __________</strong> and inclusive.</p><br><p><strong>Which word comes in the blank labelled A?</strong></p>", "options": ["<p>concentration</p>", "<p>eradication</p>", "<p>dissolution</p>", "<p>distribution</p>", "<p>reduction</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>Globalization has led to the \"distribution\" of wealth and opportunities across the globe. The word \"distribution\" fits the context as it refers to the spreading of wealth and benefits. \"Concentration\" would imply wealth is being gathered in one place, which contradicts the idea of benefits spreading. \"Eradication,\" \"dissolution,\" and \"reduction\" do not match the positive effects that supporters of globalization emphasize.</p>"}, {"question": "<p><strong>Below, a passage is given with five blanks labelled (A-E). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>The concept of economic globalization has been a subject of intense debate for decades. Supporters argue that it has led to the <strong>(A) __________</strong> of wealth and opportunities across the globe, with nations benefiting from increased trade and investment. However, critics claim that globalization has disproportionately favored developed countries while leaving many developing nations behind. One of the major criticisms is that globalization has intensified income <strong>(B) __________,</strong> with wealth increasingly concentrated in the hands of a few.</p>\n<p>In addition, the rise of multinational corporations has further complicated this issue. These entities often operate in a manner that allows them to <strong>(C) __________</strong> local regulations, exploiting gaps in labor and environmental laws in developing countries. This has resulted in significant environmental degradation and poor working conditions in many regions. As a result, there have been growing calls for stricter international regulations to ensure that economic development is both equitable and <strong>(D) __________.</strong></p>\n<p>Nevertheless, proponents maintain that globalization has provided unprecedented access to technology, education, and resources, fostering innovation and improving living standards for many. They argue that any challenges arising from globalization can be addressed through collaborative policymaking and sustainable development strategies, ensuring that future growth is more <strong>(E) __________</strong> and inclusive.</p><br><p><strong>Which word comes in the blank labelled B?</strong></p>", "options": ["<p>inequality</p>", "<p>taxation</p>", "<p>fairness</p>", "<p>uniformity</p>", "<p>parity</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>One of the major criticisms is that globalization has intensified income \"inequality,\" with wealth increasingly concentrated in the hands of a few. The correct word, \"inequality,\" captures the disparity between the rich and poor, which is a key criticism of globalization. \"Taxation\" and \"uniformity\" do not make sense in this context, while \"fairness\" and \"parity\" would contradict the argument being made.</p>"}, {"question": "<p><strong>Below, a passage is given with five blanks labelled (A-E). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>The concept of economic globalization has been a subject of intense debate for decades. Supporters argue that it has led to the <strong>(A) __________</strong> of wealth and opportunities across the globe, with nations benefiting from increased trade and investment. However, critics claim that globalization has disproportionately favored developed countries while leaving many developing nations behind. One of the major criticisms is that globalization has intensified income <strong>(B) __________,</strong> with wealth increasingly concentrated in the hands of a few.</p>\n<p>In addition, the rise of multinational corporations has further complicated this issue. These entities often operate in a manner that allows them to <strong>(C) __________</strong> local regulations, exploiting gaps in labor and environmental laws in developing countries. This has resulted in significant environmental degradation and poor working conditions in many regions. As a result, there have been growing calls for stricter international regulations to ensure that economic development is both equitable and <strong>(D) __________.</strong></p>\n<p>Nevertheless, proponents maintain that globalization has provided unprecedented access to technology, education, and resources, fostering innovation and improving living standards for many. They argue that any challenges arising from globalization can be addressed through collaborative policymaking and sustainable development strategies, ensuring that future growth is more <strong>(E) __________</strong> and inclusive.</p><br><p><strong>Which word comes in the blank labelled C?</strong></p>", "options": ["<p>circumvent</p>", "<p>adopt</p>", "<p>implement</p>", "<p>reject</p>", "<p>violate</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Multinational corporations often operate in a manner that allows them to \"circumvent\" local regulations. \"Circumvent\" means to avoid or find a way around something, which fits the idea of companies exploiting gaps in labor and environmental laws. \"Adopt\" or \"implement\" would suggest following the laws, which is not the intended meaning, while \"reject\" and \"violate\" are too strong for the subtle avoidance implied here.</p>"}, {"question": "<p><strong>Below, a passage is given with five blanks labelled (A-E). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>The concept of economic globalization has been a subject of intense debate for decades. Supporters argue that it has led to the <strong>(A) __________</strong> of wealth and opportunities across the globe, with nations benefiting from increased trade and investment. However, critics claim that globalization has disproportionately favored developed countries while leaving many developing nations behind. One of the major criticisms is that globalization has intensified income <strong>(B) __________,</strong> with wealth increasingly concentrated in the hands of a few.</p>\n<p>In addition, the rise of multinational corporations has further complicated this issue. These entities often operate in a manner that allows them to <strong>(C) __________</strong> local regulations, exploiting gaps in labor and environmental laws in developing countries. This has resulted in significant environmental degradation and poor working conditions in many regions. As a result, there have been growing calls for stricter international regulations to ensure that economic development is both equitable and <strong>(D) __________.</strong></p>\n<p>Nevertheless, proponents maintain that globalization has provided unprecedented access to technology, education, and resources, fostering innovation and improving living standards for many. They argue that any challenges arising from globalization can be addressed through collaborative policymaking and sustainable development strategies, ensuring that future growth is more <strong>(E) __________</strong> and inclusive.</p><br><p><strong>Which word comes in the blank labelled D?</strong></p>", "options": ["<p>beneficial</p>", "<p>measurable</p>", "<p>sustainable</p>", "<p>profitable</p>", "<p>temporary</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>There are calls for stricter international regulations to ensure that economic development is both equitable and \"sustainable.\" \"Sustainable\" fits because the context implies development that lasts and does not harm future generations. \"Beneficial\" is too broad, and \"measurable,\" \"profitable,\" and \"temporary\" do not align with the idea of long-term and equitable growth.</p>"}, {"question": "<p><strong>Below, a passage is given with five blanks labelled (A-E). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>The concept of economic globalization has been a subject of intense debate for decades. Supporters argue that it has led to the <strong>(A) __________</strong> of wealth and opportunities across the globe, with nations benefiting from increased trade and investment. However, critics claim that globalization has disproportionately favored developed countries while leaving many developing nations behind. One of the major criticisms is that globalization has intensified income <strong>(B) __________,</strong> with wealth increasingly concentrated in the hands of a few.</p>\n<p>In addition, the rise of multinational corporations has further complicated this issue. These entities often operate in a manner that allows them to <strong>(C) __________</strong> local regulations, exploiting gaps in labor and environmental laws in developing countries. This has resulted in significant environmental degradation and poor working conditions in many regions. As a result, there have been growing calls for stricter international regulations to ensure that economic development is both equitable and <strong>(D) __________.</strong></p>\n<p>Nevertheless, proponents maintain that globalization has provided unprecedented access to technology, education, and resources, fostering innovation and improving living standards for many. They argue that any challenges arising from globalization can be addressed through collaborative policymaking and sustainable development strategies, ensuring that future growth is more <strong>(E) __________</strong> and inclusive.</p><br><p><strong>Which word comes in the blank labelled E?</strong></p>", "options": ["<p>profitable</p>", "<p>innovative</p>", "<p>resilient</p>", "<p>equitable</p>", "<p>competitive</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>Future growth must be \"equitable\" and inclusive. \"Equitable\" means fair and just, which matches the context of addressing the imbalances caused by globalization. \"Profitable\" and \"competitive\" are too focused on financial gain, while \"innovative\" and \"resilient\" do not capture the fairness aspect necessary for inclusive growth.</p>"}, {"question": "<p><strong>In each of the following questions three sentences are given with a word highlighted in it and followed by five options. You are required to find out in which of the following sentences the word is inappropriately used from the given options.</strong></p><br><p><strong>I).</strong> The politician's <strong>divisive</strong> rhetoric created a clear split among the voters, leading to heated debates and strong disagreements.</p>\n<p><strong>II).</strong> The leader was arrested for <strong>incitement</strong> after urging the crowd to engage in violent protests.</p>\n<p><strong>III).</strong> After months of hard work, the team finally enjoyed a well-deserved <strong>reprieve</strong>, receiving a bonus for their efforts.</p>", "options": ["<p>Only I</p>", "<p>Only II</p>", "<p>Only III</p>", "<p>Both I and II</p>", "<p>Both I and III</p>"], "correctIndex": 2, "solution": "<p><strong>Answer</strong><strong>: C</strong></p>\n<p><strong>I).</strong> In this sentence, \"divisive\" is correctly used to describe rhetoric that causes division or disagreement among a group of people.</p>\n<p><strong>II).</strong> In this sentence, \"incitement\" is correctly used to describe the act of provoking or urging others to commit unlawful or violent actions.</p>\n<p><strong>III).</strong> In this sentence, \"reprieve\" is used incorrectly. \"Reprieve\" typically refers to a temporary relief or postponement from something negative, such as a punishment or a difficult situation. It doesn't fit the context of receiving a positive reward like a bonus. A more suitable term might be \"reward\" or \"recognition.\"</p>"}, {"question": "<p><strong>In each of the following questions three sentences are given with a word highlighted in it and followed by five options. You are required to find out in which of the following sentences the word is inappropriately used from the given options.</strong></p><br><p><strong>I).</strong> She decided to <strong>commute</strong> her vacation days into additional salary, hoping to boost her income for the month.</p>\n<p><strong>II).</strong> Before releasing the document to the public, the agency had to <strong>redact</strong> all confidential information to protect sensitive data.</p>\n<p><strong>III).</strong> After being found guilty of multiple charges, he faced a lengthy <strong>incarceration</strong> in a maximum-security prison.</p>", "options": ["<p>Only I</p>", "<p>Only II</p>", "<p>Only III</p>", "<p>Both I and II</p>", "<p>Both I and III</p>"], "correctIndex": 0, "solution": "<p><strong>Answer</strong><strong>: A</strong></p>\n<p><strong>I).</strong> In this sentence, \"commute\" is used incorrectly. \"Commute\" typically refers to the act of traveling regularly between home and work or, in a legal context, to reduce a judicial sentence. The intended meaning in this context might be better conveyed with \"convert\" or \"exchange.\"</p>\n<p><strong>II).</strong> In this sentence, \"redact\" is correctly used to describe the process of editing a document to remove or obscure sensitive information before its release.</p>\n<p><strong>III).</strong> In this sentence, \"incarceration\" is correctly used to refer to the state of being confined in prison.</p>"}, {"question": "<p><strong>In each of the following questions three sentences are given with a word highlighted in it and followed by five options. You are required to find out in which of the following sentences the word is inappropriately used from the given options.</strong></p><br><p><strong>I).</strong> After weeks of intense work, she finally found a moment of <strong>respite</strong> during her vacation on the chaotic island.</p>\n<p><strong>II).</strong> The suspect was arrested and charged with <strong>assault</strong> after allegedly attacking a passerby on the street.</p>\n<p><strong>III).</strong> After the intense basketball game, the coach encouraged the team to engage in <strong>introspection</strong> by practicing their dribbling skills.</p>", "options": ["<p>Only I</p>", "<p>Only II</p>", "<p>Only III</p>", "<p>Both I and II</p>", "<p>Both I and III</p>"], "correctIndex": 4, "solution": "<p><strong>Answer</strong><strong>: E</strong></p>\n<p><strong>I).</strong> In this sentence, \"respite\" is used incorrectly. \"Respite\" typically implies relief or rest from something difficult or unpleasant, but the sentence suggests that the vacation on the chaotic island would not provide such relief. A more appropriate term might be \"chaos\" or \"turmoil.\"</p>\n<p><strong>II).</strong> In this sentence, \"assault\" is correctly used to describe the act of attacking or causing harm to another person.</p>\n<p><strong>III).</strong> In this sentence, \"introspection\" is used incorrectly. \"Introspection\" refers to the process of examining one's own thoughts and feelings, which does not align with the physical activity of practicing dribbling skills. A more suitable term might be \"practice\" or \"skill refinement.\"</p>"}, {"question": "<p><strong>In each of the following questions three sentences are given with a word highlighted in it and followed by five options. You are required to find out in which of the following sentences the word is inappropriately used from the given options.</strong></p><br><p><strong>I).</strong> The local community rallied together to provide <strong>succor</strong> to the victims of the natural disaster, offering food, shelter, and support.</p>\n<p><strong>II).</strong> The crowd at the concert began to <strong>dwindle</strong> as the night went on, with more and more people arriving to enjoy the music.</p>\n<p><strong>III).</strong> The hikers faced a <strong>steep</strong> climb up the mountain, requiring them to use ropes and harnesses for safety.</p>", "options": ["<p>Only I</p>", "<p>Only II</p>", "<p>Only III</p>", "<p>Both I and II</p>", "<p>Both I and III</p>"], "correctIndex": 1, "solution": "<p><strong>Answer</strong><strong>: B</strong></p>\n<p><strong>I).</strong> In this sentence, \"succor\" is correctly used to describe the assistance, aid, or relief provided to the victims of the natural disaster by the local community.</p>\n<p><strong>II).</strong> In this sentence, \"dwindle\" is used incorrectly. \"Dwindle\" means to gradually decrease in number or intensity. However, the sentence implies the opposite—that the crowd increased instead of decreasing. A more appropriate term might be \"swell\" or \"grow.\"</p>\n<p><strong>III).</strong> In this sentence, \"steep\" is correctly used to describe the sharp incline of the mountain, indicating its significant vertical rise.</p>"}, {"question": "<p><strong>Given below are a few questions with three sentences in each of them which may or may not contain errors in them. You have to find the sentence which has or have errors in them and mark your answers accordingly. If none of the sentence contains errors then choose option E as your answer.</strong></p><br><p><strong>A).</strong> She is not interested in politics and prefers to stay out from it.</p>\n<p><strong>B).</strong> Despite the rain, they decided to go ahead with their plan for an outdoor picnic.</p>\n<p><strong>C).</strong> The cat jumped off from the table and ran towards the door.</p>", "options": ["<p>Only A</p>", "<p>Only B</p>", "<p>Both A and C</p>", "<p>Both B and C</p>", "<p>No error</p>"], "correctIndex": 2, "solution": "<p><strong>Answer:</strong><strong> C</strong></p>\n<p>Both A and C</p>\n<p><strong>A).</strong> The error in this sentence is \"prefers to stay out from it.\" The correct form is \"prefers to stay out of it.\" The preposition \"of\" is used after the phrase \"stay out.\"</p>\n<p>Corrected Sentence A: \"She is not interested in politics and prefers to stay out of it.\"</p>\n<p><strong>B).</strong> There is no error in this sentence.</p>\n<p><strong>C).</strong> The error in this sentence is \"jumped off from the table.\" The correct form is \"jumped off the table.\" The preposition \"off\" is sufficient; there's no need for \"from\"</p>\n<p>Corrected Sentence C: \"The cat jumped off the table and ran towards the door.\"</p>"}, {"question": "<p><strong>Given below are a few questions with three sentences in each of them which may or may not contain errors in them. You have to find the sentence which has or have errors in them and mark your answers accordingly. If none of the sentence contains errors then choose option E as your answer.</strong></p><br><p><strong>A).</strong> The athlete performed good in the competition, surprising everyone with his skills.</p>\n<p><strong>B).</strong> Despite the rain, the event was carried out quite successfully.</p>\n<p><strong>C).</strong> She plays the piano beautifully, creating a soothing and a calm atmosphere.</p>", "options": ["<p>Only A</p>", "<p>Only B</p>", "<p>Both A and C</p>", "<p>Both B and C</p>", "<p>No error</p>"], "correctIndex": 2, "solution": "<p><strong>Answer:</strong><strong> C</strong></p>\n<p>Both A and C</p>\n<p><strong>A).</strong> The error in this sentence is \"performed good.\" The correct form is \"performed well.\" The adverb \"well\" is used to modify the verb \"performed.\"</p>\n<p>Corrected Sentence A: \"The athlete performed well in the competition, surprising everyone with his skills.\"</p>\n<p><strong>B).</strong> There is no error in this sentence.</p>\n<p><strong>C).</strong> The error in this sentence is \"soothing and a calm.\" When using multiple adjectives before a noun, the same article should be used for each adjective. The correct form is \"a soothing and calm atmosphere.\"</p>\n<p>Corrected Sentence C: \"She plays the piano beautifully, creating a soothing and calm atmosphere.\"</p>"}, {"question": "<p><strong>Given below are a few questions with three sentences in each of them which may or may not contain errors in them. You have to find the sentence which has or have errors in them and mark your answers accordingly. If none of the sentence contains errors then choose option E as your answer.</strong></p><br><p><strong>A).</strong> Each of the students in the classroom were given a copy of the textbook.</p>\n<p><strong>B).</strong> Despite the obstacles, neither the coach nor the players were ready to give up.</p>\n<p><strong>C).</strong> The collection of old coins were displayed in a Glass case.</p>", "options": ["<p>Only A</p>", "<p>Both A and C</p>", "<p>Both B and C</p>", "<p>All A, B and C</p>", "<p>No error</p>"], "correctIndex": 1, "solution": "<p><strong>Answer:</strong><strong> B</strong></p>\n<p>Both A and C</p>\n<p><strong>A).</strong> The error in this sentence is \"Each of the students in the classroom were.\" The correct form should be \"Each of the students in the classroom was.\" When \"each\" is used before a singular noun, the verb should be singular.</p>\n<p>Corrected Sentence A: \"Each of the students in the classroom was given a copy of the textbook.\"</p>\n<p><strong>B).</strong> There is no error in this sentence.</p>\n<p><strong>C).</strong> The error in this sentence is \"collection of old coins were.\" The correct form should be \"collection of old coins was.\" The term \"collection\" is a singular noun, and when referring to it as a single entity, a singular verb is used.</p>\n<p>Corrected Sentence C: \"The collection of old coins was displayed in a glass case.\"</p>"}, {"question": "<p><strong>Given below are a few questions with three sentences in each of them which may or may not contain errors in them. You have to find the sentence which has or have errors in them and mark your answers accordingly. If none of the sentence contains errors then choose option E as your answer.</strong></p><br><p><strong>A).</strong> Not only the staff but also the manager was involved in the decision-making process.</p>\n<p><strong>B).</strong> Despite the rainy weather, she wore a colorful and a comfortable dress.</p>\n<p><strong>C).</strong> Not only the play but also the costumes were elaborate and a well-designed.</p>", "options": ["<p>Only A</p>", "<p>Both A and C</p>", "<p>Both B and C</p>", "<p>All A, B and C</p>", "<p>No error</p>"], "correctIndex": 2, "solution": "<p><strong>Answer:</strong><strong> C</strong></p>\n<p>Both B and C</p>\n<p><strong>A).</strong> There is no error in this sentence.</p>\n<p><strong>B).</strong> The error in this sentence is \"colorful and a comfortable.\" The correct form is \"colorful and comfortable dress.\"</p>\n<p>Corrected Sentence B: \"Despite the rainy weather, she wore a colorful and comfortable dress.\"</p>\n<p><strong>C).</strong> The error in this sentence is \"elaborate and a well-designed.\" When using multiple adjectives before a noun, the same article should be used for each adjective. The correct form is \"elaborate and well-designed.\"</p>\n<p>Corrected Sentence C: \"Not only the play but also the costumes were elaborate and well-designed.\"</p>"}, {"question": "<p><strong>Each of the following questions has a paragraph from which some part has been deleted at the end. From the given options, choose the one that completes the paragraph in the most appropriate way.</strong></p><br><p><strong>The COVID-19 pandemic has accelerated the shift to remote work, leading many companies to adopt flexible work arrangements permanently. This transition has brought about numerous benefits, including increased employee satisfaction and access to a broader talent pool. However, to ensure the long-term success of remote work, companies must address challenges such as ____________.</strong></p>", "options": ["<p>encouraging employees to work longer hours without breaks</p>", "<p>ignoring communication barriers between remote and in-office employees</p>", "<p>implementing strict surveillance measures to monitor employees' activities</p>", "<p>fostering a strong virtual work culture and ensuring effective communication</p>", "<p>reducing investment in remote work technologies to cut costs</p>"], "correctIndex": 3, "solution": "<p><strong>Answer:</strong><strong> D</strong></p>\n<p>The correct option is: d) fostering a strong virtual work culture and ensuring effective communication.</p>\n<p>This option aligns with the paragraph's focus on ensuring the long-term success of remote work. Fostering a strong virtual work culture and ensuring effective communication are crucial for maintaining productivity, team cohesion, and employee engagement in a remote work environment. It addresses the challenges associated with remote work, such as feelings of isolation and communication barriers, by promoting a connected and collaborative work culture.</p>\n<p>The other options are not suitable for the following reasons:</p>\n<p><strong>a).</strong> Encouraging employees to work longer hours without breaks: This option can lead to burnout and decreased productivity. It does not address the challenges of remote work in a positive or sustainable way.</p>\n<p><strong>b).</strong> Ignoring communication barriers between remote and in-office employees: Ignoring communication barriers can lead to misunderstandings, reduced collaboration, and feelings of isolation among remote employees. Effective communication is essential for the success of remote work.</p>\n<p><strong>c).</strong> Implementing strict surveillance measures to monitor employees' activities: Strict surveillance can create a culture of distrust and reduce employee morale. It is not a constructive approach to managing remote work and can lead to increased stress and decreased job satisfaction.</p>\n<p><strong>e).</strong> Reducing investment in remote work technologies to cut costs: Reducing investment in remote work technologies can hinder productivity and make it more difficult for employees to perform their tasks efficiently. Investing in the right technologies is essential for supporting remote work.</p>\n<p>In summary, option (d) emphasizes the importance of building a supportive virtual work culture and maintaining effective communication, which are key to overcoming the challenges of remote work and ensuring its success.</p>"}, {"question": "<p><strong>Each of the following questions has a paragraph from which some part has been deleted at the end. From the given options, choose the one that completes the paragraph in the most appropriate way.</strong></p><br><p><strong>Sustainable agriculture is essential for ensuring food security and environmental health in the face of climate change and population growth. Practices such as crop rotation, organic farming, and integrated pest management help maintain soil fertility and reduce the reliance on chemical inputs. To further advance sustainable agriculture, it is crucial for policymakers and farmers to invest in ____________.</strong></p>", "options": ["<p>large-scale monoculture farming for higher yields</p>", "<p>synthetic fertilizers and pesticides to boost crop production</p>", "<p>technological innovations and education for best practices</p>", "<p>clearing more land for agricultural expansion</p>", "<p>reducing agricultural research funding</p>"], "correctIndex": 2, "solution": "<p><strong>Answer:</strong><strong> C</strong></p>\n<p>The correct option is: c) technological innovations and education for best practices.</p>\n<p>This option aligns with the paragraph's emphasis on advancing sustainable agriculture. Technological innovations, such as precision farming and advanced irrigation systems, can help optimize resource use and increase efficiency. Education on best practices empowers farmers to adopt sustainable methods and make informed decisions. This combination is crucial for improving agricultural productivity while minimizing environmental impact. The other options involve practices that are either harmful to sustainability, such as monoculture farming (a) and the extensive use of synthetic inputs (b), or counterproductive, like clearing more land (d) and reducing research funding (e).</p>"}, {"question": "<p><strong>Each of the following questions has a paragraph from which some part has been deleted at the end. From the given options, choose the one that completes the paragraph in the most appropriate way.</strong></p><br><p><strong>Climate change continues to pose significant challenges globally, with rising temperatures, extreme weather events, and sea-level rise becoming increasingly prevalent. These changes are not only affecting natural ecosystems but also ____________.</strong></p>", "options": ["<p>exacerbating food insecurity and threatening agricultural productivity</p>", "<p>leading to a decrease in global greenhouse gas emissions</p>", "<p>improving air quality and reducing pollution levels</p>", "<p>promoting the expansion of biodiversity and ecosystems</p>", "<p>contributing to the stabilization of global temperatures</p>"], "correctIndex": 0, "solution": "<p><strong>Answer:</strong><strong> A</strong></p>\n<p>The correct option is: a) exacerbating food insecurity and threatening agricultural productivity.</p>\n<p>This option aligns with the paragraph's focus on the impacts of climate change. Climate change affects agriculture through shifts in temperature and precipitation patterns, leading to reduced crop yields, altered growing seasons, and increased pest and disease pressures. These changes exacerbate food insecurity, particularly in vulnerable regions where agriculture is a primary source of livelihood. Addressing the challenges posed by climate change on agriculture is crucial for ensuring food security and livelihoods for millions of people worldwide. The other options either do not accurately reflect the negative impacts of climate change (b, c, e) or introduce unrelated topics (d).</p>"}, {"question": "<p><strong>Each of the following questions has a paragraph from which some part has been deleted at the end. From the given options, choose the one that completes the paragraph in the most appropriate way.</strong></p><br><p><strong>Urban planning is crucial for creating sustainable and livable cities that meet the needs of their residents. As populations grow and cities expand, planners must address challenges such as housing shortages, traffic congestion, and environmental sustainability. One of the key strategies for achieving these goals is to invest in ____________.</strong></p>", "options": ["<p>expanding urban sprawl to accommodate more residents</p>", "<p>reducing public transportation options to decrease costs</p>", "<p>implementing green building practices and sustainable infrastructure</p>", "<p>increasing the number of high-rise buildings to maximize space</p>", "<p>promoting the use of private vehicles for all urban travel</p>"], "correctIndex": 2, "solution": "<p><strong>Answer:</strong><strong> C</strong></p>\n<p>The correct answer is:  c) implementing green building practices and sustainable infrastructure.</p>\n<p>This option aligns with the goal of creating sustainable and livable cities. Green building practices and sustainable infrastructure help reduce environmental impact, improve energy efficiency, and create healthier living conditions. Investing in these areas addresses the challenges of urban planning by promoting sustainability and enhancing the quality of life for residents. The other options either contribute to environmental degradation (a and e), reduce essential services (b), or focus on maximizing space without considering sustainability (d).</p>"}, {"question": "<p><strong>Each of the following questions has a paragraph from which some part has been deleted at the end. From the given options, choose the one that completes the paragraph in the most appropriate way.</strong></p><br><p><strong>The landscape of education is undergoing significant transformation with the integration of digital tools and online learning platforms. These advancements have made education more accessible and flexible, allowing students from diverse backgrounds to pursue their academic goals. However, to fully harness the potential of these technologies, it is essential for educational institutions to focus on ____________.</strong></p>", "options": ["<p>reducing the use of digital tools in the classroom</p>", "<p>ensuring equal access to technology for all students</p>", "<p>limiting online learning to only advanced students</p>", "<p>relying solely on traditional teaching methods</p>", "<p>discouraging collaboration between students and teachers</p>"], "correctIndex": 1, "solution": "<p><strong>Answer:</strong><strong> B</strong></p>\n<p>The correct option is: b) ensuring equal access to technology for all students.</p>\n<p>This option aligns with the paragraph's emphasis on making education more accessible and flexible through digital tools and online learning platforms. Ensuring equal access to technology for all students is crucial for harnessing the full potential of these advancements. It addresses the digital divide, allowing students from diverse backgrounds to benefit equally from modern educational resources. The other options involve actions that either reduce the use of beneficial technology (a), limit online learning opportunities (c), rely only on outdated methods (d), or discourage important collaborative interactions (e), all of which are counterproductive to the goal of transforming and improving education through technology.</p>"}, {"question": "<p><strong>Read the given passage carefully and answer the following questions based on the passage. Few words and phrases are highlighted to help you locate while answering the questions.</strong></p>\n<p>The G-20 members emit most of the world’s greenhouse gas emissions and produce the bulk of its fossil fuels. But, most of them have also pledged to be “net-zero”, cutting back on emissions and fossil fuel use. It is time for the G-20 to act as a united group that drives its own collective climate ambition through collaboration, coordination and competition. The G-20 summit in New Delhi (September 9-10) is a crucial moment to show leadership ahead of the UN Secretary General’s Climate Ambition Summit and the United Nations Framework Convention on Climate Change COP28. Recently, G-20 members have shown a degree of commitment to shift towards clean energy: renewable energy sources provided 29% of their energy mix in 2021, an increase from 19% in 2010. India has made significant steps in the last decade to become the world’s third largest producer of renewable energy and setting targets to continue the expansion of installed renewables to account for 50% of energy production by 2030. But, governments need to create a bigger shift as demand increases and the world’s carbon budget is shrinking faster than previously thought. First, at the national and local levels, G-20 countries need to improve their governance processes for just energy transitions. Governments should establish clear governance structures to ensure that the transition process is inclusive and the results equitable, and avoid <strong>siloed </strong>working. This includes clarifying responsibilities and mandates between ministries and across government levels with the goal of having coherent delivery plans that can attract investment. Progress indicators should go beyond the traditional ones such as net job creation, diversity of manufacturing and regional economic growth to include metrics on the kinds of jobs created, who has access to them, and levels of broader community resilience and innovation. Depending on the country's context, G-20 countries could establish a multi-ministerial task force or joint working groups between government and non-government actors to coordinate energy transition efforts. For example, South Africa has developed a transition framework that was led by the Presidential Climate Commission (PCC). Other G-20 members can learn from this approach, to accelerate their own energy transitions by developing concrete frameworks, road maps, or action plans. Second, as the Indian G-20 presidency has acknowledged, the G-20 should see this transition as a way to diversify G-20 member economies to ensure long-term economic stability, livelihoods and public revenue streams. International financial institutions have a critical role to play by aligning their investments and risk-taking to rapidly deploy vast amounts of renewable energy and grid infrastructure, and to target support to energy efficiency and very low-carbon industrial technologies.</p>\n<p>For example, the global increase in demand for and production of green steel necessitates the immediate transition to low carbon steel production pathways.The G-20 countries, representing 90% of global steel production and 80% of consumption, have a pivotal role in advancing global low-carbon steel production. By setting clear mandates for international financial institutions, such as multilateral development banks and international climate finance, they can drive investments in green steel transitions within developing and emerging economies.A collective commitment by the G-20 to Green Public Procurement would also accelerate the decarbonisation of hard-to-abate sectors such as steel and cement. However, collaboration <strong>around and among G-20 nations are necessity for</strong> effective and ambitious reform in public purchasing. Governments must implement effective monitoring, create clear mandates for low-carbon procurement, “upskill” procurement officers, and set time-bound targets to harness the full potential of Green Public Procurement. Third, the G-20 should take a lead in streamlining international efforts to achieve just energy transitions. These efforts will be aided by radically improved transparency and accountability, for example by setting up disclosure mechanisms on energy transitions-related data through existing mechanisms, such as the G-20 Energy Transitions and Sustainable Finance Working Groups, and the Just Energy Transition Partnerships (JET-Ps). The G-20 should also encourage fossil-fuel producing countries to provide current, comparable and reliable information about their plans and projects for oil ,gas and coal production, and how these align with international as well as national climate goals. The race to deploy clean energy for all, to decarbonise industry and to achieve a just and inclusive transition cannot be run alone. By taking a lead in these three action areas, the G-20 can ensure this is a relay race that is won together — not at the expense of some countries and communities. The outcome document of July’s G-20 Energy Transition Ministers’ meeting called for “Just, Affordable, and Inclusive Energy Transition Pathways”. But for countries to get onto such pathways, the G-20 must act together, collaborating and coordinating steps to achieve net-zero ambitions, while competing to achieve them. The G-20 summit in New Delhi is a crucial moment for the Heads of State and Government present at the meeting to adopt a strong leader’s declaration, committing to collective ambition to combat climate change. In the past few months, the <strong>devastating </strong>effects of climate change have been clearly shown. There is simply no more time to waste.</p><br><p><strong>Which of the following is/are true regarding the actions that the G-20 countries/committee must take in terms of the energy transition?</strong></p>\n<p><strong>I).</strong> The G-20 countries must establish joint working groups between government and non-government parties to coordinate energy transition efforts.</p>\n<p><strong>II).</strong> The G-20 countries may set clear mandates for international financial institutions, such as multilateral development banks and international climate finance.</p>\n<p><strong>III). </strong>Governments should have a clear governance structure to ensure inclusivity of the transition.</p>\n<p><strong>IV). </strong>The G20 committee should take the lead to streamline the international efforts towards the energy transition.</p>", "options": ["<p>Both I and II</p>", "<p>Both I and III</p>", "<p>Both II and IV</p>", "<p>I, III and IV</p>", "<p>All I, II, III and IV</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>All the given four statements are true regarding the actions the G20 countries/committee must take in terms of the energy transition.</p>\n<p><strong>Option e is the correct answer.</strong></p>"}, {"question": "<p><strong>Read the given passage carefully and answer the following questions based on the passage. Few words and phrases are highlighted to help you locate while answering the questions.</strong></p>\n<p>The G-20 members emit most of the world’s greenhouse gas emissions and produce the bulk of its fossil fuels. But, most of them have also pledged to be “net-zero”, cutting back on emissions and fossil fuel use. It is time for the G-20 to act as a united group that drives its own collective climate ambition through collaboration, coordination and competition. The G-20 summit in New Delhi (September 9-10) is a crucial moment to show leadership ahead of the UN Secretary General’s Climate Ambition Summit and the United Nations Framework Convention on Climate Change COP28. Recently, G-20 members have shown a degree of commitment to shift towards clean energy: renewable energy sources provided 29% of their energy mix in 2021, an increase from 19% in 2010. India has made significant steps in the last decade to become the world’s third largest producer of renewable energy and setting targets to continue the expansion of installed renewables to account for 50% of energy production by 2030. But, governments need to create a bigger shift as demand increases and the world’s carbon budget is shrinking faster than previously thought. First, at the national and local levels, G-20 countries need to improve their governance processes for just energy transitions. Governments should establish clear governance structures to ensure that the transition process is inclusive and the results equitable, and avoid <strong>siloed </strong>working. This includes clarifying responsibilities and mandates between ministries and across government levels with the goal of having coherent delivery plans that can attract investment. Progress indicators should go beyond the traditional ones such as net job creation, diversity of manufacturing and regional economic growth to include metrics on the kinds of jobs created, who has access to them, and levels of broader community resilience and innovation. Depending on the country's context, G-20 countries could establish a multi-ministerial task force or joint working groups between government and non-government actors to coordinate energy transition efforts. For example, South Africa has developed a transition framework that was led by the Presidential Climate Commission (PCC). Other G-20 members can learn from this approach, to accelerate their own energy transitions by developing concrete frameworks, road maps, or action plans. Second, as the Indian G-20 presidency has acknowledged, the G-20 should see this transition as a way to diversify G-20 member economies to ensure long-term economic stability, livelihoods and public revenue streams. International financial institutions have a critical role to play by aligning their investments and risk-taking to rapidly deploy vast amounts of renewable energy and grid infrastructure, and to target support to energy efficiency and very low-carbon industrial technologies.</p>\n<p>For example, the global increase in demand for and production of green steel necessitates the immediate transition to low carbon steel production pathways.The G-20 countries, representing 90% of global steel production and 80% of consumption, have a pivotal role in advancing global low-carbon steel production. By setting clear mandates for international financial institutions, such as multilateral development banks and international climate finance, they can drive investments in green steel transitions within developing and emerging economies.A collective commitment by the G-20 to Green Public Procurement would also accelerate the decarbonisation of hard-to-abate sectors such as steel and cement. However, collaboration <strong>around and among G-20 nations are necessity for</strong> effective and ambitious reform in public purchasing. Governments must implement effective monitoring, create clear mandates for low-carbon procurement, “upskill” procurement officers, and set time-bound targets to harness the full potential of Green Public Procurement. Third, the G-20 should take a lead in streamlining international efforts to achieve just energy transitions. These efforts will be aided by radically improved transparency and accountability, for example by setting up disclosure mechanisms on energy transitions-related data through existing mechanisms, such as the G-20 Energy Transitions and Sustainable Finance Working Groups, and the Just Energy Transition Partnerships (JET-Ps). The G-20 should also encourage fossil-fuel producing countries to provide current, comparable and reliable information about their plans and projects for oil ,gas and coal production, and how these align with international as well as national climate goals. The race to deploy clean energy for all, to decarbonise industry and to achieve a just and inclusive transition cannot be run alone. By taking a lead in these three action areas, the G-20 can ensure this is a relay race that is won together — not at the expense of some countries and communities. The outcome document of July’s G-20 Energy Transition Ministers’ meeting called for “Just, Affordable, and Inclusive Energy Transition Pathways”. But for countries to get onto such pathways, the G-20 must act together, collaborating and coordinating steps to achieve net-zero ambitions, while competing to achieve them. The G-20 summit in New Delhi is a crucial moment for the Heads of State and Government present at the meeting to adopt a strong leader’s declaration, committing to collective ambition to combat climate change. In the past few months, the <strong>devastating </strong>effects of climate change have been clearly shown. There is simply no more time to waste.</p><br><p><strong>How have the G-20 members contributed to clean energy since 2010?</strong></p>", "options": ["<p>They have set up many industrial plants to produce renewable resources.</p>", "<p>The members have reduced their carbon emissions by half since 2010.</p>", "<p>Renewable energy sources provided 29% of the energy mix in 2021 of the member countries, an increase from 19% in 2010.</p>", "<p>The countries have adapted to solar energy which contributes to nearly 10-15% of the energy consumed.</p>", "<p>All of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Only the statement given in option c is correct according to the given passage.</p>\n<p>The other options are discarded because no such information is given in the above passage.</p>"}, {"question": "<p><strong>Read the given passage carefully and answer the following questions based on the passage. Few words and phrases are highlighted to help you locate while answering the questions.</strong></p>\n<p>The G-20 members emit most of the world’s greenhouse gas emissions and produce the bulk of its fossil fuels. But, most of them have also pledged to be “net-zero”, cutting back on emissions and fossil fuel use. It is time for the G-20 to act as a united group that drives its own collective climate ambition through collaboration, coordination and competition. The G-20 summit in New Delhi (September 9-10) is a crucial moment to show leadership ahead of the UN Secretary General’s Climate Ambition Summit and the United Nations Framework Convention on Climate Change COP28. Recently, G-20 members have shown a degree of commitment to shift towards clean energy: renewable energy sources provided 29% of their energy mix in 2021, an increase from 19% in 2010. India has made significant steps in the last decade to become the world’s third largest producer of renewable energy and setting targets to continue the expansion of installed renewables to account for 50% of energy production by 2030. But, governments need to create a bigger shift as demand increases and the world’s carbon budget is shrinking faster than previously thought. First, at the national and local levels, G-20 countries need to improve their governance processes for just energy transitions. Governments should establish clear governance structures to ensure that the transition process is inclusive and the results equitable, and avoid <strong>siloed </strong>working. This includes clarifying responsibilities and mandates between ministries and across government levels with the goal of having coherent delivery plans that can attract investment. Progress indicators should go beyond the traditional ones such as net job creation, diversity of manufacturing and regional economic growth to include metrics on the kinds of jobs created, who has access to them, and levels of broader community resilience and innovation. Depending on the country's context, G-20 countries could establish a multi-ministerial task force or joint working groups between government and non-government actors to coordinate energy transition efforts. For example, South Africa has developed a transition framework that was led by the Presidential Climate Commission (PCC). Other G-20 members can learn from this approach, to accelerate their own energy transitions by developing concrete frameworks, road maps, or action plans. Second, as the Indian G-20 presidency has acknowledged, the G-20 should see this transition as a way to diversify G-20 member economies to ensure long-term economic stability, livelihoods and public revenue streams. International financial institutions have a critical role to play by aligning their investments and risk-taking to rapidly deploy vast amounts of renewable energy and grid infrastructure, and to target support to energy efficiency and very low-carbon industrial technologies.</p>\n<p>For example, the global increase in demand for and production of green steel necessitates the immediate transition to low carbon steel production pathways.The G-20 countries, representing 90% of global steel production and 80% of consumption, have a pivotal role in advancing global low-carbon steel production. By setting clear mandates for international financial institutions, such as multilateral development banks and international climate finance, they can drive investments in green steel transitions within developing and emerging economies.A collective commitment by the G-20 to Green Public Procurement would also accelerate the decarbonisation of hard-to-abate sectors such as steel and cement. However, collaboration <strong>around and among G-20 nations are necessity for</strong> effective and ambitious reform in public purchasing. Governments must implement effective monitoring, create clear mandates for low-carbon procurement, “upskill” procurement officers, and set time-bound targets to harness the full potential of Green Public Procurement. Third, the G-20 should take a lead in streamlining international efforts to achieve just energy transitions. These efforts will be aided by radically improved transparency and accountability, for example by setting up disclosure mechanisms on energy transitions-related data through existing mechanisms, such as the G-20 Energy Transitions and Sustainable Finance Working Groups, and the Just Energy Transition Partnerships (JET-Ps). The G-20 should also encourage fossil-fuel producing countries to provide current, comparable and reliable information about their plans and projects for oil ,gas and coal production, and how these align with international as well as national climate goals. The race to deploy clean energy for all, to decarbonise industry and to achieve a just and inclusive transition cannot be run alone. By taking a lead in these three action areas, the G-20 can ensure this is a relay race that is won together — not at the expense of some countries and communities. The outcome document of July’s G-20 Energy Transition Ministers’ meeting called for “Just, Affordable, and Inclusive Energy Transition Pathways”. But for countries to get onto such pathways, the G-20 must act together, collaborating and coordinating steps to achieve net-zero ambitions, while competing to achieve them. The G-20 summit in New Delhi is a crucial moment for the Heads of State and Government present at the meeting to adopt a strong leader’s declaration, committing to collective ambition to combat climate change. In the past few months, the <strong>devastating </strong>effects of climate change have been clearly shown. There is simply no more time to waste.</p><br><p><strong>According to the given passage, which of the following statement(s) is/are true ?</strong></p>\n<p><strong>I). </strong>Although most of the G-20 members have pledged to be net-zero they emit most of the world’s greenhouse gas emissions and produce the bulk of its fossil fuels.</p>\n<p><strong>II).</strong> India has already taken significant steps to become the world’s second largest producer of renewable energy.</p>\n<p><strong>III). </strong>The G-20 countries, representing 80% of global steel production and 90% of consumption.</p>", "options": ["<p>Only I</p>", "<p>Only II</p>", "<p>Only III</p>", "<p>Both I and III</p>", "<p>Both II and III</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Only statement I is true according to the passage.</p>\n<p>II is incorrect - India has taken necessary steps to become the world's <strong>third </strong>largest producer of renewable energy.</p>\n<p>II is incorrect because the data mentioned is wrong <strong>(the correct data from the passage is “90% steel production and 80% consumption”)</strong></p>"}, {"question": "<p><strong>Read the given passage carefully and answer the following questions based on the passage. Few words and phrases are highlighted to help you locate while answering the questions.</strong></p>\n<p>The G-20 members emit most of the world’s greenhouse gas emissions and produce the bulk of its fossil fuels. But, most of them have also pledged to be “net-zero”, cutting back on emissions and fossil fuel use. It is time for the G-20 to act as a united group that drives its own collective climate ambition through collaboration, coordination and competition. The G-20 summit in New Delhi (September 9-10) is a crucial moment to show leadership ahead of the UN Secretary General’s Climate Ambition Summit and the United Nations Framework Convention on Climate Change COP28. Recently, G-20 members have shown a degree of commitment to shift towards clean energy: renewable energy sources provided 29% of their energy mix in 2021, an increase from 19% in 2010. India has made significant steps in the last decade to become the world’s third largest producer of renewable energy and setting targets to continue the expansion of installed renewables to account for 50% of energy production by 2030. But, governments need to create a bigger shift as demand increases and the world’s carbon budget is shrinking faster than previously thought. First, at the national and local levels, G-20 countries need to improve their governance processes for just energy transitions. Governments should establish clear governance structures to ensure that the transition process is inclusive and the results equitable, and avoid <strong>siloed </strong>working. This includes clarifying responsibilities and mandates between ministries and across government levels with the goal of having coherent delivery plans that can attract investment. Progress indicators should go beyond the traditional ones such as net job creation, diversity of manufacturing and regional economic growth to include metrics on the kinds of jobs created, who has access to them, and levels of broader community resilience and innovation. Depending on the country's context, G-20 countries could establish a multi-ministerial task force or joint working groups between government and non-government actors to coordinate energy transition efforts. For example, South Africa has developed a transition framework that was led by the Presidential Climate Commission (PCC). Other G-20 members can learn from this approach, to accelerate their own energy transitions by developing concrete frameworks, road maps, or action plans. Second, as the Indian G-20 presidency has acknowledged, the G-20 should see this transition as a way to diversify G-20 member economies to ensure long-term economic stability, livelihoods and public revenue streams. International financial institutions have a critical role to play by aligning their investments and risk-taking to rapidly deploy vast amounts of renewable energy and grid infrastructure, and to target support to energy efficiency and very low-carbon industrial technologies.</p>\n<p>For example, the global increase in demand for and production of green steel necessitates the immediate transition to low carbon steel production pathways.The G-20 countries, representing 90% of global steel production and 80% of consumption, have a pivotal role in advancing global low-carbon steel production. By setting clear mandates for international financial institutions, such as multilateral development banks and international climate finance, they can drive investments in green steel transitions within developing and emerging economies.A collective commitment by the G-20 to Green Public Procurement would also accelerate the decarbonisation of hard-to-abate sectors such as steel and cement. However, collaboration <strong>around and among G-20 nations are necessity for</strong> effective and ambitious reform in public purchasing. Governments must implement effective monitoring, create clear mandates for low-carbon procurement, “upskill” procurement officers, and set time-bound targets to harness the full potential of Green Public Procurement. Third, the G-20 should take a lead in streamlining international efforts to achieve just energy transitions. These efforts will be aided by radically improved transparency and accountability, for example by setting up disclosure mechanisms on energy transitions-related data through existing mechanisms, such as the G-20 Energy Transitions and Sustainable Finance Working Groups, and the Just Energy Transition Partnerships (JET-Ps). The G-20 should also encourage fossil-fuel producing countries to provide current, comparable and reliable information about their plans and projects for oil ,gas and coal production, and how these align with international as well as national climate goals. The race to deploy clean energy for all, to decarbonise industry and to achieve a just and inclusive transition cannot be run alone. By taking a lead in these three action areas, the G-20 can ensure this is a relay race that is won together — not at the expense of some countries and communities. The outcome document of July’s G-20 Energy Transition Ministers’ meeting called for “Just, Affordable, and Inclusive Energy Transition Pathways”. But for countries to get onto such pathways, the G-20 must act together, collaborating and coordinating steps to achieve net-zero ambitions, while competing to achieve them. The G-20 summit in New Delhi is a crucial moment for the Heads of State and Government present at the meeting to adopt a strong leader’s declaration, committing to collective ambition to combat climate change. In the past few months, the <strong>devastating </strong>effects of climate change have been clearly shown. There is simply no more time to waste.</p><br><p><strong>What is the desired outcome of the G-20 summit in New Delhi in terms of a leader's declaration?</strong></p>", "options": ["<p>ban of fossils fuels atelast among the G20 nations</p>", "<p>MoU on net zero emission eradication by all the member countries</p>", "<p>an Indian ideology to conserve renewable resources</p>", "<p>a collective ambition and commitment in combating climate change</p>", "<p>fundraise programme for the underdeveloped countries</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>Option d is the best answer for this question as it is mentioned in the passage.</p>\n<p>The other options are either irrelevant or not mentioned/discussed in the passage given - hence, are discarded.</p>"}, {"question": "<p><strong>Read the given passage carefully and answer the following questions based on the passage. Few words and phrases are highlighted to help you locate while answering the questions.</strong></p>\n<p>The G-20 members emit most of the world’s greenhouse gas emissions and produce the bulk of its fossil fuels. But, most of them have also pledged to be “net-zero”, cutting back on emissions and fossil fuel use. It is time for the G-20 to act as a united group that drives its own collective climate ambition through collaboration, coordination and competition. The G-20 summit in New Delhi (September 9-10) is a crucial moment to show leadership ahead of the UN Secretary General’s Climate Ambition Summit and the United Nations Framework Convention on Climate Change COP28. Recently, G-20 members have shown a degree of commitment to shift towards clean energy: renewable energy sources provided 29% of their energy mix in 2021, an increase from 19% in 2010. India has made significant steps in the last decade to become the world’s third largest producer of renewable energy and setting targets to continue the expansion of installed renewables to account for 50% of energy production by 2030. But, governments need to create a bigger shift as demand increases and the world’s carbon budget is shrinking faster than previously thought. First, at the national and local levels, G-20 countries need to improve their governance processes for just energy transitions. Governments should establish clear governance structures to ensure that the transition process is inclusive and the results equitable, and avoid <strong>siloed </strong>working. This includes clarifying responsibilities and mandates between ministries and across government levels with the goal of having coherent delivery plans that can attract investment. Progress indicators should go beyond the traditional ones such as net job creation, diversity of manufacturing and regional economic growth to include metrics on the kinds of jobs created, who has access to them, and levels of broader community resilience and innovation. Depending on the country's context, G-20 countries could establish a multi-ministerial task force or joint working groups between government and non-government actors to coordinate energy transition efforts. For example, South Africa has developed a transition framework that was led by the Presidential Climate Commission (PCC). Other G-20 members can learn from this approach, to accelerate their own energy transitions by developing concrete frameworks, road maps, or action plans. Second, as the Indian G-20 presidency has acknowledged, the G-20 should see this transition as a way to diversify G-20 member economies to ensure long-term economic stability, livelihoods and public revenue streams. International financial institutions have a critical role to play by aligning their investments and risk-taking to rapidly deploy vast amounts of renewable energy and grid infrastructure, and to target support to energy efficiency and very low-carbon industrial technologies.</p>\n<p>For example, the global increase in demand for and production of green steel necessitates the immediate transition to low carbon steel production pathways.The G-20 countries, representing 90% of global steel production and 80% of consumption, have a pivotal role in advancing global low-carbon steel production. By setting clear mandates for international financial institutions, such as multilateral development banks and international climate finance, they can drive investments in green steel transitions within developing and emerging economies.A collective commitment by the G-20 to Green Public Procurement would also accelerate the decarbonisation of hard-to-abate sectors such as steel and cement. However, collaboration <strong>around and among G-20 nations are necessity for</strong> effective and ambitious reform in public purchasing. Governments must implement effective monitoring, create clear mandates for low-carbon procurement, “upskill” procurement officers, and set time-bound targets to harness the full potential of Green Public Procurement. Third, the G-20 should take a lead in streamlining international efforts to achieve just energy transitions. These efforts will be aided by radically improved transparency and accountability, for example by setting up disclosure mechanisms on energy transitions-related data through existing mechanisms, such as the G-20 Energy Transitions and Sustainable Finance Working Groups, and the Just Energy Transition Partnerships (JET-Ps). The G-20 should also encourage fossil-fuel producing countries to provide current, comparable and reliable information about their plans and projects for oil ,gas and coal production, and how these align with international as well as national climate goals. The race to deploy clean energy for all, to decarbonise industry and to achieve a just and inclusive transition cannot be run alone. By taking a lead in these three action areas, the G-20 can ensure this is a relay race that is won together — not at the expense of some countries and communities. The outcome document of July’s G-20 Energy Transition Ministers’ meeting called for “Just, Affordable, and Inclusive Energy Transition Pathways”. But for countries to get onto such pathways, the G-20 must act together, collaborating and coordinating steps to achieve net-zero ambitions, while competing to achieve them. The G-20 summit in New Delhi is a crucial moment for the Heads of State and Government present at the meeting to adopt a strong leader’s declaration, committing to collective ambition to combat climate change. In the past few months, the <strong>devastating </strong>effects of climate change have been clearly shown. There is simply no more time to waste.</p><br><p><strong>Replace the highlighted phrase in the passage to make the sentence grammatically and contextually correct. Choose from the below options the correct phrase.</strong></p>", "options": ["<p>across and among G-20 nations is necessary to</p>", "<p>within and among G-20 nations is necessary for</p>", "<p>within and among G-20 nations is necessity for</p>", "<p>within and through G-20 nations was necessary for</p>", "<p>within and among G-20 nations are necessary for</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The correct phrase that can be used to replace the highlighted phrase is in option b.</p>\n<p><strong>Option a - ‘</strong>across and among’ and ‘to’ is incorrect</p>\n<p><strong>Option c - </strong>‘is necessity for’ is incorrect</p>\n<p><strong>Option d - </strong>‘within and through’ and ‘was’ is incorrect</p>\n<p><strong>Option e - </strong>‘are’ in correct (collaboration is singular so ‘is’ should be the right word)</p>\n<p><strong>The sentence : </strong> However, collaboration <strong>within and among G-20 nations is necessary for</strong> effective and ambitious reform in public purchasing.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-84)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-84)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

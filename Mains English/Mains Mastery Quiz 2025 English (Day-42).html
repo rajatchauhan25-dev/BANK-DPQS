@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-42)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>In the following question, a sentence is given with two blanks (l and ll), followed by a table that provides three words each to fill in both blanks. You need to choose the appropriate words to fill in the blanks to make the sentence grammatically correct and meaningful.</strong></p><br><p>Indian women collaborated with British feminists to <strong>___(l)___</strong> for suffrage, facing property-based restrictions that limited voting rights even after men gained them, <strong>___(ll)___</strong> socio-political disparities in British India.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172007633089.png\" title=\"47.png\"/></p>", "options": ["<p>Only (A - F)</p>", "<p>Both (B - E) and (C - F)</p>", "<p>Only (B - F)</p>", "<p>Both (A - D) and (C - E)</p>", "<p>Only (A - D)</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>To answer this question, let's first analyze the given sentence:</strong></p>\n<p>Indian women collaborated with British feminists to ___<strong>(l)</strong>___ for suffrage, facing property-based restrictions that limited voting rights even after men gained them, ___<strong>(ll)</strong>___ socio-political disparities in British India.</p>\n<p>This sentence highlights Indian women working with British feminists for suffrage, addressing voting restrictions and socio-political inequalities in British India.</p>\n<p><u>Blank (l) requires a verb that conveys action, aligning with the context of supporting or promoting a cause</u>.</p>\n<p><u>Blank (ll) requires a word illustrating how property-based restrictions persist, sustaining socio-political disparities</u>.</p>\n<p><strong>Now, let's understand the meanings of the words given as options:</strong></p>\n<p><strong>For blank (l):</strong></p>\n<p><strong>A). Advocate:</strong> to publicly support or recommend a particular cause or policy.</p>\n<p><strong>B). Condemn:</strong> to express strong disapproval of something, typically in public.</p>\n<p><strong>C). Depict:</strong> to represent or show something in a picture, story, or other forms of art.</p>\n<p>After understanding the meanings of the words given as options, we can conclude that <u>blank (l) should be filled with \"advocate</u>,\" <u>as it aligns with the action of supporting the cause of suffrage</u>.</p>\n<p><strong>For blank (ll):</strong></p>\n<p><strong>D). Mitigating:</strong> making something less severe, serious, or painful.</p>\n<p><strong>E). Eradicating:</strong> completely destroying or putting an end to something.</p>\n<p><strong>F). Perpetuating:</strong> making something continue indefinitely.</p>\n<p>After understanding the meanings of the words given as options, we can conclude that <u>blank (ll) should be filled with \"perpetuating</u>,\" <u>as it reflects how property-based restrictions continue to sustain socio-political disparities</u>.</p>\n<p><strong>Therefore, the correct answer is \"Only (A - F).\"</strong></p>"}, {"question": "<p><strong>In the following question, a sentence is given with two blanks (l and ll), followed by a table that provides three words each to fill in both blanks. You need to choose the appropriate words to fill in the blanks to make the sentence grammatically correct and meaningful.</strong></p><br><p>High blood pressure, termed the \"silent killer,\" causes over 10 million <strong>___(l)___</strong> deaths annually, surpassing tobacco use and high blood sugar as a leading risk factor, often remaining <strong>___(ll)___</strong> until complications arise.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172007765033.png\" title=\"48.png\"/></p>", "options": ["<p>Only (A - D)</p>", "<p>Only (B - E)</p>", "<p>Both (A - D) and (B - E)</p>", "<p>Both (C - E) and (A - F)</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>To answer this question, let's first analyze the given sentence:</strong></p>\n<p>High blood pressure, termed the \"silent killer,\" causes over 10 million ___<strong>(l)</strong>___ deaths annually, surpassing tobacco use and high blood sugar as a leading risk factor, often remaining ___<strong>(ll)</strong>___ until complications arise.</p>\n<p>This sentence highlights how high blood pressure is a major cause of death, often unnoticed until complications occur, surpassing other risk factors.</p>\n<p><u>The word needed in the blank (l) is an adjective that implies the possibility of avoiding or stopping a negative outcome</u>.</p>\n<p><u>The word to fill in the blank (ll) should describe a characteristic of high blood pressure, emphasizing its hidden nature</u>.</p>\n<p><strong>Now, let's understand the meanings of the words given as options:</strong></p>\n<p><strong>For blank (l):</strong></p>\n<p><strong>A). Ephemeral:</strong> lasting for a very short time; fleeting or transitory.</p>\n<p><strong>B). Preventable:</strong> capable of being stopped or avoided; something that can be prevented.</p>\n<p><strong>C). Inevitable:</strong> certain to happen; unavoidable.</p>\n<p>After understanding the meanings of the words given as options, we can conclude that <u>the word that best fits the blank (l) is \"preventable\" as high blood pressure-related deaths are often preventable through lifestyle changes and medical intervention</u>.</p>\n<p><strong>For blank (ll):</strong></p>\n<p><strong>D). Blatant:</strong> done openly and unashamedly; very obvious and without any attempt to hide.</p>\n<p><strong>E). Insidious:</strong> proceeding in a gradual, subtle way, but with harmful effects.</p>\n<p><strong>F). Pervasive:</strong> spreading widely throughout an area or a group of people, often in an unwelcome way.</p>\n<p>After understanding the meanings of the words given as options, we can conclude that <u>the word that best fits the blank (ll) is \"insidious\" as it best describes the characteristic of high blood pressure, emphasizing its hidden or subtle nature until complications arise</u>.</p>\n<p><strong>Therefore, the correct answer is \"Only (B - E).\"</strong></p>"}, {"question": "<p><strong>In the following question, a sentence is given with two blanks (l and ll), followed by a table that provides three words each to fill in both blanks. You need to choose the appropriate words to fill in the blanks to make the sentence grammatically correct and meaningful.</strong></p><br><p>Mediation, <strong>___(l)___ </strong>with Gandhian ideals, diverts attention from adversarial confrontation to fostering dialogue and harmonizing discord, thereby reinstating <strong>___(ll)___</strong> in dispute resolution dynamics.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172007780514.png\" title=\"49.png\"/></p>", "options": ["<p>Both (B - E) and (C - F)</p>", "<p>Both (A - D) and (B - E)</p>", "<p>Both (C - E) and (A - F)</p>", "<p>All (B - E), (A - D), and (C - F)</p>", "<p>Only (A - E)</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>To answer this question, let's first analyze the given sentence:</strong></p>\n<p>Mediation, ___<strong>(l)</strong>___ with Gandhian ideals, diverts attention from adversarial confrontation to fostering dialogue and harmonizing discord, thereby reinstating ___<strong>(ll)</strong>___ in dispute resolution dynamics.</p>\n<p>This sentence highlights how mediation, inspired by Gandhi's principles, shifts focus from conflict to dialogue, promoting peace and balance in resolving disputes.</p>\n<p><u>Blank (l) needs a word that suggests the infusion or saturation of mediation with Gandhian principles</u>.</p>\n<p><u>Blank (ll) should be filled with a term suggesting balance or stability, reflecting the resolution process's aim for fairness</u>.</p>\n<p><strong>Now, let's understand the meanings of the words given as options:</strong></p>\n<p><strong>For blank (l):</strong></p>\n<p><strong>A). Fostered:</strong> encouraged the development of something.</p>\n<p><strong>B). Imbued:</strong> inspired or permeated with a feeling or quality.</p>\n<p><strong>C). Permeated:</strong> spread throughout something; pervaded.</p>\n<p>After understanding the meanings of the words given as options, we can conclude that <u>the word that best fits in blank (l), emphasizing the infusion or saturation of mediation with Gandhian principles, is \"imbued\" or \"permeated</u>.\"</p>\n<p><strong>For blank (ll):</strong></p>\n<p><strong>D). Turmoil:</strong> a state of great disturbance, confusion, or uncertainty.</p>\n<p><strong>E). Equilibrium:</strong> a state in which opposing forces or influences are balanced.</p>\n<p><strong>F). Equipoise:</strong> a state of balance or equilibrium.</p>\n<p>After understanding the meanings of the words given as options, we can conclude that <u>the word that best fits in blank (ll), aligning with balance or stability, is \"equilibrium\" or \"equipoise</u>.\"</p>\n<p><strong>Therefore, the correct answer is \"Both (B - E) and (C - F).\"</strong></p>"}, {"question": "<p><strong>In the following question, a sentence is given with two blanks (l and ll), followed by a table that provides three words each to fill in both blanks. You need to choose the appropriate words to fill in the blanks to make the sentence grammatically correct and meaningful.</strong></p><br><p>Science acknowledges art's therapeutic potential; neuroaesthetics delves into the <strong>___(l)___</strong> interplay between music, visual arts, and crafts, elucidating their capacity to <strong>___(ll)___</strong> and rejuvenate mental well-being.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172007792187.png\" title=\"50.png\"/></p>", "options": ["<p>Only (A - E)</p>", "<p>Only (B - D)</p>", "<p>Only (A - D)</p>", "<p>Only (C - F)</p>", "<p>Only (B - E)</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>To answer this question, let's first analyze the given sentence:</strong></p>\n<p>Science acknowledges art's therapeutic potential; neuroaesthetics delves into the ___<strong>(l)</strong>___ interplay between music, visual arts, and crafts, elucidating their capacity to ___<strong>(ll)</strong>___ and rejuvenate mental well-being.</p>\n<p>This sentence highlights how studying the connection between art forms and the brain reveals their ability to heal and refresh mental health.</p>\n<p><u>The word needed to fill in the blank (l) should describe the complex and detailed relationship between different artistic forms</u>.</p>\n<p><u>The word needed to fill in the blank (ll) should convey improvement or enhancement, reflecting the positive impact of art on mental well-being</u>.</p>\n<p><strong>Now, let's understand the meanings of the words given as options:</strong></p>\n<p><strong>For blank (l):</strong></p>\n<p><strong>A). Peculiar:</strong> different to what is normal or expected; strange.</p>\n<p><strong>B). Elaborate:</strong> involving many carefully arranged parts or details; detailed and complicated in design and planning.</p>\n<p><strong>C). Intricate:</strong> very complicated or detailed; having many interrelated parts or facets.</p>\n<p>After understanding the meanings of the words given as options, we can conclude that <u>the word that best fits blank (l) to describe the detailed and complex interplay between different artistic forms is \"intricate</u>.\"</p>\n<p><strong>For blank (ll):</strong></p>\n<p><strong>D). Aggravate:</strong> make (a problem, injury, or situation) worse or more serious.</p>\n<p><strong>E). Deteriorate:</strong> become progressively worse.</p>\n<p><strong>F). Ameliorate:</strong> make (something bad or unsatisfactory) better.</p>\n<p>After understanding the meanings of the words given as options, we can conclude that <u>the word that best fits blank (ll) to reflect the positive impact of art on mental well-being is \"ameliorate</u>.\"</p>\n<p><strong>Therefore, the correct answer is \"Only (C - F).\"</strong></p>"}, {"question": "<p><strong>In the following question, a sentence is given with two blanks (l and ll), followed by a table that provides three words each to fill in both blanks. You need to choose the appropriate words to fill in the blanks to make the sentence grammatically correct and meaningful.</strong></p><br><p>Amid the chaos, champions of human freedom rejected <strong>___(l)___,</strong> seeking reconciliation between democracy and social justice, <strong>___(ll)___</strong> to uphold dignity and justice for all.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172007803310.png\" title=\"51.png\"/></p>", "options": ["<p>Only (A - E)</p>", "<p>Only (B - D)</p>", "<p>Both (B - E) and (C - F)</p>", "<p>Both (A - D) and (B - E)</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>To answer this question, let's first analyze the given sentence:</strong></p>\n<p>Amid the chaos, champions of human freedom rejected ___<strong>(l)</strong>___, seeking reconciliation between democracy and social justice, ___<strong>(ll)</strong>___ to uphold dignity and justice for all.</p>\n<p>This sentence highlights the need for balancing democracy and social justice to ensure dignity and justice for everyone amidst turmoil.</p>\n<p><u>Blank (l) needs a word that conveys a concept opposing freedom, emphasizing the suppression or control of individuals</u>.</p>\n<p><u>Blank (ll) needs a word that indicates an ongoing effort or commitment towards a goal, reflecting continuous action and dedication</u>.</p>\n<p><strong>Now, let's understand the meanings of the words given as options:</strong></p>\n<p><strong>For blank (l):</strong></p>\n<p><strong>A). Liberty:</strong> the state of being free within society from oppressive restrictions imposed by authority on one's way of life, behaviour, or political views.</p>\n<p><strong>B). Tyranny:</strong> cruel and oppressive government or rule.</p>\n<p><strong>C). Oppression:</strong> prolonged cruel or unjust treatment or control.</p>\n<p>After analyzing the options, we can determine that <u>the appropriate words to fill in blank (l) should be either \"tyranny\" or \"oppression,\" both representing oppressive forces being rejected</u>.</p>\n<p><strong>For blank (ll):</strong></p>\n<p><strong>D). Relenting:</strong> easing up or giving in; becoming less strict or harsh.</p>\n<p><strong>E). Striving:</strong> making a great effort or endeavour to achieve something.</p>\n<p><strong>F). Endeavoring:</strong> making a sincere and earnest attempt or effort towards a goal.</p>\n<p>After analyzing the options, we can determine that <u>the appropriate words to fill in blank (ll) should be either \"striving\" or \"endeavouring,\" both indicating the continuous effort towards upholding dignity and justice for all</u>.</p>\n<p><strong>Therefore, the correct answer is \"Both (B - E) and (C - F).\"</strong></p>"}, {"question": "<p><strong>In the following questions, there are two sentences given below with two or three words highlighted in each sentence and have been interchanged inappropriately. You have to choose the proper arrangement of bold words from the given options to make the given sentences meaningful.</strong></p><br><p><strong>I).</strong> It is <strong>inappropriate (A) </strong>on the part of Prime Minister Narendra Modi to continue to defend, and even <strong>pushed (B), </strong>the Electoral Bonds Scheme, which was struck down as unconstitutional by the Supreme court in February this year.</p>\n<p><strong>II).</strong> The Prime Minister has said that the court’s decision has <strong>commend (C) </strong>contributions made to parties towards “black money,” referring to the system of political donations that <strong>prevailed (D) </strong>before the bonds scheme was introduced in 2017.</p>", "options": ["<p>A-C</p>", "<p>B-C</p>", "<p>A-C and B-D</p>", "<p>B-C and A-D</p>", "<p>No Correction required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer</strong><strong>: B</strong></p>\n<p>In the given sentences, ‘<strong>pushed</strong>’ and ‘<strong>commend</strong>’ at their current positions fail to impart valid meaning to the sentences, but interchanging them will make the given sentences both grammatically and contextually correct.</p>\n<p><strong>The correct sentences after re arrangement are: </strong></p>\n<p><strong>I).</strong> It is <strong>inappropriate</strong> on the part of Prime Minister Narendra Modi to continue to defend, and even <strong>commend</strong>, the Electoral Bonds Scheme, which was struck down as unconstitutional by the Supreme court in February this year.</p>\n<p><strong>II).</strong> The Prime Minister has said that the court’s decision has <strong>pushed</strong> contributions made to parties towards “black money,” referring to the system of political donations that <strong>prevailed</strong> before the bonds scheme was introduced in 2017.</p>\n<p>So the correct answer is: b) B-C.</p>"}, {"question": "<p><strong>In the following questions, there are two sentences given below with two or three words highlighted in each sentence and have been interchanged inappropriately. You have to choose the proper arrangement of bold words from the given options to make the given sentences meaningful.</strong></p><br><p><strong>I).</strong> The Election Commission of India’s proactive attention to 266 low-turnout parliamentary constituencies points to its <strong>extension (A) </strong>to take the <strong>issue (B) </strong>head-on.</p>\n<p><strong>II).</strong> Voter turnout is among the major checkpoints on which the <strong>quality (C) </strong>of elections and, by <strong>intention (D)</strong>, the health of Indian democracy is evaluated.</p>", "options": ["<p>A-D</p>", "<p>B-C</p>", "<p>A-C and B-D</p>", "<p>A-D and B-C</p>", "<p>No Correction required</p>"], "correctIndex": 0, "solution": "<p><strong>Answer</strong><strong>: A</strong></p>\n<p>In the given sentences, ‘<strong>extension</strong>’ and ‘<strong>intention</strong>’ at their current positions fail to impart valid meaning to the sentences, but interchanging them will make the given sentences both grammatically and contextually correct.</p>\n<p><strong>The correct sentences after re arrangement are: </strong></p>\n<p><strong>I).</strong> The Election Commission of India’s proactive attention to 266 low-turnout parliamentary constituencies points to its <strong>intention</strong> to take the <strong>issue</strong> head-on.</p>\n<p><strong>II).</strong> Voter turnout is among the major checkpoints on which the <strong>quality</strong> of elections and, by <strong>extension</strong>, the health of Indian democracy is evaluated.</p>\n<p>So the correct answer is: a) A-D.</p>"}, {"question": "<p><strong>In the following questions, there are two sentences given below with two or three words highlighted in each sentence and have been interchanged inappropriately. You have to choose the proper arrangement of bold words from the given options to make the given sentences meaningful.</strong></p><br><p><strong>I).</strong> India’s parliamentary elections, which began on April 19, is <strong>marked (A) </strong>as the largest electoral exercise in history, and promises to be one of the most <strong>graduating (B) </strong>for the country’s 968 million eligible voters, beset as they are by a host of conflicting issues, electoral promises and manifestos.</p>\n<p><strong>II).</strong> Some feel that the last ten years have been an unmitigated economic disaster <strong>billed (C) </strong>by rising unemployment and record wealth inequalities, while others believe that the economy has bloomed and is on the verge of <strong>challenging (D) </strong>to developed nation status.</p>", "options": ["<p>A-C</p>", "<p>B-D</p>", "<p>A-C and B-D</p>", "<p>B-C and A-D</p>", "<p>No Correction required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer</strong><strong>: C</strong></p>\n<p>In the given sentences, ‘<strong>marked</strong>’ and ‘<strong>billed</strong>’ at their current positions fail to impart valid meaning to the sentences, but interchanging them will make the given sentences both grammatically and contextually correct as well as ‘<strong>graduating</strong>’ and ‘<strong>challenging</strong>’ at their current positions fail to impart valid meaning to the sentences, but interchanging them will make the given sentences both grammatically and contextually correct.</p>\n<p><strong>The correct sentences after re arrangement are: </strong></p>\n<p><strong>I).</strong> India’s parliamentary elections, which began on April 19, is <strong>billed</strong> as the largest electoral exercise in history, and promises to be one of the most <strong>challenging</strong> for the country’s 968 million eligible voters, beset as they are by a host of conflicting issues, electoral promises and manifestos.</p>\n<p><strong>II).</strong> Some feel that the last ten years have been an unmitigated economic disaster <strong>marked</strong> by rising unemployment and record wealth inequalities, while others believe that the economy has bloomed and is on the verge of <strong>graduating</strong> to developed nation status.</p>\n<p>So the correct answer is: c) A-C and B-D.</p>"}, {"question": "<p><strong>In the following questions, there are two sentences given below with two or three words highlighted in each sentence and have been interchanged inappropriately. You have to choose the proper arrangement of bold words from the given options to make the given sentences meaningful.</strong></p><br><p><strong>I).</strong> The continued <strong>dissemination (A) </strong>as well as the poor quality of official data in India is, therefore, <strong>becoming (B) </strong>a matter of concern — domestically and abroad.</p>\n<p><strong>II).</strong> This is unfortunate since the quality and the public <strong>scarcity (C) </strong>of data are <strong>integral (D) </strong>to the fates of transparency and democracy.</p>", "options": ["<p>A-C</p>", "<p>B-D</p>", "<p>A-C and B-D</p>", "<p>B-C and A-D</p>", "<p>No Correction required</p>"], "correctIndex": 0, "solution": "<p><strong>Answer</strong><strong>: A</strong></p>\n<p>In the given sentences, ‘<strong>dissemination</strong>’ and ‘<strong>scarcity</strong>’ at their current positions fail to impart valid meaning to the sentences, but interchanging them will make the given sentences both grammatically and contextually correct.</p>\n<p><strong>The correct sentences after re arrangement are: </strong></p>\n<p><strong>I).</strong> The continued <strong>scarcity</strong> as well as the poor quality of official data in India is, therefore, <strong>becoming</strong> a matter of concern — domestically and abroad.</p>\n<p><strong>II).</strong> This is unfortunate since the quality and the public <strong>dissemination</strong> of data are <strong>integral</strong> to the fates of transparency and democracy.</p>\n<p>So the correct answer is: a) A-C.</p>"}, {"question": "<p><strong>In the following questions, there are two sentences given below with two or three words highlighted in each sentence and have been interchanged inappropriately. You have to choose the proper arrangement of bold words from the given options to make the given sentences meaningful.</strong></p><br><p><strong>I).</strong> To those <strong>watching (A) </strong>political parties over time, it is fascinating and instructive to see how they factor into their manifestos and election campaigns some of the popular issues of the time, irrespective of their own conviction and <strong>commitment (B) </strong>to them.</p>\n<p><strong>II).</strong> Twenty-five years ago, in the 1999 election campaign, these barely made an appearance either in manifestos or on the campaign trail of the Bharatiya Janata Party which was then <strong>seeking (C) </strong>another term in the office under the <strong>stewardship (D) </strong>of Prime Minister Atal Bihari Vajpayee.</p>", "options": ["<p>A-C</p>", "<p>B-D</p>", "<p>A-C and B-D</p>", "<p>A-D and B-C</p>", "<p>No Correction required</p>"], "correctIndex": 4, "solution": "<p><strong>Answer</strong><strong>: E</strong></p>\n<p>e) No Correction required</p>\n<p>The sentences are correct, hence no correction required.</p>"}, {"question": "<p><strong>Read each sentence to find out whether there is any grammatical error in it. The error if any, will be in one part of the sentence. Mark the number of the part with error as your answer. If there is no error, mark option (E) as your answer.</strong></p><br><p>Despite the initial setbacks, the research <strong>(A)/</strong>team managed to carry with on their <strong>(B)/</strong>investigations, refining their methodologies <strong>(C)/</strong>to achieve more accurate and reliable results. <strong>(D)/ </strong>No error <strong>(E)</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>No error</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The phrase \"carry with on\" is incorrect. The correct phrase should be \"carry on with.\"</p>\n<p><strong>Corrected sentence:</strong></p>\n<p>Despite the initial setbacks, the research team managed to carry on with their investigations, refining their methodologies to achieve more accurate and reliable results.</p>"}, {"question": "<p><strong>Read each sentence to find out whether there is any grammatical error in it. The error if any, will be in one part of the sentence. Mark the number of the part with error as your answer. If there is no error, mark option (E) as your answer.</strong></p><br><p>The unexpected downturn in the market <strong>(A)/</strong>forced investors to rethink their strategies, <strong>(B)/</strong>prompting many to scale back its operations <strong>(C)/</strong>and focus on more sustainable investments. <strong>(D)/ </strong>No error <strong>(E)</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>No error</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>In this part, \"its operations\" is incorrect because \"investors\" is plural, and the pronoun should be \"their\" instead of \"its.\"</p>\n<p><strong>Corrected sentence:</strong></p>\n<p>The unexpected downturn in the market forced investors to rethink their strategies, prompting many to scale back their operations and focus on more sustainable investments.</p>"}, {"question": "<p><strong>Read each sentence to find out whether there is any grammatical error in it. The error if any, will be in one part of the sentence. Mark the number of the part with error as your answer. If there is no error, mark option (E) as your answer.</strong></p><br><p>During the conference, experts urged <strong>(A)/</strong>attendees to take advantage of networking opportunities <strong>(B)/</strong>and connect with peers to fostering collaboration <strong>(C)/</strong>and innovation in their respective fields. <strong>(D)/</strong> All correct <strong>(E)</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>No error</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The phrase \"to fostering\" is incorrect. It should be \"to foster\" to maintain parallel structure with \"to take\" in part C.</p>\n<p><strong>Corrected sentence:</strong></p>\n<p>During the conference, experts urged attendees to take advantage of networking opportunities and connect with peers to foster collaboration and innovation in their respective fields.</p>"}, {"question": "<p><strong>Read each sentence to find out whether there is any grammatical error in it. The error if any, will be in one part of the sentence. Mark the number of the part with error as your answer. If there is no error, mark option (E) as your answer.</strong></p><br><p>In light on recent developments, the government <strong>(A)/ </strong>has decided to roll out new regulations aimed <strong>(B)/</strong> at curbing environmental degradation and<strong> (C)/ </strong>promoting sustainable practices across industries. <strong>(D)/</strong> All correct <strong>(E)</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>No error</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The phrase \"In light on\" is incorrect. It should be \"In light of\".</p>\n<p><strong>Corrected sentence:</strong></p>\n<p>In light of recent developments, the government has decided to roll out new regulations aimed at curbing environmental degradation and promoting sustainable practices across industries.</p>"}, {"question": "<p><strong>Read each sentence to find out whether there is any grammatical error in it. The error if any, will be in one part of the sentence. Mark the number of the part with error as your answer. If there is no error, mark option (E) as your answer.</strong></p><br><p>As the discussion about unfolded, the panelists emphasized <strong>(A)/</strong> the importance of addressing systemic issues and <strong>(B)/</strong> called for stakeholders to come together<strong> (C)/</strong> and tackle these challenges collectively. <strong>(D)/</strong> All correct <strong>(E)</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>No error</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The phrase \"discussion about unfolded\" is grammatically incorrect because the preposition \"about\" is unnecessary here. The verb \"unfolded\" implies that the discussion was happening or developing over time, so it should stand alone without the preposition.</p>\n<p><strong>Corrected sentence:</strong></p>\n<p>As the discussion unfolded, the panelists emphasized the importance of addressing systemic issues and called for stakeholders to come together and tackle these challenges collectively.</p>\n<p> </p>"}, {"question": "<p><strong>Read the passage and answer the questions given below.</strong></p>\n<p><strong>Meeting for the second time since the pandemic /(A) took hold in the country, the GST Council, /(B) last Friday, had decided to relax late fees and interest /(C) pay for those taxpayers failing to file returns on time./ (D) </strong>For businesses with no tax liabilities under the indirect tax regime, the late fees were completely waived. This is in line with similar relaxations announced by the Centre in March, before the lockdown was declared, to ease compliance deadline worries of small businesses in particular. Since the full lockdown lasted longer than initially envisaged, and only began to unwind this month, the forbearance on offer was a necessary step. But given the extent of economic damage as well as the States’ fiscal positions in the period between these two meetings of the Council, its decisions are far from sufficient. In March, GST collections had slipped to Rs.97,597 crore after surpassing the Rs.1-lakh crore mark over the previous four months, and the numbers for April and May will not be known before July. Finance Minister Nirmala Sitharaman has told State representatives in the Council that just 45% of the indirect tax target had been met in the past two months. Although aware of the dwindling tax kitty during the lockdown, States have had their hands full managing the pandemic.</p>\n<p>It is for this reason that several States have been urging the Centre to extend emergency fiscal support and release past GST compensation dues enshrined in the pact that allowed the new tax regime to take off three years ago. <strong>In its stimulus package, in May, the Centre enhanced States’ power to borrow, but only part of that was completely unconditional, and a large ______________ was ____________ on States undertaking specified reforms. </strong>These reforms may be long-pursued ideals, but whether this is the right time for prioritizing them has been questioned. GST compensation (for revenue shortfalls in the first five years of GST) due to States for December 2019 to February 2020 was only released on June 4. Perhaps, it was timed to pre-empt discontent in the Council’s meeting. Yet, Centre-State ties could turn more fractious, especially in the GST Council where things have usually evolved with consensus so far — thanks to the failure to finalize the way forward for paying States the compensation. One of the ideas on the table, officially discussed for around two months, is to raise loans against future GST cess accruals in order to recompense States. Any decision on this front, along with proposed GST rate rationalizations in the textiles, footwear and fertilizers sectors that were on the Council’s agenda, can now only be expected at a special meet in July. Procrastination is not an appropriate response at this arc of the curve — be it the pandemic or the economy.</p><br><p><strong>Which of the following statements are true according to the passage?</strong></p>\n<p><strong>A).</strong> GST compensation due to States for December 2019 to February 2020 was only released on June 4.</p>\n<p><strong>B).</strong> For businesses with no tax liabilities under the indirect tax regime, the late fees were not completely waived.</p>\n<p><strong>C).</strong> Finance Minister Nirmala Sitharaman has told State representatives in the Council that just 45% of the indirect tax target had been met in the past two months.</p>", "options": ["<p>Only A</p>", "<p>Only C</p>", "<p>Only B</p>", "<p>Both A and C</p>", "<p>All are true</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>Statement A is true.</strong></p>\n<p>Supporting Sentence from the passage: “GST compensation (for revenue shortfalls in the first five years of GST) due to States for December 2019 to February 2020 was only released on June 4.”</p>\n<p><strong>Statement B is false.</strong></p>\n<p>Supporting Sentence from the passage: “For businesses with no tax liabilities under the indirect tax regime, the late fees were completely waived”</p>\n<p><strong>Statement C is true.</strong></p>\n<p>Supporting sentence from the passage: “Finance Minister Nirmala Sitharaman has told State representatives in the Council that just 45% of the indirect tax target had been met in the past two months”</p>"}, {"question": "<p><strong>Read the passage and answer the questions given below.</strong></p>\n<p><strong>Meeting for the second time since the pandemic /(A) took hold in the country, the GST Council, /(B) last Friday, had decided to relax late fees and interest /(C) pay for those taxpayers failing to file returns on time./ (D) </strong>For businesses with no tax liabilities under the indirect tax regime, the late fees were completely waived. This is in line with similar relaxations announced by the Centre in March, before the lockdown was declared, to ease compliance deadline worries of small businesses in particular. Since the full lockdown lasted longer than initially envisaged, and only began to unwind this month, the forbearance on offer was a necessary step. But given the extent of economic damage as well as the States’ fiscal positions in the period between these two meetings of the Council, its decisions are far from sufficient. In March, GST collections had slipped to Rs.97,597 crore after surpassing the Rs.1-lakh crore mark over the previous four months, and the numbers for April and May will not be known before July. Finance Minister Nirmala Sitharaman has told State representatives in the Council that just 45% of the indirect tax target had been met in the past two months. Although aware of the dwindling tax kitty during the lockdown, States have had their hands full managing the pandemic.</p>\n<p>It is for this reason that several States have been urging the Centre to extend emergency fiscal support and release past GST compensation dues enshrined in the pact that allowed the new tax regime to take off three years ago. <strong>In its stimulus package, in May, the Centre enhanced States’ power to borrow, but only part of that was completely unconditional, and a large ______________ was ____________ on States undertaking specified reforms. </strong>These reforms may be long-pursued ideals, but whether this is the right time for prioritizing them has been questioned. GST compensation (for revenue shortfalls in the first five years of GST) due to States for December 2019 to February 2020 was only released on June 4. Perhaps, it was timed to pre-empt discontent in the Council’s meeting. Yet, Centre-State ties could turn more fractious, especially in the GST Council where things have usually evolved with consensus so far — thanks to the failure to finalize the way forward for paying States the compensation. One of the ideas on the table, officially discussed for around two months, is to raise loans against future GST cess accruals in order to recompense States. Any decision on this front, along with proposed GST rate rationalizations in the textiles, footwear and fertilizers sectors that were on the Council’s agenda, can now only be expected at a special meet in July. Procrastination is not an appropriate response at this arc of the curve — be it the pandemic or the economy.</p><br><p><strong>What is the style of the passage?</strong></p>", "options": ["<p>Dogmatic</p>", "<p>Patronizing</p>", "<p>Pragmatic</p>", "<p>Introspective</p>", "<p>Both B and C</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>Dogmatic</strong> = When the author has some firm belief and uses the tone to convey only his viewpoint.</p>\n<p><strong>Patronizing</strong> = When the author displays scornful expressions with regard to things considered inferior in his view.</p>\n<p><strong>Pragmatic</strong> = When the author deals with things realistically in a way that is based on practical rather than theoretical considerations.</p>\n<p><strong>Introspective</strong> = When the author analyses his own feelings and actions.</p>\n<p>The above passage deals with the topic of GST compensation, and the author here displays his ideas with considerable practicality. Hence, Pragmatic is correct.</p>"}, {"question": "<p><strong>Read the passage and answer the questions given below.</strong></p>\n<p><strong>Meeting for the second time since the pandemic /(A) took hold in the country, the GST Council, /(B) last Friday, had decided to relax late fees and interest /(C) pay for those taxpayers failing to file returns on time./ (D) </strong>For businesses with no tax liabilities under the indirect tax regime, the late fees were completely waived. This is in line with similar relaxations announced by the Centre in March, before the lockdown was declared, to ease compliance deadline worries of small businesses in particular. Since the full lockdown lasted longer than initially envisaged, and only began to unwind this month, the forbearance on offer was a necessary step. But given the extent of economic damage as well as the States’ fiscal positions in the period between these two meetings of the Council, its decisions are far from sufficient. In March, GST collections had slipped to Rs.97,597 crore after surpassing the Rs.1-lakh crore mark over the previous four months, and the numbers for April and May will not be known before July. Finance Minister Nirmala Sitharaman has told State representatives in the Council that just 45% of the indirect tax target had been met in the past two months. Although aware of the dwindling tax kitty during the lockdown, States have had their hands full managing the pandemic.</p>\n<p>It is for this reason that several States have been urging the Centre to extend emergency fiscal support and release past GST compensation dues enshrined in the pact that allowed the new tax regime to take off three years ago. <strong>In its stimulus package, in May, the Centre enhanced States’ power to borrow, but only part of that was completely unconditional, and a large ______________ was ____________ on States undertaking specified reforms. </strong>These reforms may be long-pursued ideals, but whether this is the right time for prioritizing them has been questioned. GST compensation (for revenue shortfalls in the first five years of GST) due to States for December 2019 to February 2020 was only released on June 4. Perhaps, it was timed to pre-empt discontent in the Council’s meeting. Yet, Centre-State ties could turn more fractious, especially in the GST Council where things have usually evolved with consensus so far — thanks to the failure to finalize the way forward for paying States the compensation. One of the ideas on the table, officially discussed for around two months, is to raise loans against future GST cess accruals in order to recompense States. Any decision on this front, along with proposed GST rate rationalizations in the textiles, footwear and fertilizers sectors that were on the Council’s agenda, can now only be expected at a special meet in July. Procrastination is not an appropriate response at this arc of the curve — be it the pandemic or the economy.</p><br><p><strong>Find out suitable title for the passage.</strong></p>", "options": ["<p>GST compensation: a necessity of the Covid-19 pandemic</p>", "<p>Financial Crisis of India</p>", "<p>Both A and B</p>", "<p>Economic decisions of the Centre</p>", "<p>GST: an extra burden during the Corona Pandemic</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>A is correct as it clearly conveys the main topic of the passage i.e. GST Compensation.</p>\n<p>Other options fail to display the central idea of the passage.</p>\n<p>For finding the title of a passage quickly, we should focus on the 1st 2 lines and the last 2 lines of a passage.</p>"}, {"question": "<p><strong>Read the passage and answer the questions given below.</strong></p>\n<p><strong>Meeting for the second time since the pandemic /(A) took hold in the country, the GST Council, /(B) last Friday, had decided to relax late fees and interest /(C) pay for those taxpayers failing to file returns on time./ (D) </strong>For businesses with no tax liabilities under the indirect tax regime, the late fees were completely waived. This is in line with similar relaxations announced by the Centre in March, before the lockdown was declared, to ease compliance deadline worries of small businesses in particular. Since the full lockdown lasted longer than initially envisaged, and only began to unwind this month, the forbearance on offer was a necessary step. But given the extent of economic damage as well as the States’ fiscal positions in the period between these two meetings of the Council, its decisions are far from sufficient. In March, GST collections had slipped to Rs.97,597 crore after surpassing the Rs.1-lakh crore mark over the previous four months, and the numbers for April and May will not be known before July. Finance Minister Nirmala Sitharaman has told State representatives in the Council that just 45% of the indirect tax target had been met in the past two months. Although aware of the dwindling tax kitty during the lockdown, States have had their hands full managing the pandemic.</p>\n<p>It is for this reason that several States have been urging the Centre to extend emergency fiscal support and release past GST compensation dues enshrined in the pact that allowed the new tax regime to take off three years ago. <strong>In its stimulus package, in May, the Centre enhanced States’ power to borrow, but only part of that was completely unconditional, and a large ______________ was ____________ on States undertaking specified reforms. </strong>These reforms may be long-pursued ideals, but whether this is the right time for prioritizing them has been questioned. GST compensation (for revenue shortfalls in the first five years of GST) due to States for December 2019 to February 2020 was only released on June 4. Perhaps, it was timed to pre-empt discontent in the Council’s meeting. Yet, Centre-State ties could turn more fractious, especially in the GST Council where things have usually evolved with consensus so far — thanks to the failure to finalize the way forward for paying States the compensation. One of the ideas on the table, officially discussed for around two months, is to raise loans against future GST cess accruals in order to recompense States. Any decision on this front, along with proposed GST rate rationalizations in the textiles, footwear and fertilizers sectors that were on the Council’s agenda, can now only be expected at a special meet in July. Procrastination is not an appropriate response at this arc of the curve — be it the pandemic or the economy.</p><br><p><strong>Which the following statements are false according to the passage?</strong></p>", "options": ["<p>Meeting for the first time since the pandemic took hold in the country, the GST Council, last Friday, decided to relax late fees and interest payable for those taxpayers failing to file returns on time</p>", "<p>In May, the Centre enhanced States&rsquo; power to borrow, but only part of that was completely unconditional, and a large chunk was contingent on States undertaking specified reforms</p>", "<p>Any decision on this front, along with proposed GST rate rationalizations in the textiles, footwear and fertilizers sectors that were on the Council&rsquo;s agenda, can now only be expected at a special meet in July</p>", "<p>All are true</p>", "<p>All are false</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>Statement A is false.</strong></p>\n<p>Supporting sentence from the passage: “Meeting for the second time since the pandemic took hold in the country, the GST Council, last Friday, decided to relax late fees and interest payable for those taxpayers failing to file returns on time”</p>\n<p><strong>Statement B is true.</strong></p>\n<p>Supporting statement from the passage: “In its stimulus package, in May, the Centre enhanced States’ power to borrow, but only part of that was completely unconditional, and a large chunk was contingent on States undertaking specified reforms”</p>\n<p><strong>Statement C is true.</strong></p>\n<p>Supporting sentence from the passage: “Any decision on this front, along with proposed GST rate rationalizations in the textiles, footwear and fertilizers sectors that were on the Council’s agenda, can now only be expected at a special meet in July.”</p>"}, {"question": "<p><strong>Read the passage and answer the questions given below.</strong></p>\n<p><strong>Meeting for the second time since the pandemic /(A) took hold in the country, the GST Council, /(B) last Friday, had decided to relax late fees and interest /(C) pay for those taxpayers failing to file returns on time./ (D) </strong>For businesses with no tax liabilities under the indirect tax regime, the late fees were completely waived. This is in line with similar relaxations announced by the Centre in March, before the lockdown was declared, to ease compliance deadline worries of small businesses in particular. Since the full lockdown lasted longer than initially envisaged, and only began to unwind this month, the forbearance on offer was a necessary step. But given the extent of economic damage as well as the States’ fiscal positions in the period between these two meetings of the Council, its decisions are far from sufficient. In March, GST collections had slipped to Rs.97,597 crore after surpassing the Rs.1-lakh crore mark over the previous four months, and the numbers for April and May will not be known before July. Finance Minister Nirmala Sitharaman has told State representatives in the Council that just 45% of the indirect tax target had been met in the past two months. Although aware of the dwindling tax kitty during the lockdown, States have had their hands full managing the pandemic.</p>\n<p>It is for this reason that several States have been urging the Centre to extend emergency fiscal support and release past GST compensation dues enshrined in the pact that allowed the new tax regime to take off three years ago. <strong>In its stimulus package, in May, the Centre enhanced States’ power to borrow, but only part of that was completely unconditional, and a large ______________ was ____________ on States undertaking specified reforms. </strong>These reforms may be long-pursued ideals, but whether this is the right time for prioritizing them has been questioned. GST compensation (for revenue shortfalls in the first five years of GST) due to States for December 2019 to February 2020 was only released on June 4. Perhaps, it was timed to pre-empt discontent in the Council’s meeting. Yet, Centre-State ties could turn more fractious, especially in the GST Council where things have usually evolved with consensus so far — thanks to the failure to finalize the way forward for paying States the compensation. One of the ideas on the table, officially discussed for around two months, is to raise loans against future GST cess accruals in order to recompense States. Any decision on this front, along with proposed GST rate rationalizations in the textiles, footwear and fertilizers sectors that were on the Council’s agenda, can now only be expected at a special meet in July. Procrastination is not an appropriate response at this arc of the curve — be it the pandemic or the economy.</p><br><p><strong>Find out the synonym of the given word.</strong></p>\n<p><strong>Procrastination </strong></p>", "options": ["<p>Vacillation</p>", "<p>Dithering</p>", "<p>Temporizing</p>", "<p>All A, B, C</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>Procrastination/ Dithering/ Vacillation/ Temporizing = The action of delaying something, be indecisive.</strong></p>\n<p>Hence, all A, B, C are correct.</p>"}, {"question": "<p><strong>Read the passage and answer the questions given below.</strong></p>\n<p><strong>Meeting for the second time since the pandemic /(A) took hold in the country, the GST Council, /(B) last Friday, had decided to relax late fees and interest /(C) pay for those taxpayers failing to file returns on time./ (D) </strong>For businesses with no tax liabilities under the indirect tax regime, the late fees were completely waived. This is in line with similar relaxations announced by the Centre in March, before the lockdown was declared, to ease compliance deadline worries of small businesses in particular. Since the full lockdown lasted longer than initially envisaged, and only began to unwind this month, the forbearance on offer was a necessary step. But given the extent of economic damage as well as the States’ fiscal positions in the period between these two meetings of the Council, its decisions are far from sufficient. In March, GST collections had slipped to Rs.97,597 crore after surpassing the Rs.1-lakh crore mark over the previous four months, and the numbers for April and May will not be known before July. Finance Minister Nirmala Sitharaman has told State representatives in the Council that just 45% of the indirect tax target had been met in the past two months. Although aware of the dwindling tax kitty during the lockdown, States have had their hands full managing the pandemic.</p>\n<p>It is for this reason that several States have been urging the Centre to extend emergency fiscal support and release past GST compensation dues enshrined in the pact that allowed the new tax regime to take off three years ago. <strong>In its stimulus package, in May, the Centre enhanced States’ power to borrow, but only part of that was completely unconditional, and a large ______________ was ____________ on States undertaking specified reforms. </strong>These reforms may be long-pursued ideals, but whether this is the right time for prioritizing them has been questioned. GST compensation (for revenue shortfalls in the first five years of GST) due to States for December 2019 to February 2020 was only released on June 4. Perhaps, it was timed to pre-empt discontent in the Council’s meeting. Yet, Centre-State ties could turn more fractious, especially in the GST Council where things have usually evolved with consensus so far — thanks to the failure to finalize the way forward for paying States the compensation. One of the ideas on the table, officially discussed for around two months, is to raise loans against future GST cess accruals in order to recompense States. Any decision on this front, along with proposed GST rate rationalizations in the textiles, footwear and fertilizers sectors that were on the Council’s agenda, can now only be expected at a special meet in July. Procrastination is not an appropriate response at this arc of the curve — be it the pandemic or the economy.</p><br><p><strong>Fill the blanks given in the passage.</strong></p>\n<p><strong>In its stimulus package, in May, the Centre enhanced States’ power to borrow, but only part of that was completely unconditional, and a large ______________ was ____________ on States undertaking specified reforms.</strong></p>", "options": ["<p>chunk; contingent<strong> </strong></p>", "<p>contingent; chunk<strong> </strong></p>", "<p>abhorrence; evasive</p>", "<p>acrimonious; chunk</p>", "<p>None of these<strong> </strong></p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Here in the sentence we have the meaning that  a large part was dependent on states .</p>\n<p><strong>Chunk- a short thick piece or lump. </strong></p>\n<p><strong>Contingent- occurring or existing only if (certain circumstances) are the case; dependent on.</strong></p>\n<p>Hence , “chunk” and “contingent” are suitable to fill the blanks.</p>\n<p><strong>Abhorrence- hatred</strong></p>\n<p><strong>Evasive – avoiding </strong></p>\n<p><strong>Acrimonious- harsh</strong></p>"}, {"question": "<p><strong>Read the passage and answer the questions given below.</strong></p>\n<p><strong>Meeting for the second time since the pandemic /(A) took hold in the country, the GST Council, /(B) last Friday, had decided to relax late fees and interest /(C) pay for those taxpayers failing to file returns on time./ (D) </strong>For businesses with no tax liabilities under the indirect tax regime, the late fees were completely waived. This is in line with similar relaxations announced by the Centre in March, before the lockdown was declared, to ease compliance deadline worries of small businesses in particular. Since the full lockdown lasted longer than initially envisaged, and only began to unwind this month, the forbearance on offer was a necessary step. But given the extent of economic damage as well as the States’ fiscal positions in the period between these two meetings of the Council, its decisions are far from sufficient. In March, GST collections had slipped to Rs.97,597 crore after surpassing the Rs.1-lakh crore mark over the previous four months, and the numbers for April and May will not be known before July. Finance Minister Nirmala Sitharaman has told State representatives in the Council that just 45% of the indirect tax target had been met in the past two months. Although aware of the dwindling tax kitty during the lockdown, States have had their hands full managing the pandemic.</p>\n<p>It is for this reason that several States have been urging the Centre to extend emergency fiscal support and release past GST compensation dues enshrined in the pact that allowed the new tax regime to take off three years ago. <strong>In its stimulus package, in May, the Centre enhanced States’ power to borrow, but only part of that was completely unconditional, and a large ______________ was ____________ on States undertaking specified reforms. </strong>These reforms may be long-pursued ideals, but whether this is the right time for prioritizing them has been questioned. GST compensation (for revenue shortfalls in the first five years of GST) due to States for December 2019 to February 2020 was only released on June 4. Perhaps, it was timed to pre-empt discontent in the Council’s meeting. Yet, Centre-State ties could turn more fractious, especially in the GST Council where things have usually evolved with consensus so far — thanks to the failure to finalize the way forward for paying States the compensation. One of the ideas on the table, officially discussed for around two months, is to raise loans against future GST cess accruals in order to recompense States. Any decision on this front, along with proposed GST rate rationalizations in the textiles, footwear and fertilizers sectors that were on the Council’s agenda, can now only be expected at a special meet in July. Procrastination is not an appropriate response at this arc of the curve — be it the pandemic or the economy.</p><br><p><strong>Find the grammatically incorrect part in the sentence from the passage. </strong></p>\n<p><strong>Meeting for the second time since the pandemic /(A) took hold in the country, the GST Council, /(B) last Friday, had decided to relax late fees and interest /(C) pay for those taxpayers failing to file returns on time./(D)</strong></p>", "options": ["<p>A,D</p>", "<p>B,C</p>", "<p>B,D</p>", "<p>C,D</p>", "<p>No error</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>Part C and D are grammatically incorrect.</p>\n<p><strong>In part C,  we have a past time for the action,  so the tense should be ‘simple past’, hence only “decided” should be used in place of  “had decided”.</strong></p>\n<p><strong>In part D,  it should be “payable” in place of “pay”.</strong></p>"}, {"question": "<p><strong>Given below each statement should be placed in the blank space provided so as to make a meaningful and grammatically correct sentence. If none of the sentence is appropriate mark E as the answer.</strong></p><br><p><strong>The bustling market square was alive with vibrant colors and the sound of merchants hawking their wares. As I meandered through the crowd, the aroma of exotic spices and freshly cooked street food tantalized my senses, filling me with a sense of _____________________.</strong></p>", "options": ["<p>wonder at the diversity of cultures and traditions represented in the market</p>", "<p>nostalgia for past travels to distant lands, where similar markets had left lasting impressions</p>", "<p>excitement at the prospect of discovering new flavors and unique items</p>", "<p>contentment, enjoying the lively atmosphere and the simple pleasure of exploration</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The correct answer is (c) excitement at the prospect of discovering new flavors and unique items. This option captures the sense of adventure and anticipation that comes with exploring a bustling market filled with diverse offerings.</p>\n<p>In contrast, option A focuses on \"wonder at the diversity of cultures,\" which, while relevant, emphasizes a reflective appreciation rather than the immediate excitement of discovery. Option B introduces \"nostalgia for past travels,\" which shifts the focus from the present sensory experience to past memories, making it less suitable for capturing the current sense of excitement. Option D describes \"contentment\" and enjoying the atmosphere, which, though relevant, does not fully convey the anticipatory thrill of discovering new things. Therefore, option C is the most appropriate choice, as it accurately reflects the excitement and eagerness experienced in the vibrant, sensory-rich market environment.</p>"}, {"question": "<p><strong>Given below each statement should be placed in the blank space provided so as to make a meaningful and grammatically correct sentence. If none of the sentence is appropriate mark E as the answer.</strong></p><br><p><strong>The serene garden was a haven of tranquility, with its meticulously manicured lawns and blooming flowers. As I sat on a bench, listening to the gentle trickle of a nearby fountain, I felt a sense of ___________.</strong></p>", "options": ["<p>peace, as the natural beauty and soothing sounds calmed my mind</p>", "<p>inspiration, drawn to the artistry and care evident in the garden's design</p>", "<p>nostalgia for childhood days spent playing in gardens and parks</p>", "<p>introspection, contemplating the fleeting nature of life and the importance of mindfulness</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The correct answer is (a) peace, as the natural beauty and soothing sounds calmed my mind. This option captures the serene and calming effect of the garden, providing a sense of relaxation and tranquility.</p>\n<p>In contrast, while option b) touches on the garden's artistry, it does not directly address the tranquility described. Option c) introduces nostalgia, which is less relevant to the immediate calming effect described. Option d) suggests a deeper introspection, which, is invalid in a serene setting, diverges from the direct sense of peace conveyed by the garden. Therefore, option a) is the most appropriate choice, as it directly reflects the sense of peace and calmness experienced in the tranquil garden.</p>"}, {"question": "<p><strong>Given below each statement should be placed in the blank space provided so as to make a meaningful and grammatically correct sentence. If none of the sentence is appropriate mark E as the answer.</strong></p><br><p><strong>The ancient ruins stood silently in the desert; remnants of a once-great civilization now shrouded in mystery. As I explored the crumbling structures, the hot sun beating down on me, I felt a sense of ___________.</strong></p>", "options": ["<p>awe at the ingenuity and achievements of the people who built such a magnificent city</p>", "<p>curiosity, eager to uncover the stories and secrets hidden within the ancient stones</p>", "<p>reverence, feeling a deep connection to the past and the enduring legacy of human history</p>", "<p>solitude, appreciating the quiet and isolation of the desolate landscape</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The correct answer is (b) curiosity, eager to uncover the stories and secrets hidden within the ancient stones. This option emphasizes the intrigue and sense of discovery that comes with exploring ancient ruins and pondering their history. While options a) \"awe,\" c) \"reverence,\" and d) \"solitude\" each represents valid emotional responses, option b) specifically captures the proactive, investigative feeling of wanting to uncover and learn about the ancient civilization, which best fits the context of exploring ruins shrouded in mystery.</p>"}, {"question": "<p><strong>Given below each statement should be placed in the blank space provided so as to make a meaningful and grammatically correct sentence. If none of the sentence is appropriate mark E as the answer.</strong></p><br><p><strong>The lively café was filled with the hum of conversation and the clinking of cups, creating a warm and inviting atmosphere. As I sipped my coffee, watching the world go by through the large windows, I felt a sense of ___________.</strong></p>", "options": ["<p>contentment, enjoying the simple pleasure of a good cup of coffee and the vibrant surroundings</p>", "<p>inspiration, motivated by the energy and creativity buzzing around me</p>", "<p>nostalgia for similar moments spent in caf&eacute;s in other cities, both near and far</p>", "<p>relaxation, taking a break from the hustle and bustle of everyday life to savor the moment</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The other options, such as b) \"inspiration\" and c) \"nostalgia,\" introduce emotions that, while valid, do not directly capture the immediate sense of pleasure and enjoyment that \"contentment\" conveys. The correct answer is (a) contentment, enjoying the simple pleasure of a good cup of coffee and the vibrant surroundings. This option captures the peaceful and satisfying experience of enjoying a moment of leisure in a lively café.</p>"}, {"question": "<p><strong>Given below each statement should be placed in the blank space provided so as to make a meaningful and grammatically correct sentence. If none of the sentence is appropriate mark E as the answer.</strong></p><br><p><strong>The seaside village was a picture of tranquility, with its quaint cottages and fishing boats bobbing gently in the harbor. As I walked along the sandy shore, the sound of waves lapping against the rocks filled me with a sense of ___________.</strong></p>", "options": ["<p>peace, as the soothing sounds of the sea washed away the stresses of daily life</p>", "<p>nostalgia for childhood vacations spent by the sea, building sandcastles and collecting shells</p>", "<p>freedom, as the open horizon invited thoughts of adventure and exploration</p>", "<p>belonging, feeling at home in this serene and picturesque setting</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The correct answer is (a) peace, as the soothing sounds of the sea washed away the stresses of daily life. This option captures the calming effect of the seaside environment, emphasizing the narrator's sense of relaxation and tranquility. Although option b) \"nostalgia,\" option c) \"freedom,\" and option d) \"belonging\" are valid emotions, they do not directly capture the immediate sensory and emotional impact of the peaceful seaside environment as effectively as option a) does.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-42)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-42)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

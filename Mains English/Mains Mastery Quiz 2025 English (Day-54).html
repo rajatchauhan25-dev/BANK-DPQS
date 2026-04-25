@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-54)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>Select the most appropriate words that are both grammatically and contextually correct to fill in the blanks.</strong></p><br><p><strong>The company’s decision to ____________ its workforce was met with criticism, as it was seen as an attempt to ____________ rising operational costs.</strong></p>", "options": ["<p>expand, justify</p>", "<p>downsize, mitigate</p>", "<p>enhance, overlook</p>", "<p>restructure, exaggerate</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The company’s decision to \"downsize\" its workforce was met with criticism, as it was seen as an attempt to \"mitigate\" rising operational costs. Downsizing refers to reducing the number of employees, and mitigating means taking steps to reduce the severity or seriousness of a problem, in this case, rising costs.</p>"}, {"question": "<p><strong>Select the most appropriate words that are both grammatically and contextually correct to fill in the blanks.</strong></p><br><p><strong>The government’s policy aims to ____________ the impact of climate change by ____________ renewable energy sources.</strong></p>", "options": ["<p>alleviate, promoting</p>", "<p>exacerbate, limiting</p>", "<p>compound, obstructing</p>", "<p>intensify, ignoring</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The government’s policy aims to \"alleviate\" the impact of climate change by \"promoting\" renewable energy sources. Alleviate means to reduce or lessen the impact of something, and promoting means encouraging or advancing something, such as the use of renewable energy.</p>"}, {"question": "<p><strong>Select the most appropriate words that are both grammatically and contextually correct to fill in the blanks.</strong></p><br><p><strong>In order to ____________ its market position, the company must ____________ new technologies and adapt to changing consumer preferences.</strong></p>", "options": ["<p>sabotage, eliminate</p>", "<p>undermine, neglect</p>", "<p>weaken, reject</p>", "<p>fortify, embrace</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>In order to \"fortify\" its market position, the company must \"embrace\" new technologies and adapt to changing consumer preferences. Fortifying means strengthening or reinforcing, and embracing refers to accepting and adopting new technologies or approaches.</p>"}, {"question": "<p><strong>Select the most appropriate words that are both grammatically and contextually correct to fill in the blanks.</strong></p><br><p><strong>The CEO's strategy was to ____________ the company's core competencies while ____________ non-essential operations to streamline costs.</strong></p>", "options": ["<p>conceal, acquiring</p>", "<p>disregard, accumulating</p>", "<p>leverage, divesting</p>", "<p>diminish, acquiring</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The CEO's strategy was to \"leverage\" the company's core competencies while \"divesting\" non-essential operations to streamline costs. Leverage means to use something to its maximum advantage, and divesting refers to selling off or getting rid of assets or parts of the company that are not essential.</p>"}, {"question": "<p><strong>Select the most appropriate words that are both grammatically and contextually correct to fill in the blanks.</strong></p><br><p><strong>The research was conducted to ____________ the effectiveness of the treatment and to ____________ any potential side effects.</strong></p>", "options": ["<p>validate, identify</p>", "<p>discredit, enhance</p>", "<p>nullify, intensify</p>", "<p>suppress, provoke</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The research was conducted to \"validate\" the effectiveness of the treatment and to \"identify\" any potential side effects. Validate means to confirm or prove the effectiveness, and identify means to recognize or detect potential side effects.</p>"}, {"question": "<p><strong>In the following questions, a table is given with three columns; a divided sentence is mentioned in three columns</strong> <strong>you have to combine the divided parts of the sentence, so that a meaningful sentence can be formed.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/171402454178.png\" title=\"10.png\"/></p>", "options": ["<p>Only AEG</p>", "<p>Only BFH</p>", "<p>Both AEG and CFG</p>", "<p>Both AEI and BDH</p>", "<p>All AEG, BDH and CFI</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D</strong></p>\n<p>When combining these three statements <strong>AEI</strong>: \"Mobile banking has emerged as a powerful tool for financial inclusion, allowing people to conduct transactions and access banking services using their mobile phones.\" This combined sentence highlights how mobile banking serves as a potent tool for promoting financial inclusion by enabling individuals to conduct transactions and access banking services conveniently through their mobile phones.</p>\n<p>When combining these three statements <strong>BDH</strong>: \"Government policies and initiatives can drive financial inclusion by promoting the establishment of banks in rural areas and implementing programs to educate and empower underserved communities.\" This combined sentence emphasizes the role of government policies and initiatives in driving financial inclusion through actions such as establishing banks in rural areas and implementing educational programs for underserved communities.</p>\n<p>The other combinations do not form a coherent sentence with a clear connection between the ideas presented in Columns I, II and III.</p>"}, {"question": "<p><strong>In the following questions, a table is given with three columns; a divided sentence is mentioned in three columns</strong> <strong>you have to combine the divided parts of the sentence, so that a meaningful sentence can be formed.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/171402466977.png\" title=\"11.png\"/></p>", "options": ["<p>Only AIH</p>", "<p>Only BFG</p>", "<p>Both AIH and BEG</p>", "<p>Both BFG and CDI</p>", "<p>All ADI, BEG and CFH</p>"], "correctIndex": 1, "solution": "<p><strong>Answer</strong><strong>: B</strong></p>\n<p>When combining these three statements <strong>BFG</strong>: \"Digital payment systems are transforming the landscape of financial inclusion, providing convenient and secure ways for people to transact without the need for traditional bank accounts.\" This combined sentence highlights how digital payment systems are reshaping financial inclusion by offering convenient and secure transaction methods that do not necessarily rely on traditional bank accounts.</p>\n<p>The other combinations do not form a coherent sentence with a clear connection between the ideas presented in Columns I, II and III.</p>"}, {"question": "<p><strong>In the following questions, a table is given with three columns; a divided sentence is mentioned in three columns</strong> <strong>you have to combine the divided parts of the sentence, so that a meaningful sentence can be formed.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/171402485087.png\" title=\"12.png\"/></p>", "options": ["<p>Only AEH</p>", "<p>Only BDH</p>", "<p>Both AEH and BDI</p>", "<p>Both BDI and CFG</p>", "<p>All AEH, BDI and CFG</p>"], "correctIndex": 4, "solution": "<p><strong>Answer</strong><strong>: E</strong></p>\n<p>When combining these three statements <strong>AEH</strong>: \"Microfinance institutions play a vital role in promoting financial inclusion by offering small loans, savings accounts, and other financial services to low-income individuals.\" This combined sentence emphasizes the significant role of microfinance institutions in promoting financial inclusion by providing essential financial services to low-income individuals.</p>\n<p>When combining these three statements <strong>BDI</strong>: \"Partnerships between governments, financial institutions, and non-profit organizations are key to advancing financial inclusion initiatives and reaching marginalized communities effectively.\" This combined sentence highlights the importance of collaborative efforts between various entities in advancing financial inclusion initiatives and effectively reaching marginalized communities.</p>\n<p>When combining these three statements <strong>CFG</strong>: \"The expansion of branchless banking through agent networks and mobile banking has extended financial services to remote and underserved areas, increasing financial inclusion.\" This combined sentence emphasizes how the expansion of branchless banking and mobile banking has broadened access to financial services, particularly in remote and underserved areas, thereby contributing to increased financial inclusion.</p>\n<p>The other combinations do not form a coherent sentence with a clear connection between the ideas presented in Columns I, II and III.</p>"}, {"question": "<p><strong>In the following questions, a table is given with three columns; a divided sentence is mentioned in three columns</strong> <strong>you have to combine the divided parts of the sentence, so that a meaningful sentence can be formed.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/171402499942.png\" title=\"13.png\"/></p>", "options": ["<p>Only ADG</p>", "<p>Only BHI</p>", "<p>Both BFH and CEI</p>", "<p>Both AFH and BDG</p>", "<p>All AEI, BFH and CDG</p>"], "correctIndex": 2, "solution": "<p><strong>Answer</strong><strong>: C</strong></p>\n<p>When combining these three statements <strong>BFH</strong>: \"Regulatory frameworks that encourage innovation and competition in the financial sector can lead to the development of inclusive financial products and services.\" This combined sentence emphasizes how regulatory frameworks promoting innovation and competition can foster the creation of financial products and services that are inclusive, benefiting a wider range of individuals and businesses.</p>\n<p>When combining these three statements <strong>CEI</strong>: \"Affordable and accessible credit products enable individuals and small businesses to invest in education, healthcare, and entrepreneurship, driving economic growth and reducing poverty.\" This combined sentence emphasizes how access to affordable and accessible credit products empowers both individuals and small businesses to make investments that contribute to economic growth and poverty reduction.</p>\n<p>The other combinations do not form a coherent sentence with a clear connection between the ideas presented in Columns I, II and III.</p>"}, {"question": "<p><strong>In the following questions, a table is given with three columns; a divided sentence is mentioned in three columns</strong> <strong>you have to combine the divided parts of the sentence, so that a meaningful sentence can be formed.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/171402512655.png\" title=\"14.png\"/></p>", "options": ["<p>Only ADG</p>", "<p>Only AEH and BFI</p>", "<p>Both BFI and CEH</p>", "<p>Both BFH and CDI</p>", "<p>All AEH, BFG and CDI</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D</strong></p>\n<p>When combining these three statements <strong>BFH</strong>: \"Financial inclusion aims to provide access to affordable financial services for all individuals, especially those traditionally excluded from the formal banking system.\" This combined sentence succinctly captures the essence of financial inclusion, emphasizing its goal of providing affordable financial services to everyone, with particular attention to those who have been historically excluded from traditional banking systems.</p>\n<p>When combining these three statements <strong>CDI</strong>: \"The digitization of financial services has the potential to reduce transaction costs, improve efficiency, and reach previously underserved populations, advancing financial inclusion goals.\" This combined sentence emphasizes how the digitization of financial services can be instrumental in lowering costs, enhancing efficiency, and extending services to populations that have historically lacked access to financial services, thus contributing to the goals of financial inclusion.</p>\n<p>The other combinations do not form a coherent sentence with a clear connection between the ideas presented in Columns I, II and III.</p>"}, {"question": "<p><strong>In the given question, a part of the sentences is printed in bold. Below the sentence alternatives to the bold part are given at (A), (B), (C), and (D) which may help improve the sentence. Choose the correct alternative. If the sentence is correct, choose option E which is “No correction required.”</strong></p><br><p><strong>Despite of concerted efforts to</strong> mitigate environmental degradation, deforestation continues to exacerbate biodiversity loss and disrupt ecological equilibrium.</p>", "options": ["<p>Despite concert efforts to</p>", "<p>Despite concerted efforts in</p>", "<p>In spite concerted efforts to</p>", "<p>Despite concerted efforts to</p>", "<p>No correction required</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>Despite concerted efforts to</strong> mitigate environmental degradation, deforestation continues to exacerbate biodiversity loss and disrupt ecological equilibrium.</p>"}, {"question": "<p><strong>In the given question, a part of the sentences is printed in bold. Below the sentence alternatives to the bold part are given at (A), (B), (C), and (D) which may help improve the sentence. Choose the correct alternative. If the sentence is correct, choose option E which is “No correction required.”</strong></p><br><p>The central bank’s decision to adjust interest rates <strong>was being a calculated move aimed at</strong> curbing inflationary pressures without stifling economic growth.</p>", "options": ["<p>is a calculated move aimed</p>", "<p>was a calculated move aimed at</p>", "<p>was calculated moving aimed at</p>", "<p>was a calculated move aimed</p>", "<p>No correction required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The central bank’s decision to adjust interest rates <strong>was a calculated move aimed at</strong> curbing inflationary pressures without stifling economic growth.</p>"}, {"question": "<p><strong>In the given question, a part of the sentences is printed in bold. Below the sentence alternatives to the bold part are given at (A), (B), (C), and (D) which may help improve the sentence. Choose the correct alternative. If the sentence is correct, choose option E which is “No correction required.”</strong></p><br><p>Technological determinism posits that societal development <strong>is fundamentally shaped by</strong> technological innovation, often at the expense of human agency.</p>", "options": ["<p>is fundamental shaped by</p>", "<p>is fundamentally shaping by</p>", "<p>is fundamentally shaped on</p>", "<p>is being fundamentally shaped by</p>", "<p>No correction required</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>Technological determinism posits that societal development <strong>is fundamentally shaped by</strong> technological innovation, often at the expense of human agency.</p>"}, {"question": "<p><strong>In the given question, a part of the sentences is printed in bold. Below the sentence alternatives to the bold part are given at (A), (B), (C), and (D) which may help improve the sentence. Choose the correct alternative. If the sentence is correct, choose option E which is “No correction required.”</strong></p><br><p>The volatility of emerging markets presents both substantial risks and enticing opportunities for <strong>investors seeking of high returns</strong>.</p>", "options": ["<p>investors seek high returns</p>", "<p>investors seeking high return&rsquo;s</p>", "<p>investors seeking high returns</p>", "<p>investor&rsquo;s seeking high returns</p>", "<p>No correction required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The volatility of emerging markets presents both substantial risks and enticing opportunities for <strong>investors seeking high returns</strong>.</p>"}, {"question": "<p><strong>In the given question, a part of the sentences is printed in bold. Below the sentence alternatives to the bold part are given at (A), (B), (C), and (D) which may help improve the sentence. Choose the correct alternative. If the sentence is correct, choose option E which is “No correction required.”</strong></p><br><p>Architectural innovation, particularly in sustainable design, <strong>is being reshaping urban landscapes</strong> to prioritize energy efficiency and resilience.</p>", "options": ["<p>is reshaping urban landscapes</p>", "<p>reshaping urban landscapes</p>", "<p>is reshaped urban landscapes</p>", "<p>reshaped urban landscapes</p>", "<p>No correction required</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Architectural innovation, particularly in sustainable design, <strong>is reshaping urban landscapes</strong> to prioritize energy efficiency and resilience.</p>"}, {"question": "<p><strong>The following passage given below has questions that have been framed on the content of the same. You are required to read the same carefully and answer the questions that follow</strong></p>\n<p>Two contrasting issues concerning the legislature in two States appear to sum up the potential for political controversy when elected governments and Governors do not <strong><em>see eye to eye</em></strong>. In the West Bengal Assembly, Chief Minister Mamata Banerjee and legislators of her party had to virtually plead with Governor Jagdeep Dhankhar to start reading his customary address amidst a prolonged uproar by the Opposition BJP MLAs. Mr. Dhankhar appeared ready to give in to the protesters, but was ultimately persuaded into reading the first and last lines. In Telangana, on the other hand, the K. Chandrasekhar Rao government seems to have decided not to have Governor Tamilisai Soundararajan address the legislature before it presented this year’s Budget. Instead, it is treating the current meeting of the legislature as a continuation of the last session. That the session, which last met some months ago, was not prorogued, has given scope for the government to contend that it is just a further meeting, and it is not necessary for the Governor to open it with an address. The ceremonial address is usually delivered in the first session of every year. Dr. Soundararajan has issued a rare statement to argue that the government’s position was technical, and it would not be proper to commence the Budget session without her address. The episode appears to arise from points of conflict between the government secretariat and Raj Bhavan, as the ruling TRS seems aggrieved that the Governor deviated from the text of her address last year and on some other issues too.</p>\n<p>The Governor’s address is a constitutional formality, albeit a significant one, as it is essentially a statement of policy of the regime of the day. That the formal occasion is mired in political wrangling is a sign of institutional decay and unwarranted politicisation of constitutional norms. That Ms. Banerjee saw the incidents in the Assembly, which almost resulted in the abandonment of the Governor’s address, as “an attempt to create a constitutional crisis” shows that leaders still attach constitutional significance to the tradition. It will be desirable if the same recognition is seen in Telangana too. After all, if not now, the next session will have to open with the Governor’s address. It is true that there are sound arguments that question the need and the relevance of the office of the Governor, or support the view that some incumbents are politically partisan. There may even be a case for doing away with the formality, or even arguing that the policy statement is better read out by the elected Chief Minister. However, as long as the current system is in vogue, there is a case for abiding by the norms. Politics notwithstanding, it is only in such formality that civility in public discourse is expressed.</p><br><p><strong> </strong><strong>Three sentences have been given below. You have to read the same and choose which of the following would correctly take the idiom, <em><u>‘see eye to eye’</u></em> as used in the passage?</strong></p>\n<p><strong>I. </strong>That house on the CP square certainly _____________. Should we take a look inside?</p>\n<p><strong>II. </strong>They said they were ending the contract because they didn’t ______________ with their clients.</p>\n<p><strong>III. </strong>After she found out about his latest relapse with drugs, she decided it was best to ______________.</p>", "options": ["<p>Only (i)</p>", "<p>Only (ii)</p>", "<p>Only (iii)</p>", "<p>Both (i) and (ii)</p>", "<p>Both (ii) and (iii)</p>"], "correctIndex": 1, "solution": "<p><strong>Answer:</strong><strong> B</strong></p>\n<p>The idiom ‘see eye to eye’ means to be in complete agreement with someone. In the passage, the sentence uses the phrase ‘do not’ before this idiom which means the government and the governor are not in agreement or they are not on the same page. Now, looking at the sentences above;</p>\n<p>The <strong>first</strong> sentence would take the phrase ‘caught my eyes’ which means to get someone’s attention. Like in the given sentence, the house caught the person’s attention.</p>\n<p>The <strong>second </strong>sentence would take the phrase in the question as it talks about the disagreements between the company and the clients which ended the contract between them. Also, the word ‘didn’t’ has been used before the blank to match the meaning as given in the passage.</p>\n<p>The correct phrase that can complete the <strong>third </strong>sentence is; ‘leave him for good’ as that means to leave someone permanently.</p>\n<p>Therefore, the correct option should be (b).</p>"}, {"question": "<p><strong>The following passage given below has questions that have been framed on the content of the same. You are required to read the same carefully and answer the questions that follow</strong></p>\n<p>Two contrasting issues concerning the legislature in two States appear to sum up the potential for political controversy when elected governments and Governors do not <strong><em>see eye to eye</em></strong>. In the West Bengal Assembly, Chief Minister Mamata Banerjee and legislators of her party had to virtually plead with Governor Jagdeep Dhankhar to start reading his customary address amidst a prolonged uproar by the Opposition BJP MLAs. Mr. Dhankhar appeared ready to give in to the protesters, but was ultimately persuaded into reading the first and last lines. In Telangana, on the other hand, the K. Chandrasekhar Rao government seems to have decided not to have Governor Tamilisai Soundararajan address the legislature before it presented this year’s Budget. Instead, it is treating the current meeting of the legislature as a continuation of the last session. That the session, which last met some months ago, was not prorogued, has given scope for the government to contend that it is just a further meeting, and it is not necessary for the Governor to open it with an address. The ceremonial address is usually delivered in the first session of every year. Dr. Soundararajan has issued a rare statement to argue that the government’s position was technical, and it would not be proper to commence the Budget session without her address. The episode appears to arise from points of conflict between the government secretariat and Raj Bhavan, as the ruling TRS seems aggrieved that the Governor deviated from the text of her address last year and on some other issues too.</p>\n<p>The Governor’s address is a constitutional formality, albeit a significant one, as it is essentially a statement of policy of the regime of the day. That the formal occasion is mired in political wrangling is a sign of institutional decay and unwarranted politicisation of constitutional norms. That Ms. Banerjee saw the incidents in the Assembly, which almost resulted in the abandonment of the Governor’s address, as “an attempt to create a constitutional crisis” shows that leaders still attach constitutional significance to the tradition. It will be desirable if the same recognition is seen in Telangana too. After all, if not now, the next session will have to open with the Governor’s address. It is true that there are sound arguments that question the need and the relevance of the office of the Governor, or support the view that some incumbents are politically partisan. There may even be a case for doing away with the formality, or even arguing that the policy statement is better read out by the elected Chief Minister. However, as long as the current system is in vogue, there is a case for abiding by the norms. Politics notwithstanding, it is only in such formality that civility in public discourse is expressed.</p><br><p><strong>Which of the following options explains the opening line of the passage?</strong></p>", "options": ["<p>The governors in the mentioned states have forgotten their line of duty and need to be made aware of the same</p>", "<p>The elected governments are trying impose their superiority in the states as they do not wish to function in alignment with the centre</p>", "<p>Two states are facing the same issue of a visible tussle between the governor and the state government however, for completely opposite issues</p>", "<p>Both (b) and (c)</p>", "<p>Other than the given options</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The opening lines mention the ‘contrasting issues’ which have been further discussed in the passage where at one place a governor isn’t allowed to carry out her constitutional duty whereas in the other, the government is requesting the governor to fulfil his constitutional duty.</p>\n<p>Therefore, the best option that explains the episode is (c).</p>"}, {"question": "<p><strong>The following passage given below has questions that have been framed on the content of the same. You are required to read the same carefully and answer the questions that follow</strong></p>\n<p>Two contrasting issues concerning the legislature in two States appear to sum up the potential for political controversy when elected governments and Governors do not <strong><em>see eye to eye</em></strong>. In the West Bengal Assembly, Chief Minister Mamata Banerjee and legislators of her party had to virtually plead with Governor Jagdeep Dhankhar to start reading his customary address amidst a prolonged uproar by the Opposition BJP MLAs. Mr. Dhankhar appeared ready to give in to the protesters, but was ultimately persuaded into reading the first and last lines. In Telangana, on the other hand, the K. Chandrasekhar Rao government seems to have decided not to have Governor Tamilisai Soundararajan address the legislature before it presented this year’s Budget. Instead, it is treating the current meeting of the legislature as a continuation of the last session. That the session, which last met some months ago, was not prorogued, has given scope for the government to contend that it is just a further meeting, and it is not necessary for the Governor to open it with an address. The ceremonial address is usually delivered in the first session of every year. Dr. Soundararajan has issued a rare statement to argue that the government’s position was technical, and it would not be proper to commence the Budget session without her address. The episode appears to arise from points of conflict between the government secretariat and Raj Bhavan, as the ruling TRS seems aggrieved that the Governor deviated from the text of her address last year and on some other issues too.</p>\n<p>The Governor’s address is a constitutional formality, albeit a significant one, as it is essentially a statement of policy of the regime of the day. That the formal occasion is mired in political wrangling is a sign of institutional decay and unwarranted politicisation of constitutional norms. That Ms. Banerjee saw the incidents in the Assembly, which almost resulted in the abandonment of the Governor’s address, as “an attempt to create a constitutional crisis” shows that leaders still attach constitutional significance to the tradition. It will be desirable if the same recognition is seen in Telangana too. After all, if not now, the next session will have to open with the Governor’s address. It is true that there are sound arguments that question the need and the relevance of the office of the Governor, or support the view that some incumbents are politically partisan. There may even be a case for doing away with the formality, or even arguing that the policy statement is better read out by the elected Chief Minister. However, as long as the current system is in vogue, there is a case for abiding by the norms. Politics notwithstanding, it is only in such formality that civility in public discourse is expressed.</p><br><p><strong>With which of the following would Ms. Banerjee most likely agree as per the passage?</strong></p>\n<p><strong>I. </strong>The traditional practices must be abided by as a mark of respect to our constitution if not anything else</p>\n<p><strong>II. </strong>Things should be continued as they are since they are in fashion as, breaking of rules by the government is not desirable</p>\n<p><strong>III. </strong>Telangana and West Bengal are two entirely different geographies and what happens in one won’t dictate what happens in the other</p>", "options": ["<p>Only (ii)</p>", "<p>Only (iii)</p>", "<p>Both (ii) and (iii)</p>", "<p>Only (i)</p>", "<p>Both (i) and (iii)</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>Refer to the lines from the second paragraph given below to understand the question better:</p>\n<p><em>That Ms. Banerjee saw the incidents in the Assembly, which almost resulted in the abandonment of the Governor’s address, as “an attempt to create a constitutional crisis” <strong>shows that leaders still attach</strong> constitutional significance to the tradition.</em></p>\n<p>This clearly tells us that she disapproved of the incidence and hence did not let the same happen in her state.</p>\n<p>Therefore, the best option that describes the same is (d).</p>"}, {"question": "<p><strong>The following passage given below has questions that have been framed on the content of the same. You are required to read the same carefully and answer the questions that follow</strong></p>\n<p>Two contrasting issues concerning the legislature in two States appear to sum up the potential for political controversy when elected governments and Governors do not <strong><em>see eye to eye</em></strong>. In the West Bengal Assembly, Chief Minister Mamata Banerjee and legislators of her party had to virtually plead with Governor Jagdeep Dhankhar to start reading his customary address amidst a prolonged uproar by the Opposition BJP MLAs. Mr. Dhankhar appeared ready to give in to the protesters, but was ultimately persuaded into reading the first and last lines. In Telangana, on the other hand, the K. Chandrasekhar Rao government seems to have decided not to have Governor Tamilisai Soundararajan address the legislature before it presented this year’s Budget. Instead, it is treating the current meeting of the legislature as a continuation of the last session. That the session, which last met some months ago, was not prorogued, has given scope for the government to contend that it is just a further meeting, and it is not necessary for the Governor to open it with an address. The ceremonial address is usually delivered in the first session of every year. Dr. Soundararajan has issued a rare statement to argue that the government’s position was technical, and it would not be proper to commence the Budget session without her address. The episode appears to arise from points of conflict between the government secretariat and Raj Bhavan, as the ruling TRS seems aggrieved that the Governor deviated from the text of her address last year and on some other issues too.</p>\n<p>The Governor’s address is a constitutional formality, albeit a significant one, as it is essentially a statement of policy of the regime of the day. That the formal occasion is mired in political wrangling is a sign of institutional decay and unwarranted politicisation of constitutional norms. That Ms. Banerjee saw the incidents in the Assembly, which almost resulted in the abandonment of the Governor’s address, as “an attempt to create a constitutional crisis” shows that leaders still attach constitutional significance to the tradition. It will be desirable if the same recognition is seen in Telangana too. After all, if not now, the next session will have to open with the Governor’s address. It is true that there are sound arguments that question the need and the relevance of the office of the Governor, or support the view that some incumbents are politically partisan. There may even be a case for doing away with the formality, or even arguing that the policy statement is better read out by the elected Chief Minister. However, as long as the current system is in vogue, there is a case for abiding by the norms. Politics notwithstanding, it is only in such formality that civility in public discourse is expressed.</p><br><p><strong>Which of the following has been cited as the reason that justifies the actions of the Telangana governor not being allowed to address the budget session?</strong></p>", "options": ["<p>That the practice of addressing before the session in not valid as the head of the elected government should be the one who should open the discussion</p>", "<p>The governor while addressing the last time made some derogatory remarks over the state of the affairs making the episode questionable</p>", "<p>The West Bengal governor was found indicating in his address that the governors have now stopped interfering in the government&rsquo;s affairs</p>", "<p>The state government found that the governor while addressing went awry leading to a conflict between the two authorities</p>", "<p>None of the above</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>Upon reading the last few lines of the first paragraph we can clearly understand the reason being cited by the government that says ‘she deviated from the contents of the speech and other issues’</p>\n<p>This has only been explained in the fourth option. The first option is vague, the third option is unrelated and vague however, the second option could have been close but it has nowhere been mentioned that derogatory or insulting remarks were made.</p>\n<p>Thus, the correct answer should be option (d).</p>"}, {"question": "<p><strong>The following passage given below has questions that have been framed on the content of the same. You are required to read the same carefully and answer the questions that follow</strong></p>\n<p>Two contrasting issues concerning the legislature in two States appear to sum up the potential for political controversy when elected governments and Governors do not <strong><em>see eye to eye</em></strong>. In the West Bengal Assembly, Chief Minister Mamata Banerjee and legislators of her party had to virtually plead with Governor Jagdeep Dhankhar to start reading his customary address amidst a prolonged uproar by the Opposition BJP MLAs. Mr. Dhankhar appeared ready to give in to the protesters, but was ultimately persuaded into reading the first and last lines. In Telangana, on the other hand, the K. Chandrasekhar Rao government seems to have decided not to have Governor Tamilisai Soundararajan address the legislature before it presented this year’s Budget. Instead, it is treating the current meeting of the legislature as a continuation of the last session. That the session, which last met some months ago, was not prorogued, has given scope for the government to contend that it is just a further meeting, and it is not necessary for the Governor to open it with an address. The ceremonial address is usually delivered in the first session of every year. Dr. Soundararajan has issued a rare statement to argue that the government’s position was technical, and it would not be proper to commence the Budget session without her address. The episode appears to arise from points of conflict between the government secretariat and Raj Bhavan, as the ruling TRS seems aggrieved that the Governor deviated from the text of her address last year and on some other issues too.</p>\n<p>The Governor’s address is a constitutional formality, albeit a significant one, as it is essentially a statement of policy of the regime of the day. That the formal occasion is mired in political wrangling is a sign of institutional decay and unwarranted politicisation of constitutional norms. That Ms. Banerjee saw the incidents in the Assembly, which almost resulted in the abandonment of the Governor’s address, as “an attempt to create a constitutional crisis” shows that leaders still attach constitutional significance to the tradition. It will be desirable if the same recognition is seen in Telangana too. After all, if not now, the next session will have to open with the Governor’s address. It is true that there are sound arguments that question the need and the relevance of the office of the Governor, or support the view that some incumbents are politically partisan. There may even be a case for doing away with the formality, or even arguing that the policy statement is better read out by the elected Chief Minister. However, as long as the current system is in vogue, there is a case for abiding by the norms. Politics notwithstanding, it is only in such formality that civility in public discourse is expressed.</p><br><p><strong> </strong><strong>Which of the following statements is false as per the contents of the passage?</strong></p>\n<p><strong>I.</strong> The Telangana government had discontinued the previous session without dissolving the same</p>\n<p><strong>II.</strong> Banerjee was finally able to cajole the governor to at least read the first and the last lines to begin the session</p>\n<p><strong>III. </strong>Both the CMs mentioned have been known to have animosity towards the Centre and hence, their state governors behaved the like</p>", "options": ["<p>Only (ii)</p>", "<p>Only (iii)</p>", "<p>Only (i)</p>", "<p>Both (i) and (iii)</p>", "<p>All are true</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The first statement is true as it has been mentioned in the first paragraph that the CM is adamant on treating the present session as a continuation to the last session as the last session wasn’t ‘<strong>prorogued</strong>: dissolved or finished’. So, this happens to be correct.</p>\n<p>The second statement also finds a mention in the middle of the second paragraph. So, that’s true as well.</p>\n<p>Although, the third statement we know can be true but as it has not been discussed in the passage, we cannot consider the same to be true.</p>\n<p>Therefore, the best is to mark option (b) as the answer.</p>"}, {"question": "<p><strong>The following passage given below has questions that have been framed on the content of the same. You are required to read the same carefully and answer the questions that follow</strong></p>\n<p>Two contrasting issues concerning the legislature in two States appear to sum up the potential for political controversy when elected governments and Governors do not <strong><em>see eye to eye</em></strong>. In the West Bengal Assembly, Chief Minister Mamata Banerjee and legislators of her party had to virtually plead with Governor Jagdeep Dhankhar to start reading his customary address amidst a prolonged uproar by the Opposition BJP MLAs. Mr. Dhankhar appeared ready to give in to the protesters, but was ultimately persuaded into reading the first and last lines. In Telangana, on the other hand, the K. Chandrasekhar Rao government seems to have decided not to have Governor Tamilisai Soundararajan address the legislature before it presented this year’s Budget. Instead, it is treating the current meeting of the legislature as a continuation of the last session. That the session, which last met some months ago, was not prorogued, has given scope for the government to contend that it is just a further meeting, and it is not necessary for the Governor to open it with an address. The ceremonial address is usually delivered in the first session of every year. Dr. Soundararajan has issued a rare statement to argue that the government’s position was technical, and it would not be proper to commence the Budget session without her address. The episode appears to arise from points of conflict between the government secretariat and Raj Bhavan, as the ruling TRS seems aggrieved that the Governor deviated from the text of her address last year and on some other issues too.</p>\n<p>The Governor’s address is a constitutional formality, albeit a significant one, as it is essentially a statement of policy of the regime of the day. That the formal occasion is mired in political wrangling is a sign of institutional decay and unwarranted politicisation of constitutional norms. That Ms. Banerjee saw the incidents in the Assembly, which almost resulted in the abandonment of the Governor’s address, as “an attempt to create a constitutional crisis” shows that leaders still attach constitutional significance to the tradition. It will be desirable if the same recognition is seen in Telangana too. After all, if not now, the next session will have to open with the Governor’s address. It is true that there are sound arguments that question the need and the relevance of the office of the Governor, or support the view that some incumbents are politically partisan. There may even be a case for doing away with the formality, or even arguing that the policy statement is better read out by the elected Chief Minister. However, as long as the current system is in vogue, there is a case for abiding by the norms. Politics notwithstanding, it is only in such formality that civility in public discourse is expressed.</p><br><p><strong>Choose the best option based on the words given in the column I given below taken from the passage.</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165103518397.jpg\" title=\"1.JPG\"/></strong> </p>", "options": ["<p>A-II, B-III, C-I</p>", "<p>B-II, C-III</p>", "<p>A-III, B-I, C-II</p>", "<p>A-III, B-II</p>", "<p>A-II, B-I, C-II</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The words can be understood as given below:</p>\n<p><strong>Wrangling --&gt;</strong> to engage in argument or controversy</p>\n<p><strong>Incumbents --&gt;</strong> a person who is currently in an official position</p>\n<p><strong>Uproar --&gt;</strong> an angry discussion about something</p>\n<p>There are hints to each sentence!</p>\n<p>The first sentence uses ‘the president’ (who can hold a position) so, the best is to match I with B.</p>\n<p>Then, the vowel ‘an’ precedes the blank in II, which is a direct hint for ‘uproar’ to fit there. So, C fits II</p>\n<p>And the last one, where people in families can be seen getting caught in petty quarrels so, A matches with III.</p>\n<p>Therefore, the option with these combinations should be the answer. Hence, we mark (c).</p>"}, {"question": "<p><strong>The following passage given below has questions that have been framed on the content of the same. You are required to read the same carefully and answer the questions that follow</strong></p>\n<p>Two contrasting issues concerning the legislature in two States appear to sum up the potential for political controversy when elected governments and Governors do not <strong><em>see eye to eye</em></strong>. In the West Bengal Assembly, Chief Minister Mamata Banerjee and legislators of her party had to virtually plead with Governor Jagdeep Dhankhar to start reading his customary address amidst a prolonged uproar by the Opposition BJP MLAs. Mr. Dhankhar appeared ready to give in to the protesters, but was ultimately persuaded into reading the first and last lines. In Telangana, on the other hand, the K. Chandrasekhar Rao government seems to have decided not to have Governor Tamilisai Soundararajan address the legislature before it presented this year’s Budget. Instead, it is treating the current meeting of the legislature as a continuation of the last session. That the session, which last met some months ago, was not prorogued, has given scope for the government to contend that it is just a further meeting, and it is not necessary for the Governor to open it with an address. The ceremonial address is usually delivered in the first session of every year. Dr. Soundararajan has issued a rare statement to argue that the government’s position was technical, and it would not be proper to commence the Budget session without her address. The episode appears to arise from points of conflict between the government secretariat and Raj Bhavan, as the ruling TRS seems aggrieved that the Governor deviated from the text of her address last year and on some other issues too.</p>\n<p>The Governor’s address is a constitutional formality, albeit a significant one, as it is essentially a statement of policy of the regime of the day. That the formal occasion is mired in political wrangling is a sign of institutional decay and unwarranted politicisation of constitutional norms. That Ms. Banerjee saw the incidents in the Assembly, which almost resulted in the abandonment of the Governor’s address, as “an attempt to create a constitutional crisis” shows that leaders still attach constitutional significance to the tradition. It will be desirable if the same recognition is seen in Telangana too. After all, if not now, the next session will have to open with the Governor’s address. It is true that there are sound arguments that question the need and the relevance of the office of the Governor, or support the view that some incumbents are politically partisan. There may even be a case for doing away with the formality, or even arguing that the policy statement is better read out by the elected Chief Minister. However, as long as the current system is in vogue, there is a case for abiding by the norms. Politics notwithstanding, it is only in such formality that civility in public discourse is expressed.</p><br><p><strong>Which of the following options can be marked as the central theme of the passage?</strong></p>", "options": ["<p>The differences between the leaders should not lead to politicising of constitutional norms</p>", "<p>The constitution and its norms at risk of disrepute while the leaders decide not to give in</p>", "<p>The rift between the centre and the states getting wider</p>", "<p>The governors and their realm of powers should be re-thought about</p>", "<p>The elected state governments and the need to co-operate with the administration</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The entire passage is based upon a single thought that is that; an exception to the adherence to constitutional formalities is seen as a disrespect towards the constitution itself and till the practice itself is changed, it should be respectfully followed.</p>\n<p>The first option explains the idea very well and hence, the correct answer is option (a).</p>"}, {"question": "<p><strong>In the following questions, a paragraph is given. Fill the blank with the correct sentence from the options.</strong></p><br><p><strong>It was first encouraged as a voluntary contribution by business; six years ago it evolved into a co-option _______________________ and now, corporate social responsibility or CSR has become an imposition on India Inc. Key amendments to the relevant sections of the Companies Act in the last session of Parliament have now made non-compliance with CSR norms a jailable offence for key officers of the company, apart from hefty fines up to Rs. 25 lakh on the company and Rs. 5 lakh on the officer in default.</strong></p>", "options": ["<p>Of the corporate sector to promote inclusiveness in society</p>", "<p>On partner corporates for social development and such penal provisions</p>", "<p>Of amendments on the CSR law even as a committee constituted by it</p>", "<p>Of energies on the business rather than on social spending</p>", "<p>By committee&rsquo;s suggestion to offer a tax break for expenses on CSR</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The option (a) seems to be logical for the context and is the correct part to complete the incomplete sentence of the given passage.</p>\n<p>Therefore, option A is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, a paragraph is given. Fill the blank with the correct sentence from the options.</strong></p><br><p><strong>Nine straight months of contraction in passenger vehicle sales has also begun e</strong><strong>xtracting a toll in terms of showroom closures and lay-offs at dealerships, component suppliers and vehicle makers themselves while _______________________________that have already been shed, the Society of Indian Automobile Manufacturers admitted that the industry had laid off at least about 15,000 contract workers in the last three mmonths.</strong></p>", "options": ["<p>Experiencing a serious slowdown which is evident for some time now</p>", "<p>Bedeviling demand in the auto sectors that are well established</p>", "<p>the Federation of Automobile Dealers Associations recently warned of more jobs being at risk, on top of about two lakh positions</p>", "<p>Setting up capacity, especially of fossil-fuel powered vehicles, has largely been overlooked</p>", "<p>To formulate policy interventions to address this sectoral crisis or risk wider contagion</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The option (c) seems to be logical for the context and is the correct part to complete the incomplete sentence of the given passage.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, a paragraph is given. Fill the blank with the correct sentence from the options.</strong></p><br><p><strong>The quick, if not hasty, filling up of two vacancies in the Election Commission of India (ECI) has attracted justified criticism. The multi-member body got two new members within days of the resignation of Arun Goel, an Election Commissioner (EC) whose appointment itself came in the midst of a Constitution Bench hearing for a truly independent process of selecting members of the panel that conducts and supervises India’s elections. Critics are not wrong when they point out that the Act setting out the process of selecting the Chief Election Commissioner and other ECs appeared___________________________________.</strong></p>", "options": ["<p>to fall short of the sort of independence the Constitution Bench verdict of March 2023 envisaged</p>", "<p>the Prime Minister, the Leader of the Opposition and the Chief Justice of India (CJI) formed the</p>", "<p>competence or suitability of Gyanesh Kumar and Sukhbir Singh Sandhu, the two new ECs.</p>", "<p>sought to fill the vacuum by an interim arrangement under which the Prime Minister,</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The option (a) seems to be logical for the context and is the correct part to complete the incomplete sentence of the given passage.</p>\n<p>Therefore, option A is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, a paragraph is given. Fill the blank with the correct sentence from the options.</strong></p><br><p><strong>The last time Kashmir was on the UNSC agenda was in 1965 and Pakistan as a subject have not figured at the UNSC but at the end of the consultations on Friday, when China suggested that an informal outcome be announced by Wronecka, this was backed by Britain. However, some other permanent members of the UNSC were ________________________ India and Pakistan sort out their differences over Kashmir bilaterally, two people familiar with the developments said.</strong></p>", "options": ["<p>Integrating Kashmir more closely with the rest of the country also</p>", "<p>Backing China&rsquo;s suggestion that an informal outcome be announced as</p>", "<p>Reducing tensions through bilateral dialogue regarding the situation as</p>", "<p>Against this move and were of the view that</p>", "<p>Leading to normalcy in Kashmir helped play a key role that</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The option (d) seems to be logical for the context and is the correct part to complete the incomplete sentence of the given passage.</p>\n<p>Therefore, option D is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, a paragraph is given. Fill the blank with the correct sentence from the options.</strong></p><br><p><strong>The stronger arguments offered include the following: One is that while dollar borrowings are cheaper in terms of interest costs, these could be offset by higher principal payments if the rupee falls against the dollar at the time of redemption and while a sovereign bond will __________________</strong></p>", "options": ["<p>Worsen the risks related to adverse exchange rate movements</p>", "<p>Assume that foreign direct investment will not boom in India in a world</p>", "<p>Fork out more since the rupee may have depreciated</p>", "<p>Sterilize the dollar inflows involved</p>", "<p>Expand the set of investors who buy in Indian debt</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>Option (e) seems to be logical for the context and is the correct part to complete the incomplete sentence of the given passage.</p>\n<p>Therefore, option E is the correct answer.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-54)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-54)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

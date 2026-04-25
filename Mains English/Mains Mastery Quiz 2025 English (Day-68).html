@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-68)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>Match the statements from column A with column B and find which of the following word given in the column B can be joined to make grammatical and meaningful sense.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172855897137.png\" title=\"25.png\"/></p>", "options": ["<p>A2, B3 &amp; C1</p>", "<p>A3, B1 &amp; C2</p>", "<p>C2, B3 &amp; A1</p>", "<p>B2, C1 &amp; A3</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>A1:</strong> The financial sector’s rapid digital transformation is reshaping traditional banking and consumer interaction models.</p>\n<p><strong>B3:</strong> His innovative approach to solving logistical challenges has significantly improved efficiency within the supply chain.</p>\n<p><strong>C2:</strong> The research highlights the potential economic impact of automation on emerging industries and employment sectors.</p>"}, {"question": "<p><strong>Match the statements from column A with column B and find which of the following word given in the column B can be joined to make grammatical and meaningful sense.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172855909192.png\" title=\"26.png\"/></p>", "options": ["<p>A2, B3 &amp; C1</p>", "<p>A3, B1 &amp; C2</p>", "<p>C2, B3 &amp; A1</p>", "<p>B2, C1 &amp; A3</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>A3:</strong> Her comprehensive analysis of climate policies underscores the urgent need for global cooperation and reform.</p>\n<p><strong>B1:</strong> The novel explores the protagonist’s internal conflicts, delving deeply into themes of identity and morality.</p>\n<p><strong>C2:</strong> The growing demand for renewable energy solutions is driving substantial investment in solar and wind power.</p>"}, {"question": "<p><strong>Match the statements from column A with column B and find which of the following word given in the column B can be joined to make grammatical and meaningful sense.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172855937938.png\" title=\"27.png\"/></p>", "options": ["<p>A2, B3 &amp; C1</p>", "<p>A3, B1 &amp; C2</p>", "<p>C2, B3 &amp; A1</p>", "<p>B2, C1 &amp; A3</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>A2:</strong> Technological innovations in artificial intelligence are transforming healthcare, offering new possibilities for disease diagnosis.</p>\n<p><strong>B3:</strong> The complex relationship between inflation and consumer spending continues to challenge economic analysts worldwide.</p>\n<p><strong>C1:</strong> His extensive knowledge of market trends helped the company navigate economic downturns with minimal losses.</p>"}, {"question": "<p><strong>Match the statements from column A with column B and find which of the following word given in the column B can be joined to make grammatical and meaningful sense.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172855949184.png\" title=\"28.png\"/></p>", "options": ["<p>A2, B3 &amp; C1</p>", "<p>A3, B1 &amp; C2</p>", "<p>C2, B3 &amp; A1</p>", "<p>B2, C1 &amp; A3</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>A1:</strong> Her contributions to neuroscience have advanced our understanding of cognitive processes and human behavior.</p>\n<p><strong>B3:</strong> The company's strategic expansion into international markets demonstrates its commitment to global competitiveness.</p>\n<p><strong>C2:</strong> Rising concerns over data privacy are prompting stricter regulations and heightened consumer awareness globally.</p>"}, {"question": "<p><strong>Match the statements from column A with column B and find which of the following word given in the column B can be joined to make grammatical and meaningful sense.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172855960912.png\" title=\"29.png\"/></p>", "options": ["<p>A2, B3 &amp; C1</p>", "<p>A3, B1 &amp; C2</p>", "<p>C2, B3 &amp; A1</p>", "<p>B2, C1 &amp; A3</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>A3:</strong> The report’s findings suggest a direct correlation between education reform and long-term economic growth.</p>\n<p><strong>B1:</strong> His leadership during the merger was instrumental in securing the company's position in global markets.</p>\n<p><strong>C2:</strong> The innovative use of renewable resources in architecture reflects a growing trend toward sustainable design.</p>"}, {"question": "<p><strong>In the following passage, some of the words have been highlighted in bold. Read the passage and try to understand what it wants to convey. Then replace the highlighted words with the correct option in order to make the sentence grammatically and contextually sound. In any case the highlighted word is given correctly, then mark ‘No Improvement required’ as the right answer choice.</strong></p>\n<p>In the ongoing elections, a significant cause for concern has emerged with the low voter turnout, particularly in the Hindi heartland. This trend has set off alarm bells among political parties, forcing them to delve deeper into understanding the root causes of this <strong>alacrity (A)</strong> and strategise effectively to boost participation in the remaining phases. The Hindi heartland holds immense electoral significance. However, the voter turnout here was dishearteningly low on April 19. The polling of over 62 per cent, as per the Election Commission of India’s figure, is lower compared to the first phase of the 2019 Lok Sabha elections, when it stood at 69.43 per cent. The trend is not localised as voting was held in 102 Lok Sabha seats across 21 States and UTs. Was it the summer heat or other pressing engagements? If it is about the weather, it is understandable but if it is political disillusionment, then it is a matter of grave concern. It could well also be logistical challenges such as inadequate infrastructure, long queues at polling booths and difficulties in accessing polling stations. Despite several efforts by the ECI, voters in large numbers chose not to go out to cast their vote. We have had several elections during summers where voters <strong>staggered (B)</strong> polling stations; so maybe, and it is yet to be validated, voters are losing interest in the political system. Many voters do feel disconnected from the political process, perceiving that their votes do not significantly impact policymaking or address their concerns. This disenchantment often stems from the failure of political parties to fulfil their promises, leading to a sense of betrayal among the electorate. Traditionally, voting in the urban areas has always been low but now even voters in rural areas are giving it a pass. In such areas, where transportation facilities may be limited, reaching the polling booths becomes a <strong>beguiling (C)</strong> task for many individuals, particularly the elderly and physically challenged. Another aspect of voting in the first phase was zero voting in six districts of Nagaland. It is unprecedented and shocking, to say the least. It might have been a reaction of voters to what happened in Manipur or a call by disrupting elements; either way, it does not augur well for the country. We can agree on a few things which could have resulted in the voter’s cold shoulder. Social and economic factors play a significant role in voter apathy. A large section of the population, especially in rural areas, faces issues like poverty, illiteracy and unemployment, which overshadow their engagement with the electoral process. Furthermore, the <strong>prevalence</strong> <strong>(D)</strong> of identity politics and polarisation in the Hindi heartland may have contributed to a sense of disillusionment among voters. Divisive narratives propagated by certain political entities often sow seeds of distrust and alienation among communities, discouraging them from participating in the electoral process. Political parties must prioritise engaging with the electorate beyond election cycles, <strong>deserting (E)</strong> dialogue and building trust through consistent communication and transparent governance.</p><br><p><strong>Which of the following words will replace the word in (A)?</strong></p>", "options": ["<p>ardency</p>", "<p>vivacity</p>", "<p>apathy</p>", "<p>indolence</p>", "<p>No Improvement required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer</strong><strong>: C</strong></p>\n<p>The word \"alacrity\" means brisk and cheerful readiness. Looking at the context, it seems that the intended word should convey the opposite meaning, indicating a lack of enthusiasm or readiness. Among the options, \"apathy\" fits this context best, as it means a lack of interest, enthusiasm, or concern. So, the correct answer is: c) apathy</p>\n<p><strong>a). ardency -</strong> This word refers to enthusiasm or passion. However, in the context provided, the low voter turnout suggests a lack of enthusiasm rather than an abundance of it. Therefore, this option is not suitable.</p>\n<p><strong>b). vivacity -</strong> Vivacity refers to liveliness or energy. Similar to \"ardency,\" this word implies a positive and active engagement, which contrasts with the idea of low voter turnout due to disinterest or disillusionment. Thus, this option is not appropriate.</p>\n<p><strong>c). apathy -</strong> Apathy refers to a lack of interest, enthusiasm, or concern. This term accurately captures the sentiment of disinterest or indifference towards voting, which is evident from the context provided. Therefore, this option is the correct choice.</p>\n<p><strong>d). indolence -</strong> Indolence refers to laziness or avoidance of activity. While it implies a lack of effort, it doesn't necessarily convey the specific lack of interest in voting as \"apathy\" does. Hence, this option is not as fitting.</p>\n<p>alacrity - Alacrity refers to eagerness or willingness to do something promptly. Again, this word conveys a sense of enthusiasm or readiness, which doesn't align with the idea of low voter turnout due to disinterest. Therefore, it's not the appropriate choice.</p>\n<p>In conclusion, \"c) apathy\" is the most suitable word to replace the word ‘alacrity’ in (A) because it accurately reflects the lack of interest or enthusiasm towards voting described in the passage.</p>\n<p>So, \"apathy\" is the most suitable replacement for \"alacrity\" in the given context.</p>"}, {"question": "<p><strong>In the following passage, some of the words have been highlighted in bold. Read the passage and try to understand what it wants to convey. Then replace the highlighted words with the correct option in order to make the sentence grammatically and contextually sound. In any case the highlighted word is given correctly, then mark ‘No Improvement required’ as the right answer choice.</strong></p>\n<p>In the ongoing elections, a significant cause for concern has emerged with the low voter turnout, particularly in the Hindi heartland. This trend has set off alarm bells among political parties, forcing them to delve deeper into understanding the root causes of this <strong>alacrity (A)</strong> and strategise effectively to boost participation in the remaining phases. The Hindi heartland holds immense electoral significance. However, the voter turnout here was dishearteningly low on April 19. The polling of over 62 per cent, as per the Election Commission of India’s figure, is lower compared to the first phase of the 2019 Lok Sabha elections, when it stood at 69.43 per cent. The trend is not localised as voting was held in 102 Lok Sabha seats across 21 States and UTs. Was it the summer heat or other pressing engagements? If it is about the weather, it is understandable but if it is political disillusionment, then it is a matter of grave concern. It could well also be logistical challenges such as inadequate infrastructure, long queues at polling booths and difficulties in accessing polling stations. Despite several efforts by the ECI, voters in large numbers chose not to go out to cast their vote. We have had several elections during summers where voters <strong>staggered (B)</strong> polling stations; so maybe, and it is yet to be validated, voters are losing interest in the political system. Many voters do feel disconnected from the political process, perceiving that their votes do not significantly impact policymaking or address their concerns. This disenchantment often stems from the failure of political parties to fulfil their promises, leading to a sense of betrayal among the electorate. Traditionally, voting in the urban areas has always been low but now even voters in rural areas are giving it a pass. In such areas, where transportation facilities may be limited, reaching the polling booths becomes a <strong>beguiling (C)</strong> task for many individuals, particularly the elderly and physically challenged. Another aspect of voting in the first phase was zero voting in six districts of Nagaland. It is unprecedented and shocking, to say the least. It might have been a reaction of voters to what happened in Manipur or a call by disrupting elements; either way, it does not augur well for the country. We can agree on a few things which could have resulted in the voter’s cold shoulder. Social and economic factors play a significant role in voter apathy. A large section of the population, especially in rural areas, faces issues like poverty, illiteracy and unemployment, which overshadow their engagement with the electoral process. Furthermore, the <strong>prevalence</strong> <strong>(D)</strong> of identity politics and polarisation in the Hindi heartland may have contributed to a sense of disillusionment among voters. Divisive narratives propagated by certain political entities often sow seeds of distrust and alienation among communities, discouraging them from participating in the electoral process. Political parties must prioritise engaging with the electorate beyond election cycles, <strong>deserting (E)</strong> dialogue and building trust through consistent communication and transparent governance.</p><br><p><strong>Which of the following words will replace the word in (B)?</strong></p>", "options": ["<p>besieged</p>", "<p>thronged</p>", "<p>trapped</p>", "<p>proliferated</p>", "<p>No Improvement required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer</strong><strong>: B</strong></p>\n<p>The word \" thronged \" is suitable to replace the word in (B).</p>\n<p><strong>a). besieged:</strong> This word means to be surrounded by something harmful or threatening, which doesn't fit the context of voters and polling stations. It suggests a sense of being under attack or pressure, which is not conveyed in the original sentence.</p>\n<p><strong>b). thronged:</strong> This word means to be crowded or filled with great numbers of people, which fits the context of voters going to polling stations. It conveys the idea that polling stations were crowded with voters.</p>\n<p><strong>c). trapped:</strong> This word implies being confined or unable to escape, which doesn't quite capture the essence of the situation described. While long queues and difficulties accessing polling stations are mentioned, the word \"trapped\" doesn't quite convey the sense of active participation or movement toward the polling stations.</p>\n<p><strong>d). proliferated:</strong> This word means to increase rapidly in numbers, which doesn't accurately describe the situation at polling stations. While an increase in voters would be positive, the issue being discussed is the decrease in voter turnout, so \"proliferated\" doesn't fit the context.</p>\n<p><strong>staggered: </strong>This word means to move unsteadily or with a wobbly motion, which doesn't accurately convey the situation at polling stations. It suggests a hesitant or unsteady movement, which is not the case here where the concern is low voter turnout rather than the manner in which voters move.</p>\n<p>Therefore, \" b) thronged \" is the word that appropriately replaces the word in (B).</p>"}, {"question": "<p><strong>In the following passage, some of the words have been highlighted in bold. Read the passage and try to understand what it wants to convey. Then replace the highlighted words with the correct option in order to make the sentence grammatically and contextually sound. In any case the highlighted word is given correctly, then mark ‘No Improvement required’ as the right answer choice.</strong></p>\n<p>In the ongoing elections, a significant cause for concern has emerged with the low voter turnout, particularly in the Hindi heartland. This trend has set off alarm bells among political parties, forcing them to delve deeper into understanding the root causes of this <strong>alacrity (A)</strong> and strategise effectively to boost participation in the remaining phases. The Hindi heartland holds immense electoral significance. However, the voter turnout here was dishearteningly low on April 19. The polling of over 62 per cent, as per the Election Commission of India’s figure, is lower compared to the first phase of the 2019 Lok Sabha elections, when it stood at 69.43 per cent. The trend is not localised as voting was held in 102 Lok Sabha seats across 21 States and UTs. Was it the summer heat or other pressing engagements? If it is about the weather, it is understandable but if it is political disillusionment, then it is a matter of grave concern. It could well also be logistical challenges such as inadequate infrastructure, long queues at polling booths and difficulties in accessing polling stations. Despite several efforts by the ECI, voters in large numbers chose not to go out to cast their vote. We have had several elections during summers where voters <strong>staggered (B)</strong> polling stations; so maybe, and it is yet to be validated, voters are losing interest in the political system. Many voters do feel disconnected from the political process, perceiving that their votes do not significantly impact policymaking or address their concerns. This disenchantment often stems from the failure of political parties to fulfil their promises, leading to a sense of betrayal among the electorate. Traditionally, voting in the urban areas has always been low but now even voters in rural areas are giving it a pass. In such areas, where transportation facilities may be limited, reaching the polling booths becomes a <strong>beguiling (C)</strong> task for many individuals, particularly the elderly and physically challenged. Another aspect of voting in the first phase was zero voting in six districts of Nagaland. It is unprecedented and shocking, to say the least. It might have been a reaction of voters to what happened in Manipur or a call by disrupting elements; either way, it does not augur well for the country. We can agree on a few things which could have resulted in the voter’s cold shoulder. Social and economic factors play a significant role in voter apathy. A large section of the population, especially in rural areas, faces issues like poverty, illiteracy and unemployment, which overshadow their engagement with the electoral process. Furthermore, the <strong>prevalence</strong> <strong>(D)</strong> of identity politics and polarisation in the Hindi heartland may have contributed to a sense of disillusionment among voters. Divisive narratives propagated by certain political entities often sow seeds of distrust and alienation among communities, discouraging them from participating in the electoral process. Political parties must prioritise engaging with the electorate beyond election cycles, <strong>deserting (E)</strong> dialogue and building trust through consistent communication and transparent governance.</p><br><p><strong>Which of the following words will replace the word in (C)?</strong></p>", "options": ["<p>agitating</p>", "<p>exhausting</p>", "<p>excruciating</p>", "<p>daunting</p>", "<p>No Improvement required</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D</strong></p>\n<p>The word that appropriately replaces the word in (C) is: d) daunting</p>\n<p><strong>a). Agitating:</strong> This word means causing someone to feel irritated or frustrated. While long queues and difficulties in accessing polling stations could indeed be agitating for voters, the word doesn't fully capture the sense of difficulty or challenge that the voters face in reaching the polling booths.</p>\n<p><strong>b). Exhausting:</strong> This word means causing someone to feel extremely tired or drained of energy. While waiting in long queues or facing logistical challenges could be exhausting for voters, the word doesn't convey the difficulty or intimidating nature of the task of reaching the polling booths.</p>\n<p><strong>c). Excruciating:</strong> This word means extremely painful or intense. While it's true that waiting in long queues or facing logistical challenges can be unpleasant, \"excruciating\" suggests a level of physical pain or discomfort that may not accurately reflect the situation.</p>\n<p><strong>d). Daunting:</strong> This word means intimidating or challenging. It accurately captures the sense of difficulty or challenge that voters may face in reaching the polling booths, especially in areas with limited transportation facilities or other logistical challenges.</p>\n<p><strong>Beguiling:</strong> This word means charming or enchanting. While it's possible that some voters may find the process of voting appealing, especially if they feel connected to the political process, it doesn't accurately describe the challenges or difficulties that may lead to low voter turnout.</p>\n<p>Overall, \"daunting\" is the most appropriate choice because it effectively conveys the sense of challenge or difficulty that voters may experience in reaching the polling booths.</p>\n<p>Therefore, \"d) Daunting \" is the word that appropriately replaces the word in (C).</p>"}, {"question": "<p><strong>In the following passage, some of the words have been highlighted in bold. Read the passage and try to understand what it wants to convey. Then replace the highlighted words with the correct option in order to make the sentence grammatically and contextually sound. In any case the highlighted word is given correctly, then mark ‘No Improvement required’ as the right answer choice.</strong></p>\n<p>In the ongoing elections, a significant cause for concern has emerged with the low voter turnout, particularly in the Hindi heartland. This trend has set off alarm bells among political parties, forcing them to delve deeper into understanding the root causes of this <strong>alacrity (A)</strong> and strategise effectively to boost participation in the remaining phases. The Hindi heartland holds immense electoral significance. However, the voter turnout here was dishearteningly low on April 19. The polling of over 62 per cent, as per the Election Commission of India’s figure, is lower compared to the first phase of the 2019 Lok Sabha elections, when it stood at 69.43 per cent. The trend is not localised as voting was held in 102 Lok Sabha seats across 21 States and UTs. Was it the summer heat or other pressing engagements? If it is about the weather, it is understandable but if it is political disillusionment, then it is a matter of grave concern. It could well also be logistical challenges such as inadequate infrastructure, long queues at polling booths and difficulties in accessing polling stations. Despite several efforts by the ECI, voters in large numbers chose not to go out to cast their vote. We have had several elections during summers where voters <strong>staggered (B)</strong> polling stations; so maybe, and it is yet to be validated, voters are losing interest in the political system. Many voters do feel disconnected from the political process, perceiving that their votes do not significantly impact policymaking or address their concerns. This disenchantment often stems from the failure of political parties to fulfil their promises, leading to a sense of betrayal among the electorate. Traditionally, voting in the urban areas has always been low but now even voters in rural areas are giving it a pass. In such areas, where transportation facilities may be limited, reaching the polling booths becomes a <strong>beguiling (C)</strong> task for many individuals, particularly the elderly and physically challenged. Another aspect of voting in the first phase was zero voting in six districts of Nagaland. It is unprecedented and shocking, to say the least. It might have been a reaction of voters to what happened in Manipur or a call by disrupting elements; either way, it does not augur well for the country. We can agree on a few things which could have resulted in the voter’s cold shoulder. Social and economic factors play a significant role in voter apathy. A large section of the population, especially in rural areas, faces issues like poverty, illiteracy and unemployment, which overshadow their engagement with the electoral process. Furthermore, the <strong>prevalence</strong> <strong>(D)</strong> of identity politics and polarisation in the Hindi heartland may have contributed to a sense of disillusionment among voters. Divisive narratives propagated by certain political entities often sow seeds of distrust and alienation among communities, discouraging them from participating in the electoral process. Political parties must prioritise engaging with the electorate beyond election cycles, <strong>deserting (E)</strong> dialogue and building trust through consistent communication and transparent governance.</p><br><p><strong>Which of the following words will replace the word in (D)?</strong></p>", "options": ["<p>servility</p>", "<p>paucity</p>", "<p>peculiarity</p>", "<p>mediocrity</p>", "<p>No Improvement required</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>The word \"prevalence\" in (D) is appropriate and doesn't require improvement, so the correct answer is \"e) No Improvement required.\"</p>\n<p><strong>a). servility -</strong> This word refers to a state of being submissive or obedient, often to an excessive degree. However, it doesn't fit the context of the sentence, which is discussing factors contributing to voter apathy in the Hindi heartland. Voter apathy is not caused by servility but rather by factors like poverty, illiteracy, and disillusionment with the political process.</p>\n<p><strong>b). paucity -</strong> Paucity means scarcity or a lack of something. While it could be used in some contexts related to voter turnout (e.g., paucity of polling stations), it doesn't quite fit here. The sentence is discussing the presence or existence of identity politics and polarization in the Hindi heartland, rather than a scarcity of them.</p>\n<p><strong>c). peculiarity -</strong> Peculiarity refers to something unusual or unique. While there may be peculiar aspects to the situation described in the passage, the word doesn't accurately convey the idea of the existence or prevalence of identity politics and polarization in the Hindi heartland, which is the context of the sentence.</p>\n<p><strong>d). mediocrity -</strong> Mediocrity refers to the state of being average or of moderate quality. This word doesn't fit the context of the sentence, which is discussing the presence or prevalence of identity politics and polarization in the Hindi heartland as potential causes of voter apathy. Mediocrity doesn't accurately capture the idea of these divisive factors influencing voter behavior.</p>\n<p><strong>e). No Improvement required -</strong> This option suggests that the word, \"prevalence,\" is appropriate and doesn't need to be replaced. In the context of the sentence, \"prevalence\" accurately conveys the idea of the existence or widespread occurrence of identity politics and polarization in the Hindi heartland, which may contribute to voter apathy. Therefore, this option is the correct choice.</p>"}, {"question": "<p><strong>In the following passage, some of the words have been highlighted in bold. Read the passage and try to understand what it wants to convey. Then replace the highlighted words with the correct option in order to make the sentence grammatically and contextually sound. In any case the highlighted word is given correctly, then mark ‘No Improvement required’ as the right answer choice.</strong></p>\n<p>In the ongoing elections, a significant cause for concern has emerged with the low voter turnout, particularly in the Hindi heartland. This trend has set off alarm bells among political parties, forcing them to delve deeper into understanding the root causes of this <strong>alacrity (A)</strong> and strategise effectively to boost participation in the remaining phases. The Hindi heartland holds immense electoral significance. However, the voter turnout here was dishearteningly low on April 19. The polling of over 62 per cent, as per the Election Commission of India’s figure, is lower compared to the first phase of the 2019 Lok Sabha elections, when it stood at 69.43 per cent. The trend is not localised as voting was held in 102 Lok Sabha seats across 21 States and UTs. Was it the summer heat or other pressing engagements? If it is about the weather, it is understandable but if it is political disillusionment, then it is a matter of grave concern. It could well also be logistical challenges such as inadequate infrastructure, long queues at polling booths and difficulties in accessing polling stations. Despite several efforts by the ECI, voters in large numbers chose not to go out to cast their vote. We have had several elections during summers where voters <strong>staggered (B)</strong> polling stations; so maybe, and it is yet to be validated, voters are losing interest in the political system. Many voters do feel disconnected from the political process, perceiving that their votes do not significantly impact policymaking or address their concerns. This disenchantment often stems from the failure of political parties to fulfil their promises, leading to a sense of betrayal among the electorate. Traditionally, voting in the urban areas has always been low but now even voters in rural areas are giving it a pass. In such areas, where transportation facilities may be limited, reaching the polling booths becomes a <strong>beguiling (C)</strong> task for many individuals, particularly the elderly and physically challenged. Another aspect of voting in the first phase was zero voting in six districts of Nagaland. It is unprecedented and shocking, to say the least. It might have been a reaction of voters to what happened in Manipur or a call by disrupting elements; either way, it does not augur well for the country. We can agree on a few things which could have resulted in the voter’s cold shoulder. Social and economic factors play a significant role in voter apathy. A large section of the population, especially in rural areas, faces issues like poverty, illiteracy and unemployment, which overshadow their engagement with the electoral process. Furthermore, the <strong>prevalence</strong> <strong>(D)</strong> of identity politics and polarisation in the Hindi heartland may have contributed to a sense of disillusionment among voters. Divisive narratives propagated by certain political entities often sow seeds of distrust and alienation among communities, discouraging them from participating in the electoral process. Political parties must prioritise engaging with the electorate beyond election cycles, <strong>deserting (E)</strong> dialogue and building trust through consistent communication and transparent governance.</p><br><p><strong>Which of the following words will replace the word in (E)?</strong></p>", "options": ["<p>fostering</p>", "<p>impeding</p>", "<p>repelling</p>", "<p>espousing</p>", "<p>No Improvement required</p>"], "correctIndex": 0, "solution": "<p><strong>Answer</strong><strong>: A</strong></p>\n<p>The word that best replaces the word in (E) is \"fostering.\"</p>\n<p>So the correct option is: a) fostering</p>\n<p><strong>a). fostering:</strong> This option fits well in the context because it suggests that political parties should prioritize engaging with the electorate beyond election cycles in order to promote or encourage dialogue and build trust through consistent communication and transparent governance. \"Fostering\" implies nurturing or cultivating a positive relationship with the electorate.</p>\n<p><strong>b). impeding:</strong> This option suggests that political parties should prioritize engaging with the electorate beyond election cycles in order to hinder or obstruct dialogue and trust-building efforts. However, this contradicts the intended meaning of the sentence, which is to encourage voter participation and engagement.</p>\n<p><strong>c). repelling:</strong> This option suggests that political parties should prioritize engaging with the electorate beyond election cycles in order to drive them away or repulse them. Again, this contradicts the intended meaning of the sentence, which is to encourage voter participation and engagement.</p>\n<p><strong>d). espousing:</strong> This option suggests that political parties should prioritize engaging with the electorate beyond election cycles in order to advocate for or support dialogue and trust-building efforts. While this is somewhat related to the intended meaning, \"espousing\" doesn't capture the idea of actively fostering or nurturing these efforts as strongly as the correct option does.</p>\n<p><strong>deserting:</strong> This word suggests that political parties should prioritize engaging with the electorate beyond election cycles in order to abandon or desert dialogue and trust-building efforts. This is the opposite of what the sentence is conveying, which is the need to actively engage with the electorate. Therefore, this word is not appropriate in this context.</p>\n<p>Therefore, \"a) Fostering \" is the word that appropriately replaces the word in (E).</p>"}, {"question": "<p><strong>Read the given sentence to find out whether there will be an error in two parts. The error, if any, will be in two parts of the sentence, then mark the remaining parts as answer from the given options or the given sentence is correct as it is, mark the answer as Option E.</strong></p><br><p>Ties between India and China nosedived following the fierce <strong>(A)/</strong>clash in the Galwan Valley in June 2020 that <strong>(B)/</strong>marked the most seriously military <strong>(C)/</strong>conflict among the two sides in decades<strong>.(D)/</strong>All Correct <strong>(E)</strong></p>", "options": ["<p>AD</p>", "<p>BA</p>", "<p>CD</p>", "<p>AC</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>Since the usage of adverb \"seriously\" in part C of the sentence, which qualifies the noun \"military conflict\" and the presence of preposition \"among\" in part D are grammatically incorrect. The following amendments have to be made to make the sentence grammatically and contextually correct.</p>\n<p>C - seriously ~ serious</p>\n<p>D - among ~ between</p>\n<p>Therefore, Option B is the best choice.</p>"}, {"question": "<p><strong>Read the given sentence to find out whether there will be an error in two parts. The error, if any, will be in two parts of the sentence, then mark the remaining parts as answer from the given options or the given sentence is correct as it is, mark the answer as Option E.</strong></p><br><p>Earlier to March 27, a 36-year-old man was arrested<strong>(A)/</strong> from near his residence in Southwest Delhi for<strong>(B)/</strong> allegedly operating an alleged prostitution<strong>(C)/</strong> racket from an Vasant Kunj apartment<strong>.(D)/</strong>All Correct <strong>(E)</strong></p>", "options": ["<p>AB</p>", "<p>BD</p>", "<p>CD</p>", "<p>BC</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>As the usage of preposition \"to\" in part A and the presence of indefinite article \"an\" in part D are grammatically and contextually incorrect. The following amendments have to be made to make the sentence grammatically and contextually correct.</p>\n<p>A - to ~ on</p>\n<p>D - an ~ a</p>\n<p>Therefore, Option D will be the most appropriate answer.</p>"}, {"question": "<p><strong>Read the given sentence to find out whether there will be an error in two parts. The error, if any, will be in two parts of the sentence, then mark the remaining parts as answer from the given options or the given sentence is correct as it is, mark the answer as Option E.</strong></p><br><p>The special court also dismissed the two anticipatory bail petitions <strong>(A)/</strong>was filed by Prajwal on July 24 and September 4 respectively, in connection <strong>(B)/</strong>with two separate complaints registered by the twice<strong>(C)/</strong> victims with the Special Investigation Team of CID<strong>.(D)/</strong>All Correct <strong>(E)</strong></p>", "options": ["<p>AD</p>", "<p>AC</p>", "<p>BC</p>", "<p>CD</p>", "<p>All correct</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Since the usage of past form of finite verb \"was filed\" in part B is grammatically incorrect and the noun \"twice\" in part C is contextually incorrect where the adjective form should be used. The following amendments have to be made to make the sentence grammatically and contextually correct.</p>\n<p>B - was filed ~ filed</p>\n<p>C - twice ~ two</p>\n<p>Therefore, Option A is the best choice.</p>"}, {"question": "<p><strong>Read the given sentence to find out whether there will be an error in two parts. The error, if any, will be in two parts of the sentence, then mark the remaining parts as answer from the given options or the given sentence is correct as it is, mark the answer as Option E.</strong></p><br><p>The Karnataka High Court on Monday declined to grant bail to form Hassan MP <strong>(A)/</strong> Prajwal Revanna in one case and anticipatory bail for two<strong>(B)/</strong> other cases registered against him <strong>(C)/</strong>by three victims which includes charges of two rape cases<strong>.(D)/</strong>All Correct <strong>(E).</strong></p>", "options": ["<p>AB</p>", "<p>BC</p>", "<p>CD</p>", "<p>BD</p>", "<p>All correct</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>As the usage of plural form of verb \"form\" in part A where there is no indication of action and the presence of preposition \"for\" in part B is contextually incorrect. The following amendments have to be made to make the sentence grammatically and contextually correct.</p>\n<p>A - form ~ former</p>\n<p>B - for ~ in</p>\n<p>Therefore, Option C is the best choice.</p>"}, {"question": "<p><strong>Read the given sentence to find out whether there will be an error in two parts. The error, if any, will be in two parts of the sentence, then mark the remaining parts as answer from the given options or the given sentence is correct as it is, mark the answer as Option E.</strong></p><br><p>China last Friday announced that Xi will attend<strong>(A)/</strong> the BRICS Summit in Russia, where he will work<strong>(B)/</strong> with other parties to open a new era for <strong>(C)/</strong>the Global South to seek strength through solidarity<strong>.(D)/</strong>All Correct <strong>(E)</strong></p>", "options": ["<p>AD</p>", "<p>AB</p>", "<p>CD</p>", "<p>BC</p>", "<p>All correct</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>Given sentence doesn't have any error, Hence Option E is the answer.</p>"}, {"question": "<p><strong>For the following questions, some sentences are given. Arrange the sentences in a meaningful paragraph and also find which of the sentences is out of context. Identify the correct answers for some of the activities given in the sentences.  </strong></p>\n<p><strong>A).</strong> One of the primary drivers of DMK’s success was its commitment to nurturing a robust and ideologically consistent coalition.</p>\n<p><strong>B).</strong> The Dravida Munnetra Kazhagam (DMK) led by chief minister M K Stalin has (P)/ successfully securing alongside its allies (Q)/ emerged as a formidable force in Tamil Nadu, (R)/ a clean sweep of the state’s 39 Lok Sabha seats (S).</p>\n<p><strong>C).</strong>This outcome underscores the effective of Mr Stalin’s political strategy, deeply rooted in ideological coherence, inclusive coalition building, and grassroots mobilization.<em> </em></p>\n<p><strong>D).</strong> The thumping victory comes as a blowing to the BJP and its state chief K Annamalai who led a fierce campaign in the state.</p>\n<p><strong>E).</strong> Since the 2019 elections, Mr Stalin has diligently built and maintained the Social Progressive Alliance, which later became part of the INDIA bloc.</p><br><p><strong>Identify the sentence which is out of the central theme of the passage.</strong></p>", "options": ["<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>", "<p>A</p>"], "correctIndex": 2, "solution": "<p><strong>Answer</strong><strong>: C</strong></p>\n<p>The odd one out is Sentence D: \"The thumping victory comes as a blow to the BJP and its state chief K Annamalai who led a fierce campaign in the state.\"</p>\n<p>Sentences A, B, C, and E focus on the strategies and efforts of the DMK and its leader M K Stalin in securing a political victory in Tamil Nadu. They discuss coalition building, ideological consistency, and political strategy. However, sentence D shifts the focus to the BJP and its state chief K Annamalai, discussing their reaction to the DMK's victory rather than the strategies and actions of the DMK itself. This makes sentence D the odd one out.</p>"}, {"question": "<p><strong>For the following questions, some sentences are given. Arrange the sentences in a meaningful paragraph and also find which of the sentences is out of context. Identify the correct answers for some of the activities given in the sentences.  </strong></p>\n<p><strong>A).</strong> One of the primary drivers of DMK’s success was its commitment to nurturing a robust and ideologically consistent coalition.</p>\n<p><strong>B).</strong> The Dravida Munnetra Kazhagam (DMK) led by chief minister M K Stalin has (P)/ successfully securing alongside its allies (Q)/ emerged as a formidable force in Tamil Nadu, (R)/ a clean sweep of the state’s 39 Lok Sabha seats (S).</p>\n<p><strong>C).</strong>This outcome underscores the effective of Mr Stalin’s political strategy, deeply rooted in ideological coherence, inclusive coalition building, and grassroots mobilization.<em> </em></p>\n<p><strong>D).</strong> The thumping victory comes as a blowing to the BJP and its state chief K Annamalai who led a fierce campaign in the state.</p>\n<p><strong>E).</strong> Since the 2019 elections, Mr Stalin has diligently built and maintained the Social Progressive Alliance, which later became part of the INDIA bloc.</p><br><p><strong>Find the error in the sentence (C) divided into four parts, given in italics, if the sentence is correct, mark option E.</strong></p>", "options": ["<p>This outcome underscores the effective of</p>", "<p>Mr Stalin&rsquo;s political strategy,</p>", "<p>deeply rooted in ideological coherence,</p>", "<p>inclusive coalition building, and grassroots mobilization.</p>", "<p>No correction required</p>"], "correctIndex": 0, "solution": "<p><strong>Answer</strong><strong>: </strong><strong>A</strong></p>\n<p>Error: Part a) should be corrected to \"underscores the effectiveness of.\"</p>\n<p>The error in this sentence involves incorrect word choice. The word \"effective\" is an adjective, but the sentence requires a noun to complete the phrase \"the effective of.\" The correct noun form is \"effectiveness.\"</p>\n<p>Corrected Version: To address the error, Part a) should be corrected to \"underscores the effectiveness of.\"</p>\n<p>So, the corrected sentence would read: \"This outcome underscores the effectiveness of Mr. Stalin’s political strategy, deeply rooted in ideological coherence, inclusive coalition building, and grassroots mobilization.\" This version uses the correct noun form \"effectiveness.\"</p>"}, {"question": "<p><strong>For the following questions, some sentences are given. Arrange the sentences in a meaningful paragraph and also find which of the sentences is out of context. Identify the correct answers for some of the activities given in the sentences.  </strong></p>\n<p><strong>A).</strong> One of the primary drivers of DMK’s success was its commitment to nurturing a robust and ideologically consistent coalition.</p>\n<p><strong>B).</strong> The Dravida Munnetra Kazhagam (DMK) led by chief minister M K Stalin has (P)/ successfully securing alongside its allies (Q)/ emerged as a formidable force in Tamil Nadu, (R)/ a clean sweep of the state’s 39 Lok Sabha seats (S).</p>\n<p><strong>C).</strong>This outcome underscores the effective of Mr Stalin’s political strategy, deeply rooted in ideological coherence, inclusive coalition building, and grassroots mobilization.<em> </em></p>\n<p><strong>D).</strong> The thumping victory comes as a blowing to the BJP and its state chief K Annamalai who led a fierce campaign in the state.</p>\n<p><strong>E).</strong> Since the 2019 elections, Mr Stalin has diligently built and maintained the Social Progressive Alliance, which later became part of the INDIA bloc.</p><br><p><strong>Find the error in the sentence (D) divided into four parts, given in italics, if the sentence is correct, mark option E.</strong></p>", "options": ["<p>The thumping victory comes</p>", "<p>as a blowing to the BJP and its</p>", "<p>state chief K Annamalai who led</p>", "<p>a fierce campaign in the state</p>", "<p>No correction required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: </strong><strong>B</strong></p>\n<p>Error: Part b) should be corrected to \"as a blow to the BJP.\"</p>\n<p>The error in this sentence involves incorrect word choice. The phrase \"as a blowing to the BJP\" is incorrect. The correct noun form should be \"blow\" instead of \"blowing.\"</p>\n<p>Corrected Version: To address the error, Part b) should be corrected to \"as a blow to the BJP.\"</p>\n<p>So, the corrected sentence would read: \"The thumping victory comes as a blow to the BJP and its state chief K Annamalai who led a fierce campaign in the state.\" This version uses the correct noun form \"blow.\"</p>"}, {"question": "<p><strong>For the following questions, some sentences are given. Arrange the sentences in a meaningful paragraph and also find which of the sentences is out of context. Identify the correct answers for some of the activities given in the sentences.  </strong></p>\n<p><strong>A).</strong> One of the primary drivers of DMK’s success was its commitment to nurturing a robust and ideologically consistent coalition.</p>\n<p><strong>B).</strong> The Dravida Munnetra Kazhagam (DMK) led by chief minister M K Stalin has (P)/ successfully securing alongside its allies (Q)/ emerged as a formidable force in Tamil Nadu, (R)/ a clean sweep of the state’s 39 Lok Sabha seats (S).</p>\n<p><strong>C).</strong>This outcome underscores the effective of Mr Stalin’s political strategy, deeply rooted in ideological coherence, inclusive coalition building, and grassroots mobilization.<em> </em></p>\n<p><strong>D).</strong> The thumping victory comes as a blowing to the BJP and its state chief K Annamalai who led a fierce campaign in the state.</p>\n<p><strong>E).</strong> Since the 2019 elections, Mr Stalin has diligently built and maintained the Social Progressive Alliance, which later became part of the INDIA bloc.</p><br><p><strong>Find the correct rearrangement of the sentence (B) which is divided into four parts.</strong></p>", "options": ["<p>PRSQ</p>", "<p>PRQS</p>", "<p>PSQR</p>", "<p>PQSR</p>", "<p>No rearrangement required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer</strong><strong>: B</strong></p>\n<p>While going through the sentence, only arrangement (b) makes a contextually meaningful sentence. The sentence thus formed is:” The Dravida Munnetra Kazhagam (DMK) led by chief minister M K Stalin has emerged as a formidable force in Tamil Nadu, successfully securing alongside its allies a clean sweep of the state’s 39 Lok Sabha seats.”</p>"}, {"question": "<p><strong>For the following questions, some sentences are given. Arrange the sentences in a meaningful paragraph and also find which of the sentences is out of context. Identify the correct answers for some of the activities given in the sentences.  </strong></p>\n<p><strong>A).</strong> One of the primary drivers of DMK’s success was its commitment to nurturing a robust and ideologically consistent coalition.</p>\n<p><strong>B).</strong> The Dravida Munnetra Kazhagam (DMK) led by chief minister M K Stalin has (P)/ successfully securing alongside its allies (Q)/ emerged as a formidable force in Tamil Nadu, (R)/ a clean sweep of the state’s 39 Lok Sabha seats (S).</p>\n<p><strong>C).</strong>This outcome underscores the effective of Mr Stalin’s political strategy, deeply rooted in ideological coherence, inclusive coalition building, and grassroots mobilization.<em> </em></p>\n<p><strong>D).</strong> The thumping victory comes as a blowing to the BJP and its state chief K Annamalai who led a fierce campaign in the state.</p>\n<p><strong>E).</strong> Since the 2019 elections, Mr Stalin has diligently built and maintained the Social Progressive Alliance, which later became part of the INDIA bloc.</p><br><p><strong>Find the suitable arrangement of the sentences.</strong></p>", "options": ["<p>ABCD</p>", "<p>ACDE</p>", "<p>BDCE</p>", "<p>BCAE</p>", "<p>BACD</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: </strong><strong>D</strong></p>\n<p>The paragraph focuses on the success of the Dravida Munnetra Kazhagam (DMK) led by Chief Minister M K Stalin in Tamil Nadu. It emphasizes the role of coalition building and ideological consistency in their political strategy and victory.</p>\n<p>The passage begins with <strong>sentence B</strong>, which highlights the DMK's success under Chief Minister M K Stalin in securing all 39 Lok Sabha seats in Tamil Nadu. <strong>Sentence C</strong> follows, explaining that this victory reflects the effectiveness of Stalin's political strategy, which is based on ideological coherence, inclusive coalition building, and grassroots mobilization. <strong>Sentence A</strong> delves deeper into one of the main reasons for DMK's success: its commitment to maintaining a strong and ideologically consistent coalition. Finally, <strong>sentence E</strong> provides context on Stalin's efforts since the 2019 elections to build and maintain the Social Progressive Alliance, which later became part of the INDIA bloc.</p>\n<p><strong>So, the correct sequence is: B – C – A – E.</strong></p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions given below. </strong></p><p>Lifesaving vaccines such as Covishield and Covaxin are products of modern biotechnology, as are drugs developed in recent times for treating many ailments. The potential of genetic engineering is immense, with gene editing opening up the possibility of cures to hereditary diseases. Similarly, genetically modified (GM) crops are making big strides in bringing about improvement in crop productivity across farming nations.By 2019, the area under precision agriculture of GM crops had increased 112 times from 1996, when the first biotech crop was introduced, making it the fastest adopted crop technology in recent years. During 2019, 79 percent of cotton; 74 per cent of soybean; 31 per cent of maize and 27 per cent of canola acreages globally were under biotech crops, apart from varying acreages under 28 other smaller crops. A number of independent studies are available on the socioeconomic and environmental benefits of biotech crops. One such study estimated that net global farm income increased by $ 186 billion in 20 years. That helped alleviate poverty of over 16.5 million farmers globally and led to a 8.2 per cent reduction in global consumption of pesticides.</p><p>Bt Cotton, the only GM crop introduced in India in 2002, transformed India’s cotton sector, as cotton productivity almost doubled in six years. India’s share in the global production of cotton increased from 12 per cent in 2002 to 25 per cent by 2014. From a net importer of cotton, India became the second-largest exporter of cotton.Following approval for GM cotton, several organisations invested resources and efforts in new crop biotech traits, hoping for similar transformational changes in Indian agriculture. Btbrinjal was one such technology recommended for commercialisation in October 2009, after it completed regulatory evaluation in seven years, and is still under moratorium. Meanwhile, the technology has been adopted in Bangladesh. One study in 2018 stated that net returns of Bangladesh farmers increased six-fold from Btbrinjal, and pesticide usage on brinjal went down by 61 per cent.</p><p>Another such stalemate is on GM mustard. India imports over 65 percent of her edible oil requirement, as Indian oilseed yields are almost stagnant. This costs over $10 billion annually, with imports growing over time. Mustard is one such oilseed crop. But a high yielding mustard variety developed indigenously using biotech is yet to be approved for commercialisation. The regulatory system for crop biotech is inactive, with even periodic meetings of the regulatory committee being avoided. This has resulted in serious reduction in biotech research in recent years.</p><p>This impasse is due to irrational opposition to GM crops based on ideology rather than science. India imports over 15 million tonnes of edible oil annually, of which over 25 per cent comprises soy oil and canola oil (a variant of mustard oil), which are from GM soybean and GM canola grown all over America. Over 95 per cent of cotton grown in India isBt cotton, we consume about 1.4 million tonnes of cotton seed oil produced from GM cotton. However, there is opposition to making available the same technology to mustard growers. On the matter of safety and efficacy of biotech crops, over 100 Nobel laureates collectively issued a statement in 2016, vouching for it.</p><p>It is high time Indian agriculture transforms into precision agriculture by using modern tools of biotechnology. The farmers’ agitation is also a reflection of deep anguish of the farming community about the growing <strong>chasm</strong> between agricultural income and income from other economic sectors. Farm income is a function of market prices and cost of production. While Indian market prices for major agricultural commodities are influenced by international prices, cost of production is a function of crop productivity. The current productivity of most of our crops is much lower than global averages. It is in this context that apart from reforms in the market and supply chain, we need to make available the best technologies to our farmers. Agriculturally developed countries is rapidly adapting new frontiers of precision agriculture tools, like CRISPR CAS9. It will be most appropriate, as has been the case with the COVID vaccines, if crop biotech, especially BtBrinjal and GM mustard, is accorded a similar sense of priority to improve competitiveness of Indian farmers and boost their income.</p><br><p><strong>According to the given passage, in recent years why serious reduction in biotech research has taken place?</strong></p>", "options": ["The productivity of the crops is much lower than global averages.", "Due to the avoidation of regular meetings of the committee.", "Because of the oilseed yields are almost stagnant.", "High yielding mustard variety developed indigenously using biotech is yet to be approved", "None of these"], "correctIndex": 1, "solution": "<p><strong>Answer: B </strong></p><p>Due to the avoidation of regular meetings of the committee.</p><p>In the fifth paragraph we talk about the serious reduction in biotech research in which the regulatory system for crop biotech is inactive, with even periodic meetings of the regulatory committee being avoided. This is the main reason for the reduction. That’s why option (B) is correct</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions given below. </strong></p><p>Lifesaving vaccines such as Covishield and Covaxin are products of modern biotechnology, as are drugs developed in recent times for treating many ailments. The potential of genetic engineering is immense, with gene editing opening up the possibility of cures to hereditary diseases. Similarly, genetically modified (GM) crops are making big strides in bringing about improvement in crop productivity across farming nations.By 2019, the area under precision agriculture of GM crops had increased 112 times from 1996, when the first biotech crop was introduced, making it the fastest adopted crop technology in recent years. During 2019, 79 percent of cotton; 74 per cent of soybean; 31 per cent of maize and 27 per cent of canola acreages globally were under biotech crops, apart from varying acreages under 28 other smaller crops. A number of independent studies are available on the socioeconomic and environmental benefits of biotech crops. One such study estimated that net global farm income increased by $ 186 billion in 20 years. That helped alleviate poverty of over 16.5 million farmers globally and led to a 8.2 per cent reduction in global consumption of pesticides.</p><p>Bt Cotton, the only GM crop introduced in India in 2002, transformed India’s cotton sector, as cotton productivity almost doubled in six years. India’s share in the global production of cotton increased from 12 per cent in 2002 to 25 per cent by 2014. From a net importer of cotton, India became the second-largest exporter of cotton.Following approval for GM cotton, several organisations invested resources and efforts in new crop biotech traits, hoping for similar transformational changes in Indian agriculture. Btbrinjal was one such technology recommended for commercialisation in October 2009, after it completed regulatory evaluation in seven years, and is still under moratorium. Meanwhile, the technology has been adopted in Bangladesh. One study in 2018 stated that net returns of Bangladesh farmers increased six-fold from Btbrinjal, and pesticide usage on brinjal went down by 61 per cent.</p><p>Another such stalemate is on GM mustard. India imports over 65 percent of her edible oil requirement, as Indian oilseed yields are almost stagnant. This costs over $10 billion annually, with imports growing over time. Mustard is one such oilseed crop. But a high yielding mustard variety developed indigenously using biotech is yet to be approved for commercialisation. The regulatory system for crop biotech is inactive, with even periodic meetings of the regulatory committee being avoided. This has resulted in serious reduction in biotech research in recent years.</p><p>This impasse is due to irrational opposition to GM crops based on ideology rather than science. India imports over 15 million tonnes of edible oil annually, of which over 25 per cent comprises soy oil and canola oil (a variant of mustard oil), which are from GM soybean and GM canola grown all over America. Over 95 per cent of cotton grown in India isBt cotton, we consume about 1.4 million tonnes of cotton seed oil produced from GM cotton. However, there is opposition to making available the same technology to mustard growers. On the matter of safety and efficacy of biotech crops, over 100 Nobel laureates collectively issued a statement in 2016, vouching for it.</p><p>It is high time Indian agriculture transforms into precision agriculture by using modern tools of biotechnology. The farmers’ agitation is also a reflection of deep anguish of the farming community about the growing <strong>chasm</strong> between agricultural income and income from other economic sectors. Farm income is a function of market prices and cost of production. While Indian market prices for major agricultural commodities are influenced by international prices, cost of production is a function of crop productivity. The current productivity of most of our crops is much lower than global averages. It is in this context that apart from reforms in the market and supply chain, we need to make available the best technologies to our farmers. Agriculturally developed countries is rapidly adapting new frontiers of precision agriculture tools, like CRISPR CAS9. It will be most appropriate, as has been the case with the COVID vaccines, if crop biotech, especially BtBrinjal and GM mustard, is accorded a similar sense of priority to improve competitiveness of Indian farmers and boost their income.</p><br><p><strong>According to the given passage, which combination is correct in acreages globally under biotech crops during 2019,apart from varying acreages under 28 other smaller crops.</strong></p>", "options": ["Cotton &lt; soybean &lt; canola &lt; maize", "Cotton &lt; soybean &lt; maize &lt; canola", "Cotton &gt; soybean = maize &gt; canola", "Cotton &gt; soybean &gt; maize &gt; canola", "None of these"], "correctIndex": 3, "solution": "<p><strong>Answer: D </strong></p><p>Cotton &gt; soybean &gt; maize &gt; canola</p><p>In the second paragraph, we talk about the area under precision agriculture of GM crops. The percentage of 2019 is given which were under biotech crops.</p><p>79 per cent of cotton; 74 per cent of soybean; 31 per cent of maize and 27 per cent of canola acreages globally were under biotech crops, apart from varying acreages</p><p>under 28 other smaller crops.</p><p>According to the given percentage option D is the correct answer of the following question.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions given below. </strong></p><p>Lifesaving vaccines such as Covishield and Covaxin are products of modern biotechnology, as are drugs developed in recent times for treating many ailments. The potential of genetic engineering is immense, with gene editing opening up the possibility of cures to hereditary diseases. Similarly, genetically modified (GM) crops are making big strides in bringing about improvement in crop productivity across farming nations.By 2019, the area under precision agriculture of GM crops had increased 112 times from 1996, when the first biotech crop was introduced, making it the fastest adopted crop technology in recent years. During 2019, 79 percent of cotton; 74 per cent of soybean; 31 per cent of maize and 27 per cent of canola acreages globally were under biotech crops, apart from varying acreages under 28 other smaller crops. A number of independent studies are available on the socioeconomic and environmental benefits of biotech crops. One such study estimated that net global farm income increased by $ 186 billion in 20 years. That helped alleviate poverty of over 16.5 million farmers globally and led to a 8.2 per cent reduction in global consumption of pesticides.</p><p>Bt Cotton, the only GM crop introduced in India in 2002, transformed India’s cotton sector, as cotton productivity almost doubled in six years. India’s share in the global production of cotton increased from 12 per cent in 2002 to 25 per cent by 2014. From a net importer of cotton, India became the second-largest exporter of cotton.Following approval for GM cotton, several organisations invested resources and efforts in new crop biotech traits, hoping for similar transformational changes in Indian agriculture. Btbrinjal was one such technology recommended for commercialisation in October 2009, after it completed regulatory evaluation in seven years, and is still under moratorium. Meanwhile, the technology has been adopted in Bangladesh. One study in 2018 stated that net returns of Bangladesh farmers increased six-fold from Btbrinjal, and pesticide usage on brinjal went down by 61 per cent.</p><p>Another such stalemate is on GM mustard. India imports over 65 percent of her edible oil requirement, as Indian oilseed yields are almost stagnant. This costs over $10 billion annually, with imports growing over time. Mustard is one such oilseed crop. But a high yielding mustard variety developed indigenously using biotech is yet to be approved for commercialisation. The regulatory system for crop biotech is inactive, with even periodic meetings of the regulatory committee being avoided. This has resulted in serious reduction in biotech research in recent years.</p><p>This impasse is due to irrational opposition to GM crops based on ideology rather than science. India imports over 15 million tonnes of edible oil annually, of which over 25 per cent comprises soy oil and canola oil (a variant of mustard oil), which are from GM soybean and GM canola grown all over America. Over 95 per cent of cotton grown in India isBt cotton, we consume about 1.4 million tonnes of cotton seed oil produced from GM cotton. However, there is opposition to making available the same technology to mustard growers. On the matter of safety and efficacy of biotech crops, over 100 Nobel laureates collectively issued a statement in 2016, vouching for it.</p><p>It is high time Indian agriculture transforms into precision agriculture by using modern tools of biotechnology. The farmers’ agitation is also a reflection of deep anguish of the farming community about the growing <strong>chasm</strong> between agricultural income and income from other economic sectors. Farm income is a function of market prices and cost of production. While Indian market prices for major agricultural commodities are influenced by international prices, cost of production is a function of crop productivity. The current productivity of most of our crops is much lower than global averages. It is in this context that apart from reforms in the market and supply chain, we need to make available the best technologies to our farmers. Agriculturally developed countries is rapidly adapting new frontiers of precision agriculture tools, like CRISPR CAS9. It will be most appropriate, as has been the case with the COVID vaccines, if crop biotech, especially BtBrinjal and GM mustard, is accorded a similar sense of priority to improve competitiveness of Indian farmers and boost their income.</p><br><p><strong>Which of the following statements is/are TRUE as given in the passage?</strong></p>", "options": ["India&rsquo;s share in the global production of cotton decreased from 12 per cent in 2002 to 25 per cent by 2014.", "India imports over 15 million tonnes of edible oil annually, of which over 25 per cent comprises soy oil and canola oil, which are from GM soybean and GM canola grown all over America.", "The current productivity of most of our crops is much lower than global averages.", "Both (A) and (B)", "Both (B) and (C)"], "correctIndex": 4, "solution": "<p><strong>Answer: E </strong></p><p>Both (B) and (C)</p><p>Option B and C are correct according to the given passage.</p><p>In the third paragraph, we talk about the transformation of India’s cotton sector, India’s share in the global production of cotton increased from 12 per cent in 2002 to 25 per cent by 2014. And In option A global production of cotton decreases is</p><p>given that’s why option A is false.</p><p>In the sixth paragraph, we talk about the import of oil annually which over 25 per cent comprises soy oil and canola oil, which are from GM soybean and GM canola grown all over America. Hence B is correct</p><p>In the last paragraph, we talk about how Indian agriculture transforms into precision agriculture by using modern tools of biotechnology. And talk about the farm income. And productivity of most of the crops is much lower than global averages is given, that’s why option C is correct.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions given below. </strong></p><p>Lifesaving vaccines such as Covishield and Covaxin are products of modern biotechnology, as are drugs developed in recent times for treating many ailments. The potential of genetic engineering is immense, with gene editing opening up the possibility of cures to hereditary diseases. Similarly, genetically modified (GM) crops are making big strides in bringing about improvement in crop productivity across farming nations.By 2019, the area under precision agriculture of GM crops had increased 112 times from 1996, when the first biotech crop was introduced, making it the fastest adopted crop technology in recent years. During 2019, 79 percent of cotton; 74 per cent of soybean; 31 per cent of maize and 27 per cent of canola acreages globally were under biotech crops, apart from varying acreages under 28 other smaller crops. A number of independent studies are available on the socioeconomic and environmental benefits of biotech crops. One such study estimated that net global farm income increased by $ 186 billion in 20 years. That helped alleviate poverty of over 16.5 million farmers globally and led to a 8.2 per cent reduction in global consumption of pesticides.</p><p>Bt Cotton, the only GM crop introduced in India in 2002, transformed India’s cotton sector, as cotton productivity almost doubled in six years. India’s share in the global production of cotton increased from 12 per cent in 2002 to 25 per cent by 2014. From a net importer of cotton, India became the second-largest exporter of cotton.Following approval for GM cotton, several organisations invested resources and efforts in new crop biotech traits, hoping for similar transformational changes in Indian agriculture. Btbrinjal was one such technology recommended for commercialisation in October 2009, after it completed regulatory evaluation in seven years, and is still under moratorium. Meanwhile, the technology has been adopted in Bangladesh. One study in 2018 stated that net returns of Bangladesh farmers increased six-fold from Btbrinjal, and pesticide usage on brinjal went down by 61 per cent.</p><p>Another such stalemate is on GM mustard. India imports over 65 percent of her edible oil requirement, as Indian oilseed yields are almost stagnant. This costs over $10 billion annually, with imports growing over time. Mustard is one such oilseed crop. But a high yielding mustard variety developed indigenously using biotech is yet to be approved for commercialisation. The regulatory system for crop biotech is inactive, with even periodic meetings of the regulatory committee being avoided. This has resulted in serious reduction in biotech research in recent years.</p><p>This impasse is due to irrational opposition to GM crops based on ideology rather than science. India imports over 15 million tonnes of edible oil annually, of which over 25 per cent comprises soy oil and canola oil (a variant of mustard oil), which are from GM soybean and GM canola grown all over America. Over 95 per cent of cotton grown in India isBt cotton, we consume about 1.4 million tonnes of cotton seed oil produced from GM cotton. However, there is opposition to making available the same technology to mustard growers. On the matter of safety and efficacy of biotech crops, over 100 Nobel laureates collectively issued a statement in 2016, vouching for it.</p><p>It is high time Indian agriculture transforms into precision agriculture by using modern tools of biotechnology. The farmers’ agitation is also a reflection of deep anguish of the farming community about the growing <strong>chasm</strong> between agricultural income and income from other economic sectors. Farm income is a function of market prices and cost of production. While Indian market prices for major agricultural commodities are influenced by international prices, cost of production is a function of crop productivity. The current productivity of most of our crops is much lower than global averages. It is in this context that apart from reforms in the market and supply chain, we need to make available the best technologies to our farmers. Agriculturally developed countries is rapidly adapting new frontiers of precision agriculture tools, like CRISPR CAS9. It will be most appropriate, as has been the case with the COVID vaccines, if crop biotech, especially BtBrinjal and GM mustard, is accorded a similar sense of priority to improve competitiveness of Indian farmers and boost their income.</p><br><p><strong>Which of the following statements is/are False as given in the passage?</strong></p>", "options": ["From a net importer of cotton, India became the second-largest importer of cotton.", "Over 95 per cent of cotton grown in India isBt cotton, we consume about 1.4 million tonnes of cotton seed oil produced from GM cotton.", "Farm income is a function of market prices and cost of production.", "Both (B) and (C)", "All (A), (B) and (C)"], "correctIndex": 0, "solution": "<p><strong>Answer: </strong><strong>A </strong></p><p><strong>Only A</strong></p><p class=\"MsoNormal\" style=\"margin-bottom: .0001pt; line-height: normal;\">In the third paragraph, we talk about the transformation of India’s cotton sector and the increment in India’s share in the global production of cotton. From this India became the second-largest exporter of cotton. But in option A the second-largest importer of cotton is given, that's why option A is false.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions given below. </strong></p><p>Lifesaving vaccines such as Covishield and Covaxin are products of modern biotechnology, as are drugs developed in recent times for treating many ailments. The potential of genetic engineering is immense, with gene editing opening up the possibility of cures to hereditary diseases. Similarly, genetically modified (GM) crops are making big strides in bringing about improvement in crop productivity across farming nations.By 2019, the area under precision agriculture of GM crops had increased 112 times from 1996, when the first biotech crop was introduced, making it the fastest adopted crop technology in recent years. During 2019, 79 percent of cotton; 74 per cent of soybean; 31 per cent of maize and 27 per cent of canola acreages globally were under biotech crops, apart from varying acreages under 28 other smaller crops. A number of independent studies are available on the socioeconomic and environmental benefits of biotech crops. One such study estimated that net global farm income increased by $ 186 billion in 20 years. That helped alleviate poverty of over 16.5 million farmers globally and led to a 8.2 per cent reduction in global consumption of pesticides.</p><p>Bt Cotton, the only GM crop introduced in India in 2002, transformed India’s cotton sector, as cotton productivity almost doubled in six years. India’s share in the global production of cotton increased from 12 per cent in 2002 to 25 per cent by 2014. From a net importer of cotton, India became the second-largest exporter of cotton.Following approval for GM cotton, several organisations invested resources and efforts in new crop biotech traits, hoping for similar transformational changes in Indian agriculture. Btbrinjal was one such technology recommended for commercialisation in October 2009, after it completed regulatory evaluation in seven years, and is still under moratorium. Meanwhile, the technology has been adopted in Bangladesh. One study in 2018 stated that net returns of Bangladesh farmers increased six-fold from Btbrinjal, and pesticide usage on brinjal went down by 61 per cent.</p><p>Another such stalemate is on GM mustard. India imports over 65 percent of her edible oil requirement, as Indian oilseed yields are almost stagnant. This costs over $10 billion annually, with imports growing over time. Mustard is one such oilseed crop. But a high yielding mustard variety developed indigenously using biotech is yet to be approved for commercialisation. The regulatory system for crop biotech is inactive, with even periodic meetings of the regulatory committee being avoided. This has resulted in serious reduction in biotech research in recent years.</p><p>This impasse is due to irrational opposition to GM crops based on ideology rather than science. India imports over 15 million tonnes of edible oil annually, of which over 25 per cent comprises soy oil and canola oil (a variant of mustard oil), which are from GM soybean and GM canola grown all over America. Over 95 per cent of cotton grown in India isBt cotton, we consume about 1.4 million tonnes of cotton seed oil produced from GM cotton. However, there is opposition to making available the same technology to mustard growers. On the matter of safety and efficacy of biotech crops, over 100 Nobel laureates collectively issued a statement in 2016, vouching for it.</p><p>It is high time Indian agriculture transforms into precision agriculture by using modern tools of biotechnology. The farmers’ agitation is also a reflection of deep anguish of the farming community about the growing <strong>chasm</strong> between agricultural income and income from other economic sectors. Farm income is a function of market prices and cost of production. While Indian market prices for major agricultural commodities are influenced by international prices, cost of production is a function of crop productivity. The current productivity of most of our crops is much lower than global averages. It is in this context that apart from reforms in the market and supply chain, we need to make available the best technologies to our farmers. Agriculturally developed countries is rapidly adapting new frontiers of precision agriculture tools, like CRISPR CAS9. It will be most appropriate, as has been the case with the COVID vaccines, if crop biotech, especially BtBrinjal and GM mustard, is accorded a similar sense of priority to improve competitiveness of Indian farmers and boost their income.</p><br><p><strong>Find the synonym of Chasm</strong></p>", "options": ["Void", "Juncture", "Solid", "Remembrance", "None of these"], "correctIndex": 0, "solution": "<p><strong>Answer: A </strong></p><p>Void</p><p><strong>Chasm: -</strong> a wide difference of feelings, interests, etc. between two people or groups</p><p><strong>(A) Void: - </strong>completely lacking something, a large empty space</p><p><strong>(B) Juncture: -</strong> a particular point in time</p><p><strong>(C) Solid: -</strong> having no holes or empty spaces inside; not hollow</p><p><strong>(D) Remembrance: -</strong> thinking about and showing respect for somebody who is dead</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-68)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-68)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

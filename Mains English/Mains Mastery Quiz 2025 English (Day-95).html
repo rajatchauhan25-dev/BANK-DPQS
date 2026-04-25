@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-95)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>In each of the questions below, a sentence is given with three words highlighted in bold. From the given options, identify the correct set of synonyms for the highlighted words.</strong></p><br><p>Citizens have the right to <strong>demur</strong> and protest any law they feel is <strong>unconstitutional</strong> and <strong>detrimental</strong> to the progress of the nation.</p>", "options": ["<p>advocate, prohibited, unsupportive</p>", "<p>expostulate, unlawful, deleterious</p>", "<p>accede ,impermissible, adverse</p>", "<p>assent ,unjust, baneful</p>", "<p>None of the above</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>Demur (verb) - to present an opposing opinion or argument</p>\n<p>Unconstitutional (adjective) – not in accordance with the political constitution or with the procedural rules</p>\n<p>Detrimental (adjective) – tending to cause harm</p>\n<p>Options<strong> </strong>a, c, d contain antonyms for the word ‘demur’. Thus, these options are incorrect. Advocate (verb) – publicly recommend; accede (verb) – agree to demand, request, ideas; assent (verb) – express approval or agreement.</p>\n<p>Thus, option b is right.</p>\n<p>Expostulate – to present an opposing opinion or argument; unlawful – contrary to or forbidden by law; deleterious – capable of causing harm.</p>"}, {"question": "<p><strong>In each of the questions below, a sentence is given with three words highlighted in bold. From the given options, identify the correct set of synonyms for the highlighted words.</strong></p><br><p>For a man in <strong>imminent</strong> danger of losing his job he appeared quite <strong>unruffled</strong> and <strong>nonchalant</strong> about turning financially unstable with loss of income and livelihood in the near future.</p>", "options": ["<p>looming, unperturbed, ardent</p>", "<p>approaching, tranquil, fervent</p>", "<p>impending, placid, insouciant</p>", "<p>proximate, detached, avid</p>", "<p>None of the above</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Imminent (adjective) – giving signs of immediate occurrence</p>\n<p>Unruffled (adjective) – free from emotional or mental agitation</p>\n<p>Nonchalant (Adjective) – having or showing a lack of interest, feeling or concern.</p>\n<p>Options a, b, and d contain antonyms for the word ‘nonchalant’.</p>\n<p>Ardent – showing great depth of feeling and enthusiasm; fervent - showing great depth of feeling and enthusiasm; avid - showing urgent desire or interest.</p>\n<p>Thus, option c is right.</p>\n<p>Impending – being soon to appear or take place</p>\n<p>Placid – free from emotional and mental agitation</p>\n<p>Insouciant – having or showing freedom from worried or trouble; nonchalant</p>"}, {"question": "<p><strong>In each of the questions below, a sentence is given with three words highlighted in bold. From the given options, identify the correct set of synonyms for the highlighted words.</strong></p><br><p>An <strong>astute</strong> observation is thought-provoking, unlike an <strong>asinine</strong> observance that could never result in <strong>sagacious</strong> judgments.</p>", "options": ["<p>gullible, lunatic, obtuse</p>", "<p>ingenuous, absurd, imbecilic</p>", "<p>savvy, judicious, purblind</p>", "<p>shrewd, absurd, sapient</p>", "<p>None of the above</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>Astute (adjective) – having or showing a practical cleverness or judgment</p>\n<p>Asinine (adjective) – showing or marked by lack of good sense of judgment</p>\n<p>Sagacious (adjective) – having or showing deep understanding and intelligent application of knowledge</p>\n<p>Option a, b, and c contain antonyms for the word sagacious. Obtuse - Lacking in insight or discernment; dumb, imbecilic - Devoid of good sense or judgment; purblind - Lacking in insight or discernment; obtuse</p>\n<p>Thus, option d is the right answer.</p>\n<p>Shrewd – having or showing practical cleverness or judgment; absurd – showing or marked by lack of good sense or judgment; sapient - having or showing deep understanding and intelligent application of knowledge.</p>"}, {"question": "<p><strong>In each of the following questions, a sentence is divided into five parts. One part of the sentence is fixed and highlighted in bold. The highlighted part of the sentence appears at the position given and no change in position should be applied for the highlighted part. You have to arrange the remaining parts of the sentence to form a meaningful sentence.</strong></p><br><p><strong>A).</strong> <strong>A sessions court in Jabalpur has sentenced a man</strong></p>\n<p><strong>B).</strong> in the name of MP high court to at least 15 job-seeking youth</p>\n<p><strong>C). </strong>to 110 years of rigorous imprisonment under non-bailable conditions</p>\n<p><strong>D).</strong> after charging them Rs 5000 to Rs 30,000 each</p>\n<p><strong>E).</strong> and imposed a fine of Rs. 25000 for giving fake appointment letters</p>", "options": ["<p>ABDEC</p>", "<p>ACEBD</p>", "<p>ABCED</p>", "<p>ACDBE</p>", "<p>No rearrangement required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>Part A is highlighted and fixed and thus, it comes first. Part A should be followed by part C since the part A ends with ‘sentenced a man’ and the part C begins with ‘to imprisonment’ (sentenced in always followed by the preposition ‘to’). Part E should come next since this part adds information regarding the other penalization announced for the man apart from imprisonment. Part E should be followed by part B since part B proceeds to explain about the offense committed by the accused man. Part D comes finally. Thus, the right rearrangement is ACEBD.</p>\n<p>The right sentence is:</p>\n<p>A sessions court in Jabalpur has sentenced a man to 110 years of rigorous imprisonment under non-bailable conditions and imposed a fine of Rs. 25000 for giving fake appointment letters in the name of MP high court to at least 15 job-seeking youth after charging them Rs 5000 to Rs 30,000 each.</p>"}, {"question": "<p><strong>In each of the following questions, a sentence is divided into five parts. One part of the sentence is fixed and highlighted in bold. The highlighted part of the sentence appears at the position given and no change in position should be applied for the highlighted part. You have to arrange the remaining parts of the sentence to form a meaningful sentence.</strong></p><br><p><strong>A).</strong> <strong>Pointing to alleged discrimination by the previous government,</strong></p>\n<p><strong>B).</strong> 16% of the total population of Karnataka expect a hike in the allocation of funds</p>\n<p><strong>C).</strong> communities like Muslims, Christians, Buddhists, Sikhs, Jains, and Parsis that account to</p>\n<p><strong>D).</strong> their people, who are largely backward in many areas, specifically in education</p>\n<p><strong>E).</strong> granted by the state government for the welfare and development of</p>", "options": ["<p>ABECD</p>", "<p>ABDCE</p>", "<p>ACBED</p>", "<p>AECBD</p>", "<p>No rearrangement required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Part A comes first since it is highlighted. Next comes part C since it introduces the subject of the sentence. Next comes part B since it adds further information of the subject of the sentence mentioned in part B. Next comes part E since it talks about the funds that is mentioned in the end of part B. Next comes part D since it adds further information of the people who are mentioned in the end of part B. The right pattern of rearrangement is ACBED.</p>\n<p>The right sentence is:</p>\n<p>Pointing to alleged discrimination by the previous government, minority communities like Muslims, Christians, Buddhists, Sikhs, Jains, and Parsis that account to almost 16% of the total population of Karnataka expect a hike in the allocation of funds granted by the state government for the welfare and development of their people, who are largely backward in many areas, specifically in education.</p>"}, {"question": "<p><strong>In each of the following questions, a sentence is divided into five parts. One part of the sentence is fixed and highlighted in bold. The highlighted part of the sentence appears at the position given and no change in position should be applied for the highlighted part. You have to arrange the remaining parts of the sentence to form a meaningful sentence.</strong></p><br><p><strong>A).</strong> the Supreme Court referred the challenge to the constitutional validity</p>\n<p><strong>B).</strong> the center which substantially neglected its May 11 judgment</p>\n<p><strong>C).</strong> of the recently registered May 19 Delhi services ordinance</p>\n<p><strong>D).</strong> to a five-bench judge but officially refused to stay the order of</p>\n<p><strong>E). giving legislative and executive control over the bureaucracy to the Delhi government.</strong></p>", "options": ["<p>ADCBE</p>", "<p>BCADE</p>", "<p>ACDBE</p>", "<p>BACDE</p>", "<p>No rearrangement required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Part A comes first in the rearrangement since it introduces the subject of the sentence. Part B does not come first because it contains a phrase that says ‘its May 11 judgment’ which is contextually false because when placing part B first, the pronoun refers to the center but the center does not pass judgments in the first place (only courts can pass judgments) to eventually refuse it. Thus, part A comes first. Next comes part C since part A ends with ‘validity’ which is often followed by the preposition ‘of’. Next comes part D since it renders information of where the challenge that is mentioned in part A is referred to (as described in part A again). Since part E is highlighted it comes last and thus, part B comes fourth. The right pattern of rearrangement is ACDBE.</p>\n<p>The right sentence is:</p>\n<p>The Supreme Court referred the challenge to the constitutional validity of the recently registered May 19 Delhi services ordinance to a five-bench judge but refused to stay the order of the center which substantially neglected its May 11 judgment giving legislative and executive control over the bureaucracy to the Delhi government.</p>"}, {"question": "<p><strong>In each of the following questions, a sentence is divided into five parts. One part of the sentence is fixed and highlighted in bold. The highlighted part of the sentence appears at the position given and no change in position should be applied for the highlighted part. You have to arrange the remaining parts of the sentence to form a meaningful sentence.</strong></p><br><p><strong>A).</strong> the state government as per his recommendation is in the process of developing fruit hubs</p>\n<p><strong>B).</strong> adopting high density fruit plantation while micro irrigation facility efforts</p>\n<p><strong>C). to increase fruit production according to the region-specific conditions by </strong></p>\n<p><strong>D).</strong> Chief Minister said that under the Himachal Pradesh Shiva Project</p>\n<p><strong>E).</strong> are underway to increase the area under horticulture in the state</p>", "options": ["<p>BACDE</p>", "<p>DACBE</p>", "<p>DECAB</p>", "<p>AECBD</p>", "<p>No rearrangement required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>Part D comes first because it introduces the context of the sentence to the readers. Part A does not come first because it mentions a pronoun ‘his’ which has no references to a noun mentioned before or in part A. Thus, part D comes first. Then comes part A since it talks more about the project. Since part C is highlighted it comes third. Then comes part B since it explains how to increase fruit production that is mentioned in part C. Part E comes last. The right pattern of rearrangement is DACBE.</p>\n<p>The right sentence is:</p>\n<p>Chief Minister said that under the Himachal Pradesh Shiva Project, the state government as per his recommendation is in the process of developing fruit hubs to increase fruit production according to the region-specific conditions by<strong> </strong>adopting high density fruit plantation while micro irrigation facility efforts are underway to increase the area under horticulture in the state.</p>"}, {"question": "<p><strong>In each of the following questions, a sentence is divided into five parts. One part of the sentence is fixed and highlighted in bold. The highlighted part of the sentence appears at the position given and no change in position should be applied for the highlighted part. You have to arrange the remaining parts of the sentence to form a meaningful sentence.</strong></p><br><p><strong>A). Four teams of the National Disaster Response Force are leading </strong></p>\n<p><strong>B).</strong> by over 400 mm of rainfall flattened a remote tribal hamlet named Irshalwadi</p>\n<p><strong>C).</strong> recorded multiple cases of missing residents and casualties</p>\n<p><strong>D).</strong> resulting in one of the biggest natural disasters in Maharashtra that</p>\n<p><strong>E).</strong> the rescue operation in Pune after a massive landslide precipitated</p>", "options": ["<p>ABEDC</p>", "<p>ADEBC</p>", "<p>AEBDC</p>", "<p>ACBDE</p>", "<p>No rearrangement required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Since part A is highlighted it should come first. Part E should come first since it talks about what the four teams of the NDRF are leading (as mentioned in part A). Then comes part B since part E ends with the word ‘precipitated’ which relates to rainfall that is mentioned in part B. Then comes part D since it adds further information of the landslide. Part C comes last since it proceeds to describe the figures associated with the disaster in specific. Thus, the right pattern of rearrangement is AEBDC.<strong> </strong></p>\n<p>The right sentence is:                                                   </p>\n<p>Four teams of the National Disaster Response Force are leading the rescue operation in Pune after a massive landslide precipitated by over 400 mm of rainfall flattened a remote tribal hamlet named Irshalwadi resulting in one of the biggest natural disasters in Maharashtra that recorded multiple cases of missing residents and casualties.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Events that draw huge crowds require careful preparations. The loss of five lives during an air show at mid-day on Chennai's Marina beach on October 6, organized by the Indian Air Force (IAF) as part of its 92nd anniversary, could have been avoided with better anticipation of the surge in spectators. The cause of death was attributed to heatstroke, though dehydration and suffocation may also have been fac- tors. More than 200 people reportedly fainted. The IAF had issued advisories urging attendees to be well protected against the heat of around 34°C to 35°C. After the show, many complained of dizziness. Tamil Nadu Health Minister M. Subramanian said 102 individuals were sent to government hospitals nearby. In addition to the medical emergencies, chaos ensued on Chennai's roads for hours. Metro Rail and Mass Rapid Transit System (MRTS) trains were overcrowded. Stations were extremely congested and services were in- sufficient. Tamil Nadu Chief Minister M.K. Stalin announced a solatium of 5 lakh each to the families of those dead. He attributed the traffic con- gestion to the \"overwhelming response\", despite multiple departments coordinating preparations. This is not the first time that Chennai has hosted such an event. An IAF air show on September 6, 2003, drew an estimated 13 lakh people, just 2,00,000 less than this year. Notably, there were no heatstroke fatalities then, although two children went missing. Traffic management and train services were similarly chaotic. Clearly, lessons have not been learned. The blame should be shared not only by the State government, responsible for logistical support, but also by the railway administration for its inadequate response. Defence officials should have provided more critical inputs than they did, given their experience in conducting such shows nationwide. After the crash of a fighter jet at an air show in New Delhi on October 8, 1989, the IAF seemed to have ad- dressed its weak points to ensure smooth events related to Air Force Day. In a social media post, Mr. M. Subramanian claimed that the government had exceeded the requirements requested by the IAF. However, his assertion about sufficient toilets and drinking water did not align with complaints about inadequacies at the venue. The authorities should not have allowed several lakhs to converge at the Marina. Giant screens could have livestreamed the display and volunteers from higher education institutions could have assisted the police, transport and health officials to attend to those in distress. Defence officials and host States should critically review their plans. Only then can such mayhem be prevented.</p><br><p><strong>What event was the air show in Chennai organized to celebrate?</strong></p>", "options": ["<p>India's Independence Day</p>", "<p>The Indian Air Force's 92<sup>nd</sup> anniversary</p>", "<p>The inauguration of a new metro line</p>", "<p>The launch of a new fighter jet</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage clearly states that the air show was organized by the Indian Air Force (IAF) as part of its 92<sup>nd</sup> anniversary.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Events that draw huge crowds require careful preparations. The loss of five lives during an air show at mid-day on Chennai's Marina beach on October 6, organized by the Indian Air Force (IAF) as part of its 92nd anniversary, could have been avoided with better anticipation of the surge in spectators. The cause of death was attributed to heatstroke, though dehydration and suffocation may also have been fac- tors. More than 200 people reportedly fainted. The IAF had issued advisories urging attendees to be well protected against the heat of around 34°C to 35°C. After the show, many complained of dizziness. Tamil Nadu Health Minister M. Subramanian said 102 individuals were sent to government hospitals nearby. In addition to the medical emergencies, chaos ensued on Chennai's roads for hours. Metro Rail and Mass Rapid Transit System (MRTS) trains were overcrowded. Stations were extremely congested and services were in- sufficient. Tamil Nadu Chief Minister M.K. Stalin announced a solatium of 5 lakh each to the families of those dead. He attributed the traffic con- gestion to the \"overwhelming response\", despite multiple departments coordinating preparations. This is not the first time that Chennai has hosted such an event. An IAF air show on September 6, 2003, drew an estimated 13 lakh people, just 2,00,000 less than this year. Notably, there were no heatstroke fatalities then, although two children went missing. Traffic management and train services were similarly chaotic. Clearly, lessons have not been learned. The blame should be shared not only by the State government, responsible for logistical support, but also by the railway administration for its inadequate response. Defence officials should have provided more critical inputs than they did, given their experience in conducting such shows nationwide. After the crash of a fighter jet at an air show in New Delhi on October 8, 1989, the IAF seemed to have ad- dressed its weak points to ensure smooth events related to Air Force Day. In a social media post, Mr. M. Subramanian claimed that the government had exceeded the requirements requested by the IAF. However, his assertion about sufficient toilets and drinking water did not align with complaints about inadequacies at the venue. The authorities should not have allowed several lakhs to converge at the Marina. Giant screens could have livestreamed the display and volunteers from higher education institutions could have assisted the police, transport and health officials to attend to those in distress. Defence officials and host States should critically review their plans. Only then can such mayhem be prevented.</p><br><p><strong>What measures did the Tamil Nadu Health Minister mention regarding the medical emergencies?</strong></p>", "options": ["<p>Many were treated at the venue</p>", "<p>No medical emergencies were reported</p>", "<p>102 individuals were sent to government hospitals nearby</p>", "<p>Free medical services were provided for all attendees</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>According to the passage, Tamil Nadu Health Minister M. Subramanian confirmed that 102 individuals were sent to nearby government hospitals due to medical emergencies.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Events that draw huge crowds require careful preparations. The loss of five lives during an air show at mid-day on Chennai's Marina beach on October 6, organized by the Indian Air Force (IAF) as part of its 92nd anniversary, could have been avoided with better anticipation of the surge in spectators. The cause of death was attributed to heatstroke, though dehydration and suffocation may also have been fac- tors. More than 200 people reportedly fainted. The IAF had issued advisories urging attendees to be well protected against the heat of around 34°C to 35°C. After the show, many complained of dizziness. Tamil Nadu Health Minister M. Subramanian said 102 individuals were sent to government hospitals nearby. In addition to the medical emergencies, chaos ensued on Chennai's roads for hours. Metro Rail and Mass Rapid Transit System (MRTS) trains were overcrowded. Stations were extremely congested and services were in- sufficient. Tamil Nadu Chief Minister M.K. Stalin announced a solatium of 5 lakh each to the families of those dead. He attributed the traffic con- gestion to the \"overwhelming response\", despite multiple departments coordinating preparations. This is not the first time that Chennai has hosted such an event. An IAF air show on September 6, 2003, drew an estimated 13 lakh people, just 2,00,000 less than this year. Notably, there were no heatstroke fatalities then, although two children went missing. Traffic management and train services were similarly chaotic. Clearly, lessons have not been learned. The blame should be shared not only by the State government, responsible for logistical support, but also by the railway administration for its inadequate response. Defence officials should have provided more critical inputs than they did, given their experience in conducting such shows nationwide. After the crash of a fighter jet at an air show in New Delhi on October 8, 1989, the IAF seemed to have ad- dressed its weak points to ensure smooth events related to Air Force Day. In a social media post, Mr. M. Subramanian claimed that the government had exceeded the requirements requested by the IAF. However, his assertion about sufficient toilets and drinking water did not align with complaints about inadequacies at the venue. The authorities should not have allowed several lakhs to converge at the Marina. Giant screens could have livestreamed the display and volunteers from higher education institutions could have assisted the police, transport and health officials to attend to those in distress. Defence officials and host States should critically review their plans. Only then can such mayhem be prevented.</p><br><p><strong>Based on past events, what does the passage suggest about Chennai's preparedness for large events?</strong></p>", "options": ["<p>There have been repeated failures to learn from past experiences</p>", "<p>Chennai has consistently managed large events with success</p>", "<p>Chennai has improved significantly since previous incidents</p>", "<p>There is no historical data to assess Chennai's preparedness</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The passage indicates that this is not the first time Chennai has hosted such an event, and it mentions that lessons have not been learned from previous incidents, such as the chaos and fatalities experienced.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Events that draw huge crowds require careful preparations. The loss of five lives during an air show at mid-day on Chennai's Marina beach on October 6, organized by the Indian Air Force (IAF) as part of its 92nd anniversary, could have been avoided with better anticipation of the surge in spectators. The cause of death was attributed to heatstroke, though dehydration and suffocation may also have been fac- tors. More than 200 people reportedly fainted. The IAF had issued advisories urging attendees to be well protected against the heat of around 34°C to 35°C. After the show, many complained of dizziness. Tamil Nadu Health Minister M. Subramanian said 102 individuals were sent to government hospitals nearby. In addition to the medical emergencies, chaos ensued on Chennai's roads for hours. Metro Rail and Mass Rapid Transit System (MRTS) trains were overcrowded. Stations were extremely congested and services were in- sufficient. Tamil Nadu Chief Minister M.K. Stalin announced a solatium of 5 lakh each to the families of those dead. He attributed the traffic con- gestion to the \"overwhelming response\", despite multiple departments coordinating preparations. This is not the first time that Chennai has hosted such an event. An IAF air show on September 6, 2003, drew an estimated 13 lakh people, just 2,00,000 less than this year. Notably, there were no heatstroke fatalities then, although two children went missing. Traffic management and train services were similarly chaotic. Clearly, lessons have not been learned. The blame should be shared not only by the State government, responsible for logistical support, but also by the railway administration for its inadequate response. Defence officials should have provided more critical inputs than they did, given their experience in conducting such shows nationwide. After the crash of a fighter jet at an air show in New Delhi on October 8, 1989, the IAF seemed to have ad- dressed its weak points to ensure smooth events related to Air Force Day. In a social media post, Mr. M. Subramanian claimed that the government had exceeded the requirements requested by the IAF. However, his assertion about sufficient toilets and drinking water did not align with complaints about inadequacies at the venue. The authorities should not have allowed several lakhs to converge at the Marina. Giant screens could have livestreamed the display and volunteers from higher education institutions could have assisted the police, transport and health officials to attend to those in distress. Defence officials and host States should critically review their plans. Only then can such mayhem be prevented.</p><br><p><strong>What were the issues faced with transport services during the event?</strong></p>", "options": ["<p>They were well-organized and efficient</p>", "<p>Services were insufficient and overcrowded</p>", "<p>There were no reported issues with transport</p>", "<p>Transport was provided free of charge</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage describes how Metro Rail and MRTS trains were overcrowded and that stations were extremely congested, indicating a lack of sufficient transport services.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Events that draw huge crowds require careful preparations. The loss of five lives during an air show at mid-day on Chennai's Marina beach on October 6, organized by the Indian Air Force (IAF) as part of its 92nd anniversary, could have been avoided with better anticipation of the surge in spectators. The cause of death was attributed to heatstroke, though dehydration and suffocation may also have been fac- tors. More than 200 people reportedly fainted. The IAF had issued advisories urging attendees to be well protected against the heat of around 34°C to 35°C. After the show, many complained of dizziness. Tamil Nadu Health Minister M. Subramanian said 102 individuals were sent to government hospitals nearby. In addition to the medical emergencies, chaos ensued on Chennai's roads for hours. Metro Rail and Mass Rapid Transit System (MRTS) trains were overcrowded. Stations were extremely congested and services were in- sufficient. Tamil Nadu Chief Minister M.K. Stalin announced a solatium of 5 lakh each to the families of those dead. He attributed the traffic con- gestion to the \"overwhelming response\", despite multiple departments coordinating preparations. This is not the first time that Chennai has hosted such an event. An IAF air show on September 6, 2003, drew an estimated 13 lakh people, just 2,00,000 less than this year. Notably, there were no heatstroke fatalities then, although two children went missing. Traffic management and train services were similarly chaotic. Clearly, lessons have not been learned. The blame should be shared not only by the State government, responsible for logistical support, but also by the railway administration for its inadequate response. Defence officials should have provided more critical inputs than they did, given their experience in conducting such shows nationwide. After the crash of a fighter jet at an air show in New Delhi on October 8, 1989, the IAF seemed to have ad- dressed its weak points to ensure smooth events related to Air Force Day. In a social media post, Mr. M. Subramanian claimed that the government had exceeded the requirements requested by the IAF. However, his assertion about sufficient toilets and drinking water did not align with complaints about inadequacies at the venue. The authorities should not have allowed several lakhs to converge at the Marina. Giant screens could have livestreamed the display and volunteers from higher education institutions could have assisted the police, transport and health officials to attend to those in distress. Defence officials and host States should critically review their plans. Only then can such mayhem be prevented.</p><br><p><strong>What criticism did Mr. M. Subramanian face regarding the event preparations?</strong></p>", "options": ["<p>The government had failed to inform the public</p>", "<p>There was an excess of unnecessary security</p>", "<p>The event was canceled at the last minute</p>", "<p>There were insufficient toilets and drinking water at the venue</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The passage mentions that Mr. Subramanian's assertion about the adequacy of toilets and drinking water did not align with complaints from attendees, indicating shortcomings in event preparations.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Events that draw huge crowds require careful preparations. The loss of five lives during an air show at mid-day on Chennai's Marina beach on October 6, organized by the Indian Air Force (IAF) as part of its 92nd anniversary, could have been avoided with better anticipation of the surge in spectators. The cause of death was attributed to heatstroke, though dehydration and suffocation may also have been fac- tors. More than 200 people reportedly fainted. The IAF had issued advisories urging attendees to be well protected against the heat of around 34°C to 35°C. After the show, many complained of dizziness. Tamil Nadu Health Minister M. Subramanian said 102 individuals were sent to government hospitals nearby. In addition to the medical emergencies, chaos ensued on Chennai's roads for hours. Metro Rail and Mass Rapid Transit System (MRTS) trains were overcrowded. Stations were extremely congested and services were in- sufficient. Tamil Nadu Chief Minister M.K. Stalin announced a solatium of 5 lakh each to the families of those dead. He attributed the traffic con- gestion to the \"overwhelming response\", despite multiple departments coordinating preparations. This is not the first time that Chennai has hosted such an event. An IAF air show on September 6, 2003, drew an estimated 13 lakh people, just 2,00,000 less than this year. Notably, there were no heatstroke fatalities then, although two children went missing. Traffic management and train services were similarly chaotic. Clearly, lessons have not been learned. The blame should be shared not only by the State government, responsible for logistical support, but also by the railway administration for its inadequate response. Defence officials should have provided more critical inputs than they did, given their experience in conducting such shows nationwide. After the crash of a fighter jet at an air show in New Delhi on October 8, 1989, the IAF seemed to have ad- dressed its weak points to ensure smooth events related to Air Force Day. In a social media post, Mr. M. Subramanian claimed that the government had exceeded the requirements requested by the IAF. However, his assertion about sufficient toilets and drinking water did not align with complaints about inadequacies at the venue. The authorities should not have allowed several lakhs to converge at the Marina. Giant screens could have livestreamed the display and volunteers from higher education institutions could have assisted the police, transport and health officials to attend to those in distress. Defence officials and host States should critically review their plans. Only then can such mayhem be prevented.</p><br><p><strong>What potential solutions does the passage suggest to prevent chaos during similar events in the future?</strong></p>", "options": ["<p>Reducing the number of attendees</p>", "<p>Building more facilities on-site</p>", "<p>Livestreaming the event on giant screens and involving volunteers</p>", "<p>Conducting the event in a more remote location</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The passage suggests that giant screens could have been used for livestreaming the display and that volunteers could have assisted in managing the situation to help attendees in distress.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Events that draw huge crowds require careful preparations. The loss of five lives during an air show at mid-day on Chennai's Marina beach on October 6, organized by the Indian Air Force (IAF) as part of its 92nd anniversary, could have been avoided with better anticipation of the surge in spectators. The cause of death was attributed to heatstroke, though dehydration and suffocation may also have been fac- tors. More than 200 people reportedly fainted. The IAF had issued advisories urging attendees to be well protected against the heat of around 34°C to 35°C. After the show, many complained of dizziness. Tamil Nadu Health Minister M. Subramanian said 102 individuals were sent to government hospitals nearby. In addition to the medical emergencies, chaos ensued on Chennai's roads for hours. Metro Rail and Mass Rapid Transit System (MRTS) trains were overcrowded. Stations were extremely congested and services were in- sufficient. Tamil Nadu Chief Minister M.K. Stalin announced a solatium of 5 lakh each to the families of those dead. He attributed the traffic con- gestion to the \"overwhelming response\", despite multiple departments coordinating preparations. This is not the first time that Chennai has hosted such an event. An IAF air show on September 6, 2003, drew an estimated 13 lakh people, just 2,00,000 less than this year. Notably, there were no heatstroke fatalities then, although two children went missing. Traffic management and train services were similarly chaotic. Clearly, lessons have not been learned. The blame should be shared not only by the State government, responsible for logistical support, but also by the railway administration for its inadequate response. Defence officials should have provided more critical inputs than they did, given their experience in conducting such shows nationwide. After the crash of a fighter jet at an air show in New Delhi on October 8, 1989, the IAF seemed to have ad- dressed its weak points to ensure smooth events related to Air Force Day. In a social media post, Mr. M. Subramanian claimed that the government had exceeded the requirements requested by the IAF. However, his assertion about sufficient toilets and drinking water did not align with complaints about inadequacies at the venue. The authorities should not have allowed several lakhs to converge at the Marina. Giant screens could have livestreamed the display and volunteers from higher education institutions could have assisted the police, transport and health officials to attend to those in distress. Defence officials and host States should critically review their plans. Only then can such mayhem be prevented.</p><br><p><strong>What can be inferred about the role of the railway administration in this incident?</strong></p>", "options": ["<p>The railway administration effectively managed the crowds</p>", "<p>The railway administration shares responsibility for the chaos due to inadequate response</p>", "<p>The railway administration was not involved in the preparations</p>", "<p>The railway administration had no impact on the event's outcome</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer:</strong> <strong>B</strong></p>\n<p>The passage states that the blame should be shared by multiple parties, including the State government and the railway administration, for their inadequate response.</p>"}, {"question": "<p><strong>In the following questions, a sentence is divided into five parts out of which only one part of the sentence is correct. You have to mark that part of the sentence as the answer.</strong></p><br><p>Soon after the US pointed the finger to India <strong>(A)/</strong> for allegedly incidents of human rights violations, <strong>(B)/</strong> particularly at Manipur, <strong>(C)/</strong> India has vehemently criticised <strong>(D)/</strong> the State Department report <strong>(E).</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 4, "solution": "<p><strong>Answer</strong><strong>: E</strong></p>\n<p><strong>A).</strong> \"Soon after the US pointed the finger to India\" - This part contains a prepositional error. The correct phrase should be \"pointed the finger at India\" to indicate attribution.</p>\n<p><strong>B).</strong> \"for allegedly incidents of human rights violations,\" - This part contains a grammatical error. It should be \"alleged incidents of human rights violations\" to match the adjective \"alleged\" with the noun \"incidents.\"</p>\n<p><strong>C).</strong> \"particularly at Manipur,\" - The correct preposition to use here is \"in\" instead of \"at\" to indicate location.</p>\n<p>The error in part C lies in the use of the preposition \"at\" before \"Manipur.\"</p>\n<p>In English, we typically use the preposition \"in\" to indicate a specific location, such as a city or region. The preposition \"at\" is generally used to denote a specific point or place.</p>\n<p>Since Manipur is a region or state, it is more appropriate to use the preposition \"in\" to indicate location.</p>\n<p>Corrected Part C: \"particularly in Manipur,\"</p>\n<p><strong>D).</strong> \"India vehemently criticized\" - Removing \"has\" maintains the past tense consistency with the preceding actions.</p>\n<p>The error lies in the use of the present perfect tense (\"has\") in this context. The present perfect tense is typically used to describe actions that happened at an unspecified time before the present moment or actions that have relevance to the present moment. However, in this sentence, the context suggests that India's criticism of the State Department report occurred immediately after the US pointed the finger to India for human rights violations.</p>\n<p>Given this immediate sequence of events in the past, it's more appropriate to use the simple past tense (\"criticized\") to describe India's action. Therefore, the correct form is \"India vehemently criticized.\"</p>\n<p><strong>E).</strong> \"the State Department report\" - This part is grammatically correct. It specifies the object of India's criticism.</p>\n<p>So, the correct choice is E) \"the State Department report\". The errors are in parts A, B, C and D.</p>\n<p><strong>The corrected sentence would read:</strong> \"Soon after the US pointed the finger <strong>at </strong>India for <strong>alleged</strong> incidents of human rights violations, particularly <strong>in</strong> Manipur, <strong>India vehemently</strong> criticised the State Department report.\"</p>\n<p>Therefore, option E is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, a sentence is divided into five parts out of which only one part of the sentence is correct. You have to mark that part of the sentence as the answer.</strong></p><br><p>The scapegoating of Sri Lankan Tamils have <strong>(A)/</strong> broadly followed similar pattern as in India, <strong>(B)/</strong> even if the axis of persecution <strong>(C)/</strong> take place more on ethnic/linguistic <strong>(D)/</strong> rather than religious line <strong>(E).</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 2, "solution": "<p><strong>Answer</strong><strong>: C</strong></p>\n<p><strong>A).</strong> \"The scapegoating of Sri Lankan Tamils have\" - The verb \"have\" is incorrect here because \"scapegoating\" is a singular noun, so it requires a singular verb form. The correct form should be \"has.\"</p>\n<p><strong>B).</strong> \"broadly followed similar pattern as in India,\" - The error in part B is the lack of pluralization in the noun \"pattern.\" In English, when referring to multiple instances or variations of something, we use plural nouns. Since the sentence is discussing multiple patterns of scapegoating, it should use the plural form \"patterns\" instead of \"pattern.\"</p>\n<p>So, the corrected part B is: \"broadly followed similar patterns as in India,\"</p>\n<p>This correction ensures grammatical accuracy by using the appropriate plural form of the noun to match the context of the sentence.</p>\n<p><strong>C).</strong> \"even if the axis of persecution\" - This part is grammatically correct. It introduces the axis of persecution as a contrast to the pattern mentioned earlier.</p>\n<p><strong>D).</strong> \"take place more on ethnic/linguistic\" - The verb \"take\" should be in the singular form to match the singular subject \"axis.\" The correct form should be \"takes.\"</p>\n<p><strong>E).</strong> \"rather than religious line\" - The phrase \"religious line\" is grammatically incorrect. It should be \"religious lines\" to indicate multiple lines.</p>\n<p>So, the correct choice is C) \"even if the axis of persecution\". The errors are in parts A, B, D and E.</p>\n<p><strong>The corrected sentence would read: “</strong>The scapegoating of Sri Lankan Tamils <strong>has </strong>broadly followed similar <strong>patterns</strong> as in India, even if the axis of persecution<strong> takes</strong> place more on ethnic/linguistic rather than religious <strong>lines</strong>.<strong>”</strong></p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, a sentence is divided into five parts out of which only one part of the sentence is correct. You have to mark that part of the sentence as the answer.</strong></p><br><p>The Supreme Court of India rejection of the demand <strong>(A)/</strong> for 100% verification of the paper trail leave by the votes <strong>(B)/</strong> cast through electronic voting machines come as no surprise, <strong>(C)/</strong> as there is no hard evidence that the current <strong>(D)/</strong> verification system suffer from any irremediable lacuna <strong>(E).</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D</strong></p>\n<p><strong>A)</strong>. \"The Supreme Court of India rejection of the demand\" - The error here is the absence of the possessive form for \"India.\" When referring to the Supreme Court of India, it's necessary to include the possessive form to indicate that the rejection belongs to the Supreme Court of India.</p>\n<p>Corrected Part A: \"The Supreme Court of India's rejection of the demand\"- This correction ensures that the possessive form \"India's\" is used correctly to indicate that the rejection belongs to the Supreme Court of India.</p>\n<p><strong>B)</strong>. \"for 100% verification of the paper trail leave by the votes\" - The error here is in subject-verb agreement. \"Leave\" should be \"left\" to agree with the singular subject \"trail.\"</p>\n<p><strong>C).</strong> \"cast through electronic voting machines come as no surprise,\" - The error here is in subject-verb agreement. The verb \"come\" should be \"comes\" to agree with the singular subject \"rejection.\"</p>\n<p><strong>D)</strong>. \"as there is no hard evidence that the current\" - This part of the sentence is grammatically correct. It provides a reason for the lack of surprise regarding the Supreme Court's decision.</p>\n<p><strong>E).</strong> \"verification system suffer from any irremediable lacuna\" - The error here is the verb form \"suffer.\" It should be \"suffers\" to agree with the singular subject \"verification system.\"</p>\n<p>So, the correct choice is D) \" as there is no hard evidence that the current \". The errors are in parts A, B, C and E.</p>\n<p><strong>The corrected sentence would read:</strong> “The Supreme Court of <strong>India’s</strong> rejection of the demand for 100% verification of the paper <strong>trail left</strong> by the votes cast through electronic voting machines <strong>comes</strong> as no surprise, as there is no hard evidence that the current verification system <strong>suffers </strong>from any irremediable lacuna.”</p>\n<p>Therefore, option D is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, a sentence is divided into five parts out of which only one part of the sentence is correct. You have to mark that part of the sentence as the answer.</strong></p><br><p>The median age of the population are <strong>(A)/</strong> approaching the point when demanding <strong>(B)/</strong> for new housing peaks, <strong>(C)/</strong> and the property market seems sets <strong>(D)/</strong> to a sustained boom <strong>(E). </strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 2, "solution": "<p><strong>Answer</strong><strong>: C</strong></p>\n<p><strong>A)</strong>. \"The median age of the population are\" - The verb \"are\" does not agree with the singular subject \"median age.\" It should be \"is\" instead of \"are.\"</p>\n<p><strong>B)</strong>. \"approaching the point when demanding\" - This part lacks a main verb. It seems like there's a missing verb after \"when.\" It should be \"approaching the point when demand\" to complete the sentence correctly.</p>\n<p><strong>C)</strong>. \"for new housing peaks\" - This part is grammatically correct. It describes the time when demand for new housing reaches its highest point.</p>\n<p><strong>D).</strong> \"and the property market seems sets\" - The verb form \"seems sets\" is incorrect. It should be \"seems set\" to maintain proper verb agreement.</p>\n<p><strong>E).</strong> \"to a sustained boom\" - The preposition \"to\" typically indicates direction or movement towards a particular goal or outcome. However, in this context, we are not describing movement towards a sustained boom. Instead, we are describing the state or condition of the property market.</p>\n<p>The correct preposition to use when describing a state or condition is \"for,\" which indicates the purpose or intended outcome.</p>\n<p>Therefore, the corrected phrase should be \"seems set for a sustained boom,\" indicating that the property market is positioned or prepared for experiencing a sustained period of prosperity.</p>\n<p>So, the correct choice is C) \"for new housing peaks \". The errors are in parts A, B, D and E.</p>\n<p><strong>The corrected sentence would read:</strong> “The median age of the population <strong>is</strong> approaching the point when <strong>demand </strong>for new housing peaks, and the property market seems<strong> set for</strong> a sustained boom.”</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, a sentence is divided into five parts out of which only one part of the sentence is correct. You have to mark that part of the sentence as the answer.</strong></p><br><p>By deal with the latest round of complaints of alleged hate speeches <strong>(A)/</strong> made by politicians during recent election campaign and rallies, <strong>(B)/</strong> EC has reassuring all of us that it is a fair referee <strong>(C)/</strong> that's not intimidate by the position or post of the <strong>(D)/</strong> alleged violators of the model code of conduct <strong>(E).</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 4, "solution": "<p><strong>Answer</strong><strong>: E</strong></p>\n<p><strong>A)</strong>. \"By deal with the latest round of complaints of alleged hate speeches\" - The phrase \"By deal with\" is grammatically incorrect. It should be \"By dealing with\" to form the present participle form of the verb.</p>\n<p><strong>B)</strong>. \"made by politicians during recent election campaign and rallies,\" - The error here lies in the singular form \"campaign\" when it should be the plural \"campaigns\" to match the plural noun \"rallies.\"</p>\n<p>Corrected Part B: \"made by politicians during recent election campaigns and rallies,\"</p>\n<p><strong>C)</strong>. \"EC has reassuring all of us that it is a fair referee\" - This part has a verb tense error. It should be \"EC has reassured all of us\" to match the past tense \"has reassured.\"</p>\n<p><strong>D).</strong> \"that's not intimidate by the position or post of the\" - The verb \"intimidate\" is not correct in this context. It should be \"intimidated\" to agree with the subject \"EC.\"</p>\n<p><strong>E)</strong>. \"alleged violators of the model code of conduct\" - This part is grammatically correct. It describes the individuals accused of violating the model code of conduct.</p>\n<p>So, the correct choice is E) \"alleged violators of the model code of conduct \". The errors are in parts A, B, C and D.</p>\n<p><strong>The corrected sentence would read: </strong>“By <strong>dealing</strong> with the latest round of complaints of alleged hate speeches made by politicians during recent election <strong>campaigns</strong> and rallies, EC has <strong>reassured</strong> all of us that it is a fair referee that's not <strong>intimidated</strong> by the position or post of the alleged violators of the model code of conduct.”</p>\n<p>Therefore, option E is the correct answer.</p>"}, {"question": "<p><strong>In the mentioned questions, a paragraph is given. Fill the blank with the correct sentence from the options.</strong></p><br><p><strong>The military council then had an opportunity, like the military in Tunisia after the fall of the dictator Zine El Abidine Ben Ali in January 2011, to return to the barracks and let the civilian leadership assume power and shape the country’s future but Sudan’s military not only refused to give up its powers but also ________________</strong></p>", "options": ["<p>Guarantee a smooth transition from military to civilian rule</p>", "<p>Found a balance between the military&rsquo;s quest to retain its privileges&nbsp;</p>", "<p>Massacred the protesters who challenged them</p>", "<p>Resisted by the powerful, deeply entrenched military</p>", "<p>Convinced the generals they could not anymore amass absolute power, as they did under three-decade-long rule</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The option (c) seems to be logical for the context and is the correct part to complete the incomplete sentence of passage.</p>"}, {"question": "<p><strong>In the mentioned questions, a paragraph is given. Fill the blank with the correct sentence from the options.</strong></p><br><p><strong>It is highly unlikely that the quantum of funds that the government is likely to receive from SEBI will make much of a difference to the government’s overall fiscal situation, so the amendment to the SEBI Act seems to be clearly ____________________ rather than by financial considerations.</strong></p>", "options": ["<p>Going ahead with its capital expenditure plans</p>", "<p>Motivated by the desire to increase control over the regulator</p>", "<p>Investing in new technologies and other requirements to upgrade market infrastructure</p>", "<p>Regulated the economy by consolidating all existing powers under the Finance Ministry</p>", "<p>Subsuming them under the wings of the government affecting their credibility</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The option (b) seems to be logical for the context and is the correct part to complete the incomplete sentence of passage.</p>"}, {"question": "<p><strong>In the mentioned questions, a paragraph is given. Fill the blank with the correct sentence from the options.</strong></p><br><p><strong>Das said India won’t be as badly affected from the U.S.-China trade war in the short term as other economies that ______________________ but if those tensions are prolonged, they will have an adverse impact on India, especially on its exports, which contracted in June for the first time in nine months.</strong></p>", "options": ["<p>Becomes a problem to absorb excess liquidity</p>", "<p>Included a plan to ease foreign direct investment rules for sectors ranging from aviation to media</p>", "<p>Cannot boost the economy and there&rsquo;s a need for more reforms with various stakeholders</p>", "<p>Can be seen as a positive development on the one hand</p>", "<p>Are more plugged into global value chains</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>The option (e) seems to be logical for the context and is the correct part to complete the incomplete sentence of passage.</p>"}, {"question": "<p><strong>In the mentioned questions, a paragraph is given. Fill the blank with the correct sentence from the options.</strong></p><br><p><strong>With the Supreme Court-led process of updating the National Register of Citizens in Assam nearing its deadline of July 31, the complexities involved in the gargantuan exercise have dawned upon the executive and both the Central and State governments have sought an extension but it remains to be seen whether the Court, which has _________________________ when it hears the matter on July 23.</strong></p>", "options": ["<p>Insisted on sticking to the timelines, would relent</p>", "<p>Emerged of persons wrongfully left out of the list can change</p>", "<p>Slipped into the list will quell</p>", "<p>Reverified during the process of disposal of claims</p>", "<p>Keeps holding out the prospect of unleashing a nationwide NRC to detect and deport&nbsp;</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The option (a) seems to be logical for the context and is the correct part to complete the incomplete sentence of passage.</p>"}, {"question": "<p><strong>In the mentioned questions, a paragraph is given. Fill the blank with the correct sentence from the options.</strong></p><br><p><strong>Despite lacklustre company earnings and other fundamental issues, markets in the past have been pushed up aggressively by the ample liquidity provided by central banks but without enough reforms to strengthen the fundamentals that can back lofty valuations, it may _____________________</strong></p>", "options": ["<p>be only a matter of time before markets begin to lose steam</p>", "<p>be easing its policy, any global liquidity tightening can affect foreign fund inflows</p>", "<p>tilt towards populism as the government expands the size of its welfare projects instead of taking steps to revive private investment</p>", "<p>unlikely to make much of a difference to the government&rsquo;s fiscal position</p>", "<p>lowers the chances of an interest rate cut by the Federal Reserve, and the potential systemic risk posed by the troubles&nbsp;</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The option (a) seems to be logical for the context and is the correct part to complete the incomplete sentence of passage.</p>"}, {"question": "<p><strong>In each question below, two sentences have been given. Three starters have been given below the sentences. You are required to select the appropriate starter that would combine the two sentences by being placed in the beginning of either of the sentences without changing the meaning of the sentences</strong></p><br><p><strong>a)</strong> That will benefit from Trump’s successes and others that will see gains if he fails</p><p><strong>b)</strong> Diversify your investments and consider mitigating your risks by taking some positions</p><p><strong>(i)</strong> Assuming…</p><p><strong>(ii)</strong> Make sure to…</p><p><strong>(iii)</strong> There is a need to…</p>", "options": ["Only (i)", "Both (ii) and (iii)", "Only (iii)", "None matches", "All (i), (ii) and (iii)"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p><p>Any of the given starters if placed before the first sentence won’t make any sense and there would be a need of other words as well to join the two statements.</p><p>Also, we can use ‘assuming’ to connect the sentences but in between so this gets ruled out.</p><p>The sentences after being connected would be:</p><ul><li><strong><em>Make sure to</em></strong> diversify your investments and consider mitigating your risks by taking some positions that will benefit from Trump's successes and others that will see gains if he fails</li><li><strong><em>There is a need to</em></strong> diversify your investments and consider mitigating your risks by taking some positions that will benefit from Trump's successes and others that will see gains if he fails</li></ul>"}, {"question": "<p><strong>In each question below, two sentences have been given. Three starters have been given below the sentences. You are required to select the appropriate starter that would combine the two sentences by being placed in the beginning of either of the sentences without changing the meaning of the sentences</strong></p><br><p><strong>a)</strong> The change in living quarters, it is important to acknowledge boundaries in the work environment.</p><p><strong>b)</strong> For example, in the workplace, I need to respect my father as my boss, but he also needs to respect my professional opinion even if it differs from his.</p><p><strong>(i)</strong> But despite…</p><p><strong>(ii)</strong> Instead of…</p><p><strong>(iii)</strong> Understanding the…</p>", "options": ["Only (i)", "Only (iii)", "Only (ii)", "Both (i) and (iii)", "All (i), (ii) and (iii)"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p><p>The best starter that connects the two given sentences meaningfully is (i). The sentence after connecting would be:</p><ul><li><strong><em>But despite</em></strong> the change in living quarters, it is important to acknowledge boundaries in the work environment. For example, in the workplace, I need to respect my father as my boss, but he also needs to respect my professional opinion even if it differs from his.</li></ul>"}, {"question": "<p><strong>In each question below, two sentences have been given. Three starters have been given below the sentences. You are required to select the appropriate starter that would combine the two sentences by being placed in the beginning of either of the sentences without changing the meaning of the sentences</strong></p><br><p><strong>a)</strong> This kind of success takes effort, investment, and commitment.</p><p><strong>b)</strong> Which is why, when a multinational giant comes knocking at the door with an impressive offer, it’s not easy—or always right—to walk away</p><p><strong>(i)</strong> Whatsoever…</p><p><strong>(ii)</strong> The reality…</p><p><strong>(iii)</strong> Sustaining…</p>", "options": ["Only (ii)", "Both (ii) and (i)", "Only (iii)", "All (i), (ii) and (iii)", "None of the above"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p><p>The sentences can be combined meaningfully when ‘Sustaining’ starts the first sentence and the second sentence continues the idea.</p><p>Other starters do not combine the sentences well and hence can be ruled out. The correct sentence is given below:</p><ul><li><strong><em>Sustaining </em></strong>this kind of success takes effort, investment, and commitment. Which is why, when a multinational giant comes knocking at the door with an impressive offer, it’s not easy—or always right—to walk away</li></ul>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-95)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-95)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

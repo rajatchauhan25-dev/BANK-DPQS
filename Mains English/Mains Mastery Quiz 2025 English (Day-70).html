@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-70)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>In each of the questions given below an incomplete sentence which must be filled/completed with one of the sentences given below.  Choose the correct option and complete the given sentences.</strong></p><br><p><strong>The intricate relationship between economic growth and environmental sustainability necessitates that policymakers _____________________________.</strong></p>", "options": ["<p>craft comprehensive regulations that not only mitigate ecological degradation but also incentivize innovative practices aimed at fostering long-term ecological resilience</p>", "<p>crafting comprehensive regulations that not only mitigate ecological degradation but also incentivize innovative practices focused on fostering long-term ecological resilience</p>", "<p>a comprehensive regulation crafting that mitigates ecological degradation while incentivizing innovative practices focused on fostering long-term ecological resilience</p>", "<p>crafting comprehensive regulations that mitigated ecological degradation while also incentivizing innovative practices focused on fostering long-term ecological resilience</p>", "<p>None of the above</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Option (a) maintains proper parallel structure and consistent verb tense. The use of \"craft\" fits the context of policymakers taking action. Additionally, the phrase \"aimed at fostering\" clarifies the purpose of the innovative practices.</p>"}, {"question": "<p><strong>In each of the questions given below an incomplete sentence which must be filled/completed with one of the sentences given below.  Choose the correct option and complete the given sentences.</strong></p><br><p><strong>The emergence of artificial intelligence in various sectors raises profound ethical questions regarding ________________________.</strong></p>", "options": ["<p>algorithms&rsquo; accountability in decision-making processes, job displacement potential, and the necessity for transparent governance frameworks that safeguard against misuse</p>", "<p>accountability of algorithms in decision-making, potential job displacement, and necessity for transparent governance frameworks safeguarding against misuse</p>", "<p>the accountability of algorithms in decision-making processes, the potential for job displacement, and the necessity for transparent governance frameworks that safeguard against misuse</p>", "<p>the accountability of algorithms in decision-making, job displacement potential, and necessity for transparent governance frameworks that safeguard against misuse</p>", "<p>None of the above</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Option (c) is the only one that maintains a consistent structure with a clear focus on the ethical issues raised by AI. It uses definite articles and parallel nouns effectively to clarify the complex topics being addressed.</p>"}, {"question": "<p><strong>In each of the questions given below an incomplete sentence which must be filled/completed with one of the sentences given below.  Choose the correct option and complete the given sentences.</strong></p><br><p><strong>The government’s decision to implement new tax reforms, while ____________, has sparked debate among economists and policy analysts.</strong></p>", "options": ["<p>hailed by some as a necessary step toward fiscal responsibility, is criticized by others as potentially harmful to the middle class</p>", "<p>hailing by some as necessary for fiscal responsibility, others criticizing it as harmful to the middle class</p>", "<p>being hailed by some, while others criticize it as potentially harming the middle class</p>", "<p>hailed by some as necessary for fiscal responsibility, it has been criticized by others as unfairly targeting the middle class</p>", "<p>None of the above</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Option (a) maintains proper grammatical structure, balancing the sentence with \"hailed by some\" and \"criticized by others.\" This creates a parallel contrast while keeping the sentence flowing smoothly. Other options are either incomplete or grammatically inconsistent.</p>"}, {"question": "<p><strong>In each of the questions given below an incomplete sentence which must be filled/completed with one of the sentences given below.  Choose the correct option and complete the given sentences.</strong></p><br><p><strong>The city’s ambitious climate action plan, aimed at reducing carbon emissions by 50% over the next decade, will require ____________.</strong></p>", "options": ["<p>significant investment in renewable energy sources, upgrading public transportation systems, and encouraging citizens to adopt energy-efficient practices</p>", "<p>investing significantly in renewable energy sources, public transport upgrades, and energy-efficient practices, which the city hopes citizens will adopt</p>", "<p>a major investment in renewable energy, improving public transport, and urging citizens to adopt more efficient energy practices</p>", "<p>an overhaul of current public transport systems, significant renewable energy investments, and citizens&rsquo; support of energy-efficient practices</p>", "<p>None of the above</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Option (a) provides a balanced structure by highlighting three key areas of focus: renewable energy, public transportation, and citizen involvement. The other options either lack specificity or disrupt the flow of the sentence by using non-parallel structures.</p>"}, {"question": "<p><strong>In each of the questions given below an incomplete sentence which must be filled/completed with one of the sentences given below.  Choose the correct option and complete the given sentences.</strong></p><br><p><strong>In the aftermath of the financial crisis, many governments adopted austerity measures in an attempt to stabilize their economies, ____________.</strong></p>", "options": ["<p>these policies have been effective in reducing deficits, they have also been blamed for slowing down economic recovery and worsening inequality</p>", "<p>while these policies effectively reduced deficits, they also being blamed for slowing economic recovery and increasing inequality</p>", "<p>despite their success in reducing deficits, they were also accused of slowing down economic recovery and worsening inequalities</p>", "<p>although these policies have reduced deficits, they have also been criticized for their role in exacerbating inequality and delaying economic recovery</p>", "<p>None of the above</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>Option (d) correctly uses \"although\" to contrast the policies' success in reducing deficits with the criticism of their side effects. It keeps the sentence balanced and contextually relevant. Other options either use incorrect verb tenses or awkward phrasing.</p>"}, {"question": "<p><strong>In each of the questions given below, a sentence/ paragraph is given with few words highlighted. These words may not be placed correctly. Also, one of these words may be inappropriate in context of the sentence/ paragraph. Identify the most appropriate rearrangement of the words and the suitable replacement for the incorrect word.</strong></p><br><p>India’s Northeastern region has for long experienced <strong>humility (A)</strong>, internal conflict and unrest and the challenges have often been <strong>perceived</strong> <strong>(B)</strong> by its complex history, geographical <strong>isolation</strong> <strong>(C)</strong> and <strong>exacerbated (D)</strong> neglect by the Central Government.</p>", "options": ["<p>ABCD; A-insurgency</p>", "<p>ADCB; A-insurgency</p>", "<p>CBAD; A-timidity</p>", "<p>CDAB; A-rebellion</p>", "<p>No rearrangement required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer</strong><strong>: B</strong></p>\n<p>\"Insurgency\" refers to armed rebellion or revolt against authority, particularly against the government or ruling power. It denotes a state of conflict characterized by armed opposition to established governance. \"Humility,\" on the other hand, refers to the quality of being humble or modest. It is unrelated to armed rebellion or conflict against authority. Using \"humility\" in place of \"insurgency\" would not accurately convey the intended meaning and would change the sense of the sentence entirely.</p>\n<p><strong>The Correct sentence will be: “</strong>India’s Northeastern region has for long experienced <strong>insurgency</strong>, internal conflict and unrest and the challenges have often been <strong>exacerbated</strong> by its complex history, geographical <strong>isolation</strong> and <strong>perceived</strong> neglect by the Central Government.<strong>”</strong></p>"}, {"question": "<p><strong>In each of the questions given below, a sentence/ paragraph is given with few words highlighted. These words may not be placed correctly. Also, one of these words may be inappropriate in context of the sentence/ paragraph. Identify the most appropriate rearrangement of the words and the suitable replacement for the incorrect word.</strong></p><br><p>The Election Commission of India (ECI) has been <strong>making</strong> <strong>(A)</strong> significant efforts to increase voter turnout. These measures include <strong>repelling</strong> <strong>(B)</strong> celebrities from various fields in campaigns, <strong>organising</strong> <strong>(C)</strong> mass campaigns in public places such as colleges, universities, and workplaces, and <strong>implementing</strong> <strong>(D)</strong> the SVEEP (Systematic Voter Education and Electoral Participation) at the district level to raise awareness about the importance of voting.</p>", "options": ["<p>ABCD; B-<strong> </strong>engaging</p>", "<p>ACDB; A-contriving</p>", "<p>CBAD; B-<strong> </strong>engaging</p>", "<p>ACBD; A-contriving</p>", "<p>No rearrangement required</p>"], "correctIndex": 0, "solution": "<p><strong>Answer</strong><strong>: A</strong></p>\n<p>\"Engaging\" means involving or attracting the active participation or interest of individuals. It suggests that the Election Commission of India (ECI) is actively involving celebrities and organizing campaigns to attract people's interest and encourage voter turnout. \"Repelling,\" on the other hand, means causing someone to feel intense dislike or aversion towards something. Using \"repelling\" in place of \"engaging\" would imply that the Election Commission's efforts are causing people to feel a strong dislike or aversion, which contradicts the intended meaning of actively involving or attracting people's interest. Therefore, \"repelling\" would not accurately convey the idea of the Election Commission's efforts to increase voter turnout through active involvement and attraction.</p>\n<p><strong>The Correct sentence will be: “</strong>The Election Commission of India (ECI) has been making significant efforts to increase voter turnout. These measures include engaging celebrities from various fields in campaigns, organising mass campaigns in public places such as colleges, universities, and workplaces, and implementing the SVEEP (Systematic Voter Education and Electoral Participation) at the district level to raise awareness about the importance of voting.<strong>”</strong></p>"}, {"question": "<p><strong>In each of the questions given below, a sentence/ paragraph is given with few words highlighted. These words may not be placed correctly. Also, one of these words may be inappropriate in context of the sentence/ paragraph. Identify the most appropriate rearrangement of the words and the suitable replacement for the incorrect word.</strong></p><br><p>Enacted in 2002, PMLA prioritised combating money laundering, which posed a serious threat to India’s financial institutions and <strong>stimulated (A)</strong> resources from the nation. The fundamental intention of the legislature was to <strong>facilitated</strong> <strong>(B)</strong> the nation’s finances and halt money laundering activities <strong>safeguard</strong> <strong>(C)</strong> by criminal organisations involved in crimes such as drug trafficking, prostitution, and other activities <strong>integrated</strong> <strong>(D)</strong> into the economy.</p>", "options": ["<p>ABCD; A-drained</p>", "<p>ACBD; A-drained</p>", "<p>CABD; A- exhausted</p>", "<p>CABD; A-protected</p>", "<p>No rearrangement required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer</strong><strong>: B</strong></p>\n<p>\"Drained\" implies a reduction or depletion of resources, often to the detriment of the entity from which they are taken. It suggests a negative impact on India's financial institutions and the nation's resources. \"Stimulated,\" on the other hand, means to encourage or promote activity or growth. Using \"stimulated\" in place of \"drained\" would convey the opposite meaning. It would imply that money laundering activities somehow encouraged or promoted growth or activity within India's financial institutions or economy, which is not the intended meaning in this context. So, when the sentence mentions that money laundering \"drained resources from the nation,\" it implies that money laundering activities were gradually siphoning off financial resources from India, which could have otherwise been used for legitimate purposes or investment in the country's development.</p>\n<p><strong>The Correct sentence will be:</strong> Enacted in 2002, PMLA prioritised combating money laundering, which posed a serious threat to India’s financial institutions and <strong>drained</strong> resources from the nation. The fundamental intention of the legislature was to <strong>safeguard</strong> the nation’s finances and halt money laundering activities <strong>facilitated</strong> by criminal organisations involved in crimes such as drug trafficking, prostitution, and other activities <strong>integrated</strong> into the economy.</p>"}, {"question": "<p><strong>In each of the questions given below, a sentence/ paragraph is given with few words highlighted. These words may not be placed correctly. Also, one of these words may be inappropriate in context of the sentence/ paragraph. Identify the most appropriate rearrangement of the words and the suitable replacement for the incorrect word.</strong></p><br><p>With the year 2030 just half a decade away, many nations are <strong>intensifying</strong> <strong>(A)</strong> their <strong>efforts</strong> <strong>(B)</strong> to meet the Sustainable Development Goals (SDGs) outlined in the 2015 Paris Agreement. However, amid recovery from pandemic-induced <strong>inequalities</strong>, <strong>(C)</strong> poverty, and economic slowdowns, several countries in the Global South, including India, are grappling with balancing carbon emissions reduction and meeting <strong>escalating</strong> <strong>(D)</strong> energy demands.</p>", "options": ["<p>ABCD; A-aggravating</p>", "<p>DBCA; A- burgeoning</p>", "<p>ACBD; A-aggravating</p>", "<p>DCBA; A- burgeoning</p>", "<p>No rearrangement required</p>"], "correctIndex": 4, "solution": "<p><strong>Answer</strong><strong>: E</strong></p>\n<p>The sentence is correct, hence no rearrangement required.</p>\n<p><strong>The Correct sentence will be</strong>: “With the year 2030 just half a decade away, many nations are <strong>intensifying</strong> their <strong>efforts</strong> to meet the Sustainable Development Goals (SDGs) outlined in the 2015 Paris Agreement. However, amid recovery from pandemic-induced <strong>inequalities</strong>, poverty, and economic slowdowns, several countries in the Global South, including India, are grappling with balancing carbon emissions reduction and meeting <strong>escalating</strong> energy demands.”</p>"}, {"question": "<p><strong>In each of the questions given below, a sentence/ paragraph is given with few words highlighted. These words may not be placed correctly. Also, one of these words may be inappropriate in context of the sentence/ paragraph. Identify the most appropriate rearrangement of the words and the suitable replacement for the incorrect word.</strong></p><br><p>An obstacle <strong>asserting</strong> <strong>(A)</strong> the state government from <strong>hindering</strong> <strong>(B)</strong> control over groundwater resources is the Easements Act, 1882, which <strong>grants</strong> <strong>(C)</strong> landowners an unencumbered right over the use of their land. Additionally, the law <strong>proscribes (D)</strong> that landowners possess a prescriptive right to pollute air or water above and under their land, absolving them of liability for over-extraction of water resources.</p>", "options": ["<p>ABCD; A- confining</p>", "<p>ABDC; D- allocates</p>", "<p>BADC; A- attesting</p>", "<p>BACD; D-<strong> </strong>stipulates</p>", "<p>No rearrangement required</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D</strong></p>\n<p>\"Stipulates\" means to demand or specify something as a requirement or condition. In the given context, it refers to the Easements Act, 1882, which specifies or lays down the conditions under which landowners possess certain rights over their land and its resources. It suggests that the law specifies or establishes certain rights or conditions regarding the use of land and its resources. \"Proscribes,\" on the other hand, means to forbid or prohibit something by law. Using \"proscribes\" in place of \"stipulates\" would convey the opposite meaning. It would imply that the law prohibits landowners from having certain rights or actions related to their land, which is not the intended meaning in this context. So, when it says that the law \"stipulates that landowners possess a prescriptive right to pollute air or water above and under their land,\" it means that the law specifies or establishes the condition that landowners have the right to pollute the air or water above and below their land, and they are absolved of liability for over-extraction of water resources. The term \"stipulates\" emphasizes the requirement or condition set forth by the law regarding the rights of landowners in relation to the use and management of groundwater resources.</p>\n<p><strong>The Correct sentence will be: </strong>An obstacle <strong>hindering</strong> the state government from <strong>asserting</strong> control over groundwater resources is the Easements Act, 1882, which <strong>grants</strong> landowners an unencumbered right over the use of their land. Additionally, the law <strong>stipulates</strong> that landowners possess a prescriptive right to pollute air or water above and under their land, absolving them of liability for over-extraction of water resources.</p>"}, {"question": "<p><strong>Given below are few questions with underlined phrase and few options. You have to choose the correct improvement of the underlined phrase in order to make the sentence grammatically and contextually correct.</strong></p><br><p>The Indian and Chinese militaries have been locked in a standoff since May 2020 and a full resolution of the border row <strong><u>had not yet be achieved thought the two sides has disengage</u></strong> from a number of friction points.</p>", "options": ["<p>is not yet being achieve think the two sides have be disengaged</p>", "<p>was not yet been achieving though the two side have disengagedly</p>", "<p>has not yet been achieved though the two sides have disengaged</p>", "<p>were not yet been achieved after the twice sides having disengaged</p>", "<p>No replacement required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>As the sentence is in present perfect tense, the usage of simple past form of verbs \"was\" and \"were\" makes the sentence grammatically incorrect, Options B &amp; D are excluded. Since the usage of the past form of verb \"thought\" is contextually incorrect, hence, the highlighted part of the sentence makes it inappropriate, Option E is excluded. The usage of simple present form of verbs \"achieve\" and \"be\" is grammatically incorrect. Thus, Option A will be eliminated. Therefore Option C will be the best choice.</p>"}, {"question": "<p><strong>Given below are few questions with underlined phrase and few options. You have to choose the correct improvement of the underlined phrase in order to make the sentence grammatically and contextually correct.</strong></p><br><p>Last month, External Affairs Minister S Jaishankar said roughly 75 per cent of the disengagement problems with China <strong><u>was sort by but the bigger issue were be the</u></strong> increasing militarisation of the frontier.</p>", "options": ["<p>were sorted out but the bigger issue has been the</p>", "<p>is been sorted with but the bigger issue have be the</p>", "<p>was being sort till but the bigger issue has being the</p>", "<p>have sorting off but the bigger issue had been the</p>", "<p>No replacement required</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Since the usage of singular form of verb \"was\" for plural subject \"75% problems\" in the given sentence is grammatically wrong, hence Option E gets eliminated. As the sentence is in past form usage of present and present perfect form of verbs \"is\" and \"have\" makes the sentence grammatically incorrect. Thus, Option B &amp; D are ruled out. Presence of phrasal verb \"sort till\" is contextually incorrect. Hence, Option D can be excluded. Therefore, Option A will be the best choice.</p>\n<p><strong>Sort out (Phrasal Verb)</strong> - to separate one type of things from a group of things; to find a solution to a problem.</p>"}, {"question": "<p><strong>Given below are few questions with underlined phrase and few options. You have to choose the correct improvement of the underlined phrase in order to make the sentence grammatically and contextually correct.</strong></p><br><p>It is not immediately clear whether the agreement facilitates the restoration of patrolling rights <strong><u>that have been in the place prior to the standoff in</u></strong> May 2020.</p>", "options": ["<p>that was in place prior to the standing in</p>", "<p>that has in place priorly to the standard in</p>", "<p>that were in place priorities to the standoffs in</p>", "<p>that had in place priority to the stands in</p>", "<p>No replacement required</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>All the highlighted parts have been correct and do not require any replacement. Hence, Option E is the most suitable answer.</p>\n<p><strong>Stand off (Phrasal Verb)</strong> - a situation in which an argument or fight stops for a period of time because no one can win or get an advantage</p>"}, {"question": "<p><strong>Given below are few questions with underlined phrase and few options. You have to choose the correct improvement of the underlined phrase in order to make the sentence grammatically and contextually correct.</strong></p><br><p>\"Over the last several weeks, Indian and Chinese diplomatic and military negotiators <strong><u>has been in close contact against every other in the variety</u></strong> of forums,\" the foreign secretary said at a media briefing.</p>", "options": ["<p>is being in closed contact towards each other in the variety</p>", "<p>had been in close contact with each other in a variety</p>", "<p>have be in close contact with each other in a varieties</p>", "<p>being in close contacted before each other's in an variety</p>", "<p>No replacement required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>As the usage of the singular form of the verb \"has\" in the bolded part of the given sentence is grammatically wrong, Option E gets eliminated. Since the usage of adjective \"closed\" and the present form of verb \"be\" followed with have form verb makes the sentence grammatically and contextually incorrect. Thus, Option A &amp; C are ruled out. The presence of the possessive form \"other's\" and the preposition \"before\" is contextually incorrect. Hence, Option D can be excluded. Therefore, Option B will be the best choice.</p>"}, {"question": "<p><strong>Given below are few questions with underlined phrase and few options. You have to choose the correct improvement of the underlined phrase in order to make the sentence grammatically and contextually correct.</strong></p><br><p>A Mumbai police official said that five more persons were held on Friday <strong><u>for allege providing firearm and logistic supports to</u></strong> the shooters in the Baba Siddique murder case.</p>", "options": ["<p>for allergy providing firearms and logistic supporting towards</p>", "<p>for alleging provides firearms and logistical support against</p>", "<p>towards allegedly provide firearms and logistically supporting to</p>", "<p>for allegedly providing firearms and logistical support to</p>", "<p>No replacement required</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The highlighted part of the given sentence is grammatically wrong as the usage of the verb \"allege\" in an object is inappropriate, hence Option E gets eliminated. The usage of verbs \"provide\" and \"provides\" and the prepositions \"towards\" and \"against\" makes the sentence grammatically and contextually incorrect. Thus, Option B &amp; C are ruled out. Presence of the noun \"allergy\" is contextually incorrect. Hence, Option A can be excluded. Therefore, Option D will be the best choice.</p>"}, {"question": "<p><strong>In the following passage, some of the words have been highlighted in bold. Read the passage and try to understand what it wants to convey. Then replace the highlighted words with the correct option in order to make the sentence grammatically and contextually sound. In any case the highlighted word is given correctly, then mark ‘No Improvement required’ as the right answer choice.</strong></p>\n<p>A restatement of basic principles of law is always welcome, especially if there are judicial orders that seem to ignore them. The Supreme Court’s recent order cautioning courts against granting pre-trial injunctions against the media in civil suits for defamation is a reminder that such orders could have severe <strong>(A) ramifications</strong> on the freedom of speech and may impair the public’s right to know. “Granting interim injunctions before the trial commences, in a <strong>(B) cavalier</strong> manner results in the stifling of public debate,” the Court observed, while setting aside a Delhi lower court order, also confirmed by the Delhi High Court, that directed news outlet Bloomberg to take down an article concerning Zee Entertainment Enterprises Ltd. within a week for being allegedly defamatory. The brief order has not only reiterated the standard three-fold test for granting interim injunctions in general, but reminded the judicial officers that the “constitutional mandate of protecting journalistic expression cannot be understated” when it comes to cases against the media. The <strong>(C) admonition</strong> against courts mechanically applying the three limbs of the test — whether there is a prima facie case, whether the ‘balance of convenience’ is in favour of an interim restraint, and lastly, whether not granting it will cause “irreparable loss or harm” to the <strong>(D) plaintiff</strong> — by merely recording that these grounds have been satisfied is quite apposite. The courts granting an injunction are also expected to record reasons by analysing the facts. However, it is with unfortunate frequency that one hears of three kinds of judicial orders that place questionable curbs on journalistic publications: outright gag orders banning any publication of information related to cases being heard by the courts, omnibus prior restraint orders against all media houses based on a plaintiff’s fear that a defamatory statement may be repeated by others and, finally, pre-trial orders to specific media houses to take down an article and refrain from further publication. Such orders will not be possible unless one ignores the common law principle in Bonnard vs Perryman, which lays down the standard that there can be an injunction in a defamation suit only if the court feels that the content is defamatory and that there can be no way the publication can be justified during trial, for instance by pleading the defence of truth and public interest. The latest order also contains a reminder that those with influence and economic power can resort to ‘SLAPP’ (Strategic Litigation/Lawsuit against Public Participation), a tactic often used to <strong>(E) stifle</strong> public criticism of projects and companies. The Court has struck the right note when it warns that an early injunction in what could be a prolonged trial acts as a ‘death sentence’ against the material to be published.</p><br><p><strong>Which of the following words will replace the word in (A)?</strong></p>", "options": ["<p>transfusions</p>", "<p>advancements</p>", "<p>corollaries</p>", "<p>repercussions</p>", "<p>No Improvement required</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D</strong></p>\n<p>The word in (A) should be replaced with: d) repercussions</p>\n<p>a). transfusions - This word refers to the process of transferring blood or other fluids into a person’s circulatory system. It is not relevant in the context of discussing the impact of judicial orders on freedom of speech.</p>\n<p>b). advancements - This refers to progress or developments in a particular field. While it implies positive progress, it doesn't fit the context where the focus is on the potential negative impact of judicial orders.</p>\n<p>c). corollaries - This refers to propositions that follow from one that is already proved or a natural consequence of something. While it implies a consequence, it doesn't strongly convey the potential negative impact like \"repercussions\" does.</p>\n<p>d). repercussions - This refers to unintended and usually negative consequences of an action. This is the most suitable word in the context, as it correctly conveys the potential negative impact of judicial orders on freedom of speech and public knowledge.</p>\n<p>Thus, \"repercussions\" is the best choice as it accurately describes the possible negative consequences mentioned in the sentence.</p>"}, {"question": "<p><strong>In the following passage, some of the words have been highlighted in bold. Read the passage and try to understand what it wants to convey. Then replace the highlighted words with the correct option in order to make the sentence grammatically and contextually sound. In any case the highlighted word is given correctly, then mark ‘No Improvement required’ as the right answer choice.</strong></p>\n<p>A restatement of basic principles of law is always welcome, especially if there are judicial orders that seem to ignore them. The Supreme Court’s recent order cautioning courts against granting pre-trial injunctions against the media in civil suits for defamation is a reminder that such orders could have severe <strong>(A) ramifications</strong> on the freedom of speech and may impair the public’s right to know. “Granting interim injunctions before the trial commences, in a <strong>(B) cavalier</strong> manner results in the stifling of public debate,” the Court observed, while setting aside a Delhi lower court order, also confirmed by the Delhi High Court, that directed news outlet Bloomberg to take down an article concerning Zee Entertainment Enterprises Ltd. within a week for being allegedly defamatory. The brief order has not only reiterated the standard three-fold test for granting interim injunctions in general, but reminded the judicial officers that the “constitutional mandate of protecting journalistic expression cannot be understated” when it comes to cases against the media. The <strong>(C) admonition</strong> against courts mechanically applying the three limbs of the test — whether there is a prima facie case, whether the ‘balance of convenience’ is in favour of an interim restraint, and lastly, whether not granting it will cause “irreparable loss or harm” to the <strong>(D) plaintiff</strong> — by merely recording that these grounds have been satisfied is quite apposite. The courts granting an injunction are also expected to record reasons by analysing the facts. However, it is with unfortunate frequency that one hears of three kinds of judicial orders that place questionable curbs on journalistic publications: outright gag orders banning any publication of information related to cases being heard by the courts, omnibus prior restraint orders against all media houses based on a plaintiff’s fear that a defamatory statement may be repeated by others and, finally, pre-trial orders to specific media houses to take down an article and refrain from further publication. Such orders will not be possible unless one ignores the common law principle in Bonnard vs Perryman, which lays down the standard that there can be an injunction in a defamation suit only if the court feels that the content is defamatory and that there can be no way the publication can be justified during trial, for instance by pleading the defence of truth and public interest. The latest order also contains a reminder that those with influence and economic power can resort to ‘SLAPP’ (Strategic Litigation/Lawsuit against Public Participation), a tactic often used to <strong>(E) stifle</strong> public criticism of projects and companies. The Court has struck the right note when it warns that an early injunction in what could be a prolonged trial acts as a ‘death sentence’ against the material to be published.</p><br><p><strong>Which of the following words will replace the word in (B)?</strong></p>", "options": ["<p>reticent</p>", "<p>diffident</p>", "<p>submissive</p>", "<p>imperious</p>", "<p>No Improvement required</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D</strong></p>\n<p>The correct word to replace the word in (B) is: d) imperious</p>\n<p>The word \"imperious\" means assuming power or authority without justification; arrogant and domineering, which fits well with the context of the passage.</p>\n<p>a). Reticent: This word means not revealing one's thoughts or feelings readily; reserved. It implies being silent or uncommunicative, which does not fit the context of the passage, where the emphasis is on granting injunctions in a commanding or overbearing manner.</p>\n<p>b). Diffident: This word means modest or shy because of a lack of self-confidence. It suggests hesitancy and a lack of assertiveness, which is the opposite of the intended meaning in the passage. The passage describes an authoritative and forceful manner of granting injunctions, not a hesitant or shy approach.</p>\n<p>c). Submissive: This word means ready to conform to the authority or will of others; meekly obedient or passive. This again is contrary to the intended meaning. The passage describes a manner of granting injunctions that is overbearing and authoritative, not yielding or submissive.</p>\n<p>d). Imperious: This word means assuming power or authority without justification; arrogant and domineering. This fits the context perfectly as it describes the authoritative and commanding manner in which the injunctions are granted, leading to the stifling of public debate. The use of \"imperious\" aligns with the idea of acting with undue authority and control, which is the critique being made in the passage.</p>\n<p>Therefore, imperious is the most appropriate choice to replace the word in (B).</p>"}, {"question": "<p><strong>In the following passage, some of the words have been highlighted in bold. Read the passage and try to understand what it wants to convey. Then replace the highlighted words with the correct option in order to make the sentence grammatically and contextually sound. In any case the highlighted word is given correctly, then mark ‘No Improvement required’ as the right answer choice.</strong></p>\n<p>A restatement of basic principles of law is always welcome, especially if there are judicial orders that seem to ignore them. The Supreme Court’s recent order cautioning courts against granting pre-trial injunctions against the media in civil suits for defamation is a reminder that such orders could have severe <strong>(A) ramifications</strong> on the freedom of speech and may impair the public’s right to know. “Granting interim injunctions before the trial commences, in a <strong>(B) cavalier</strong> manner results in the stifling of public debate,” the Court observed, while setting aside a Delhi lower court order, also confirmed by the Delhi High Court, that directed news outlet Bloomberg to take down an article concerning Zee Entertainment Enterprises Ltd. within a week for being allegedly defamatory. The brief order has not only reiterated the standard three-fold test for granting interim injunctions in general, but reminded the judicial officers that the “constitutional mandate of protecting journalistic expression cannot be understated” when it comes to cases against the media. The <strong>(C) admonition</strong> against courts mechanically applying the three limbs of the test — whether there is a prima facie case, whether the ‘balance of convenience’ is in favour of an interim restraint, and lastly, whether not granting it will cause “irreparable loss or harm” to the <strong>(D) plaintiff</strong> — by merely recording that these grounds have been satisfied is quite apposite. The courts granting an injunction are also expected to record reasons by analysing the facts. However, it is with unfortunate frequency that one hears of three kinds of judicial orders that place questionable curbs on journalistic publications: outright gag orders banning any publication of information related to cases being heard by the courts, omnibus prior restraint orders against all media houses based on a plaintiff’s fear that a defamatory statement may be repeated by others and, finally, pre-trial orders to specific media houses to take down an article and refrain from further publication. Such orders will not be possible unless one ignores the common law principle in Bonnard vs Perryman, which lays down the standard that there can be an injunction in a defamation suit only if the court feels that the content is defamatory and that there can be no way the publication can be justified during trial, for instance by pleading the defence of truth and public interest. The latest order also contains a reminder that those with influence and economic power can resort to ‘SLAPP’ (Strategic Litigation/Lawsuit against Public Participation), a tactic often used to <strong>(E) stifle</strong> public criticism of projects and companies. The Court has struck the right note when it warns that an early injunction in what could be a prolonged trial acts as a ‘death sentence’ against the material to be published.</p><br><p><strong>Which of the following words will replace the word in (C)?</strong></p>", "options": ["<p>exoneration</p>", "<p>exculpation</p>", "<p>reprimand</p>", "<p>denunciation</p>", "<p>No Improvement required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer</strong><strong>: C</strong></p>\n<p>The word that will replace the word in (C) is: c) reprimand</p>\n<p>a). Exoneration: This means the act of officially absolving someone from blame or fault. It implies clearing someone from accusations. In the context of the sentence, it does not make sense because the context is about cautioning or criticizing courts, not absolving them.</p>\n<p>b). Exculpation: This is similar to exoneration and means clearing someone of blame or fault. Like exoneration, it does not fit the context because it suggests freeing someone from blame rather than warning or criticizing them.</p>\n<p>c). Reprimand: This means a formal expression of disapproval. It fits the context perfectly as the sentence is about the Supreme Court warning or expressing disapproval of how lower courts are granting interim injunctions without proper consideration.</p>\n<p>d). Denunciation: This means public condemnation of someone or something. While it is close in meaning to reprimand, it often implies a more public or severe condemnation than what is suggested by the context. The context is more about cautioning and guiding courts rather than a public condemnation.</p>\n<p>In summary, \"reprimand\" is the most appropriate word as it conveys a formal expression of disapproval by the Supreme Court towards the lower courts' handling of pre-trial injunctions in defamation cases.</p>"}, {"question": "<p><strong>In the following passage, some of the words have been highlighted in bold. Read the passage and try to understand what it wants to convey. Then replace the highlighted words with the correct option in order to make the sentence grammatically and contextually sound. In any case the highlighted word is given correctly, then mark ‘No Improvement required’ as the right answer choice.</strong></p>\n<p>A restatement of basic principles of law is always welcome, especially if there are judicial orders that seem to ignore them. The Supreme Court’s recent order cautioning courts against granting pre-trial injunctions against the media in civil suits for defamation is a reminder that such orders could have severe <strong>(A) ramifications</strong> on the freedom of speech and may impair the public’s right to know. “Granting interim injunctions before the trial commences, in a <strong>(B) cavalier</strong> manner results in the stifling of public debate,” the Court observed, while setting aside a Delhi lower court order, also confirmed by the Delhi High Court, that directed news outlet Bloomberg to take down an article concerning Zee Entertainment Enterprises Ltd. within a week for being allegedly defamatory. The brief order has not only reiterated the standard three-fold test for granting interim injunctions in general, but reminded the judicial officers that the “constitutional mandate of protecting journalistic expression cannot be understated” when it comes to cases against the media. The <strong>(C) admonition</strong> against courts mechanically applying the three limbs of the test — whether there is a prima facie case, whether the ‘balance of convenience’ is in favour of an interim restraint, and lastly, whether not granting it will cause “irreparable loss or harm” to the <strong>(D) plaintiff</strong> — by merely recording that these grounds have been satisfied is quite apposite. The courts granting an injunction are also expected to record reasons by analysing the facts. However, it is with unfortunate frequency that one hears of three kinds of judicial orders that place questionable curbs on journalistic publications: outright gag orders banning any publication of information related to cases being heard by the courts, omnibus prior restraint orders against all media houses based on a plaintiff’s fear that a defamatory statement may be repeated by others and, finally, pre-trial orders to specific media houses to take down an article and refrain from further publication. Such orders will not be possible unless one ignores the common law principle in Bonnard vs Perryman, which lays down the standard that there can be an injunction in a defamation suit only if the court feels that the content is defamatory and that there can be no way the publication can be justified during trial, for instance by pleading the defence of truth and public interest. The latest order also contains a reminder that those with influence and economic power can resort to ‘SLAPP’ (Strategic Litigation/Lawsuit against Public Participation), a tactic often used to <strong>(E) stifle</strong> public criticism of projects and companies. The Court has struck the right note when it warns that an early injunction in what could be a prolonged trial acts as a ‘death sentence’ against the material to be published.</p><br><p><strong>Which of the following words will replace the word in (D)?</strong></p>", "options": ["<p>culprit</p>", "<p>suspect</p>", "<p>accused</p>", "<p>offender</p>", "<p>No Improvement required</p>"], "correctIndex": 4, "solution": "<p><strong>Answer</strong><strong>: E</strong></p>\n<p>The word \"plaintiff \" in (D) is appropriate and doesn't require improvement, so the correct answer is \"e) No Improvement required.\"</p>\n<p>The word \"plaintiff\" is the correct term to use in this context. It refers to the party who brings a lawsuit against another in a court of law, which is appropriate here as the passage discusses a defamation suit initiated by the plaintiff. The other options (culprit, suspect, accused, offender) are not appropriate because they imply a criminal context, whereas defamation is a civil matter.</p>\n<p>a). Culprit - This term typically refers to a person who is responsible for a wrongdoing or a crime. It's more commonly used in criminal contexts rather than civil cases. In a defamation suit, the term \"culprit\" might imply criminality, which is not the appropriate characterization for a plaintiff who initiates a civil action.</p>\n<p>b). Suspect - This term is commonly used in criminal law to refer to someone who is under suspicion or investigation for a crime. In a civil defamation suit, there's no suspicion of criminal activity, so \"suspect\" would be an incorrect term to describe the plaintiff.</p>\n<p>c). Accused - Similar to \"suspect,\" \"accused\" is a term primarily used in criminal law to refer to someone formally charged with a crime. In a defamation suit, the term \"accused\" might wrongly suggest a criminal offense, which is not the case.</p>\n<p>d). Offender - \"Offender\" is another term often used in criminal law to describe someone who has committed an offense or a wrongdoing. Again, in a civil defamation case, using \"offender\" would imply criminal behavior, which is not accurate.</p>\n<p>e). No Improvement required - This option indicates that the word \"plaintiff\" is appropriate and doesn't need to be changed. In the context of a civil defamation suit, the term \"plaintiff\" accurately refers to the party who brings the lawsuit against another party.</p>\n<p>In summary, while options a) through d) all suggest terms that are commonly used in criminal law, the word \"plaintiff\" is the correct and appropriate term for describing the party initiating a civil defamation suit. Therefore, option e) is the correct choice.</p>"}, {"question": "<p><strong>In the following passage, some of the words have been highlighted in bold. Read the passage and try to understand what it wants to convey. Then replace the highlighted words with the correct option in order to make the sentence grammatically and contextually sound. In any case the highlighted word is given correctly, then mark ‘No Improvement required’ as the right answer choice.</strong></p>\n<p>A restatement of basic principles of law is always welcome, especially if there are judicial orders that seem to ignore them. The Supreme Court’s recent order cautioning courts against granting pre-trial injunctions against the media in civil suits for defamation is a reminder that such orders could have severe <strong>(A) ramifications</strong> on the freedom of speech and may impair the public’s right to know. “Granting interim injunctions before the trial commences, in a <strong>(B) cavalier</strong> manner results in the stifling of public debate,” the Court observed, while setting aside a Delhi lower court order, also confirmed by the Delhi High Court, that directed news outlet Bloomberg to take down an article concerning Zee Entertainment Enterprises Ltd. within a week for being allegedly defamatory. The brief order has not only reiterated the standard three-fold test for granting interim injunctions in general, but reminded the judicial officers that the “constitutional mandate of protecting journalistic expression cannot be understated” when it comes to cases against the media. The <strong>(C) admonition</strong> against courts mechanically applying the three limbs of the test — whether there is a prima facie case, whether the ‘balance of convenience’ is in favour of an interim restraint, and lastly, whether not granting it will cause “irreparable loss or harm” to the <strong>(D) plaintiff</strong> — by merely recording that these grounds have been satisfied is quite apposite. The courts granting an injunction are also expected to record reasons by analysing the facts. However, it is with unfortunate frequency that one hears of three kinds of judicial orders that place questionable curbs on journalistic publications: outright gag orders banning any publication of information related to cases being heard by the courts, omnibus prior restraint orders against all media houses based on a plaintiff’s fear that a defamatory statement may be repeated by others and, finally, pre-trial orders to specific media houses to take down an article and refrain from further publication. Such orders will not be possible unless one ignores the common law principle in Bonnard vs Perryman, which lays down the standard that there can be an injunction in a defamation suit only if the court feels that the content is defamatory and that there can be no way the publication can be justified during trial, for instance by pleading the defence of truth and public interest. The latest order also contains a reminder that those with influence and economic power can resort to ‘SLAPP’ (Strategic Litigation/Lawsuit against Public Participation), a tactic often used to <strong>(E) stifle</strong> public criticism of projects and companies. The Court has struck the right note when it warns that an early injunction in what could be a prolonged trial acts as a ‘death sentence’ against the material to be published.</p><br><p><strong>Which of the following words will replace the word in (E)?</strong></p>", "options": ["<p>assuage</p>", "<p>aggravate</p>", "<p>suppress</p>", "<p>stagnate</p>", "<p>No Improvement required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer</strong><strong>: C</strong></p>\n<p>The word that will replace (E) is \"suppress\" in the context of the sentence \"a tactic often used to suppress public criticism of projects and companies.\"</p>\n<p>a). Assuage: This means to make (an unpleasant feeling) less intense or severe. In the context of the sentence, it wouldn't make sense to say \"a tactic often used to assuage public criticism of projects and companies\" because \"assuage\" implies calming or soothing, which is the opposite of what the tactic is doing.</p>\n<p>b). Aggravate: This means to make (a problem, injury, or offense) worse or more serious. While it's plausible that a tactic could worsen or exacerbate public criticism, it's not the most appropriate word in this context. The word \"aggravate\" doesn't specifically capture the act of deliberately stifling or suppressing public criticism, which is the focus of the sentence.</p>\n<p>c). Suppress: This means to forcibly put an end to something. In the context of the sentence, \"a tactic often used to suppress public criticism of projects and companies\" accurately conveys the idea that the tactic is aimed at quashing or silencing public criticism, making it the most fitting choice.</p>\n<p>d). Stagnate: This means to cease developing; become inactive or dull. While a tactic could potentially cause public criticism to stagnate or become less dynamic, it doesn't fully capture the deliberate effort to suppress it, as described in the sentence.</p>\n<p>So, among the options, \"suppress\" is the best replacement for the stifle in the context.</p>"}, {"question": "<p><strong>There is information given below based on which questions have been framed. You must read the given details carefully and answer the questions that follow:</strong></p>\n<p>For a nation that has had a significant demographic dividend — the working age population is much larger than the non-working age sections — finding productive employment for its youth was to be an imperative for India. Yet, in the last few years, unemployment has remained a major concern — the leaked Periodic Labour Force Survey (PLFS) in 2018 revealed that India’s unemployment rate was the highest (6.07%) in four decades. The latest PLFS suggests that the numbers now are not so drastic, with the overall unemployment rate at 4.2% in 2020-21 compared to 4.8% in 2019-20 and the labour force participation rate (LFPR) increasing to 41.6%, up from 40.1% in 2019-20. In terms of the more widely used statistic internationally, the current weekly status of unemployment, the figure of 7.5% for all persons in 2020-21 is still worrying. <strong><em>But, the PLFS data will not bring much cheer to the Government with a decrease in unemployment, according to official data.</em></strong> This is because the decrease, says the PLFS, has also coincided with the transfer of employment into lower productive and unpaid jobs away from salaried employment. Worryingly, industrial jobs have decreased with more employment in agricultural and farm-related jobs — a trend that accelerated following the lockdown and has not reversed since then. Unemployment rates among the educated (above secondary education — 9.1%) and the youth (age between 15-29 — 12.9%) have only declined marginally.</p>\n<p>Wage rates have continued to remain lower for those employed in either salaried jobs or self-employed compared to the pre-pandemic period, with the increases being marginal in the year following lockdown-driven days of the pandemic. It is clear that the Government must tackle unemployment and, <strong>concomitantly</strong>, the quality of employment issue, on a war footing. In this regard, Prime Minister Narendra Modi’s announcement that the Government will be recruiting 10 lakh personnel within the next 18 months (vacancies in the Railways, the armed forces and GST departments among others) should be seen as a step in the right direction. The latest data showed that there were 8.86 lakh vacant jobs among all central government civilian posts as of March 2020. Mr. Modi’s announcement was not about the creation of a large chunk of new jobs; the bulk of the promised employment is to fill up vacancies. But even this measure would be <strong><em>ameliorative</em></strong> in the real economy that continues to remain distressed, a consequence of the BJP-led government’s mismanagement and the effects of the pandemic in the last few years. The country cannot afford to squander more years in its race to reap the benefits of its demographic dividend, and the push to provide jobs for those seeking to enter the labour force, even if belated, will help ease matters for the medium term.</p><br><p><strong> </strong><strong>Why according to the passage will the latest PLFS data not bring any cheer for the government?</strong></p>\n<p><strong> </strong><strong>(i) </strong>The improvement in the employment statistics has not been as per the expectations</p>\n<p><strong> </strong><strong>(ii) </strong>The increase in employment has come with a shift to unpaid or lower paying jobs</p>\n<p><strong>(iii) </strong>The face of the trend during the lockdown has still not changed</p>", "options": ["<p>Only (i)</p>", "<p>All (i), (ii) and (iii)</p>", "<p>Only (ii)</p>", "<p>Both (ii) and (iii)</p>", "<p>Only (iii)</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D<br/></strong></p>\n<p>The answer to the given question can be found in the first paragraph from the lines given below:</p>\n<p><em>This is because the decrease, says the PLFS<strong>, has also coincided</strong> with the transfer of employment into <strong>lower productive</strong> and <strong>unpaid jobs</strong> away from salaried employment. Worryingly, industrial jobs have decreased with more employment in agricultural and farm-related jobs — a <strong>trend</strong> that accelerated following the lockdown and has not reversed since then.</em></p>\n<p>The information above helps us understand that only the second and the third sentences are true.</p>\n<p>Therefore, the correct answer is option (d).</p>"}, {"question": "<p><strong>There is information given below based on which questions have been framed. You must read the given details carefully and answer the questions that follow:</strong></p>\n<p>For a nation that has had a significant demographic dividend — the working age population is much larger than the non-working age sections — finding productive employment for its youth was to be an imperative for India. Yet, in the last few years, unemployment has remained a major concern — the leaked Periodic Labour Force Survey (PLFS) in 2018 revealed that India’s unemployment rate was the highest (6.07%) in four decades. The latest PLFS suggests that the numbers now are not so drastic, with the overall unemployment rate at 4.2% in 2020-21 compared to 4.8% in 2019-20 and the labour force participation rate (LFPR) increasing to 41.6%, up from 40.1% in 2019-20. In terms of the more widely used statistic internationally, the current weekly status of unemployment, the figure of 7.5% for all persons in 2020-21 is still worrying. <strong><em>But, the PLFS data will not bring much cheer to the Government with a decrease in unemployment, according to official data.</em></strong> This is because the decrease, says the PLFS, has also coincided with the transfer of employment into lower productive and unpaid jobs away from salaried employment. Worryingly, industrial jobs have decreased with more employment in agricultural and farm-related jobs — a trend that accelerated following the lockdown and has not reversed since then. Unemployment rates among the educated (above secondary education — 9.1%) and the youth (age between 15-29 — 12.9%) have only declined marginally.</p>\n<p>Wage rates have continued to remain lower for those employed in either salaried jobs or self-employed compared to the pre-pandemic period, with the increases being marginal in the year following lockdown-driven days of the pandemic. It is clear that the Government must tackle unemployment and, <strong>concomitantly</strong>, the quality of employment issue, on a war footing. In this regard, Prime Minister Narendra Modi’s announcement that the Government will be recruiting 10 lakh personnel within the next 18 months (vacancies in the Railways, the armed forces and GST departments among others) should be seen as a step in the right direction. The latest data showed that there were 8.86 lakh vacant jobs among all central government civilian posts as of March 2020. Mr. Modi’s announcement was not about the creation of a large chunk of new jobs; the bulk of the promised employment is to fill up vacancies. But even this measure would be <strong><em>ameliorative</em></strong> in the real economy that continues to remain distressed, a consequence of the BJP-led government’s mismanagement and the effects of the pandemic in the last few years. The country cannot afford to squander more years in its race to reap the benefits of its demographic dividend, and the push to provide jobs for those seeking to enter the labour force, even if belated, will help ease matters for the medium term.</p><br><p><strong> </strong><strong>The word <em>‘concomitantly’</em> as used above can fill the blanks given in which of the following sentences?</strong></p>\n<p><strong> (i) </strong>Traffic has increased by 57 per cent over the last 10 years, and air pollution has grown<strong> _________</strong>.</p>\n<p><strong> (ii) </strong>There is a cloakroom situated<strong> __________ </strong>next to the front door.</p>\n<p><strong> </strong></p>\n<p><strong>(iii)</strong> Most lenders want this number to be no more than 28 percent, <strong>____________</strong>.</p>", "options": ["<p>Only (iii)</p>", "<p>Both (i) and (iii)</p>", "<p>Only (i)</p>", "<p>All (i), (ii) and (iii)</p>", "<p>Only (ii)</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C<br/></strong></p>\n<p>The word <strong>‘concomitantly’</strong> as used means, <strong>at the same time</strong>; <strong>simultaneously</strong>. As, in the sentence above, it is being mentioned that the situation of unemployment needs to be tackled <strong>(along with)</strong> the quality of employment. So, this is the meaning that we need to check fits in which of the given sentences.</p>\n<p>It fits well in the first sentence that talks about <strong>traffic being increased at the same time with</strong> air pollution. So, (i) is correct.</p>\n<p>The second and the third sentences do not take the given word correctly so these can be ruled out.</p>\n<p>Thus, the correct answer is option (c).</p>"}, {"question": "<p><strong>There is information given below based on which questions have been framed. You must read the given details carefully and answer the questions that follow:</strong></p>\n<p>For a nation that has had a significant demographic dividend — the working age population is much larger than the non-working age sections — finding productive employment for its youth was to be an imperative for India. Yet, in the last few years, unemployment has remained a major concern — the leaked Periodic Labour Force Survey (PLFS) in 2018 revealed that India’s unemployment rate was the highest (6.07%) in four decades. The latest PLFS suggests that the numbers now are not so drastic, with the overall unemployment rate at 4.2% in 2020-21 compared to 4.8% in 2019-20 and the labour force participation rate (LFPR) increasing to 41.6%, up from 40.1% in 2019-20. In terms of the more widely used statistic internationally, the current weekly status of unemployment, the figure of 7.5% for all persons in 2020-21 is still worrying. <strong><em>But, the PLFS data will not bring much cheer to the Government with a decrease in unemployment, according to official data.</em></strong> This is because the decrease, says the PLFS, has also coincided with the transfer of employment into lower productive and unpaid jobs away from salaried employment. Worryingly, industrial jobs have decreased with more employment in agricultural and farm-related jobs — a trend that accelerated following the lockdown and has not reversed since then. Unemployment rates among the educated (above secondary education — 9.1%) and the youth (age between 15-29 — 12.9%) have only declined marginally.</p>\n<p>Wage rates have continued to remain lower for those employed in either salaried jobs or self-employed compared to the pre-pandemic period, with the increases being marginal in the year following lockdown-driven days of the pandemic. It is clear that the Government must tackle unemployment and, <strong>concomitantly</strong>, the quality of employment issue, on a war footing. In this regard, Prime Minister Narendra Modi’s announcement that the Government will be recruiting 10 lakh personnel within the next 18 months (vacancies in the Railways, the armed forces and GST departments among others) should be seen as a step in the right direction. The latest data showed that there were 8.86 lakh vacant jobs among all central government civilian posts as of March 2020. Mr. Modi’s announcement was not about the creation of a large chunk of new jobs; the bulk of the promised employment is to fill up vacancies. But even this measure would be <strong><em>ameliorative</em></strong> in the real economy that continues to remain distressed, a consequence of the BJP-led government’s mismanagement and the effects of the pandemic in the last few years. The country cannot afford to squander more years in its race to reap the benefits of its demographic dividend, and the push to provide jobs for those seeking to enter the labour force, even if belated, will help ease matters for the medium term.</p><br><p><strong> </strong><strong>Choose the statement that is not true as per the passage.</strong></p>", "options": ["<p>A drastic change of 0.6% has been observed in the unemployment rate from 2019-20 to 2020-21</p>", "<p>Unemployment in the educated and the youth has declined marginally</p>", "<p>Now is not the time for our country to sit and wait for the benefits of demographic dividend</p>", "<p>India&rsquo;s working age population is far more than its non-working age population</p>", "<p>All statements are true</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A<br/></strong></p>\n<p>The first statement is partially true. Only till it mentions a figure of 0.6% as we can find the same from the first paragraph which says the unemployment has declined from 4.8% to 4.2% in the given two years. But the passage also says that the change is not so optimistic so, as the option mentions it to be a ‘drastic change’ which doesn’t fit the context.</p>\n<p>The last line of the second paragraph helps us confirm the second option to be true. The third option can be upheld from the last few lines of the passage. And, if we go through the first few lines of the first paragraph, we find that the fourth option is correct as well.</p>\n<p>Therefore, the correct answer is option (a).</p>"}, {"question": "<p><strong>There is information given below based on which questions have been framed. You must read the given details carefully and answer the questions that follow:</strong></p>\n<p>For a nation that has had a significant demographic dividend — the working age population is much larger than the non-working age sections — finding productive employment for its youth was to be an imperative for India. Yet, in the last few years, unemployment has remained a major concern — the leaked Periodic Labour Force Survey (PLFS) in 2018 revealed that India’s unemployment rate was the highest (6.07%) in four decades. The latest PLFS suggests that the numbers now are not so drastic, with the overall unemployment rate at 4.2% in 2020-21 compared to 4.8% in 2019-20 and the labour force participation rate (LFPR) increasing to 41.6%, up from 40.1% in 2019-20. In terms of the more widely used statistic internationally, the current weekly status of unemployment, the figure of 7.5% for all persons in 2020-21 is still worrying. <strong><em>But, the PLFS data will not bring much cheer to the Government with a decrease in unemployment, according to official data.</em></strong> This is because the decrease, says the PLFS, has also coincided with the transfer of employment into lower productive and unpaid jobs away from salaried employment. Worryingly, industrial jobs have decreased with more employment in agricultural and farm-related jobs — a trend that accelerated following the lockdown and has not reversed since then. Unemployment rates among the educated (above secondary education — 9.1%) and the youth (age between 15-29 — 12.9%) have only declined marginally.</p>\n<p>Wage rates have continued to remain lower for those employed in either salaried jobs or self-employed compared to the pre-pandemic period, with the increases being marginal in the year following lockdown-driven days of the pandemic. It is clear that the Government must tackle unemployment and, <strong>concomitantly</strong>, the quality of employment issue, on a war footing. In this regard, Prime Minister Narendra Modi’s announcement that the Government will be recruiting 10 lakh personnel within the next 18 months (vacancies in the Railways, the armed forces and GST departments among others) should be seen as a step in the right direction. The latest data showed that there were 8.86 lakh vacant jobs among all central government civilian posts as of March 2020. Mr. Modi’s announcement was not about the creation of a large chunk of new jobs; the bulk of the promised employment is to fill up vacancies. But even this measure would be <strong><em>ameliorative</em></strong> in the real economy that continues to remain distressed, a consequence of the BJP-led government’s mismanagement and the effects of the pandemic in the last few years. The country cannot afford to squander more years in its race to reap the benefits of its demographic dividend, and the push to provide jobs for those seeking to enter the labour force, even if belated, will help ease matters for the medium term.</p><br><p><strong> </strong><strong>Which of the following has not been quoted by the author viz-a-viz the jobs post-covid?</strong></p>\n<p><strong>(i) </strong>A significant decrease has been observed in the industrial jobs</p>\n<p><strong>(ii) </strong>Many people are managing with marginal salaries</p>\n<p><strong>(iii) </strong>86 lakh vacant posts have been created among all central government civilian posts</p>", "options": ["<p>Only (i)</p>", "<p>Both (i) and (ii)</p>", "<p>Only (iii)</p>", "<p>All (i), (ii) and (iii)</p>", "<p>Only (ii)</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B<br/></strong></p>\n<p>The ending of the first and the beginning of the second paragraphs can help us understand the correct answers.</p>\n<p>The first option is absolutely correct as it has been mentioned that people from ‘industrial jobs’ have shifted to farming and agriculture-based jobs.</p>\n<p>It has been given that many people have not been getting the same salaries post-covid which is also a cause of concern. This makes the second statement correct as well.</p>\n<p>The third sentence is incorrect as; the posts have not been lying vacant due to covid. But these many jobs can be potentially created is what has been mentioned in the passage.</p>\n<p>Therefore, the correct answer is option (b).</p>"}, {"question": "<p><strong>There is information given below based on which questions have been framed. You must read the given details carefully and answer the questions that follow:</strong></p>\n<p>For a nation that has had a significant demographic dividend — the working age population is much larger than the non-working age sections — finding productive employment for its youth was to be an imperative for India. Yet, in the last few years, unemployment has remained a major concern — the leaked Periodic Labour Force Survey (PLFS) in 2018 revealed that India’s unemployment rate was the highest (6.07%) in four decades. The latest PLFS suggests that the numbers now are not so drastic, with the overall unemployment rate at 4.2% in 2020-21 compared to 4.8% in 2019-20 and the labour force participation rate (LFPR) increasing to 41.6%, up from 40.1% in 2019-20. In terms of the more widely used statistic internationally, the current weekly status of unemployment, the figure of 7.5% for all persons in 2020-21 is still worrying. <strong><em>But, the PLFS data will not bring much cheer to the Government with a decrease in unemployment, according to official data.</em></strong> This is because the decrease, says the PLFS, has also coincided with the transfer of employment into lower productive and unpaid jobs away from salaried employment. Worryingly, industrial jobs have decreased with more employment in agricultural and farm-related jobs — a trend that accelerated following the lockdown and has not reversed since then. Unemployment rates among the educated (above secondary education — 9.1%) and the youth (age between 15-29 — 12.9%) have only declined marginally.</p>\n<p>Wage rates have continued to remain lower for those employed in either salaried jobs or self-employed compared to the pre-pandemic period, with the increases being marginal in the year following lockdown-driven days of the pandemic. It is clear that the Government must tackle unemployment and, <strong>concomitantly</strong>, the quality of employment issue, on a war footing. In this regard, Prime Minister Narendra Modi’s announcement that the Government will be recruiting 10 lakh personnel within the next 18 months (vacancies in the Railways, the armed forces and GST departments among others) should be seen as a step in the right direction. The latest data showed that there were 8.86 lakh vacant jobs among all central government civilian posts as of March 2020. Mr. Modi’s announcement was not about the creation of a large chunk of new jobs; the bulk of the promised employment is to fill up vacancies. But even this measure would be <strong><em>ameliorative</em></strong> in the real economy that continues to remain distressed, a consequence of the BJP-led government’s mismanagement and the effects of the pandemic in the last few years. The country cannot afford to squander more years in its race to reap the benefits of its demographic dividend, and the push to provide jobs for those seeking to enter the labour force, even if belated, will help ease matters for the medium term.</p><br><p><strong> </strong><strong>Choose a sentence that uses the antonym of the word <em>‘ameliorative’</em> taken from the passage above.</strong></p>", "options": ["<p>He drudges daily with no hope of <strong><em>bettering </em></strong>himself.</p>", "<p>All the hospital staff were wonderfully <strong><em>supportive</em></strong>.</p>", "<p>The program helps people recently released from prison figure out how they can play a <strong><em>constructive </em></strong>role in society.</p>", "<p>The work was <strong><em>rewarding</em></strong>, though, as the house began to take on a homey atmosphere.</p>", "<p>His angry comments have <strong><em>exacerbated</em></strong> tensions in the negotiation process.</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E<br/></strong></p>\n<p>The first four sentences use words that are positive and related to the word given in bold in some way. <strong><em>‘Ameliorative’</em></strong> means intended towards making things better; to help things grow.</p>\n<p>If we look at the sentences from (a) to (d), all the words have been used in a positive light and they mean the same as explained above.</p>\n<p>The word highlighted in (e) means making things worse or harmful. This goes opposite as per the context.</p>\n<p>Therefore, the correct answer will be option (e).</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-70)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-70)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-10)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Lila had always been fascinated by the stars. As a child, she would spend hours lying on her back in the small garden behind her house, gazing up at the twinkling lights that filled the night sky. Her grandfather had once told her that each star was a dream waiting to be discovered, and she had taken his words to heart. Now, at 24, she worked as an astronomer at the city observatory, fulfilling a lifelong dream of studying the universe.</p>\n<p>One cold winter night, Lila was alone at the observatory, reviewing data from a recent meteor shower. The vast dome above her was open, exposing the enormous telescope to the dark sky. As she adjusted the focus, she noticed something unusual—a faint, glowing object moving slowly across the field of view. It wasn't a meteor, and it wasn't a satellite. Curious, she tracked the object for several minutes, watching as it grew brighter and more distinct. Her heart raced. Could this be the discovery of a new comet?</p>\n<p>Lila quickly ran calculations on the object's trajectory and distance. Her excitement grew with each passing minute. The data suggested that this was not just a regular space object—it was something extraordinary. She immediately documented her findings and sent an urgent message to the senior astronomer. As she waited for a response, Lila couldn't help but think of her grandfather and how proud he would be.</p>\n<p>Hours later, the senior astronomer arrived at the observatory. Together, they reviewed the data and confirmed Lila's suspicions. What she had discovered was indeed a new comet, one that hadn't been observed before. They decided to name it \"Comet Lila,\" after the young astronomer who had made the discovery.</p>\n<p>News of the discovery spread quickly, and Lila became an overnight sensation in the scientific community. But more than the recognition, she cherished the feeling of knowing that she had added something new to the vast tapestry of the universe, just as her grandfather had told her all those years ago.</p><br><p><strong>How did the senior astronomer react to Lila's discovery?</strong></p>", "options": ["<p>He doubted her findings</p>", "<p>He dismissed her observation as irrelevant</p>", "<p>He took full credit for the discovery</p>", "<p>He confirmed her discovery and helped verify the comet's existence</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The senior astronomer reviewed Lila’s data and confirmed her discovery, showing support and collaboration.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Lila had always been fascinated by the stars. As a child, she would spend hours lying on her back in the small garden behind her house, gazing up at the twinkling lights that filled the night sky. Her grandfather had once told her that each star was a dream waiting to be discovered, and she had taken his words to heart. Now, at 24, she worked as an astronomer at the city observatory, fulfilling a lifelong dream of studying the universe.</p>\n<p>One cold winter night, Lila was alone at the observatory, reviewing data from a recent meteor shower. The vast dome above her was open, exposing the enormous telescope to the dark sky. As she adjusted the focus, she noticed something unusual—a faint, glowing object moving slowly across the field of view. It wasn't a meteor, and it wasn't a satellite. Curious, she tracked the object for several minutes, watching as it grew brighter and more distinct. Her heart raced. Could this be the discovery of a new comet?</p>\n<p>Lila quickly ran calculations on the object's trajectory and distance. Her excitement grew with each passing minute. The data suggested that this was not just a regular space object—it was something extraordinary. She immediately documented her findings and sent an urgent message to the senior astronomer. As she waited for a response, Lila couldn't help but think of her grandfather and how proud he would be.</p>\n<p>Hours later, the senior astronomer arrived at the observatory. Together, they reviewed the data and confirmed Lila's suspicions. What she had discovered was indeed a new comet, one that hadn't been observed before. They decided to name it \"Comet Lila,\" after the young astronomer who had made the discovery.</p>\n<p>News of the discovery spread quickly, and Lila became an overnight sensation in the scientific community. But more than the recognition, she cherished the feeling of knowing that she had added something new to the vast tapestry of the universe, just as her grandfather had told her all those years ago.</p><br><p><strong>What does Lila cherish more than the recognition from the scientific community?</strong></p>", "options": ["<p>The feeling of adding something new to the universe</p>", "<p>The award she received for her discovery</p>", "<p>The fame she gained after her discovery</p>", "<p>The chance to meet other famous astronomers</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The passage states that more than the recognition, Lila cherished the feeling of contributing something new to the universe.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Lila had always been fascinated by the stars. As a child, she would spend hours lying on her back in the small garden behind her house, gazing up at the twinkling lights that filled the night sky. Her grandfather had once told her that each star was a dream waiting to be discovered, and she had taken his words to heart. Now, at 24, she worked as an astronomer at the city observatory, fulfilling a lifelong dream of studying the universe.</p>\n<p>One cold winter night, Lila was alone at the observatory, reviewing data from a recent meteor shower. The vast dome above her was open, exposing the enormous telescope to the dark sky. As she adjusted the focus, she noticed something unusual—a faint, glowing object moving slowly across the field of view. It wasn't a meteor, and it wasn't a satellite. Curious, she tracked the object for several minutes, watching as it grew brighter and more distinct. Her heart raced. Could this be the discovery of a new comet?</p>\n<p>Lila quickly ran calculations on the object's trajectory and distance. Her excitement grew with each passing minute. The data suggested that this was not just a regular space object—it was something extraordinary. She immediately documented her findings and sent an urgent message to the senior astronomer. As she waited for a response, Lila couldn't help but think of her grandfather and how proud he would be.</p>\n<p>Hours later, the senior astronomer arrived at the observatory. Together, they reviewed the data and confirmed Lila's suspicions. What she had discovered was indeed a new comet, one that hadn't been observed before. They decided to name it \"Comet Lila,\" after the young astronomer who had made the discovery.</p>\n<p>News of the discovery spread quickly, and Lila became an overnight sensation in the scientific community. But more than the recognition, she cherished the feeling of knowing that she had added something new to the vast tapestry of the universe, just as her grandfather had told her all those years ago.</p><br><p><strong>What is the significance of naming the comet \"Comet Lila\"?</strong></p>", "options": ["<p>It honors her grandfather&rsquo;s dream</p>", "<p>It is a tradition to name celestial objects after astronomers</p>", "<p>It celebrates Lila&rsquo;s individual contribution to science</p>", "<p>It is a random choice of name</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The naming of the comet after Lila highlights her personal achievement in discovering it.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Lila had always been fascinated by the stars. As a child, she would spend hours lying on her back in the small garden behind her house, gazing up at the twinkling lights that filled the night sky. Her grandfather had once told her that each star was a dream waiting to be discovered, and she had taken his words to heart. Now, at 24, she worked as an astronomer at the city observatory, fulfilling a lifelong dream of studying the universe.</p>\n<p>One cold winter night, Lila was alone at the observatory, reviewing data from a recent meteor shower. The vast dome above her was open, exposing the enormous telescope to the dark sky. As she adjusted the focus, she noticed something unusual—a faint, glowing object moving slowly across the field of view. It wasn't a meteor, and it wasn't a satellite. Curious, she tracked the object for several minutes, watching as it grew brighter and more distinct. Her heart raced. Could this be the discovery of a new comet?</p>\n<p>Lila quickly ran calculations on the object's trajectory and distance. Her excitement grew with each passing minute. The data suggested that this was not just a regular space object—it was something extraordinary. She immediately documented her findings and sent an urgent message to the senior astronomer. As she waited for a response, Lila couldn't help but think of her grandfather and how proud he would be.</p>\n<p>Hours later, the senior astronomer arrived at the observatory. Together, they reviewed the data and confirmed Lila's suspicions. What she had discovered was indeed a new comet, one that hadn't been observed before. They decided to name it \"Comet Lila,\" after the young astronomer who had made the discovery.</p>\n<p>News of the discovery spread quickly, and Lila became an overnight sensation in the scientific community. But more than the recognition, she cherished the feeling of knowing that she had added something new to the vast tapestry of the universe, just as her grandfather had told her all those years ago.</p><br><p><strong>What can be inferred about Lila's relationship with her grandfather?</strong></p>", "options": ["<p>He was indifferent to her interests</p>", "<p>He played a significant role in shaping her dreams</p>", "<p>He was also an astronomer</p>", "<p>He discouraged her from pursuing astronomy</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage suggests that her grandfather's words about stars and dreams greatly influenced Lila’s aspirations, showing their close and influential relationship.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Lila had always been fascinated by the stars. As a child, she would spend hours lying on her back in the small garden behind her house, gazing up at the twinkling lights that filled the night sky. Her grandfather had once told her that each star was a dream waiting to be discovered, and she had taken his words to heart. Now, at 24, she worked as an astronomer at the city observatory, fulfilling a lifelong dream of studying the universe.</p>\n<p>One cold winter night, Lila was alone at the observatory, reviewing data from a recent meteor shower. The vast dome above her was open, exposing the enormous telescope to the dark sky. As she adjusted the focus, she noticed something unusual—a faint, glowing object moving slowly across the field of view. It wasn't a meteor, and it wasn't a satellite. Curious, she tracked the object for several minutes, watching as it grew brighter and more distinct. Her heart raced. Could this be the discovery of a new comet?</p>\n<p>Lila quickly ran calculations on the object's trajectory and distance. Her excitement grew with each passing minute. The data suggested that this was not just a regular space object—it was something extraordinary. She immediately documented her findings and sent an urgent message to the senior astronomer. As she waited for a response, Lila couldn't help but think of her grandfather and how proud he would be.</p>\n<p>Hours later, the senior astronomer arrived at the observatory. Together, they reviewed the data and confirmed Lila's suspicions. What she had discovered was indeed a new comet, one that hadn't been observed before. They decided to name it \"Comet Lila,\" after the young astronomer who had made the discovery.</p>\n<p>News of the discovery spread quickly, and Lila became an overnight sensation in the scientific community. But more than the recognition, she cherished the feeling of knowing that she had added something new to the vast tapestry of the universe, just as her grandfather had told her all those years ago.</p><br><p><strong>What is the tone of the passage?</strong></p>", "options": ["<p>Melancholic and regretful</p>", "<p>Uplifting and inspirational</p>", "<p>Critical and judgmental</p>", "<p>Anxious and worried</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage has a positive and inspirational tone, focusing on Lila’s journey of fulfilling her dreams and making a significant discovery.</p>"}, {"question": "<p><strong>In each of the following questions three sentences are given with a word highlighted in it and followed by five options. You are required to find out in which of the following sentences the word is inappropriately used from the given options.</strong></p><br><p><strong>I).</strong> Despite facing severe consequences, she stood tall in <strong>defiance</strong> of the unjust law, refusing to comply with its oppressive measures.</p>\n<p><strong>II).</strong> Despite initial setbacks, she was not <strong>daunted</strong> and continued to pursue her dreams with determination.</p>\n<p><strong>III).</strong> The employee's energy was <strong>depleted</strong> after a long vacation, leaving them feeling refreshed and ready to tackle their workload.</p>", "options": ["<p>Only I</p>", "<p>Only II</p>", "<p>Only III</p>", "<p>Both I and II</p>", "<p>Both I and III</p>"], "correctIndex": 2, "solution": "<p><strong>Answer</strong><strong>: C</strong></p>\n<p><strong>I).</strong> In this sentence, \"defiance\" is correctly used to describe the act of openly resisting or challenging something, in this case, an unjust law.</p>\n<p><strong>II).</strong> In this sentence, \"daunted\" is correctly used to convey that the setbacks did not discourage or intimidate her; she remained determined despite challenges.</p>\n<p><strong>III).</strong> In this sentence, \"depleted\" is used incorrectly. \"Depleted\" typically means used up or exhausted, often implying a lack or deficiency. However, in the sentence, it suggests the opposite—a feeling of refreshment and readiness after a vacation, which contradicts the usual meaning of \"depleted.\" A more appropriate term might be \"replenished\" or \"renewed.\"</p>"}, {"question": "<p><strong>In each of the following questions three sentences are given with a word highlighted in it and followed by five options. You are required to find out in which of the following sentences the word is inappropriately used from the given options.</strong></p><br><p><strong>I).</strong> Her lack of <strong>resilience</strong> was evident as she quickly bounced back from setbacks and adversity, showing strength and determination.</p>\n<p><strong>II).</strong> The company's decision to downsize its workforce was aimed at <strong>bolstering</strong> employee morale, but it resulted in widespread dissatisfaction and low morale among the remaining staff.</p>\n<p><strong>III).</strong> Despite numerous setbacks, she maintained a <strong>relentless</strong> pursuit of her goals, never giving up on her dreams.</p>", "options": ["<p>Only I</p>", "<p>Only II</p>", "<p>Only III</p>", "<p>Both I and II</p>", "<p>Both I and III</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D</strong></p>\n<p><strong>I).</strong> In this sentence, \"resilience\" is used incorrectly. Resilience typically refers to the ability to recover quickly from difficulties or setbacks, showing toughness or flexibility. However, the sentence suggests a lack of resilience despite quickly bouncing back from setbacks, which contradicts the usual meaning of the term. A more appropriate term might be \"fragility\" or \"vulnerability.\"</p>\n<p><strong>II).</strong> In this sentence, \"bolstering\" is used incorrectly. \"Bolstering\" typically means to support or strengthen, but the sentence suggests that the company's decision to downsize had the opposite effect—it weakened employee morale instead of strengthening it. A more appropriate term might be \"undermining\" or \"eroding.\"</p>\n<p><strong>III).</strong> In this sentence, \"relentless\" is correctly used to describe the unwavering and persistent pursuit of her goals despite challenges or obstacles.</p>"}, {"question": "<p><strong>In each of the following questions three sentences are given with a word highlighted in it and followed by five options. You are required to find out in which of the following sentences the word is inappropriately used from the given options.</strong></p><br><p><strong>I).</strong> His lack of <strong>remorse</strong> for his actions was evident as he apologized sincerely to those affected by his behaviour.</p>\n<p><strong>II).</strong> Despite his expertise, he couldn't help but <strong>fumble</strong> with the unfamiliar controls of the new machine.</p>\n<p><strong>III). </strong>The peaceful protest aimed to <strong>ravage</strong> awareness about environmental issues and promote community harmony.</p>", "options": ["<p>Only I</p>", "<p>Only II</p>", "<p>Only III</p>", "<p>Both I and II</p>", "<p>Both I and III</p>"], "correctIndex": 4, "solution": "<p><strong>Answer</strong><strong>: E</strong></p>\n<p><strong>I).</strong> In this sentence, \"lack of remorse\" is used incorrectly. Remorse implies a feeling of regret or guilt for one's actions, but the sentence suggests that the individual apologized sincerely, which indicates some level of remorse. A more appropriate term might be \"apathy\" or \"indifference.\"</p>\n<p><strong>II).</strong> In this sentence, \"fumble\" is correctly used to describe clumsily handling or struggling with something, in this case, the unfamiliar controls of the new machine.</p>\n<p><strong>III).</strong> In this sentence, \"ravage\" is used incorrectly. \"Ravage\" typically means to cause severe damage or destruction, often in a violent or destructive manner. However, in the context of the sentence, the intended meaning seems to be to raise or promote awareness, which doesn't align with the usual meaning of \"ravage.\" A more appropriate term might be \"raise\" or \"promote.\"</p>"}, {"question": "<p><strong>Below a passage is given with five filled blanks labelled (a-e), which may or may not be appropriate. Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>The global financial markets have witnessed significant volatility over the past few years, primarily driven by geopolitical tensions and unexpected economic downturns. In such a <strong>(a) _______ (stable) </strong>environment, investors are increasingly seeking safe havens for their capital, with assets like gold and government bonds gaining popularity. Central banks, in response to economic uncertainties, have often resorted to <strong>(b) _________ (unconventional)</strong> monetary policies, aiming to stabilize their economies by lowering interest rates and injecting liquidity into the financial system.</p>\n<p>However, these measures have had mixed results. While they have <strong>(c) _________ (hindered)</strong> short-term growth, they have also led to increased debt levels and a potential risk of inflation. As the world continues to recover from the shocks of the global financial crisis and subsequent recessions, it is imperative for policymakers to strike a <strong>(d) ________ (vague)</strong> balance between promoting economic growth and maintaining fiscal discipline.</p>\n<p>Moreover, the rise of fintech and digital currencies has added a new dimension to the financial landscape. While these technologies offer numerous opportunities, they also present challenges, particularly in terms of regulation and security. It is crucial for governments and financial institutions to work together in <strong>(e) ________ (observing)</strong> a robust framework that ensures stability and fosters innovation.</p><br><p><strong>Which word comes in the blank labelled a?</strong></p>", "options": ["<p>unvarying</p>", "<p>precarious</p>", "<p>predictable</p>", "<p>linear</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage highlights the uncertainty and instability in global financial markets, which is best described by \"precarious.\" \"Stable\" and \"predictable\" are contradictory to the sense of uncertainty. \"Linear\" does not fit the context of economic volatility.</p>"}, {"question": "<p><strong>Below a passage is given with five filled blanks labelled (a-e), which may or may not be appropriate. Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>The global financial markets have witnessed significant volatility over the past few years, primarily driven by geopolitical tensions and unexpected economic downturns. In such a <strong>(a) _______ (stable) </strong>environment, investors are increasingly seeking safe havens for their capital, with assets like gold and government bonds gaining popularity. Central banks, in response to economic uncertainties, have often resorted to <strong>(b) _________ (unconventional)</strong> monetary policies, aiming to stabilize their economies by lowering interest rates and injecting liquidity into the financial system.</p>\n<p>However, these measures have had mixed results. While they have <strong>(c) _________ (hindered)</strong> short-term growth, they have also led to increased debt levels and a potential risk of inflation. As the world continues to recover from the shocks of the global financial crisis and subsequent recessions, it is imperative for policymakers to strike a <strong>(d) ________ (vague)</strong> balance between promoting economic growth and maintaining fiscal discipline.</p>\n<p>Moreover, the rise of fintech and digital currencies has added a new dimension to the financial landscape. While these technologies offer numerous opportunities, they also present challenges, particularly in terms of regulation and security. It is crucial for governments and financial institutions to work together in <strong>(e) ________ (observing)</strong> a robust framework that ensures stability and fosters innovation.</p><br><p><strong>Which word comes in the blank labelled b?</strong></p>", "options": ["<p>restrictive</p>", "<p>experimental</p>", "<p>aggressive</p>", "<p>traditional</p>", "<p>None of these</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>Central banks have responded to economic challenges by adopting non-traditional measures, such as lowering interest rates or quantitative easing. This approach is best described by \"unconventional.\" \"Restrictive\" and \"traditional\" would not fit as they imply a conservative approach, while \"experimental\" and \"aggressive\" are less accurate.</p>"}, {"question": "<p><strong>Below a passage is given with five filled blanks labelled (a-e), which may or may not be appropriate. Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>The global financial markets have witnessed significant volatility over the past few years, primarily driven by geopolitical tensions and unexpected economic downturns. In such a <strong>(a) _______ (stable) </strong>environment, investors are increasingly seeking safe havens for their capital, with assets like gold and government bonds gaining popularity. Central banks, in response to economic uncertainties, have often resorted to <strong>(b) _________ (unconventional)</strong> monetary policies, aiming to stabilize their economies by lowering interest rates and injecting liquidity into the financial system.</p>\n<p>However, these measures have had mixed results. While they have <strong>(c) _________ (hindered)</strong> short-term growth, they have also led to increased debt levels and a potential risk of inflation. As the world continues to recover from the shocks of the global financial crisis and subsequent recessions, it is imperative for policymakers to strike a <strong>(d) ________ (vague)</strong> balance between promoting economic growth and maintaining fiscal discipline.</p>\n<p>Moreover, the rise of fintech and digital currencies has added a new dimension to the financial landscape. While these technologies offer numerous opportunities, they also present challenges, particularly in terms of regulation and security. It is crucial for governments and financial institutions to work together in <strong>(e) ________ (observing)</strong> a robust framework that ensures stability and fosters innovation.</p><br><p><strong>Which word comes in the blank labelled c?</strong></p>", "options": ["<p>promoted</p>", "<p>suppressed</p>", "<p>confabulated</p>", "<p>acerbic</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The monetary policies implemented by central banks have encouraged short-term economic growth. \"Promoted\" captures this idea. \"Suppressed,\" and \"hindered,\" would imply negative outcomes, which are not the focus here. \"promoted\" better reflects the intention of fostering growth.</p>"}, {"question": "<p><strong>Below a passage is given with five filled blanks labelled (a-e), which may or may not be appropriate. Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>The global financial markets have witnessed significant volatility over the past few years, primarily driven by geopolitical tensions and unexpected economic downturns. In such a <strong>(a) _______ (stable) </strong>environment, investors are increasingly seeking safe havens for their capital, with assets like gold and government bonds gaining popularity. Central banks, in response to economic uncertainties, have often resorted to <strong>(b) _________ (unconventional)</strong> monetary policies, aiming to stabilize their economies by lowering interest rates and injecting liquidity into the financial system.</p>\n<p>However, these measures have had mixed results. While they have <strong>(c) _________ (hindered)</strong> short-term growth, they have also led to increased debt levels and a potential risk of inflation. As the world continues to recover from the shocks of the global financial crisis and subsequent recessions, it is imperative for policymakers to strike a <strong>(d) ________ (vague)</strong> balance between promoting economic growth and maintaining fiscal discipline.</p>\n<p>Moreover, the rise of fintech and digital currencies has added a new dimension to the financial landscape. While these technologies offer numerous opportunities, they also present challenges, particularly in terms of regulation and security. It is crucial for governments and financial institutions to work together in <strong>(e) ________ (observing)</strong> a robust framework that ensures stability and fosters innovation.</p><br><p><strong>Which word comes in the blank labelled d?</strong></p>", "options": ["<p>delicate</p>", "<p>relaxed</p>", "<p>rigid</p>", "<p>skewed</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Policymakers need to strike a careful or \"delicate\" balance between economic growth and fiscal discipline. Other options like \"relaxed,\" \"rigid,\" and \"vague\" do not convey the careful balancing act required. \"Skewed\" suggests imbalance, which is not the aim.</p>"}, {"question": "<p><strong>Below a passage is given with five filled blanks labelled (a-e), which may or may not be appropriate. Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>The global financial markets have witnessed significant volatility over the past few years, primarily driven by geopolitical tensions and unexpected economic downturns. In such a <strong>(a) _______ (stable) </strong>environment, investors are increasingly seeking safe havens for their capital, with assets like gold and government bonds gaining popularity. Central banks, in response to economic uncertainties, have often resorted to <strong>(b) _________ (unconventional)</strong> monetary policies, aiming to stabilize their economies by lowering interest rates and injecting liquidity into the financial system.</p>\n<p>However, these measures have had mixed results. While they have <strong>(c) _________ (hindered)</strong> short-term growth, they have also led to increased debt levels and a potential risk of inflation. As the world continues to recover from the shocks of the global financial crisis and subsequent recessions, it is imperative for policymakers to strike a <strong>(d) ________ (vague)</strong> balance between promoting economic growth and maintaining fiscal discipline.</p>\n<p>Moreover, the rise of fintech and digital currencies has added a new dimension to the financial landscape. While these technologies offer numerous opportunities, they also present challenges, particularly in terms of regulation and security. It is crucial for governments and financial institutions to work together in <strong>(e) ________ (observing)</strong> a robust framework that ensures stability and fosters innovation.</p><br><p><strong>Which word comes in the blank labelled e?</strong></p>", "options": ["<p>dismantling</p>", "<p>establishing</p>", "<p>ignoring</p>", "<p>opposing</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>Governments and financial institutions need to create or \"establish\" a robust framework for regulating new financial technologies. \"Dismantling,\" \"ignoring,\" or \"opposing\" would have negative connotations and do not fit the context of fostering stability. \"Observing\" is not proactive enough.</p>"}, {"question": "<p><strong>A sentence or a part of the sentence is highlighted. Four alternatives marked as (A), (B), (C) and (D) are given as substitutions for the highlighted part, one of which will improve the sentence. Choose the correct alternative. In case no improvement is needed, choose the option “No improvement is required” i.e. (E).</strong></p><br><p>When trying to find the best deal on car rentals for their upcoming trip, the couple <strong>decided to call after</strong> to several rental agencies in the area, hoping to compare prices and secure the most affordable option.</p>", "options": ["<p>decided to call up</p>", "<p>decided to call on</p>", "<p>decided to call in</p>", "<p>decided to call around</p>", "<p>No improvement is required</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D</strong></p>\n<p>The correct option is: d) decided to call around</p>\n<p>The phrase \"decided to call around\" is idiomatic and commonly used to indicate that someone is making multiple phone calls to different places or people in order to gather information or compare options. In this context, the couple is calling different rental agencies to compare prices.</p>\n<p>Options (a), (b), and (c) introduce variations that are not idiomatic or do not convey the intended meaning:</p>\n<p>Option (a) \"decided to call up\" could imply calling a specific person or place, but it doesn't convey the idea of calling multiple places to compare.</p>\n<p>Option (b) \"decided to call on\" usually means to visit someone, which doesn't fit the context of making phone calls.</p>\n<p>Option (c) \"decided to call in\" typically means to contact someone for assistance or to make a reservation, which is not the same as calling multiple places to compare options.</p>\n<p>Therefore, option (d) \"decided to call around\" is the correct choice for maintaining proper idiom and conveying the intended meaning effectively.</p>"}, {"question": "<p><strong>A sentence or a part of the sentence is highlighted. Four alternatives marked as (A), (B), (C) and (D) are given as substitutions for the highlighted part, one of which will improve the sentence. Choose the correct alternative. In case no improvement is needed, choose the option “No improvement is required” i.e. (E).</strong></p><br><p>Despite the temptation to engage in petty gossip, she <strong>always strived to be away</strong> such behaviour, preferring to focus on meaningful conversations and constructive interactions with others.</p>", "options": ["<p>always strived to be above</p>", "<p>always strived to be after</p>", "<p>always strived to be along</p>", "<p>always strived to be around</p>", "<p>No improvement is required</p>"], "correctIndex": 0, "solution": "<p><strong>Answer</strong><strong>: A</strong></p>\n<p>The correct option is: a) always strived to be above</p>\n<p>The phrase \"strived to be above\" is idiomatic and effectively conveys the idea of avoiding or rising above petty gossip. It implies maintaining a higher standard of behaviour.</p>\n<p>Options (b), (c), and (d) introduce variations that do not fit the intended meaning or are less idiomatic:</p>\n<p>Option (b) \"strived to be after\" does not convey the idea of avoiding gossip. \"After\" typically means pursuing or chasing something.</p>\n<p>Option (c) \"strived to be along\" is not idiomatic in this context. \"Along\" typically means in company or alongside someone or something.</p>\n<p>Option (d) \"strived to be around\" does not convey the idea of avoiding gossip. \"Around\" typically means in the vicinity or nearby.</p>\n<p>Therefore, option (a) \"always strived to be above\" is the correct choice for maintaining proper grammar and conveying the intended meaning effectively.</p>"}, {"question": "<p><strong>A sentence or a part of the sentence is highlighted. Four alternatives marked as (A), (B), (C) and (D) are given as substitutions for the highlighted part, one of which will improve the sentence. Choose the correct alternative. In case no improvement is needed, choose the option “No improvement is required” i.e. (E).</strong></p><br><p>After numerous unsuccessful attempts to repair the old car, the mechanic finally <strong>decided to write it down</strong> as beyond salvageable, acknowledging that it would be more cost-effective to invest in a new vehicle instead.</p>", "options": ["<p>decided to write it in</p>", "<p>decided to write it out</p>", "<p>decided to write it off</p>", "<p>decided to write it up</p>", "<p>No improvement is required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer</strong><strong>: C</strong></p>\n<p>The correct option is: c) decided to write it off</p>\n<p>The phrase \"write it off\" means to declare something as a loss, especially in accounting or financial contexts. In this sentence, the mechanic decided that the old car was beyond repair and should be considered a loss. Therefore, \"write it off\" is the most appropriate choice.</p>\n<p>Options (a), (b), and (d) introduce variations that do not convey the intended meaning:</p>\n<p>Option (a) \"decided to write it in\" is not idiomatic. \"Write in\" typically means to record or insert information, which doesn't fit the context of declaring the car as beyond repair.</p>\n<p>Option (b) \"decided to write it out\" also doesn't convey the intended meaning. \"Write out\" typically means to express or spell out in detail, which is not applicable here.</p>\n<p>Option (d) \"decided to write it up\" suggests writing a report or summary, which is not appropriate in this context.</p>\n<p>Therefore, option (c) \"decided to write it off\" is the correct choice for maintaining proper grammar and conveying the intended meaning effectively.</p>"}, {"question": "<p><strong>A sentence or a part of the sentence is highlighted. Four alternatives marked as (A), (B), (C) and (D) are given as substitutions for the highlighted part, one of which will improve the sentence. Choose the correct alternative. In case no improvement is needed, choose the option “No improvement is required” i.e. (E).</strong></p><br><p>After indulging in a hearty meal, he knew he <strong>needed to work off</strong> the excess calories, so he headed to the gym to engage in an intense workout session to burn off the extra energy and maintain his fitness regimen.</p>", "options": ["<p>needed to work on</p>", "<p>needed to work in</p>", "<p>needed to work over</p>", "<p>needed to work through</p>", "<p>No improvement is required</p>"], "correctIndex": 4, "solution": "<p><strong>Answer</strong><strong>: E</strong></p>\n<p>The correct option is: e) No improvement is required</p>\n<p>The sentence is grammatically correct and effectively conveys the intended meaning. The phrase \"needed to work off\" is idiomatic and means to remove or eliminate something, in this case, excess calories.</p>\n<p>Options (a), (b), (c), and (d) introduce variations that do not convey the intended meaning or are not idiomatic:</p>\n<p>Option (a) \"needed to work on\" does not convey the idea of removing or eliminating something.</p>\n<p>Option (b) \"needed to work in\" is not idiomatic in this context and does not convey the idea of removing or eliminating something.</p>\n<p>Option (c) \"needed to work over\" does not convey the idea of removing or eliminating something.</p>\n<p>Option (d) \"needed to work through\" does not convey the idea of removing or eliminating something.</p>\n<p>Therefore, option (e) \"No improvement is required\" is the correct choice as the original sentence maintains proper grammar and effectively conveys the intended meaning.</p>"}, {"question": "<p><strong>A sentence or a part of the sentence is highlighted. Four alternatives marked as (A), (B), (C) and (D) are given as substitutions for the highlighted part, one of which will improve the sentence. Choose the correct alternative. In case no improvement is needed, choose the option “No improvement is required” i.e. (E).</strong></p><br><p>As twilight descended over the sleepy town, a dense fog <strong>began to creep out</strong> the countryside, shrouding everything in an eerie veil of mist and casting an otherworldly atmosphere over the landscape.</p>", "options": ["<p>began to creep into</p>", "<p>began to creep over</p>", "<p>began to creep in</p>", "<p>began to creep up on</p>", "<p>No improvement is required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer</strong><strong>: B</strong></p>\n<p>The correct option is: b) began to creep over</p>\n<p>The phrase \"creep over\" is idiomatic and effectively conveys the idea of the fog gradually spreading across the countryside. It implies a movement that extends over an area, which aligns well with the context of the sentence describing the fog enveloping the landscape.</p>\n<p>Options (a), (c), and (d) introduce variations that are less idiomatic or do not convey the intended meaning:</p>\n<p>Option (a) \"began to creep into\" suggests movement towards the interior of something, which doesn't accurately depict the spreading nature of fog over an area.</p>\n<p>Option (c) \"began to creep in\" is less specific and doesn't convey the idea of the fog spreading over the countryside as effectively as option (b).</p>\n<p>Option (d) \"began to creep up on\" implies a sudden approach or surprise, which doesn't fit the gradual and pervasive nature of the fog described in the sentence.</p>\n<p>Therefore, option (b) \"began to creep over\" is the correct choice for maintaining proper grammar and conveying the intended meaning effectively.</p>"}, {"question": "<p><strong>In each of the following questions a short passage is given with one of the lines in the passage missing and represented by a blank. Select the best out of the five answer choices given, to make the passage complete and coherent (coherent means logically complete and sound).</strong></p><br><p><strong>Moldovans voted by a razor-thin majority in favor of securing the country’s path toward European Union membership, electoral data showed Monday, after the pro-Western president accused foreign ______________________</strong></p>", "options": ["<p>has one state-run nursing education institute at Bambolim village near Panaji</p>", "<p>interference and criminal groups of trying to undermine the vote in the former Soviet republic</p>", "<p>the &lsquo;Aamdar&rsquo; canteen is known for its affordability and wide-ranging menu</p>", "<p>the state&rsquo;s highways to protest against their paddy being not picked up by the millers from the grain markets</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer:</strong><strong> B</strong></p>\n<p>According to the context, the paragraph shows the favor of securing the country's path towards the European Union membership after the accusations of the Pro-western president. Of the given options, Option B makes the most sense and they fit the blank perfectly.</p>\n<p><strong>Sentence A:</strong> Mentions the state-run nursing education institute which can be eliminated as it is not related to the context of the passage</p>\n<p><strong>Sentence C:</strong> Shows the features of Aamdar canteen which can be ruled out as it makes the sentence incoherent.</p>\n<p><strong>Sentence D:</strong> Talks about the protest of the state's highways which can be excluded as it is not related to the context of the passage. Therefore, Option B is the most suitable answer.</p>"}, {"question": "<p><strong>In each of the following questions a short passage is given with one of the lines in the passage missing and represented by a blank. Select the best out of the five answer choices given, to make the passage complete and coherent (coherent means logically complete and sound).</strong></p><br><p><strong>Ajey Mehta, CEO of the Educational Outreach at IIT Hyderabad, noted the attention the course has garnered at the institute and said the strategic initiative aims ______________________</strong></p>", "options": ["<p>to cater to a broad audience, providing accessible upskilling opportunities in filmmaking</p>", "<p>has come ahead of the November 13 by-elections to four constituencies in the state</p>", "<p>was represented by the AAP, the remaining three seats were held by the Congress</p>", "<p>was then conspicuous by his absence from Prime Minister Narendra Modi&rsquo;s rallies too</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer:</strong><strong> A</strong></p>\n<p>According to the context, the paragraph shows the attention given to the course which provides accessible upskilling opportunities in filmmaking. Of the given options, Option A makes the most sense and they fit the blank perfectly.</p>\n<p><strong>Sentence B:</strong> Mentions about the upcoming 13 by-elections to four constituencies which can be eliminated as it is not related to the context of the passage</p>\n<p><strong>Sentence C:</strong> Talks about seats held by the political parties which can be ruled out as it makes the sentence incoherent.</p>\n<p><strong>Sentence D:</strong> Says about the absence of a person from rallies which can be excluded as it is not related to the context of the passage. Therefore, Option A is the most suitable answer.</p>"}, {"question": "<p><strong>In each of the following questions a short passage is given with one of the lines in the passage missing and represented by a blank. Select the best out of the five answer choices given, to make the passage complete and coherent (coherent means logically complete and sound).</strong></p><br><p><strong>A woman colonel of the Army has filed a writ petition in the Punjab and Haryana High Court alleging ill-treatment at the hands of Army medical authorities and has sought directions to ______________________</strong></p>", "options": ["<p>who contested from their home turf in Patiala, unsuccessfully, on the BJP ticket</p>", "<p>but Amarinder Singh insisted that he would go to meet the farmers in the morning</p>", "<p>allow her to seek medical treatment at the Postgraduate Institute of Medical Education and Research (PGIMER), Chandigarh, or any other medical institution</p>", "<p>has been drawing fire from the farmers since the enactment of the now-repealed three central farm laws in 2020</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer:</strong><strong> C</strong></p>\n<p>According to the context, the paragraph shows a petition filed by a woman colonel in the Punjab and Haryana High Court against the ill-treatment of Army medical authorities. Of the given options, Option C makes the most sense and they fit the blank perfectly.</p>\n<p><strong>Sentence A:</strong> Mentions about the person contested on the BJP ticket, which can be eliminated as it is not related to the context of the passage</p>\n<p><strong>Sentence B:</strong> Talks about the instructions given to Amarinder Singh which can be ruled out as it makes the sentence incoherent.</p>\n<p><strong>Sentence D:</strong> Shows the consequence of enactment of central farm laws, which can be excluded as it is not related to the context of the passage. Therefore, Option C is the most suitable answer.</p>"}, {"question": "<p><strong>In each of the following questions a short passage is given with one of the lines in the passage missing and represented by a blank. Select the best out of the five answer choices given, to make the passage complete and coherent (coherent means logically complete and sound).</strong></p><br><p><strong>With the Indian Institute of Technology (IIT) Bombay opening its courses to outsiders under Educational Outreach, an easy assumption would be that they ______________________</strong></p>", "options": ["<p>a state subject and it is the duty of the Punjab CM to get procurement, lifting and storage of grains done</p>", "<p>worked with opposition governments during my tenure and farmers never faced any issue</p>", "<p>will urge the central government to intervene to ensure a smooth procurement</p>", "<p>used to take up the issues of the farmers with the Centre and they would release money</p>", "<p>None of these</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>According to the context, the paragraph shows the activity of opening its courses to outsiders by the Indian Institute of Technical (IIT) Bombay. Of the given Options none suits perfectly.</p>\n<p><strong>Sentence A:</strong> Speaks about the duty of Punjab CM which can be eliminated as it is not related to the context of the passage</p>\n<p><strong>Sentence B:</strong> Shows the general statement of a person who worked with opposition governments which can be excluded as it is not related to the context of the passage.</p>\n<p><strong>Sentence C:</strong> Talks about the act of urging central government which can be ruled out as it makes the sentence incoherent.</p>\n<p><strong>Sentence D:</strong> Says about the act of considering the farmers' issues and releasing money, which can be excluded as it is not related to the context of the passage. Therefore, Option E is the most appropriate answer.</p>"}, {"question": "<p><strong>In each of the following questions a short passage is given with one of the lines in the passage missing and represented by a blank. Select the best out of the five answer choices given, to make the passage complete and coherent (coherent means logically complete and sound).</strong></p><br><p><strong>Spokesperson Peter Stano told reporters that allegations of vote-buying, the bussing of voters and disinformation are only the most recent forms of Russian interference, ______________________</strong></p>", "options": ["<p>when the party returned to power by winning 77 seats, defeating the then ruling party</p>", "<p>many films and shows have already explored human encounters with the wilderness</p>", "<p>greatest challenge comes when she accidentally kills a family of geese and is left with a lone gosling</p>", "<p>and that attempts to undermine Moldova and its support for the European Union have been going on for months</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer:</strong><strong> D</strong></p>\n<p>According to the context, the sentence shows the statement of spokesperson Peter Stano to reporters that the consequence of Russian interference and an attempt of undermining Moldova which has been going on for the months. Of the given options, Option D makes the most sense and they fit the blank perfectly.</p>\n<p><strong>Sentence A:</strong> Mentions the party's victory against ruling party which can be eliminated as it is not related to the context of the passage</p>\n<p><strong>Sentence B:</strong> Says about the exploration of human encounters, which can be ruled out as it makes the sentence incoherent.</p>\n<p><strong>Sentence C:</strong> Shows the activity of killing the family of geese which can be excluded as it is not related to the context of the passage. Therefore, Option D is the most suitable answer.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-10)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-10)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

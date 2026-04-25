@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-71)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>In the sentences, certain words are in bold and numbered from A to D, which are the possible pairs to be arranged. Choose the pair(s) of words that need(s) to be arranged to make the sentence grammatically correct and meaningful.</strong></p><br><p>The (A) <strong>philosophical </strong>discourse surrounding (B) <strong>ethical </strong>dilemmas often challenges individuals to (C) <strong>frameworks</strong> their moral (D) <strong>reconsider</strong> and societal obligations.</p>", "options": ["<p>abdc</p>", "<p>bcad</p>", "<p>badc</p>", "<p>acbd</p>", "<p>No improvement required</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>The corrected sentence is:</strong></p>\n<p>The <strong>philosophical </strong>discourse surrounding <strong>ethical </strong>dilemmas often challenges individuals to <strong>reconsider</strong> their moral <strong>frameworks</strong> and societal obligations.</p>"}, {"question": "<p><strong>In the sentences, certain words are in bold and numbered from A to D, which are the possible pairs to be arranged. Choose the pair(s) of words that need(s) to be arranged to make the sentence grammatically correct and meaningful.</strong></p><br><p>Her meticulous (A) <strong>exemplifies</strong> to detail in the architectural design (B) <strong>attention </strong>a commitment to both (C) <strong>aesthetics </strong>and functionality in (D) <strong>modern </strong>urban planning.</p>", "options": ["<p>abdc</p>", "<p>bcad</p>", "<p>bacd</p>", "<p>acbd</p>", "<p>No improvement required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>The corrected sentence is:</strong></p>\n<p>Her meticulous <strong>attention </strong>to detail in the architectural design <strong>exemplifies</strong> a commitment to both <strong>aesthetics </strong>and functionality in <strong>modern </strong>urban planning.</p>"}, {"question": "<p><strong>In the sentences, certain words are in bold and numbered from A to D, which are the possible pairs to be arranged. Choose the pair(s) of words that need(s) to be arranged to make the sentence grammatically correct and meaningful.</strong></p><br><p>The documentary sheds (A) <strong>ramifications</strong> on the socio-political (B) <strong>emphasizing</strong> of climate change, (C) <strong>light</strong> the urgent need for (D) <strong>comprehensive</strong> global action.</p>", "options": ["<p>abdc</p>", "<p>cabd</p>", "<p>badc</p>", "<p>acbd</p>", "<p>No improvement required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>The corrected sentence is:</strong></p>\n<p>The documentary sheds <strong>light</strong> on the socio-political <strong>ramifications</strong> of climate change, <strong>emphasizing</strong> the urgent need for <strong>comprehensive</strong> global action.</p>"}, {"question": "<p><strong>In the sentences, certain words are in bold and numbered from A to D, which are the possible pairs to be arranged. Choose the pair(s) of words that need(s) to be arranged to make the sentence grammatically correct and meaningful.</strong></p><br><p>The rapid advancement of biotechnology raises (A) <strong>generations</strong> ethical questions regarding (B) <strong>genetic </strong>manipulation and its (C) <strong>implications </strong>for future (D) <strong>profound</strong>.</p>", "options": ["<p>abdc</p>", "<p>dbca</p>", "<p>dcba</p>", "<p>acbd</p>", "<p>No improvement required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>The corrected sentence is:</strong></p>\n<p>The rapid advancement of biotechnology raises <strong>profound </strong>ethical questions regarding <strong>genetic </strong>manipulation and its <strong>implications </strong>for future <strong>generations</strong>.</p>"}, {"question": "<p><strong>In the sentences, certain words are in bold and numbered from A to D, which are the possible pairs to be arranged. Choose the pair(s) of words that need(s) to be arranged to make the sentence grammatically correct and meaningful.</strong></p><br><p>His (A) <strong>extensive</strong> literary analysis revealed (B) <strong>underlying</strong> themes of existentialism and (C) <strong>absurdism</strong> within the works of 20th-century (D) <strong>playwrights</strong>.</p>", "options": ["<p>abdc</p>", "<p>bcad</p>", "<p>badc</p>", "<p>acbd</p>", "<p>No improvement required</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p><strong>The corrected sentence is:</strong></p>\n<p>His <strong>extensive</strong> literary analysis revealed <strong>underlying</strong> themes of existentialism and <strong>absurdism</strong> within the works of 20th-century <strong>playwrights</strong>.</p>"}, {"question": "<p><strong>In the following questions, two columns are given, containing three phrases each. A phrase from the first column may or may not connect with a phrase from the second column to make a grammatically and contextually correct sentence. There are five options, four of which display the sequence(s) in which the phrases can be joined to form a correct sentence. If none of the phrases makes a correct sentence, mark 'None of these' as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/171566977734.png\" title=\"34.png\"/></p>", "options": ["<p>Only A-E</p>", "<p>Only B-D</p>", "<p>Both A-E and B-D</p>", "<p>Both B-D and C-F</p>", "<p>All A-E, B-D and C-F</p>"], "correctIndex": 4, "solution": "<p><strong>Answer</strong><strong>: E</strong></p>\n<p>When combining these two statements <strong>A-E</strong>: \"Banking is an essential financial institution that offers various services, such as deposit-taking, lending, and investment management.\" This sentence underscores the essential role of banking in providing a diverse array of financial services crucial for individuals and businesses, including managing deposits, extending loans, and handling investments.</p>\n<p>When combining these two statements <strong>B-D</strong>: \"The banking sector plays a crucial role in the economy by facilitating monetary transactions, mobilizing savings, and providing credit to individuals and businesses.\" This sentence emphasizes the vital contribution of the banking sector to the economy by enabling essential financial activities such as transactions, savings accumulation, and access to credit, which are essential for economic growth and development.</p>\n<p>When combining these two statements <strong>C-F</strong>: \"The history of banking dates back to ancient civilizations, evolving from simple moneylending practices to complex financial institutions.\" This sentence highlights the historical progression of banking, illustrating how it has evolved from its early origins to become the complex and integral financial system that we know today.</p>\n<p>The other combinations do not form a coherent sentence with a clear connection between the ideas presented in Column I and Column II.</p>"}, {"question": "<p><strong>In the following questions, two columns are given, containing three phrases each. A phrase from the first column may or may not connect with a phrase from the second column to make a grammatically and contextually correct sentence. There are five options, four of which display the sequence(s) in which the phrases can be joined to form a correct sentence. If none of the phrases makes a correct sentence, mark 'None of these' as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/171566983086.png\" title=\"35.png\"/></p>", "options": ["<p>Only A-E</p>", "<p>Only B-F</p>", "<p>Both A-D and C-F</p>", "<p>Both A-E and B-F</p>", "<p>All A-D, B-F and C-E</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D</strong></p>\n<p>When combining these two statements <strong>A-E</strong>: \"Banks offer a range of products and services, including checking accounts, savings accounts, loans, mortgages, and investment opportunities.\" This sentence highlights the comprehensive offerings of banks, covering various financial products and services that cater to the diverse needs of customers.</p>\n<p>When combining these two statements <strong>B-F</strong>: \"Banks generate revenue through interest earned on loans, fees for services, and returns on investments, contributing to the overall profitability of the institution.\" This sentence underscores the various sources of revenue for banks, highlighting their role in generating profits and ensuring financial sustainability.</p>\n<p>The other combinations do not form a coherent sentence with a clear connection between the ideas presented in Column I and Column II.</p>"}, {"question": "<p><strong>In the following questions, two columns are given, containing three phrases each. A phrase from the first column may or may not connect with a phrase from the second column to make a grammatically and contextually correct sentence. There are five options, four of which display the sequence(s) in which the phrases can be joined to form a correct sentence. If none of the phrases makes a correct sentence, mark 'None of these' as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/171566991654.png\" title=\"36.png\"/></p>", "options": ["<p>Only A-F</p>", "<p>Only B-D</p>", "<p>Both B-F and C-E</p>", "<p>Both A-D and B-F</p>", "<p>All A-F, B-D and C-E</p>"], "correctIndex": 1, "solution": "<p><strong>Answer</strong><strong>: B</strong></p>\n<p>When combining these two statements <strong>B-D</strong>: \"Bank branches provide physical locations where customers can conduct transactions, seek financial advice, and access banking services in person.\" This sentence emphasizes the multifunctional aspect of bank branches, highlighting their role as convenient hubs for various banking needs, from basic transactions to personalized financial guidance.</p>\n<p>The other combinations do not form a coherent sentence with a clear connection between the ideas presented in Column I and Column II.</p>"}, {"question": "<p><strong>In the following questions, two columns are given, containing three phrases each. A phrase from the first column may or may not connect with a phrase from the second column to make a grammatically and contextually correct sentence. There are five options, four of which display the sequence(s) in which the phrases can be joined to form a correct sentence. If none of the phrases makes a correct sentence, mark 'None of these' as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/1715670102100.png\" title=\"37.png\"/></p>", "options": ["<p>Only A-E</p>", "<p>Only B-D</p>", "<p>Both A-E and C-F</p>", "<p>Both B-F and C-D</p>", "<p>All A-D, B-F and C-E</p>"], "correctIndex": 2, "solution": "<p><strong>Answer</strong><strong>: C</strong></p>\n<p>When combining these two statements <strong>A-E</strong>: \"Banks act as intermediaries between depositors who have surplus funds and borrowers who need capital for various purposes.\" This sentence succinctly captures the essential role of banks in connecting those with surplus funds to those in need of capital, underscoring their function as financial intermediaries in the economy.</p>\n<p>When combining these two statements <strong>C-F</strong>: \"Retail banking focuses on providing financial services directly to individuals and households, such as checking accounts, loans, and credit cards.\" This sentence highlights the core function of retail banking and provides examples of the financial services typically offered to individual customers and households.</p>\n<p>The other combinations do not form a coherent sentence with a clear connection between the ideas presented in Column I and Column II.</p>"}, {"question": "<p><strong>In the following questions, two columns are given, containing three phrases each. A phrase from the first column may or may not connect with a phrase from the second column to make a grammatically and contextually correct sentence. There are five options, four of which display the sequence(s) in which the phrases can be joined to form a correct sentence. If none of the phrases makes a correct sentence, mark 'None of these' as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/171567020615.png\" title=\"38.png\"/></p>", "options": ["<p>Only A-F</p>", "<p>Only B-E</p>", "<p>Both A-F and B-E</p>", "<p>Both B-E and C-D</p>", "<p>All A-F, B-E and C-D</p>"], "correctIndex": 4, "solution": "<p><strong>Answer</strong><strong>: E</strong></p>\n<p>When combining these two statements <strong>A-F</strong>: \"Cybersecurity threats pose a significant risk to banks and their customers, necessitating robust measures to protect sensitive financial data.\" This sentence underscores the importance of implementing effective cybersecurity measures in the banking sector to mitigate risks and protect the integrity of financial data.</p>\n<p>When combining these two statements <strong>B-E</strong>: \"Technological innovation, such as blockchain technology and artificial intelligence, is transforming the banking industry, leading to more efficient processes and enhanced customer experiences.\" This sentence underscores the transformative role of technology in banking, showcasing its potential to revolutionize operations and improve services for customers.</p>\n<p>When combining these two statements <strong>C-D</strong>: \"Offshore banking involves banking activities conducted in foreign jurisdictions, often chosen for favorable tax and regulatory environments.\" This sentence succinctly explains the concept of offshore banking and highlights one of its key benefits, demonstrating why individuals or entities might pursue such banking arrangements.</p>\n<p>The other combinations do not form a coherent sentence with a clear connection between the ideas presented in Column I and Column II.</p>"}, {"question": "<p><strong>Below, a passage is given with five blanks labelled (A-E). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>In recent years, the financial landscape has undergone significant transformations, driven largely by technological advancements and changing consumer behaviors. One notable trend is the rise of <strong>(A) __________</strong> banking, which has enabled consumers to conduct transactions seamlessly through their smartphones and computers. This shift towards digital platforms has not only increased convenience but has also posed challenges related to <strong>(B) __________ </strong>security, as financial institutions strive to protect sensitive customer information from cyber threats.</p>\n<p>Additionally, the proliferation of financial technology (fintech) companies has introduced innovative solutions that <strong>(C) __________</strong> traditional banking practices. These companies leverage data analytics and artificial intelligence to provide personalized financial services, making it easier for consumers to manage their finances. However, this rapid evolution raises questions about the adequacy of <strong>(D) __________</strong> frameworks that govern the financial industry, as existing regulations may not be equipped to address the unique risks posed by fintech.</p>\n<p>Moreover, the growing emphasis on <strong>(E) __________</strong> investing reflects a shift in consumer priorities, with individuals increasingly seeking investments that align with their values, such as sustainability and social responsibility. This trend challenges traditional investment strategies and encourages financial advisors to develop more holistic approaches to asset management.</p><br><p><strong>Which word comes in the blank labelled A?</strong></p>", "options": ["<p>traditional</p>", "<p>manual</p>", "<p>physical</p>", "<p>digital</p>", "<p>hybrid</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The context of the passage discusses banking that utilizes modern technology and platforms, which aligns with \"digital banking.\" \"Traditional,\" \"physical,\" and \"manual\" imply older, less advanced methods, while \"hybrid\" does not clearly convey the specific transformation discussed.</p>"}, {"question": "<p><strong>Below, a passage is given with five blanks labelled (A-E). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>In recent years, the financial landscape has undergone significant transformations, driven largely by technological advancements and changing consumer behaviors. One notable trend is the rise of <strong>(A) __________</strong> banking, which has enabled consumers to conduct transactions seamlessly through their smartphones and computers. This shift towards digital platforms has not only increased convenience but has also posed challenges related to <strong>(B) __________ </strong>security, as financial institutions strive to protect sensitive customer information from cyber threats.</p>\n<p>Additionally, the proliferation of financial technology (fintech) companies has introduced innovative solutions that <strong>(C) __________</strong> traditional banking practices. These companies leverage data analytics and artificial intelligence to provide personalized financial services, making it easier for consumers to manage their finances. However, this rapid evolution raises questions about the adequacy of <strong>(D) __________</strong> frameworks that govern the financial industry, as existing regulations may not be equipped to address the unique risks posed by fintech.</p>\n<p>Moreover, the growing emphasis on <strong>(E) __________</strong> investing reflects a shift in consumer priorities, with individuals increasingly seeking investments that align with their values, such as sustainability and social responsibility. This trend challenges traditional investment strategies and encourages financial advisors to develop more holistic approaches to asset management.</p><br><p><strong>Which word comes in the blank labelled B?</strong></p>", "options": ["<p>technological</p>", "<p>physical</p>", "<p>operational</p>", "<p>financial</p>", "<p>cyber</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>The passage highlights the challenges related to securing customer information in digital banking, making \"cybersecurity\" the most appropriate choice. Other options like \"technological,\" \"physical,\" and \"operational\" do not specifically address the security risks of digital transactions, while \"financial\" is too broad.</p>"}, {"question": "<p><strong>Below, a passage is given with five blanks labelled (A-E). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>In recent years, the financial landscape has undergone significant transformations, driven largely by technological advancements and changing consumer behaviors. One notable trend is the rise of <strong>(A) __________</strong> banking, which has enabled consumers to conduct transactions seamlessly through their smartphones and computers. This shift towards digital platforms has not only increased convenience but has also posed challenges related to <strong>(B) __________ </strong>security, as financial institutions strive to protect sensitive customer information from cyber threats.</p>\n<p>Additionally, the proliferation of financial technology (fintech) companies has introduced innovative solutions that <strong>(C) __________</strong> traditional banking practices. These companies leverage data analytics and artificial intelligence to provide personalized financial services, making it easier for consumers to manage their finances. However, this rapid evolution raises questions about the adequacy of <strong>(D) __________</strong> frameworks that govern the financial industry, as existing regulations may not be equipped to address the unique risks posed by fintech.</p>\n<p>Moreover, the growing emphasis on <strong>(E) __________</strong> investing reflects a shift in consumer priorities, with individuals increasingly seeking investments that align with their values, such as sustainability and social responsibility. This trend challenges traditional investment strategies and encourages financial advisors to develop more holistic approaches to asset management.</p><br><p><strong>Which word comes in the blank labelled C?</strong></p>", "options": ["<p>stabilize</p>", "<p>disrupt</p>", "<p>conform</p>", "<p>imitate</p>", "<p>simplify</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage notes how fintech companies introduce changes that challenge and alter traditional banking practices, which is best captured by \"disrupt.\" Options like \"stabilize,\" \"conform,\" \"imitate,\" and \"simplify\" do not convey the same transformative impact described.</p>"}, {"question": "<p><strong>Below, a passage is given with five blanks labelled (A-E). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>In recent years, the financial landscape has undergone significant transformations, driven largely by technological advancements and changing consumer behaviors. One notable trend is the rise of <strong>(A) __________</strong> banking, which has enabled consumers to conduct transactions seamlessly through their smartphones and computers. This shift towards digital platforms has not only increased convenience but has also posed challenges related to <strong>(B) __________ </strong>security, as financial institutions strive to protect sensitive customer information from cyber threats.</p>\n<p>Additionally, the proliferation of financial technology (fintech) companies has introduced innovative solutions that <strong>(C) __________</strong> traditional banking practices. These companies leverage data analytics and artificial intelligence to provide personalized financial services, making it easier for consumers to manage their finances. However, this rapid evolution raises questions about the adequacy of <strong>(D) __________</strong> frameworks that govern the financial industry, as existing regulations may not be equipped to address the unique risks posed by fintech.</p>\n<p>Moreover, the growing emphasis on <strong>(E) __________</strong> investing reflects a shift in consumer priorities, with individuals increasingly seeking investments that align with their values, such as sustainability and social responsibility. This trend challenges traditional investment strategies and encourages financial advisors to develop more holistic approaches to asset management.</p><br><p><strong>Which word comes in the blank labelled D?</strong></p>", "options": ["<p>innovative</p>", "<p>ethical</p>", "<p>regulatory</p>", "<p>financial</p>", "<p>managerial</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The mention of frameworks governing the financial industry suggests that \"regulatory\" frameworks are being discussed. Other options like \"innovative,\" \"ethical,\" \"financial,\" and \"managerial\" do not fit the context of frameworks meant to oversee and manage industry practices.</p>"}, {"question": "<p><strong>Below, a passage is given with five blanks labelled (A-E). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>In recent years, the financial landscape has undergone significant transformations, driven largely by technological advancements and changing consumer behaviors. One notable trend is the rise of <strong>(A) __________</strong> banking, which has enabled consumers to conduct transactions seamlessly through their smartphones and computers. This shift towards digital platforms has not only increased convenience but has also posed challenges related to <strong>(B) __________ </strong>security, as financial institutions strive to protect sensitive customer information from cyber threats.</p>\n<p>Additionally, the proliferation of financial technology (fintech) companies has introduced innovative solutions that <strong>(C) __________</strong> traditional banking practices. These companies leverage data analytics and artificial intelligence to provide personalized financial services, making it easier for consumers to manage their finances. However, this rapid evolution raises questions about the adequacy of <strong>(D) __________</strong> frameworks that govern the financial industry, as existing regulations may not be equipped to address the unique risks posed by fintech.</p>\n<p>Moreover, the growing emphasis on <strong>(E) __________</strong> investing reflects a shift in consumer priorities, with individuals increasingly seeking investments that align with their values, such as sustainability and social responsibility. This trend challenges traditional investment strategies and encourages financial advisors to develop more holistic approaches to asset management.</p><br><p><strong>Which word comes in the blank labelled E?</strong></p>", "options": ["<p>passive</p>", "<p>ethical</p>", "<p>speculative</p>", "<p>aggressive</p>", "<p>conservative</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage discusses a shift in consumer priorities towards investments that reflect values such as sustainability, making \"ethical\" investing the best fit. Options like \"passive,\" \"speculative,\" \"aggressive,\" and \"conservative\" do not capture this focus on values and responsibility in investment choices.</p>"}, {"question": "<p><strong>In each of the following sentences there are two blank spaces. Below each sentence five pairs of words are given. Find out which pair of words can be filled up in the blanks in the sentence in the same sequence to make the sentence grammatically and meaningfully correct.</strong></p><br><p><strong>As AI continues to evolve and _______ every aspect of the industry, it is essential for businesses to embrace innovation, adapt to technological advancements, and prioritise ethical considerations to _______ the full potential of AI while ensuring inclusivity, fairness, and security in the e-commerce ecosystem.</strong></p>", "options": ["<p>permeate, harness</p>", "<p>infiltrate, constrain</p>", "<p>dominate, hinder</p>", "<p>disrupt, exploit</p>", "<p>invade, limit</p>"], "correctIndex": 0, "solution": "<p><strong>Answer:</strong><strong> A</strong></p>\n<p>The Correct Option is: a) permeate, harness</p>\n<p>\"Permeate\" means to spread or diffuse through, which accurately describes AI affecting every part of the industry.</p>\n<p>\"Harness\" means to control and make use of (resources), especially to produce energy, which fits the context of leveraging AI's full potential.</p>\n<p>b). infiltrate, constrain: \"Infiltrate\" carries a negative connotation of entering or gaining access to something surreptitiously, which is not appropriate in a positive business context.</p>\n<p>\"Constrain\" means to restrict or limit, which is the opposite of what businesses should do to utilize AI effectively.</p>\n<p>c). dominate, hinder: \"Dominate\" implies overpowering, which could be seen as negative and doesn't align with the collaborative and integrated connotation of \"permeate.\"</p>\n<p>\"Hinder\" means to create difficulties or obstacles, which is the opposite of utilizing AI's potential.</p>\n<p>d). disrupt, exploit: \"Disrupt\" implies causing significant change that interrupts the normal course, which might not accurately describe the gradual and comprehensive spread of AI.</p>\n<p>\"Exploit\" often carries a negative connotation of using something unfairly or selfishly, which is not aligned with the positive goal of \"harness.\"</p>\n<p>e). invade, limit: \"Invade\" implies entering forcibly, which carries a negative connotation and doesn't suit the positive integration of AI.</p>\n<p>\"Limit\" means to restrict, which contradicts the idea of fully utilizing AI's potential.</p>\n<p>In summary, option (a) \"permeate, harness\" provides the best fit for maintaining both the coherence and meaning of the sentence. It effectively conveys the idea that AI is spreading through every aspect of the industry and that businesses should fully utilize its potential while maintaining ethical standards.</p>"}, {"question": "<p><strong>In each of the following sentences there are two blank spaces. Below each sentence five pairs of words are given. Find out which pair of words can be filled up in the blanks in the sentence in the same sequence to make the sentence grammatically and meaningfully correct.</strong></p><br><p><strong>A serious heat and water ________ that has already claimed lives and is threatening many more is ________ the northern parts of India, including the Capital.</strong></p>", "options": ["<p>shortage, aiding</p>", "<p>crisis, assisting</p>", "<p>emergency, alleviating</p>", "<p>dilemma, helping</p>", "<p>catastrophe, plaguing</p>"], "correctIndex": 4, "solution": "<p><strong>Answer:</strong><strong> E</strong></p>\n<p>The Correct Option is: e) catastrophe, plaguing</p>\n<p>\"Catastrophe\" means a sudden and widespread disaster, which accurately describes a serious heat and water crisis.</p>\n<p>\"Plaguing\" means causing continual trouble or distress, fitting well to describe the ongoing impact on northern parts of India.</p>\n<p>a). shortage, aiding: \"Shortage\" does not convey the severity implied by \"catastrophe.\"</p>\n<p>\"Aiding\" means helping or supporting, which is the opposite of causing distress.</p>\n<p>b). crisis, assisting: \"Crisis\" is appropriate but \"catastrophe\" conveys a greater severity, making it a better fit.</p>\n<p>\"Assisting\" means helping or supporting, which is the opposite of causing distress.</p>\n<p>c). emergency, alleviating: \"Emergency\" is appropriate but does not capture the long-term impact implied by \"catastrophe.\"</p>\n<p>\"Alleviating\" means making a problem less severe, which is the opposite of causing distress.</p>\n<p>d). dilemma, helping: \"Dilemma\" implies a difficult choice rather than a disaster.</p>\n<p>\"Helping\" means providing assistance, which is the opposite of causing distress.</p>\n<p>In summary, option (e) \"catastrophe, plaguing\" provides the best fit for maintaining both the coherence and meaning of the sentence. It effectively conveys the idea of a severe heat and water crisis causing ongoing distress in the northern parts of India.</p>"}, {"question": "<p><strong>In each of the following sentences there are two blank spaces. Below each sentence five pairs of words are given. Find out which pair of words can be filled up in the blanks in the sentence in the same sequence to make the sentence grammatically and meaningfully correct.</strong></p><br><p><strong>Fadnavis and the other senior BJP leaders had termed Ajit as the _______ of corruption but they found no ______ in forming a coalition Government with him.</strong></p>", "options": ["<p>symbol, issue</p>", "<p>embodiment, qualms</p>", "<p>epitome, fear</p>", "<p>personification, problem</p>", "<p>incarnation, concern</p>"], "correctIndex": 1, "solution": "<p><strong>Answer:</strong><strong> B</strong></p>\n<p>The Correct Option is: b) embodiment, qualms</p>\n<p>\"Embodiment\" means a tangible or visible form of an idea, quality, or feeling, which fits well to describe Ajit as representing corruption.</p>\n<p>\"Qualms\" means feelings of doubt or uneasiness, which accurately describes the lack of hesitation in forming a coalition.</p>\n<p>a). symbol, issue: \"Symbol\" is close in meaning to \"embodiment\" but doesn't capture the same depth of representation.</p>\n<p>\"Issue\" means a point of discussion or debate, which doesn't fit the context of having no hesitation or doubt.</p>\n<p>c). epitome, fear: \"Epitome\" is another word that can mean a perfect example, but \"embodiment\" is more fitting in this context.</p>\n<p>\"Fear\" doesn't fit well with the context; \"qualms\" is a more appropriate term for hesitation or doubt.</p>\n<p>d). personification, problem: \"Personification\" means attributing human characteristics to something non-human, which is close in meaning to \"embodiment\" but less direct.</p>\n<p>\"Problem\" is too vague and doesn't specifically address the concept of hesitation or doubt.</p>\n<p>e). incarnation, concern: \"Incarnation\" implies a more literal embodiment, often with religious connotations, making \"embodiment\" a better choice.</p>\n<p>\"Concern\" could be interpreted in various ways and doesn't specifically address the idea of hesitation or doubt like \"qualms\" does.</p>\n<p>In summary, option (b) \"embodiment, qualms\" provides the best fit for maintaining both the coherence and meaning of the sentence. It effectively conveys the contradiction of describing Ajit as a representation of corruption while having no hesitation in forming a coalition with him.</p>"}, {"question": "<p><strong>In each of the following sentences there are two blank spaces. Below each sentence five pairs of words are given. Find out which pair of words can be filled up in the blanks in the sentence in the same sequence to make the sentence grammatically and meaningfully correct.</strong></p><br><p><strong>The one idea that is deeply ________ in the hypersensitive Bengali psyche is the belief that the Centre, as in the government in New Delhi, is biased and works actively to _______ the state of many things, including a bigger share in power and a legitimate share of the pie of benefits that ought to flow into West Bengal.</strong></p>", "options": ["<p>implanted, support</p>", "<p>rooted, enhance</p>", "<p>ingrained, deprive</p>", "<p>embedded, favour</p>", "<p>entrenched, enrich</p>"], "correctIndex": 2, "solution": "<p><strong>Answer:</strong><strong> C</strong></p>\n<p>The Correct Option is: c) ingrained, deprive</p>\n<p>\"Ingrained\" means firmly fixed or established, which accurately describes an idea that is deeply embedded in the psyche.</p>\n<p>\"Deprive\" means to deny someone the possession or use of something, fitting well with the context of the Centre withholding benefits.</p>\n<p>a). implanted, support: \"Implanted\" can mean fixed securely or deeply, but \"ingrained\" is more commonly used in this context.</p>\n<p>\"Support\" means to bear all or part of the weight, which is the opposite of \"deprive\" and doesn't fit the context of the sentence.</p>\n<p>b). rooted, enhance: \"Rooted\" means established deeply and firmly, similar to \"ingrained,\" but \"ingrained\" better conveys the depth of the belief.</p>\n<p>\"Enhance\" means to improve the quality, value, or extent of something, which is the opposite of \"deprive.\"</p>\n<p>d). embedded, favour: \"Embedded\" means fixed firmly and deeply in a surrounding mass, but \"ingrained\" is more appropriate for describing a psychological belief.</p>\n<p>\"Favour\" means to show preferential treatment, which doesn't fit the context of the Centre's supposed actions against the state.</p>\n<p>e). entrenched, enrich: \"Entrenched\" means firmly established and difficult to change, similar to \"ingrained,\" but \"ingrained\" is a more suitable choice in this context.</p>\n<p>\"Enrich\" means to improve or enhance the quality or value of something, which is the opposite of \"deprive.\"</p>\n<p>In summary, option (c) \"ingrained, deprive\" provides the best fit for maintaining both the coherence and meaning of the sentence. It effectively conveys the deeply embedded belief in the Bengali psyche that the Centre is biased and works to deny the state its fair share of power and benefits.</p>"}, {"question": "<p><strong>In each of the following sentences there are two blank spaces. Below each sentence five pairs of words are given. Find out which pair of words can be filled up in the blanks in the sentence in the same sequence to make the sentence grammatically and meaningfully correct.</strong></p><br><p><strong>Indian voters have shown the world that there is still hope for democracy, that voters can and will cut _______ down to size, that the narrative of hate will be rejected and that ________ propaganda can be countered through the power of the ballot.</strong></p>", "options": ["<p>elites, noble</p>", "<p>leaders, virtuous</p>", "<p>tyrants, malicious</p>", "<p>politicians, beneficial</p>", "<p>populists, vile</p>"], "correctIndex": 4, "solution": "<p><strong>Answer:</strong><strong> E</strong></p>\n<p>The Correct Option is: e) populists, vile</p>\n<p>\"Populists\" refers to politicians who claim to represent the common people, often using rhetoric that appeals to popular desires and prejudices.</p>\n<p>\"Vile\" means extremely unpleasant or morally bad, which fits well with the context of hateful propaganda.</p>\n<p>a). elites, noble: \"Elites\" refers to a select group that is superior in terms of ability or qualities, which doesn't specifically capture the idea of politicians using populist tactics.</p>\n<p>\"Noble\" means having fine personal qualities or high moral principles, which is the opposite of \"vile\" and doesn't fit the context of propaganda being countered.</p>\n<p>b). leaders, virtuous: \"Leaders\" is too general and doesn't capture the specific idea of populists.</p>\n<p>\"Virtuous\" means having high moral standards, which is the opposite of \"vile.\"</p>\n<p>c). tyrants, malicious: \"Tyrants\" refers to cruel and oppressive rulers, which is a different concept from populists who use rhetoric to appeal to the masses.</p>\n<p>\"Malicious\" means intending to do harm, which could fit the context but isn't as precise as \"vile\" for describing the nature of the propaganda.</p>\n<p>d). politicians, beneficial: \"Politicians\" is too broad and doesn't capture the specific idea of populists.</p>\n<p>\"Beneficial\" means favourable or advantageous, which is the opposite of \"vile.\"</p>\n<p>In summary, option (e) \"populists, vile\" provides the best fit for maintaining both the coherence and meaning of the sentence. It effectively conveys the idea that Indian voters reject populist leaders who use hateful and morally bad propaganda.</p>"}, {"question": "<p><strong>Read the passage carefully and answer the questions below.</strong></p>\n<p>The second wave of the pandemic seems to be finally receding. The official number of infections has plateaued, though deaths continue to rise and it may be some time before they <strong>turn a corner</strong>. Declining covid infections are good news. But it will be premature to declare the end of the second wave based on official figures. Independent media reports show these tallies to be gross underestimates of the ground reality, and more so in rural areas. This is difficult to verify. The general consensus, however, is that the actual levels of infections and deaths are much higher than officially reported. Doubts over the official numbers apart, what’s also worrying is the geographical spread of the infection. <strong>The pandemic this time has affected rural areas disproportionately more. Within rural areas, the spread is far worst in states and districts with higher concentrations of the poor and lower access to health infrastructure.</strong> Rural areas, therefore, hold the key to dealing with the pandemic. Given the poor state of health infrastructure in a majority of the districts that are contributing a bulk of the cases, the challenge is not just to deal with infections, but also ensure a reduction in their numbers. Improving rickety health infrastructure in a short span of time may be difficult. The best strategy, therefore, would be to increase the rate of vaccinations in such districts. Unfortunately, data suggests that the reverse is happening, with the rate of vaccination much higher in urban metropolitan areas than in rural areas.</p>\n<p>The country’s health crisis is a bigger challenge in rural areas at this point. It may yet worsen for some time before cases begin to decline. The real test, however, will begin once the rise in infections is brought under control and the rural economy has to be rebuilt. It has already been under stress for some time now. Recent new data isn’t available, but two high-frequency indicators of income and employment suggest a worsening of rural distress. Numbers from the labour bureau suggest that real wages for March 2021 were lower than in March 2019 for both agricultural and non-agricultural workers.  What’s also worrying is that, unlike last year, India’s agricultural sector is showing signs of a sudden spike in stress. Recent data indicates a rise in input costs and decline in credit availability in rural areas. Some of this is already visible in the slowdown in sales of agricultural machinery and decline in fertilizer consumption. The fall in demand is also reflected in a decline in prices of most agricultural commodities, except those that are imported, such as pulses and edible oil. Further, a fall in prices of vegetables and cereals will likely hurt agricultural incomes, thus making a rural recovery distant. However, unlike 2020, when the government had announced three large packages to help revive the informal sector and increased social-sector expenditure, this time there has not been any such fiscal package, except for support in the form of free foodgrain to be distributed through the public distribution system (PDS) for two months. Despite a massive increase in demand for work under the rural employment guarantee scheme, the budget for it has not yet been enhanced. There has also not been any announcement on income transfers to vulnerable groups.</p>\n<p>There is a glaring lack of fiscal support from the government at a time when India’s rural economy has been in deep distress for at least a year. High out-of-pocket health expenses and the loss of jobs and incomes are building up towards an even larger humanitarian crisis. This is likely to ________________________ <strong>(p)</strong> India’s demand recovery. Unlike last year, when a revival was driven partly by a rebound in discretionary spending in rural areas, this time it will be difficult even for essential spending to be maintained in the absence of state support. Containing the pandemic is the immediate goal for India’s central and state governments. But ignoring other fast-worsening conditions in the rural hinterland will aggravate pain. Any delay in increasing public outlays on rural areas will, therefore, weigh not just on the rural economy, but also on chances of a broad economic revival.</p><br><p><strong>Why did the second wave affect rural India more as compared to urban India, according to the passage?</strong></p>", "options": ["<p>Ill-equipped medical infrastructure in villages leaves people struggling to cope with the deadly virus.</p>", "<p>Villages will be hit hardest by a shortage of vaccines that is hobbling the country&rsquo;s inoculation drive.</p>", "<p>Limited awareness about the extent of the spread of the pandemic.</p>", "<p>People are reluctant to follow quarantine protocols in rural areas this will lead to a surge in covid cases.</p>", "<p>Both A and B</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p><strong>Refer to the first paragraph -</strong> “The pandemic this time has affected rural areas disproportionately more. Within rural areas, the spread is far worse in states and districts with higher concentrations of the poor and lower access to health</p>\n<p>infrastructure” and “The best strategy, therefore, would be to increase the rate of vaccinations in such districts. Unfortunately, data suggests that the reverse is happening, with the rate of vaccination much higher in urban metropolitan areas than in rural areas.” From the above quoted lines we can conclude that option E is the right answer. </p>"}, {"question": "<p><strong>Read the passage carefully and answer the questions below.</strong></p>\n<p>The second wave of the pandemic seems to be finally receding. The official number of infections has plateaued, though deaths continue to rise and it may be some time before they <strong>turn a corner</strong>. Declining covid infections are good news. But it will be premature to declare the end of the second wave based on official figures. Independent media reports show these tallies to be gross underestimates of the ground reality, and more so in rural areas. This is difficult to verify. The general consensus, however, is that the actual levels of infections and deaths are much higher than officially reported. Doubts over the official numbers apart, what’s also worrying is the geographical spread of the infection. <strong>The pandemic this time has affected rural areas disproportionately more. Within rural areas, the spread is far worst in states and districts with higher concentrations of the poor and lower access to health infrastructure.</strong> Rural areas, therefore, hold the key to dealing with the pandemic. Given the poor state of health infrastructure in a majority of the districts that are contributing a bulk of the cases, the challenge is not just to deal with infections, but also ensure a reduction in their numbers. Improving rickety health infrastructure in a short span of time may be difficult. The best strategy, therefore, would be to increase the rate of vaccinations in such districts. Unfortunately, data suggests that the reverse is happening, with the rate of vaccination much higher in urban metropolitan areas than in rural areas.</p>\n<p>The country’s health crisis is a bigger challenge in rural areas at this point. It may yet worsen for some time before cases begin to decline. The real test, however, will begin once the rise in infections is brought under control and the rural economy has to be rebuilt. It has already been under stress for some time now. Recent new data isn’t available, but two high-frequency indicators of income and employment suggest a worsening of rural distress. Numbers from the labour bureau suggest that real wages for March 2021 were lower than in March 2019 for both agricultural and non-agricultural workers.  What’s also worrying is that, unlike last year, India’s agricultural sector is showing signs of a sudden spike in stress. Recent data indicates a rise in input costs and decline in credit availability in rural areas. Some of this is already visible in the slowdown in sales of agricultural machinery and decline in fertilizer consumption. The fall in demand is also reflected in a decline in prices of most agricultural commodities, except those that are imported, such as pulses and edible oil. Further, a fall in prices of vegetables and cereals will likely hurt agricultural incomes, thus making a rural recovery distant. However, unlike 2020, when the government had announced three large packages to help revive the informal sector and increased social-sector expenditure, this time there has not been any such fiscal package, except for support in the form of free foodgrain to be distributed through the public distribution system (PDS) for two months. Despite a massive increase in demand for work under the rural employment guarantee scheme, the budget for it has not yet been enhanced. There has also not been any announcement on income transfers to vulnerable groups.</p>\n<p>There is a glaring lack of fiscal support from the government at a time when India’s rural economy has been in deep distress for at least a year. High out-of-pocket health expenses and the loss of jobs and incomes are building up towards an even larger humanitarian crisis. This is likely to ________________________ <strong>(p)</strong> India’s demand recovery. Unlike last year, when a revival was driven partly by a rebound in discretionary spending in rural areas, this time it will be difficult even for essential spending to be maintained in the absence of state support. Containing the pandemic is the immediate goal for India’s central and state governments. But ignoring other fast-worsening conditions in the rural hinterland will aggravate pain. Any delay in increasing public outlays on rural areas will, therefore, weigh not just on the rural economy, but also on chances of a broad economic revival.</p><br><p><strong>Which of the following is true as per the context of the passage?</strong></p>", "options": ["<p>The rise in demand is reflected in a surge in prices of most agricultural commodities.</p>", "<p>A hike in prices of vegetables and cereals will likely boost agricultural incomes, thus making a rural recovery distant.</p>", "<p>Two high-frequency indicators of inflation and employment suggest a worsening of rural suffering.</p>", "<p>Free foodgrain is to be distributed through the public distribution system (PDS) for two months.</p>", "<p>None is true</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>Only option D is true to the context of the passage which is mentioned in the second paragraph, remaining all the options are not correct to the context.</p>\n<p>Correct statements-</p>\n<p>A- The fall in demand is also reflected in a decline in prices of most agricultural commodities</p>\n<p>B- A fall in prices of vegetables and cereals will likely hurt agricultural incomes, thus making a rural recovery distant.</p>\n<p>C- Two high-frequency indicators of income and employment suggest a worsening of rural distress.</p>\n<p> </p>"}, {"question": "<p><strong>Read the passage carefully and answer the questions below.</strong></p>\n<p>The second wave of the pandemic seems to be finally receding. The official number of infections has plateaued, though deaths continue to rise and it may be some time before they <strong>turn a corner</strong>. Declining covid infections are good news. But it will be premature to declare the end of the second wave based on official figures. Independent media reports show these tallies to be gross underestimates of the ground reality, and more so in rural areas. This is difficult to verify. The general consensus, however, is that the actual levels of infections and deaths are much higher than officially reported. Doubts over the official numbers apart, what’s also worrying is the geographical spread of the infection. <strong>The pandemic this time has affected rural areas disproportionately more. Within rural areas, the spread is far worst in states and districts with higher concentrations of the poor and lower access to health infrastructure.</strong> Rural areas, therefore, hold the key to dealing with the pandemic. Given the poor state of health infrastructure in a majority of the districts that are contributing a bulk of the cases, the challenge is not just to deal with infections, but also ensure a reduction in their numbers. Improving rickety health infrastructure in a short span of time may be difficult. The best strategy, therefore, would be to increase the rate of vaccinations in such districts. Unfortunately, data suggests that the reverse is happening, with the rate of vaccination much higher in urban metropolitan areas than in rural areas.</p>\n<p>The country’s health crisis is a bigger challenge in rural areas at this point. It may yet worsen for some time before cases begin to decline. The real test, however, will begin once the rise in infections is brought under control and the rural economy has to be rebuilt. It has already been under stress for some time now. Recent new data isn’t available, but two high-frequency indicators of income and employment suggest a worsening of rural distress. Numbers from the labour bureau suggest that real wages for March 2021 were lower than in March 2019 for both agricultural and non-agricultural workers.  What’s also worrying is that, unlike last year, India’s agricultural sector is showing signs of a sudden spike in stress. Recent data indicates a rise in input costs and decline in credit availability in rural areas. Some of this is already visible in the slowdown in sales of agricultural machinery and decline in fertilizer consumption. The fall in demand is also reflected in a decline in prices of most agricultural commodities, except those that are imported, such as pulses and edible oil. Further, a fall in prices of vegetables and cereals will likely hurt agricultural incomes, thus making a rural recovery distant. However, unlike 2020, when the government had announced three large packages to help revive the informal sector and increased social-sector expenditure, this time there has not been any such fiscal package, except for support in the form of free foodgrain to be distributed through the public distribution system (PDS) for two months. Despite a massive increase in demand for work under the rural employment guarantee scheme, the budget for it has not yet been enhanced. There has also not been any announcement on income transfers to vulnerable groups.</p>\n<p>There is a glaring lack of fiscal support from the government at a time when India’s rural economy has been in deep distress for at least a year. High out-of-pocket health expenses and the loss of jobs and incomes are building up towards an even larger humanitarian crisis. This is likely to ________________________ <strong>(p)</strong> India’s demand recovery. Unlike last year, when a revival was driven partly by a rebound in discretionary spending in rural areas, this time it will be difficult even for essential spending to be maintained in the absence of state support. Containing the pandemic is the immediate goal for India’s central and state governments. But ignoring other fast-worsening conditions in the rural hinterland will aggravate pain. Any delay in increasing public outlays on rural areas will, therefore, weigh not just on the rural economy, but also on chances of a broad economic revival.</p><br><p><strong>Which of the following is the immediate goal of India’s central and state governments?</strong></p>", "options": ["<p>Urban to rural transmission should be quickly curbed by setting up temporary quarantine shelters and providing food for migrant labourers.</p>", "<p>Improve availability and equitable distribution of the jabs in urban and rural India.</p>", "<p>Greater public spending to ease rural distress to help support pandemic-hit aggregate demand.</p>", "<p>Mass vaccination will have to be deployed to prevent a potential third wave.</p>", "<p>None of the above.</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>If you go through the last paragraph carefully you will find that “Containing the pandemic is the immediate goal for India’s central and state governments” and this one is not mentioned in any of the above statements. Hence, option E is the correct answer.</p>"}, {"question": "<p><strong>Read the passage carefully and answer the questions below.</strong></p>\n<p>The second wave of the pandemic seems to be finally receding. The official number of infections has plateaued, though deaths continue to rise and it may be some time before they <strong>turn a corner</strong>. Declining covid infections are good news. But it will be premature to declare the end of the second wave based on official figures. Independent media reports show these tallies to be gross underestimates of the ground reality, and more so in rural areas. This is difficult to verify. The general consensus, however, is that the actual levels of infections and deaths are much higher than officially reported. Doubts over the official numbers apart, what’s also worrying is the geographical spread of the infection. <strong>The pandemic this time has affected rural areas disproportionately more. Within rural areas, the spread is far worst in states and districts with higher concentrations of the poor and lower access to health infrastructure.</strong> Rural areas, therefore, hold the key to dealing with the pandemic. Given the poor state of health infrastructure in a majority of the districts that are contributing a bulk of the cases, the challenge is not just to deal with infections, but also ensure a reduction in their numbers. Improving rickety health infrastructure in a short span of time may be difficult. The best strategy, therefore, would be to increase the rate of vaccinations in such districts. Unfortunately, data suggests that the reverse is happening, with the rate of vaccination much higher in urban metropolitan areas than in rural areas.</p>\n<p>The country’s health crisis is a bigger challenge in rural areas at this point. It may yet worsen for some time before cases begin to decline. The real test, however, will begin once the rise in infections is brought under control and the rural economy has to be rebuilt. It has already been under stress for some time now. Recent new data isn’t available, but two high-frequency indicators of income and employment suggest a worsening of rural distress. Numbers from the labour bureau suggest that real wages for March 2021 were lower than in March 2019 for both agricultural and non-agricultural workers.  What’s also worrying is that, unlike last year, India’s agricultural sector is showing signs of a sudden spike in stress. Recent data indicates a rise in input costs and decline in credit availability in rural areas. Some of this is already visible in the slowdown in sales of agricultural machinery and decline in fertilizer consumption. The fall in demand is also reflected in a decline in prices of most agricultural commodities, except those that are imported, such as pulses and edible oil. Further, a fall in prices of vegetables and cereals will likely hurt agricultural incomes, thus making a rural recovery distant. However, unlike 2020, when the government had announced three large packages to help revive the informal sector and increased social-sector expenditure, this time there has not been any such fiscal package, except for support in the form of free foodgrain to be distributed through the public distribution system (PDS) for two months. Despite a massive increase in demand for work under the rural employment guarantee scheme, the budget for it has not yet been enhanced. There has also not been any announcement on income transfers to vulnerable groups.</p>\n<p>There is a glaring lack of fiscal support from the government at a time when India’s rural economy has been in deep distress for at least a year. High out-of-pocket health expenses and the loss of jobs and incomes are building up towards an even larger humanitarian crisis. This is likely to ________________________ <strong>(p)</strong> India’s demand recovery. Unlike last year, when a revival was driven partly by a rebound in discretionary spending in rural areas, this time it will be difficult even for essential spending to be maintained in the absence of state support. Containing the pandemic is the immediate goal for India’s central and state governments. But ignoring other fast-worsening conditions in the rural hinterland will aggravate pain. Any delay in increasing public outlays on rural areas will, therefore, weigh not just on the rural economy, but also on chances of a broad economic revival.</p><br><p><strong>Which of the following can be inferred from the passage above?</strong></p>", "options": ["<p>The slow pace of inoculations within the countryside will make it harder to counter the fury of India&rsquo;s second wave.</p>", "<p>A rural recovery is critical to the overall revival of India&rsquo;s economy.</p>", "<p>With already elevated global food prices, the possibility of India having to engage in food imports would create disruptions in global markets</p>", "<p>Disparity in healthcare services between Urban and Rural areas will exacerbate the loss of life in rural India.</p>", "<p>The awareness of people in the villages and the cooperation of village governing bodies is just as important in controlling this spread.</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>If you read the above passage carefully you came to know that it is all about rural India and its contribution in overall development because urban recovery alone will not contribute to the revival of any economy and both rural plus urban recovery must go hand in hand if one wants to achieve overall revival. So the correct option is “B”.</p>"}, {"question": "<p><strong>Read the passage carefully and answer the questions below.</strong></p>\n<p>The second wave of the pandemic seems to be finally receding. The official number of infections has plateaued, though deaths continue to rise and it may be some time before they <strong>turn a corner</strong>. Declining covid infections are good news. But it will be premature to declare the end of the second wave based on official figures. Independent media reports show these tallies to be gross underestimates of the ground reality, and more so in rural areas. This is difficult to verify. The general consensus, however, is that the actual levels of infections and deaths are much higher than officially reported. Doubts over the official numbers apart, what’s also worrying is the geographical spread of the infection. <strong>The pandemic this time has affected rural areas disproportionately more. Within rural areas, the spread is far worst in states and districts with higher concentrations of the poor and lower access to health infrastructure.</strong> Rural areas, therefore, hold the key to dealing with the pandemic. Given the poor state of health infrastructure in a majority of the districts that are contributing a bulk of the cases, the challenge is not just to deal with infections, but also ensure a reduction in their numbers. Improving rickety health infrastructure in a short span of time may be difficult. The best strategy, therefore, would be to increase the rate of vaccinations in such districts. Unfortunately, data suggests that the reverse is happening, with the rate of vaccination much higher in urban metropolitan areas than in rural areas.</p>\n<p>The country’s health crisis is a bigger challenge in rural areas at this point. It may yet worsen for some time before cases begin to decline. The real test, however, will begin once the rise in infections is brought under control and the rural economy has to be rebuilt. It has already been under stress for some time now. Recent new data isn’t available, but two high-frequency indicators of income and employment suggest a worsening of rural distress. Numbers from the labour bureau suggest that real wages for March 2021 were lower than in March 2019 for both agricultural and non-agricultural workers.  What’s also worrying is that, unlike last year, India’s agricultural sector is showing signs of a sudden spike in stress. Recent data indicates a rise in input costs and decline in credit availability in rural areas. Some of this is already visible in the slowdown in sales of agricultural machinery and decline in fertilizer consumption. The fall in demand is also reflected in a decline in prices of most agricultural commodities, except those that are imported, such as pulses and edible oil. Further, a fall in prices of vegetables and cereals will likely hurt agricultural incomes, thus making a rural recovery distant. However, unlike 2020, when the government had announced three large packages to help revive the informal sector and increased social-sector expenditure, this time there has not been any such fiscal package, except for support in the form of free foodgrain to be distributed through the public distribution system (PDS) for two months. Despite a massive increase in demand for work under the rural employment guarantee scheme, the budget for it has not yet been enhanced. There has also not been any announcement on income transfers to vulnerable groups.</p>\n<p>There is a glaring lack of fiscal support from the government at a time when India’s rural economy has been in deep distress for at least a year. High out-of-pocket health expenses and the loss of jobs and incomes are building up towards an even larger humanitarian crisis. This is likely to ________________________ <strong>(p)</strong> India’s demand recovery. Unlike last year, when a revival was driven partly by a rebound in discretionary spending in rural areas, this time it will be difficult even for essential spending to be maintained in the absence of state support. Containing the pandemic is the immediate goal for India’s central and state governments. But ignoring other fast-worsening conditions in the rural hinterland will aggravate pain. Any delay in increasing public outlays on rural areas will, therefore, weigh not just on the rural economy, but also on chances of a broad economic revival.</p><br><p><strong>What is the meaning of the highlighted idiom “turn a corner”?</strong></p>", "options": ["<p>To begin doing an activity completely from the beginning</p>", "<p>To pass the critical point and start to improve</p>", "<p>To think carefully about a situation so that you can decide what to do about it</p>", "<p>To deal with each day&rsquo;s problems as they happen</p>", "<p>None of the above</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>Meaning of the highlighted idiom<strong> “</strong><strong>turn a corner”</strong> is to get past the most difficult area or period in something and begin to improve so the correct answer is option “B”.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-71)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-71)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-44)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>Given below is a word followed by three sentences. You need to understand whether word is used correctly or not. You have to choose correct sentence in which word has been used correctly.</strong></p><br><p><strong>Articulate</strong></p>\n<p><strong>1).</strong> Her <strong>articulate</strong> presentation of the research findings was both compelling and easy to understand, earning her praise from the entire panel.</p>\n<p><strong>2).</strong> Despite his extensive knowledge on the subject, his inability to <strong>articulate</strong> his thoughts clearly led to confusion among his audience.</p>\n<p><strong>3).</strong> The professor’s <strong>articulate</strong> arguments were well-received, providing a lucid explanation of the complex theories under discussion.</p>", "options": ["<p>Only 1 and 2</p>", "<p>Only 2</p>", "<p>Only 3</p>", "<p>Only 1 and 3</p>", "<p>All 1, 2, and 3</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>Sentences 1, 2 and 3 use \"articulate\" in a positive context, describing clear and effective communication.</p>"}, {"question": "<p><strong>Given below is a word followed by three sentences. You need to understand whether word is used correctly or not. You have to choose correct sentence in which word has been used correctly.</strong></p><br><p><strong>Meticulous</strong></p>\n<p><strong>1).</strong> The <strong>meticulous</strong> scientist carefully documented every detail of the experiment to ensure the results could be replicated accurately.</p>\n<p><strong>2).</strong> His <strong>meticulous</strong> planning for the event left no room for error, demonstrating his thorough attention to detail.</p>\n<p><strong>3).</strong> The haphazard approach to organizing the data showed a lack of <strong>meticulousness</strong>, resulting in numerous inaccuracies.</p>", "options": ["<p>Only 1 and 2</p>", "<p>Only 2 and 3</p>", "<p>Only 3</p>", "<p>Only 1 and 3</p>", "<p>All 1, 2, and 3</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>Sentences 1,2 and 3 describe actions characterized by thoroughness and attention to detail, embodying meticulousness. </p>"}, {"question": "<p><strong>Given below is a word followed by three sentences. You need to understand whether word is used correctly or not. You have to choose correct sentence in which word has been used correctly.</strong></p><br><p><strong>Pragmatic</strong></p>\n<p><strong>1).</strong> Her <strong>pragmatic</strong> approach to solving the problem involved analyzing the practical implications of each potential solution and choosing the most feasible one.</p>\n<p><strong>2).</strong> The team’s <strong>pragmatic</strong> decision to implement the cost-effective measure, despite its initial unpopularity, ultimately led to substantial savings.</p>\n<p><strong>3).</strong> His idealistic views often clashed with the <strong>pragmatic</strong> needs of the project, leading to friction between the two approaches.</p>", "options": ["<p>All 1, 2, and 3</p>", "<p>Only 2 and 3</p>", "<p>Only 3</p>", "<p>Only 1 and 3</p>", "<p>Only 1 and 2</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Sentences 1, 2 and 3 describe approaches that focus on practicality and feasibility, embodying pragmatism. </p>"}, {"question": "<p><strong>Given below is a word followed by three sentences. You need to understand whether word is used correctly or not. You have to choose correct sentence in which word has been used correctly.</strong></p><br><p><strong>Persistent   </strong></p>\n<p><strong>1).</strong> The entrepreneur's persistent efforts to secure funding, despite numerous setbacks, eventually led to the successful launch of his startup.</p>\n<p><strong>2).</strong> His sporadic and inconsistent attempts at addressing the issue showed a lack of persistence and commitment.</p>\n<p><strong>3).</strong> Her persistent questioning during the investigation uncovered crucial evidence that had been overlooked by others.</p>", "options": ["<p>Only 1 and 2</p>", "<p>Only 2</p>", "<p>Only 3</p>", "<p>Only 1 and 3</p>", "<p>All 1, 2, and 3</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>Sentences 1 and 3 describe ongoing, determined efforts, embodying persistence. Sentence 2 describes attempts that are sporadic and lack commitment, indicating a lack of persistence.</p>"}, {"question": "<p><strong>Given below is a word followed by three sentences. You need to understand whether word is used correctly or not. You have to choose correct sentence in which word has been used correctly.</strong></p><br><p><strong>Adept</strong></p>\n<p><strong>1).</strong> The pianist, renowned for being adept at interpreting complex compositions, performed the intricate piece with remarkable skill and expression.</p>\n<p><strong>2).</strong> Her adept handling of the negotiations ensured that all parties were satisfied with the final agreement, demonstrating her proficiency in conflict resolution.</p>\n<p><strong>3).</strong> The new employee’s struggle to adapt to the demanding software highlighted his current lack of adeptness in using advanced tools.</p>", "options": ["<p>Only 1 and 2</p>", "<p>Only 2 and 3</p>", "<p>Only 3</p>", "<p>Only 1 and 3</p>", "<p>All 1, 2, and 3</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Sentences 1 and 2 describe high skill levels and proficiency, embodying adeptness. Sentence 3 describes difficulties in adapting to new tools, indicating a lack of adeptness.</p>"}, {"question": "<p><strong>In each of the following questions three sentences are given with a word highlighted in it and followed by five options. You are required to find out in which of the following sentences the word is inappropriately used from the given options.</strong></p><br><p><strong>I).</strong> The team's <strong>fractious</strong> behavior during the meeting hindered progress and collaboration on the project.</p>\n<p><strong>II).</strong> The new marketing strategy gained little <strong>traction</strong> among the target audience, leading to increased brand awareness and customer engagement.</p>\n<p><strong>III).</strong> After the storm, the small boat was left <strong>adrift</strong> in the vast open sea, at the mercy of the currents.</p>", "options": ["<p>Only I</p>", "<p>Only II</p>", "<p>Only III</p>", "<p>Both I and II</p>", "<p>Both II and III</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>I).</strong> In this sentence, \"fractious\" is correctly used to describe the team's unruly and quarrelsome behavior, which disrupted the meeting and impeded cooperation on the project.</p>\n<p><strong>II).</strong> In this sentence, the word \"traction\" is used incorrectly. The context suggests that the marketing strategy was successful, gaining attention and engagement, which contradicts the usual understanding of \"traction\" as a measure of success or progress. A more suitable term might be \"resistance\" or \"opposition\" to convey a lack of success.</p>\n<p><strong>III).</strong> In this sentence, \"adrift\" is correctly used to convey that the boat is floating without being anchored or under control, emphasizing its vulnerability in the open sea.</p>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>In each of the following questions three sentences are given with a word highlighted in it and followed by five options. You are required to find out in which of the following sentences the word is inappropriately used from the given options.</strong></p><br><p><strong>I).</strong> The <strong>tottering</strong> toddler skilfully navigated the playground equipment without any difficulty.</p>\n<p><strong>II).</strong> The mountain climbers faced an <strong>arduous</strong> journey, navigating steep slopes and unpredictable weather conditions to reach the summit.</p>\n<p><strong>III).</strong> The garden was adorned with a <strong>myriad</strong> of vibrant flowers, creating a breathtaking display of colours.</p>", "options": ["<p>Only I</p>", "<p>Only II</p>", "<p>Only III</p>", "<p>Both I and II</p>", "<p>Both I and III</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>I).</strong> In this sentence, \"tottering\" is used incorrectly. \"Tottering\" typically conveys a sense of unsteady or shaky movement, especially in the context of someone who is frail or unstable. However, the sentence suggests that the toddler navigated the playground equipment skilfully, which contradicts the usual meaning of \"tottering.\"</p>\n<p><strong>II).</strong> In this sentence, \"arduous\" is correctly used to describe the challenging and difficult nature of the climbers' journey.</p>\n<p><strong>III).</strong> In this sentence, \"myriad\" is correctly used to convey a large and diverse number of flowers in the garden, emphasizing the abundance and variety of colours.</p>\n<p>Therefore, option A is the correct answer.</p>"}, {"question": "<p><strong>In each of the following questions three sentences are given with a word highlighted in it and followed by five options. You are required to find out in which of the following sentences the word is inappropriately used from the given options.</strong></p><br><p><strong>I).</strong> The cheerful atmosphere in the park felt <strong>ominous</strong> as children laughed and played under the sunny sky.</p>\n<p><strong>II).</strong> Her constant <strong>bragging</strong> about her achievements made her unpopular among her colleagues.</p>\n<p><strong>III).</strong> The <strong>abrasive</strong> weather brought warmth and sunshine to the region, creating an enjoyable atmosphere for outdoor activities.</p>", "options": ["<p>Only I</p>", "<p>Only II</p>", "<p>Only III</p>", "<p>Both I and II</p>", "<p>Both I and III</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p><strong>I).</strong> In this sentence, \"ominous\" is used incorrectly because it is meant to describe a threatening or foreboding atmosphere, but the context contradicts this meaning by mentioning a cheerful atmosphere, children laughing, and a sunny sky.</p>\n<p><strong>II).</strong> In this sentence, \"bragging\" is used correctly to describe the act of excessively boasting or talking with pride about one's accomplishments, highlighting the negative impact on relationships with colleagues.</p>\n<p><strong>III).</strong> In this sentence, the word \"abrasive\" is used incorrectly. \"Abrasive\" typically means harsh, rough, or causing irritation, and it doesn't align with the positive description of weather bringing warmth and sunshine.</p>\n<p>Therefore, option E is the correct answer.</p>"}, {"question": "<p><strong>In each of the following questions three sentences are given with a word highlighted in it and followed by five options. You are required to find out in which of the following sentences the word is inappropriately used from the given options.</strong></p><br><p><strong>I).</strong> Despite numerous attempts, the depth of the ocean remains difficult to <strong>fathom</strong>, revealing the mysteries hidden beneath its surface.</p>\n<p><strong>II).</strong> The <strong>prevalence</strong> of smartphones has transformed the way people communicate and access information in the modern era.</p>\n<p><strong>III).</strong> In the midst of the joyful celebration, the atmosphere became <strong>sobering</strong> as people danced and laughed together.</p>", "options": ["<p>Only I</p>", "<p>Only II</p>", "<p>Only III</p>", "<p>Both I and II</p>", "<p>Both II and III</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: </strong><strong>C</strong></p>\n<p><strong>I).</strong> In this sentence, \"fathom\" is correctly used to convey the challenge of understanding or measuring the depth of the ocean.</p>\n<p><strong>II).</strong> In this sentence, \"prevalence\" is used correctly to indicate the widespread existence or occurrence of smartphones and their impact on society.</p>\n<p><strong>III).</strong> In this sentence, \"sobering\" is used incorrectly. \"Sobering\" typically refers to something serious, solemn, or thought-provoking, often causing one to become more serious or thoughtful. The context of a joyful celebration contradicts the usual meaning of \"sobering.\"</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>In each of the following questions three sentences are given with a word highlighted in it and followed by five options. You are required to find out in which of the following sentences the word is inappropriately used from the given options.</strong></p><br><p><strong>I).</strong> The government deployed additional troops to suppress the <strong>insurgent</strong> forces seeking to overthrow the established regime.</p>\n<p><strong>II).</strong> His <strong>exuberance</strong> for solitude was evident as he eagerly joined social gatherings and engaged in lively conversations with enthusiasm.</p>\n<p><strong>III).</strong> His daily routine of meditation and mindfulness was seen as a <strong>peril</strong> to his colleagues, as it brought about a calm and focused work environment.</p>", "options": ["<p>Only I</p>", "<p>Only II</p>", "<p>Only III</p>", "<p>Both I and II</p>", "<p>Both II and III</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: </strong><strong>E</strong></p>\n<p><strong>I).</strong> In this sentence, \"insurgent\" is correctly used to describe forces or individuals who are rebelling against or opposing the established authority or government.</p>\n<p><strong>II).</strong> In this sentence, \"exuberance\" is used incorrectly. Exuberance typically refers to an enthusiastic and lively quality, often associated with social interaction or energetic activities. The sentence suggests the opposite—an enthusiasm for solitude, which is a more reserved and solitary state. A more appropriate term might be \"preference\" or \"fondness.\"</p>\n<p><strong>III).</strong> In this sentence, \"peril\" is used incorrectly. \"Peril\" typically refers to serious and immediate danger or risk, but the sentence suggests that the routine of meditation and mindfulness is seen as a positive influence, creating a calm and focused work environment. A more suitable term might be \"benefit\" or \"advantage.\"</p>\n<p>Therefore, option E is the correct answer.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Trust can be everything, in governance. The can of worms that split open with the publication of results of the National Eligibility cum Entrance Test (NEET)-UG-2024 has elevated the entrance examination for medical (and dental) seats to a metaphor for distrust in the system, among the people. This year, dogged by accusations of paper leak, malpractices, and technical failures, besides the grant of grace marks to some students, NEET, which was conceived to <strong>homogenize</strong> selection on merit, has now morphed into a beast that is far removed from its original idea. The Supreme Court of India, on Thursday, rescheduled the NEET-UG hearing to July 18, to address complaints regarding irregularities and malpractices during the exam conducted by the National Testing Agency (NTA). A CBI investigation into the charges is ongoing. Meanwhile, the Centre has leaned heavily on a report, a data analysis, submitted by IIT Madras, examining the results to see if malpractices have occurred. The report’s executive summary claimed that there was no abnormality that was discovered in a center and city-wise analysis that was done for two years. The analysis was carried out for the top 1.4 lakh ranks in the country. It further stated that there was no evidence of either mass malpractice or a localized set of candidates benefiting. The overall increase of marks among students, a charge that was laid out initially, is attributed to the 25% reduction in syllabus, and it confirms that this occurred across multiple cities. However, outrage among student applicants on social media continues. While NEET is no stranger to controversy, with States opposing it, the charges that have been levelled against it this year have had the effect of invoking distrust against the test among a larger subsect of chary students across the country. The only way to move forward from here is to ensure that the issue is debated threadbare on public platforms and all doubt is removed, instead of trying to sweep the worms that have spilled out under the carpet. Loud denials of malpractice should be matched with the willingness to engage with those affected in a public forum and provide clarifications. Where errors have taken place, as is possible in an exercise of this scale, it behaves a proper acknowledgement and apology. When trust is violated, the reparation for it should sometimes be utter honesty. For the longer term, the government must introduce greater <strong>limpidity</strong> in the examination process, and make sure that the NTA and its line agencies remain committed to maintaining transparency. It might also be the opportunity to set right other issues raised about the conduct of the examination itself, including security checks on students.</p><br><p><strong>What prompted the Supreme Court of India to reschedule the NEET-UG hearing to July 18, 2024?</strong></p>", "options": ["<p>Complaints regarding exam syllabus</p>", "<p>Appeals for higher grace marks</p>", "<p>Requests for additional exam centers</p>", "<p>Allegations of irregularities and malpractices during the exam</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The passage mentions that the Supreme Court rescheduled the hearing to address complaints regarding irregularities and malpractices during the NEET-UG exam conducted by the NTA.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Trust can be everything, in governance. The can of worms that split open with the publication of results of the National Eligibility cum Entrance Test (NEET)-UG-2024 has elevated the entrance examination for medical (and dental) seats to a metaphor for distrust in the system, among the people. This year, dogged by accusations of paper leak, malpractices, and technical failures, besides the grant of grace marks to some students, NEET, which was conceived to <strong>homogenize</strong> selection on merit, has now morphed into a beast that is far removed from its original idea. The Supreme Court of India, on Thursday, rescheduled the NEET-UG hearing to July 18, to address complaints regarding irregularities and malpractices during the exam conducted by the National Testing Agency (NTA). A CBI investigation into the charges is ongoing. Meanwhile, the Centre has leaned heavily on a report, a data analysis, submitted by IIT Madras, examining the results to see if malpractices have occurred. The report’s executive summary claimed that there was no abnormality that was discovered in a center and city-wise analysis that was done for two years. The analysis was carried out for the top 1.4 lakh ranks in the country. It further stated that there was no evidence of either mass malpractice or a localized set of candidates benefiting. The overall increase of marks among students, a charge that was laid out initially, is attributed to the 25% reduction in syllabus, and it confirms that this occurred across multiple cities. However, outrage among student applicants on social media continues. While NEET is no stranger to controversy, with States opposing it, the charges that have been levelled against it this year have had the effect of invoking distrust against the test among a larger subsect of chary students across the country. The only way to move forward from here is to ensure that the issue is debated threadbare on public platforms and all doubt is removed, instead of trying to sweep the worms that have spilled out under the carpet. Loud denials of malpractice should be matched with the willingness to engage with those affected in a public forum and provide clarifications. Where errors have taken place, as is possible in an exercise of this scale, it behaves a proper acknowledgement and apology. When trust is violated, the reparation for it should sometimes be utter honesty. For the longer term, the government must introduce greater <strong>limpidity</strong> in the examination process, and make sure that the NTA and its line agencies remain committed to maintaining transparency. It might also be the opportunity to set right other issues raised about the conduct of the examination itself, including security checks on students.</p><br><p><strong>What did the report from IIT Madras claim regarding the NEET-UG results?</strong></p>", "options": ["<p>Evidence of mass malpractice was found</p>", "<p>No abnormality was discovered in the center and city-wise analysis</p>", "<p>The results were inconclusive</p>", "<p>technical failures were the main issue</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage states that the IIT Madras report claimed there was no abnormality found in the analysis and no evidence of mass malpractice.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Trust can be everything, in governance. The can of worms that split open with the publication of results of the National Eligibility cum Entrance Test (NEET)-UG-2024 has elevated the entrance examination for medical (and dental) seats to a metaphor for distrust in the system, among the people. This year, dogged by accusations of paper leak, malpractices, and technical failures, besides the grant of grace marks to some students, NEET, which was conceived to <strong>homogenize</strong> selection on merit, has now morphed into a beast that is far removed from its original idea. The Supreme Court of India, on Thursday, rescheduled the NEET-UG hearing to July 18, to address complaints regarding irregularities and malpractices during the exam conducted by the National Testing Agency (NTA). A CBI investigation into the charges is ongoing. Meanwhile, the Centre has leaned heavily on a report, a data analysis, submitted by IIT Madras, examining the results to see if malpractices have occurred. The report’s executive summary claimed that there was no abnormality that was discovered in a center and city-wise analysis that was done for two years. The analysis was carried out for the top 1.4 lakh ranks in the country. It further stated that there was no evidence of either mass malpractice or a localized set of candidates benefiting. The overall increase of marks among students, a charge that was laid out initially, is attributed to the 25% reduction in syllabus, and it confirms that this occurred across multiple cities. However, outrage among student applicants on social media continues. While NEET is no stranger to controversy, with States opposing it, the charges that have been levelled against it this year have had the effect of invoking distrust against the test among a larger subsect of chary students across the country. The only way to move forward from here is to ensure that the issue is debated threadbare on public platforms and all doubt is removed, instead of trying to sweep the worms that have spilled out under the carpet. Loud denials of malpractice should be matched with the willingness to engage with those affected in a public forum and provide clarifications. Where errors have taken place, as is possible in an exercise of this scale, it behaves a proper acknowledgement and apology. When trust is violated, the reparation for it should sometimes be utter honesty. For the longer term, the government must introduce greater <strong>limpidity</strong> in the examination process, and make sure that the NTA and its line agencies remain committed to maintaining transparency. It might also be the opportunity to set right other issues raised about the conduct of the examination itself, including security checks on students.</p><br><p><strong>Based on the passage, what can be inferred about the public reaction to the NEET-UG 2024 results?</strong></p>", "options": ["<p>There is significant outrage and distrust among student applicants</p>", "<p>The public is largely supportive of the results</p>", "<p>The results were widely accepted without controversy</p>", "<p>The public is indifferent to the exam results</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The passage mentions ongoing outrage among student applicants on social media, indicating significant distrust and dissatisfaction.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Trust can be everything, in governance. The can of worms that split open with the publication of results of the National Eligibility cum Entrance Test (NEET)-UG-2024 has elevated the entrance examination for medical (and dental) seats to a metaphor for distrust in the system, among the people. This year, dogged by accusations of paper leak, malpractices, and technical failures, besides the grant of grace marks to some students, NEET, which was conceived to <strong>homogenize</strong> selection on merit, has now morphed into a beast that is far removed from its original idea. The Supreme Court of India, on Thursday, rescheduled the NEET-UG hearing to July 18, to address complaints regarding irregularities and malpractices during the exam conducted by the National Testing Agency (NTA). A CBI investigation into the charges is ongoing. Meanwhile, the Centre has leaned heavily on a report, a data analysis, submitted by IIT Madras, examining the results to see if malpractices have occurred. The report’s executive summary claimed that there was no abnormality that was discovered in a center and city-wise analysis that was done for two years. The analysis was carried out for the top 1.4 lakh ranks in the country. It further stated that there was no evidence of either mass malpractice or a localized set of candidates benefiting. The overall increase of marks among students, a charge that was laid out initially, is attributed to the 25% reduction in syllabus, and it confirms that this occurred across multiple cities. However, outrage among student applicants on social media continues. While NEET is no stranger to controversy, with States opposing it, the charges that have been levelled against it this year have had the effect of invoking distrust against the test among a larger subsect of chary students across the country. The only way to move forward from here is to ensure that the issue is debated threadbare on public platforms and all doubt is removed, instead of trying to sweep the worms that have spilled out under the carpet. Loud denials of malpractice should be matched with the willingness to engage with those affected in a public forum and provide clarifications. Where errors have taken place, as is possible in an exercise of this scale, it behaves a proper acknowledgement and apology. When trust is violated, the reparation for it should sometimes be utter honesty. For the longer term, the government must introduce greater <strong>limpidity</strong> in the examination process, and make sure that the NTA and its line agencies remain committed to maintaining transparency. It might also be the opportunity to set right other issues raised about the conduct of the examination itself, including security checks on students.</p><br><p><strong>Why does the author suggest that the government should ensure the issue is debated publicly?</strong></p>", "options": ["<p>To punish those involved in malpractice</p>", "<p>To restore trust and remove doubts</p>", "<p>To announce new exam policies</p>", "<p>To delay the examination process</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The author suggests public debate to ensure all doubts are removed and to restore trust in the examination process.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Trust can be everything, in governance. The can of worms that split open with the publication of results of the National Eligibility cum Entrance Test (NEET)-UG-2024 has elevated the entrance examination for medical (and dental) seats to a metaphor for distrust in the system, among the people. This year, dogged by accusations of paper leak, malpractices, and technical failures, besides the grant of grace marks to some students, NEET, which was conceived to <strong>homogenize</strong> selection on merit, has now morphed into a beast that is far removed from its original idea. The Supreme Court of India, on Thursday, rescheduled the NEET-UG hearing to July 18, to address complaints regarding irregularities and malpractices during the exam conducted by the National Testing Agency (NTA). A CBI investigation into the charges is ongoing. Meanwhile, the Centre has leaned heavily on a report, a data analysis, submitted by IIT Madras, examining the results to see if malpractices have occurred. The report’s executive summary claimed that there was no abnormality that was discovered in a center and city-wise analysis that was done for two years. The analysis was carried out for the top 1.4 lakh ranks in the country. It further stated that there was no evidence of either mass malpractice or a localized set of candidates benefiting. The overall increase of marks among students, a charge that was laid out initially, is attributed to the 25% reduction in syllabus, and it confirms that this occurred across multiple cities. However, outrage among student applicants on social media continues. While NEET is no stranger to controversy, with States opposing it, the charges that have been levelled against it this year have had the effect of invoking distrust against the test among a larger subsect of chary students across the country. The only way to move forward from here is to ensure that the issue is debated threadbare on public platforms and all doubt is removed, instead of trying to sweep the worms that have spilled out under the carpet. Loud denials of malpractice should be matched with the willingness to engage with those affected in a public forum and provide clarifications. Where errors have taken place, as is possible in an exercise of this scale, it behaves a proper acknowledgement and apology. When trust is violated, the reparation for it should sometimes be utter honesty. For the longer term, the government must introduce greater <strong>limpidity</strong> in the examination process, and make sure that the NTA and its line agencies remain committed to maintaining transparency. It might also be the opportunity to set right other issues raised about the conduct of the examination itself, including security checks on students.</p><br><p><strong>Why does the passage mention the 25% reduction in syllabus?</strong></p>", "options": ["<p>To criticize the reduction in syllabus</p>", "<p>To suggest a new policy for the next exam</p>", "<p>To explain the increase in marks among students</p>", "<p>To highlight errors in exam content</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The passage attributes the overall increase in marks to the 25% reduction in syllabus.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Trust can be everything, in governance. The can of worms that split open with the publication of results of the National Eligibility cum Entrance Test (NEET)-UG-2024 has elevated the entrance examination for medical (and dental) seats to a metaphor for distrust in the system, among the people. This year, dogged by accusations of paper leak, malpractices, and technical failures, besides the grant of grace marks to some students, NEET, which was conceived to <strong>homogenize</strong> selection on merit, has now morphed into a beast that is far removed from its original idea. The Supreme Court of India, on Thursday, rescheduled the NEET-UG hearing to July 18, to address complaints regarding irregularities and malpractices during the exam conducted by the National Testing Agency (NTA). A CBI investigation into the charges is ongoing. Meanwhile, the Centre has leaned heavily on a report, a data analysis, submitted by IIT Madras, examining the results to see if malpractices have occurred. The report’s executive summary claimed that there was no abnormality that was discovered in a center and city-wise analysis that was done for two years. The analysis was carried out for the top 1.4 lakh ranks in the country. It further stated that there was no evidence of either mass malpractice or a localized set of candidates benefiting. The overall increase of marks among students, a charge that was laid out initially, is attributed to the 25% reduction in syllabus, and it confirms that this occurred across multiple cities. However, outrage among student applicants on social media continues. While NEET is no stranger to controversy, with States opposing it, the charges that have been levelled against it this year have had the effect of invoking distrust against the test among a larger subsect of chary students across the country. The only way to move forward from here is to ensure that the issue is debated threadbare on public platforms and all doubt is removed, instead of trying to sweep the worms that have spilled out under the carpet. Loud denials of malpractice should be matched with the willingness to engage with those affected in a public forum and provide clarifications. Where errors have taken place, as is possible in an exercise of this scale, it behaves a proper acknowledgement and apology. When trust is violated, the reparation for it should sometimes be utter honesty. For the longer term, the government must introduce greater <strong>limpidity</strong> in the examination process, and make sure that the NTA and its line agencies remain committed to maintaining transparency. It might also be the opportunity to set right other issues raised about the conduct of the examination itself, including security checks on students.</p><br><p><strong>What is a synonym for \"homogenize\" as used in the passage?</strong></p>", "options": ["<p>Diversify</p>", "<p>Complicate</p>", "<p>Separate</p>", "<p>Standardize</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>\"<strong>Homogenize</strong>\" means to make uniform or similar, which is synonymous with \"standardize.\"</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Trust can be everything, in governance. The can of worms that split open with the publication of results of the National Eligibility cum Entrance Test (NEET)-UG-2024 has elevated the entrance examination for medical (and dental) seats to a metaphor for distrust in the system, among the people. This year, dogged by accusations of paper leak, malpractices, and technical failures, besides the grant of grace marks to some students, NEET, which was conceived to <strong>homogenize</strong> selection on merit, has now morphed into a beast that is far removed from its original idea. The Supreme Court of India, on Thursday, rescheduled the NEET-UG hearing to July 18, to address complaints regarding irregularities and malpractices during the exam conducted by the National Testing Agency (NTA). A CBI investigation into the charges is ongoing. Meanwhile, the Centre has leaned heavily on a report, a data analysis, submitted by IIT Madras, examining the results to see if malpractices have occurred. The report’s executive summary claimed that there was no abnormality that was discovered in a center and city-wise analysis that was done for two years. The analysis was carried out for the top 1.4 lakh ranks in the country. It further stated that there was no evidence of either mass malpractice or a localized set of candidates benefiting. The overall increase of marks among students, a charge that was laid out initially, is attributed to the 25% reduction in syllabus, and it confirms that this occurred across multiple cities. However, outrage among student applicants on social media continues. While NEET is no stranger to controversy, with States opposing it, the charges that have been levelled against it this year have had the effect of invoking distrust against the test among a larger subsect of chary students across the country. The only way to move forward from here is to ensure that the issue is debated threadbare on public platforms and all doubt is removed, instead of trying to sweep the worms that have spilled out under the carpet. Loud denials of malpractice should be matched with the willingness to engage with those affected in a public forum and provide clarifications. Where errors have taken place, as is possible in an exercise of this scale, it behaves a proper acknowledgement and apology. When trust is violated, the reparation for it should sometimes be utter honesty. For the longer term, the government must introduce greater <strong>limpidity</strong> in the examination process, and make sure that the NTA and its line agencies remain committed to maintaining transparency. It might also be the opportunity to set right other issues raised about the conduct of the examination itself, including security checks on students.</p><br><p><strong>What is the antonym of the word \"limpidity\" as used in the passage?</strong></p>", "options": ["<p>Clarity</p>", "<p>Opacity</p>", "<p>Transparency</p>", "<p>Purity</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>\"<strong>Limpidity</strong>\" means clear or transparent, while \"opacity\" means not transparent or hard to understand.</p>"}, {"question": "<p><strong>Below is a theme given in each question followed by four different statements. Read each statement carefully and determine which is/are not based on the stated title.</strong></p><br><p><strong>Theme: Community Engagement</strong></p>", "options": ["<p>Volunteering time to community projects fosters a sense of belonging and strengthens social connections.</p>", "<p>Contributing to local charities and organizations is an effective way to address social issues and support community development.</p>", "<p>Withdrawing from community involvement and isolating oneself promotes social cohesion and unity.</p>", "<p>Participating in neighborhood clean-up initiatives promotes environmental stewardship and enhances community pride.</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Statements a), b), and d) all highlight the positive impacts of community engagement on fostering connections, addressing social issues, and promoting environmental stewardship. However, statement c) contradicts the theme by suggesting that withdrawing from community involvement and isolating oneself promotes social cohesion and unity, which is not the case.</p>"}, {"question": "<p><strong>Below is a theme given in each question followed by four different statements. Read each statement carefully and determine which is/are not based on the stated title.</strong></p><br><p><strong>Theme: Cultural Appreciation</strong></p>", "options": ["<p>Embracing diverse cultural traditions enriches society and promotes cross-cultural understanding and appreciation</p>", "<p>Excluding individuals based on their cultural background fosters inclusivity and promotes unity within communities.</p>", "<p>Celebrating multicultural festivals and events encourages respect for different cultural practices and fosters a sense of belonging.</p>", "<p>Belittling or mocking cultural differences undermines efforts to promote diversity and cultural appreciation.</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>Statements a), c), and d) all emphasize the importance of embracing cultural diversity and promoting cross-cultural understanding. However, statement b) contradicts this theme by suggesting that excluding individuals based on their cultural background fosters inclusivity and unity within communities, which is logically inconsistent.</p>"}, {"question": "<p><strong>Below is a theme given in each question followed by four different statements. Read each statement carefully and determine which is/are not based on the stated title.</strong></p><br><p><strong>Theme: Personal Growth</strong></p>", "options": ["<p>Avoiding new experiences and maintaining a static routine is the key to personal fulfillment and happiness.</p>", "<p>Stepping out of one's comfort zone and embracing challenges is essential for personal growth and development.</p>", "<p>Learning from failures and setbacks is a valuable opportunity for self-reflection and improvement.</p>", "<p>Settling for mediocrity and avoiding self-improvement efforts leads to greater satisfaction and contentment in life.</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Statements b), c), and d) all advocate for personal growth through embracing challenges, learning from failures, and striving for improvement. However, statement a) contradicts this theme by suggesting that avoiding new experiences and maintaining a static routine is the key to personal fulfillment and happiness, which is not consistent with principles of personal growth and development.</p>"}, {"question": "<p><strong>Rearrange the following sentences in the proper sequence to form a meaningful paragraph and then answer the questions given below.</strong></p>\n<p><strong>A</strong><strong>).</strong> Moreover, salaries in public sector enterprises are not as competitive as those offered by private or foreign corporates.</p>\n<p><strong>B</strong><strong>).</strong> This trend should be a wake-up call for stakeholders to examine why employees are seeking better opportunities with private companies in India and abroad.</p>\n<p><strong>C</strong><strong>).</strong> Public Sector Enterprises (PSEs) have been experiencing severe challenges in attracting, motivating and retaining their key staff.</p>\n<p><strong>D</strong><strong>).</strong> Having identified these as the reasons why employees leave PSEs, it is important to empower stakeholders to find ways to remedy the situation.</p>\n<p><strong>E</strong><strong>).</strong> One reason is that young employees lured away by private firms are more willing to undertake professional risks.</p>\n<p><strong>F</strong><strong>).</strong> Employees in specialist roles especially have become increasingly difficult to retain.</p><br><p><strong>Which of the following combinations is the combination of three consecutive statements after rearrangement?</strong></p>", "options": ["<p>ADB</p>", "<p>CAF</p>", "<p>BDE</p>", "<p>BEA</p>", "<p>EDB</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The final arrangement is <strong>CFBEAD.</strong></p>\n<p><strong>Sentence C</strong> sets the context for the discussion about the challenges PSEs face. <strong>Sentence F</strong> expands on the initial statement, highlighting a specific issue within the broader challenge. <strong>Sentence B</strong> reflects on the trend and implies that stakeholders need to understand the reasons behind it. <strong>Sentence E</strong> provides an explanation for why employees are leaving PSEs, linking back to the trend mentioned in B.  <strong>Sentence A</strong> adds another reason to explain why employees are seeking opportunities elsewhere, complementing E. <strong>Sentence D</strong> concludes by emphasizing the need for stakeholders to take action based on the identified reasons.</p>"}, {"question": "<p><strong>Rearrange the following sentences in the proper sequence to form a meaningful paragraph and then answer the questions given below.</strong></p>\n<p><strong>A</strong><strong>).</strong> Moreover, salaries in public sector enterprises are not as competitive as those offered by private or foreign corporates.</p>\n<p><strong>B</strong><strong>).</strong> This trend should be a wake-up call for stakeholders to examine why employees are seeking better opportunities with private companies in India and abroad.</p>\n<p><strong>C</strong><strong>).</strong> Public Sector Enterprises (PSEs) have been experiencing severe challenges in attracting, motivating and retaining their key staff.</p>\n<p><strong>D</strong><strong>).</strong> Having identified these as the reasons why employees leave PSEs, it is important to empower stakeholders to find ways to remedy the situation.</p>\n<p><strong>E</strong><strong>).</strong> One reason is that young employees lured away by private firms are more willing to undertake professional risks.</p>\n<p><strong>F</strong><strong>).</strong> Employees in specialist roles especially have become increasingly difficult to retain.</p><br><p><strong>Which of the following statement will be the last statement after rearrangement?</strong></p>", "options": ["<p>F</p>", "<p>C</p>", "<p>B</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The final arrangement is <strong>CFBEAD.</strong></p>\n<p><strong>Sentence C </strong>sets the context for the discussion about the challenges PSEs face. <strong>Sentence F</strong> expands on the initial statement, highlighting a specific issue within the broader challenge. <strong>Sentence B </strong>reflects on the trend and implies that stakeholders need to understand the reasons behind it. <strong>Sentence E </strong>provides an explanation for why employees are leaving PSEs, linking back to the trend mentioned in B. <strong>Sentence A</strong> adds another reason to explain why employees are seeking opportunities elsewhere, complementing E. <strong>Sentence D</strong> concludes by emphasizing the need for stakeholders to take action based on the identified reasons.</p>"}, {"question": "<p><strong>Rearrange the following sentences in the proper sequence to form a meaningful paragraph and then answer the questions given below.</strong></p>\n<p><strong>A</strong><strong>).</strong> Moreover, salaries in public sector enterprises are not as competitive as those offered by private or foreign corporates.</p>\n<p><strong>B</strong><strong>).</strong> This trend should be a wake-up call for stakeholders to examine why employees are seeking better opportunities with private companies in India and abroad.</p>\n<p><strong>C</strong><strong>).</strong> Public Sector Enterprises (PSEs) have been experiencing severe challenges in attracting, motivating and retaining their key staff.</p>\n<p><strong>D</strong><strong>).</strong> Having identified these as the reasons why employees leave PSEs, it is important to empower stakeholders to find ways to remedy the situation.</p>\n<p><strong>E</strong><strong>).</strong> One reason is that young employees lured away by private firms are more willing to undertake professional risks.</p>\n<p><strong>F</strong><strong>).</strong> Employees in specialist roles especially have become increasingly difficult to retain.</p><br><p><strong>Which of the following statement will be the Introductory statement after rearrangement?</strong></p>", "options": ["<p>F</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The final arrangement is <strong>CFBEAD.</strong></p>\n<p><strong>Sentence C </strong>sets the context for the discussion about the challenges PSEs face. <strong>Sentence F</strong> expands on the initial statement, highlighting a specific issue within the broader challenge. <strong>Sentence B </strong>reflects on the trend and implies that stakeholders need to understand the reasons behind it. <strong>Sentence E </strong>provides an explanation for why employees are leaving PSEs, linking back to the trend mentioned in B. <strong>Sentence A</strong> adds another reason to explain why employees are seeking opportunities elsewhere, complementing E. <strong>Sentence D</strong> concludes by emphasizing the need for stakeholders to take action based on the identified reasons.</p>"}, {"question": "<p><strong>Rearrange the following sentences in the proper sequence to form a meaningful paragraph and then answer the questions given below.</strong></p>\n<p><strong>A</strong><strong>).</strong> Moreover, salaries in public sector enterprises are not as competitive as those offered by private or foreign corporates.</p>\n<p><strong>B</strong><strong>).</strong> This trend should be a wake-up call for stakeholders to examine why employees are seeking better opportunities with private companies in India and abroad.</p>\n<p><strong>C</strong><strong>).</strong> Public Sector Enterprises (PSEs) have been experiencing severe challenges in attracting, motivating and retaining their key staff.</p>\n<p><strong>D</strong><strong>).</strong> Having identified these as the reasons why employees leave PSEs, it is important to empower stakeholders to find ways to remedy the situation.</p>\n<p><strong>E</strong><strong>).</strong> One reason is that young employees lured away by private firms are more willing to undertake professional risks.</p>\n<p><strong>F</strong><strong>).</strong> Employees in specialist roles especially have become increasingly difficult to retain.</p><br><p><strong>Which of the following statement will be the Antepenultimate statement after rearrangement?</strong></p>", "options": ["<p>F</p>", "<p>C</p>", "<p>B</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>The final arrangement is <strong>CFBEAD.</strong></p>\n<p><strong>Sentence C </strong>sets the context for the discussion about the challenges PSEs face. <strong>Sentence F</strong> expands on the initial statement, highlighting a specific issue within the broader challenge. <strong>Sentence B </strong>reflects on the trend and implies that stakeholders need to understand the reasons behind it. <strong>Sentence E </strong>provides an explanation for why employees are leaving PSEs, linking back to the trend mentioned in B. <strong>Sentence A</strong> adds another reason to explain why employees are seeking opportunities elsewhere, complementing E. <strong>Sentence D</strong> concludes by emphasizing the need for stakeholders to take action based on the identified reasons.</p>"}, {"question": "<p><strong>Rearrange the following sentences in the proper sequence to form a meaningful paragraph and then answer the questions given below.</strong></p>\n<p><strong>A</strong><strong>).</strong> Moreover, salaries in public sector enterprises are not as competitive as those offered by private or foreign corporates.</p>\n<p><strong>B</strong><strong>).</strong> This trend should be a wake-up call for stakeholders to examine why employees are seeking better opportunities with private companies in India and abroad.</p>\n<p><strong>C</strong><strong>).</strong> Public Sector Enterprises (PSEs) have been experiencing severe challenges in attracting, motivating and retaining their key staff.</p>\n<p><strong>D</strong><strong>).</strong> Having identified these as the reasons why employees leave PSEs, it is important to empower stakeholders to find ways to remedy the situation.</p>\n<p><strong>E</strong><strong>).</strong> One reason is that young employees lured away by private firms are more willing to undertake professional risks.</p>\n<p><strong>F</strong><strong>).</strong> Employees in specialist roles especially have become increasingly difficult to retain.</p><br><p><strong>Which of the following statement will be the second statement after rearrangement?</strong></p>", "options": ["<p>F</p>", "<p>C</p>", "<p>B</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The final arrangement is <strong>CFBEAD.</strong></p>\n<p><strong>Sentence C </strong>sets the context for the discussion about the challenges PSEs face. <strong>Sentence F</strong> expands on the initial statement, highlighting a specific issue within the broader challenge. <strong>Sentence B </strong>reflects on the trend and implies that stakeholders need to understand the reasons behind it. <strong>Sentence E </strong>provides an explanation for why employees are leaving PSEs, linking back to the trend mentioned in B. <strong>Sentence A</strong> adds another reason to explain why employees are seeking opportunities elsewhere, complementing E. <strong>Sentence D</strong> concludes by emphasizing the need for stakeholders to take action based on the identified reasons.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-44)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-44)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

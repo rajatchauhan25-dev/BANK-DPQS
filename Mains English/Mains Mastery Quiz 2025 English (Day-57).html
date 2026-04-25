@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-57)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>Below a passage is given with five filled blanks labelled (A-E), which may or may not be appropriate. Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>In the field of artificial intelligence, machine learning has become a pivotal component in developing advanced systems that can <strong>(A) ________ (accept)</strong>complex tasks with high efficiency. The rise of big data has further accelerated this trend, providing vast amounts of information that algorithms can <strong>(B) ________ (parse)</strong>to make accurate predictions and decisions. However, the implementation of machine learning models also presents several challenges, including issues related to <strong>(C) ________ (accuracy)</strong> and bias in the data used for training. Ensuring the fairness and transparency of these systems is crucial for gaining public trust and <strong>(D) ________ (regulating)</strong>responsible use of AI technology. Moreover, as technology continues to evolve, researchers are constantly exploring new methods to enhance the <strong>(E) _________ (profits)</strong>of machine learning models, aiming for even greater accuracy and applicability.</p><br><p><strong>Which word comes in the blank labelled A?</strong></p>", "options": ["<p>replicate</p>", "<p>execute</p>", "<p>innovate</p>", "<p>predict</p>", "<p>No replacement required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>“Execute” fits best in the context of performing or carrying out complex tasks efficiently. While “innovate” and “predict”and “accept” are not relevant to AI, \"execute\" directly relates to performing tasks.</p>"}, {"question": "<p><strong>Below a passage is given with five filled blanks labelled (A-E), which may or may not be appropriate. Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>In the field of artificial intelligence, machine learning has become a pivotal component in developing advanced systems that can <strong>(A) ________ (accept)</strong>complex tasks with high efficiency. The rise of big data has further accelerated this trend, providing vast amounts of information that algorithms can <strong>(B) ________ (parse)</strong>to make accurate predictions and decisions. However, the implementation of machine learning models also presents several challenges, including issues related to <strong>(C) ________ (accuracy)</strong> and bias in the data used for training. Ensuring the fairness and transparency of these systems is crucial for gaining public trust and <strong>(D) ________ (regulating)</strong>responsible use of AI technology. Moreover, as technology continues to evolve, researchers are constantly exploring new methods to enhance the <strong>(E) _________ (profits)</strong>of machine learning models, aiming for even greater accuracy and applicability.</p><br><p><strong>Which word comes in the blank labelled B?</strong></p>", "options": ["<p>scramble</p>", "<p>partial</p>", "<p>ignore</p>", "<p>delete</p>", "<p>No replacement required</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>\"Parse\" means to analyze or interpret data systematically. It is used correctly here. In machine learning, parsing data is essential for making accurate predictions. Other options like \"scramble\" or \"ignore\" do not fit the context of processing data for predictions.</p>"}, {"question": "<p><strong>Below a passage is given with five filled blanks labelled (A-E), which may or may not be appropriate. Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>In the field of artificial intelligence, machine learning has become a pivotal component in developing advanced systems that can <strong>(A) ________ (accept)</strong>complex tasks with high efficiency. The rise of big data has further accelerated this trend, providing vast amounts of information that algorithms can <strong>(B) ________ (parse)</strong>to make accurate predictions and decisions. However, the implementation of machine learning models also presents several challenges, including issues related to <strong>(C) ________ (accuracy)</strong> and bias in the data used for training. Ensuring the fairness and transparency of these systems is crucial for gaining public trust and <strong>(D) ________ (regulating)</strong>responsible use of AI technology. Moreover, as technology continues to evolve, researchers are constantly exploring new methods to enhance the <strong>(E) _________ (profits)</strong>of machine learning models, aiming for even greater accuracy and applicability.</p><br><p><strong>Which word comes in the blank labelled C?</strong></p>", "options": ["<p>efficiency</p>", "<p>randomness</p>", "<p>transparency</p>", "<p>redundancy</p>", "<p>No replacement required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>\"Transparency\" is crucial in ensuring that machine learning models are fair and unbiased. It means that the processes and decisions made by the models are clear and understandable. \"Randomness\" and \"bias\" relate to issues, but transparency addresses how these issues can be mitigated. Accuracy is out of context here.</p>"}, {"question": "<p><strong>Below a passage is given with five filled blanks labelled (A-E), which may or may not be appropriate. Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>In the field of artificial intelligence, machine learning has become a pivotal component in developing advanced systems that can <strong>(A) ________ (accept)</strong>complex tasks with high efficiency. The rise of big data has further accelerated this trend, providing vast amounts of information that algorithms can <strong>(B) ________ (parse)</strong>to make accurate predictions and decisions. However, the implementation of machine learning models also presents several challenges, including issues related to <strong>(C) ________ (accuracy)</strong> and bias in the data used for training. Ensuring the fairness and transparency of these systems is crucial for gaining public trust and <strong>(D) ________ (regulating)</strong>responsible use of AI technology. Moreover, as technology continues to evolve, researchers are constantly exploring new methods to enhance the <strong>(E) _________ (profits)</strong>of machine learning models, aiming for even greater accuracy and applicability.</p><br><p><strong>Which word comes in the blank labelled D?</strong></p>", "options": ["<p>encouraging</p>", "<p>accumulating</p>", "<p>undermining</p>", "<p>avoiding</p>", "<p>No replacement required</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>\"Regulating\" refers to managing or overseeing the responsible use of AI technology. This ensures that AI systems are used ethically and within legal boundaries. Other options like \"encouraging\" or \"avoiding\" do not fit as directly with the concept of managing technology use.</p>"}, {"question": "<p><strong>Below a passage is given with five filled blanks labelled (A-E), which may or may not be appropriate. Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>In the field of artificial intelligence, machine learning has become a pivotal component in developing advanced systems that can <strong>(A) ________ (accept)</strong>complex tasks with high efficiency. The rise of big data has further accelerated this trend, providing vast amounts of information that algorithms can <strong>(B) ________ (parse)</strong>to make accurate predictions and decisions. However, the implementation of machine learning models also presents several challenges, including issues related to <strong>(C) ________ (accuracy)</strong> and bias in the data used for training. Ensuring the fairness and transparency of these systems is crucial for gaining public trust and <strong>(D) ________ (regulating)</strong>responsible use of AI technology. Moreover, as technology continues to evolve, researchers are constantly exploring new methods to enhance the <strong>(E) _________ (profits)</strong>of machine learning models, aiming for even greater accuracy and applicability.</p><br><p><strong>Which word comes in the blank labelled E?</strong></p>", "options": ["<p>complexity</p>", "<p>consistency</p>", "<p>effectiveness</p>", "<p>obsolescence</p>", "<p>No replacement required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>\"Effectiveness\" pertains to how well machine learning models perform their intended tasks. Enhancing effectiveness relates to improving accuracy and applicability, which is the goal of ongoing research in AI. \"Complexity\" and \"consistency\" are related but do not directly address performance improvement. Profits is contextually incorrect here.</p>"}, {"question": "<p><strong>Select the phrase (STARTERS) from the given three options which can be used to form a single sentence from the two sentences given below, implying the same meaning as expressed in the statement sentences.</strong></p><br><p><strong>I).</strong> The company announced record-breaking profits for the fiscal year.</p>\n<p><strong>II).</strong> Several employees were laid off due to budget cuts.</p>\n<p><strong>A).</strong> Despite the company's record-breaking profits ………</p>\n<p><strong>B).</strong> Not only did the company ………</p>\n<p><strong>C).</strong> While the employees were being ……</p>", "options": ["<p>Only A</p>", "<p>Only B</p>", "<p>Only C</p>", "<p>Both A and B</p>", "<p>All A, B, and C</p>"], "correctIndex": 0, "solution": "<p><strong>Answer</strong><strong>: A</strong></p>\n<p><strong>A).</strong> Despite the company's record-breaking profits, - This option introduces a contrast between the two statements, suggesting that despite one fact (record-breaking profits), another fact (layoffs) is true. This effectively captures the relationship between the given statements.</p>\n<p><strong>B).</strong> Not only did the company - This option introduces the idea of adding something extra to what has already been mentioned. It doesn't accurately reflect the relationship between the two statements.</p>\n<p><strong>C).</strong> While the employees were being - This option suggests a simultaneous contrast between the two statements, implying that something is happening in one statement while something else is happening in the other. It doesn't accurately reflect the relationship between the given statements.</p>\n<p>Given the statements:</p>\n<p>The first statement indicates that the company achieved record-breaking profits, while the second statement reveals that despite these profits, several employees were laid off due to budget cuts. The relationship between the two statements is one of contrast, highlighting the discrepancy between the company's financial success and its impact on its employees.</p>\n<p>Therefore, option A (\"Despite the company's record-breaking profits,\") accurately captures this contrast between the two statements.</p>\n<p>So, the correct answer is: a) Only A</p>\n<p>Option A effectively introduces a contrast between the two statements, accurately reflecting the relationship between the company's record-breaking profits and the layoffs of several employees. It highlights the discrepancy between the company's financial success and its impact on its workforce, making it the most suitable choice.</p>"}, {"question": "<p><strong>Select the phrase (STARTERS) from the given three options which can be used to form a single sentence from the two sentences given below, implying the same meaning as expressed in the statement sentences.</strong></p><br><p><strong>I).</strong> The new product launch exceeded sales projections by 200%.</p>\n<p><strong>II).</strong> Despite the success, the marketing team acknowledged areas for improvement in the next launch strategy.</p>\n<p><strong>A).</strong> Even though the new product launch far surpassed expectations……</p>\n<p><strong>B).</strong> In addition to the remarkable success of the new product launch……</p>\n<p><strong>C).</strong> As opposed to the sales projections being exceeded by 200% ……</p>", "options": ["<p>Only A</p>", "<p>Only B</p>", "<p>Only C</p>", "<p>Both A and B</p>", "<p>All A, B, and C</p>"], "correctIndex": 0, "solution": "<p><strong>Answer:</strong><strong> A</strong></p>\n<p><strong>A).</strong> Even though the new product launch far surpassed expectations, - This option introduces a contrast between the two statements, indicating that despite the remarkable success of the new product launch, there are still areas for improvement. It effectively captures the relationship between the given statements.</p>\n<p><strong>B).</strong> In addition to the remarkable success of the new product launch, - This option suggests adding something extra to what has already been mentioned. It doesn't accurately reflect the contrast between the success of the new product launch and the acknowledgment of areas for improvement.</p>\n<p><strong>C).</strong> As opposed to the sales projections being exceeded by 200%, - This option seems to suggest a contrast, but it doesn't effectively capture the relationship between the two statements provided.</p>\n<p>Given the statements:</p>\n<p>The first statement describes the remarkable success of the new product launch, while the second statement reveals that despite this success, there are still areas for improvement acknowledged by the marketing team. The relationship between the two statements is one of contrast, highlighting the discrepancy between the sales success and the acknowledgment of improvement areas.</p>\n<p>Therefore, option A (\"Even though the new product launch far surpassed expectations,\") accurately captures this contrast between the two statements.</p>\n<p>So, the correct answer is: a) Only A</p>\n<p>Option A effectively introduces a contrast between the remarkable success of the new product launch and the acknowledgment of improvement areas by the marketing team. It accurately reflects the relationship between the given statements, making it the most suitable choice.</p>"}, {"question": "<p><strong>Select the phrase (STARTERS) from the given three options which can be used to form a single sentence from the two sentences given below, implying the same meaning as expressed in the statement sentences.</strong></p><br><p><strong>I).</strong> The team celebrated their victory with a grand party.</p>\n<p><strong>II).</strong> Some team members expressed disappointment over their individual performances.</p>\n<p><strong>A).</strong> Although the team celebrated ……</p>\n<p><strong>B).</strong> Not only did the team celebrate ……</p>\n<p><strong>C).</strong> While the team celebrated ……</p>", "options": ["<p>Only A</p>", "<p>Only B</p>", "<p>Only C</p>", "<p>Both A and B</p>", "<p>All A, B, and C</p>"], "correctIndex": 0, "solution": "<p><strong>Answer:</strong><strong> A</strong></p>\n<p><strong>A).</strong> Although the team celebrated their victory, - This option introduces a contrast between the two statements, suggesting that despite the celebration of victory, there's another aspect (individual disappointment) mentioned in the second statement. This effectively captures the relationship between the given statements.</p>\n<p><strong>B).</strong> Not only did the team celebrate their victory, - This option introduces the idea of adding something extra to what has already been mentioned. It doesn't accurately reflect the relationship between the two statements.</p>\n<p><strong>C).</strong> While the team celebrated their victory, - This option suggests a simultaneous contrast between the two statements, implying that something is happening in one statement while something else is happening in the other. It doesn't accurately reflect the relationship between the given statements.</p>\n<p>Given the statements:</p>\n<p>The first statement describes the team celebrating their victory, while the second statement reveals that despite the celebration, some team members expressed disappointment over their individual performances. The relationship between the two statements is one of contrast, highlighting the discrepancy between the overall team success and the individual feelings of disappointment.</p>\n<p>Therefore, option A (\"Although the team celebrated their victory,\") accurately captures this contrast between the two statements.</p>\n<p>So, the correct answer is: a) Only A</p>\n<p>Option A effectively introduces a contrast between the celebration of victory and the individual disappointment expressed by some team members. It accurately reflects the relationship between the given statements, making it the most suitable choice.</p>"}, {"question": "<p><strong>In the sentences, certain words are in bold and numbered from A to C, which are the possible pairs to be arranged. Choose the pair(s) of words that need(s) to be arranged to make the sentence grammatically correct and meaningful.</strong></p><br><p>Cultural hegemony has (A) <strong>historical </strong>the narrative of (B) <strong>shaped</strong> events, often marginalizing (C) <strong>indigenous</strong> perspectives.</p>", "options": ["<p>ACB</p>", "<p>BCA</p>", "<p>CAB</p>", "<p>BAC</p>", "<p>No arrangement required</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>Cultural hegemony has <strong>shaped</strong> the narrative of <strong>historical </strong>events, often marginalizing <strong>indigenous</strong> perspectives.</p>"}, {"question": "<p><strong>In the sentences, certain words are in bold and numbered from A to C, which are the possible pairs to be arranged. Choose the pair(s) of words that need(s) to be arranged to make the sentence grammatically correct and meaningful.</strong></p><br><p>The corporation’s (A) <strong>inefficient</strong> organizational structure made (B) <strong>decision</strong>-making slow and (C) <strong>labyrinthine.</strong></p>", "options": ["<p>ACB</p>", "<p>BCA</p>", "<p>CBA</p>", "<p>BAC</p>", "<p>No arrangement required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The corporation’s <strong>labyrinthine</strong> organizational structure made <strong>decision</strong>-making slow and <strong>inefficient.</strong></p>"}, {"question": "<p><strong>In the sentences, certain words are in bold and numbered from A to C, which are the possible pairs to be arranged. Choose the pair(s) of words that need(s) to be arranged to make the sentence grammatically correct and meaningful.</strong></p><br><p>His innate (A) <strong>negotiations </strong>for leadership became (B) <strong>evident</strong> as he navigated the team through difficult (C) <strong>proclivity</strong>.</p>", "options": ["<p>CBA</p>", "<p>BCA</p>", "<p>CAB</p>", "<p>BAC</p>", "<p>No arrangement required</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>His innate <strong>proclivity </strong>for leadership became <strong>evident</strong> as he navigated the team through difficult <strong>negotiations</strong>.</p>"}, {"question": "<p><strong>In the sentences, certain words are in bold and numbered from A to C, which are the possible pairs to be arranged. Choose the pair(s) of words that need(s) to be arranged to make the sentence grammatically correct and meaningful.</strong></p><br><p>The (A) <strong>convergence</strong> of biotechnology and (B) <strong>medical</strong> intelligence promises unprecedented advancements in (C) <strong>artificial </strong>science.</p>", "options": ["<p>ACB</p>", "<p>BCA</p>", "<p>CAB</p>", "<p>BAC</p>", "<p>No arrangement required</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The <strong>convergence</strong> of biotechnology and <strong>artificial </strong>intelligence promises unprecedented advancements in <strong>medical</strong> science.</p>"}, {"question": "<p><strong>In the sentences, certain words are in bold and numbered from A to C, which are the possible pairs to be arranged. Choose the pair(s) of words that need(s) to be arranged to make the sentence grammatically correct and meaningful.</strong></p><br><p>The intricate (A) <strong>web</strong> of international relations requires (B) <strong>diplomats </strong>to employ both (C) <strong>tact</strong> and strategic foresight.</p>", "options": ["<p>ACB</p>", "<p>BCA</p>", "<p>CAB</p>", "<p>BAC</p>", "<p>No arrangement required</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>The intricate <strong>web</strong> of international relations requires <strong>diplomats </strong>to employ both <strong>tact</strong> and strategic foresight.</p>"}, {"question": "<p><strong>In the table given below two columns are given to connect the sentence. The sentence given in column A may or may not be connected with column B contextually and grammatically. You have to identify possible combination to combine the sentence from column A to column B. If any possible connections are not found from the option, choose “None of these.”</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172493706788.png\" title=\"39.png\"/></p>", "options": ["<p>A2, B3 &amp; C1</p>", "<p>C1 &amp; B3</p>", "<p>A2 &amp; B3</p>", "<p>C3, A2 &amp; B1</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>A2:</strong> She danced gracefully across the stage, her movements fluid and effortless, captivating the audience with every step.</p>\n<p><strong>B3:</strong> He gazed out the window, lost in thought as he watched the city skyline shimmering in the evening light.</p>\n<p><strong>C1:</strong> The aroma of freshly baked bread filled the kitchen, making her stomach rumble with hunger and anticipation.</p>"}, {"question": "<p><strong>In the table given below two columns are given to connect the sentence. The sentence given in column A may or may not be connected with column B contextually and grammatically. You have to identify possible combination to combine the sentence from column A to column B. If any possible connections are not found from the option, choose “None of these.”</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172493718614.png\" title=\"40.png\"/></p>", "options": ["<p>A2, B3 &amp; C1</p>", "<p>C1, A3 &amp; B2</p>", "<p>A2 &amp; B3</p>", "<p>C3, A2 &amp; B1</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>A3:</strong> They sat around the campfire, sharing stories and laughter as the flames crackled and danced in the darkness.</p>\n<p><strong>B2:</strong> The crimson sunset painted the sky with hues of orange and purple, casting a warm glow over the sleepy town below.</p>\n<p><strong>C1:</strong> She tiptoed through the garden, admiring the vibrant colors of the flowers and inhaling the sweet fragrance that hung in the air.</p>"}, {"question": "<p><strong>In the table given below two columns are given to connect the sentence. The sentence given in column A may or may not be connected with column B contextually and grammatically. You have to identify possible combination to combine the sentence from column A to column B. If any possible connections are not found from the option, choose “None of these.”</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172493731717.png\" title=\"41.png\"/></p>", "options": ["<p>A2, B3 &amp; C1</p>", "<p>C1 &amp; B3</p>", "<p>A2 &amp; B3</p>", "<p>C3, A2 &amp; B1</p>", "<p>None of these</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p><strong>A1:</strong> With a sigh of contentment, he sank into the plush armchair, a good book in hand and a steaming cup of tea by his side.</p>\n<p><strong>B2:</strong> The sound of waves crashing against the shore was a soothing lullaby as they drifted off to sleep beneath the starlit sky.</p>\n<p><strong>C3:</strong> The city streets buzzed with activity, as people hurried about their day, their footsteps echoing against the pavement.</p>"}, {"question": "<p><strong>In the table given below two columns are given to connect the sentence. The sentence given in column A may or may not be connected with column B contextually and grammatically. You have to identify possible combination to combine the sentence from column A to column B. If any possible connections are not found from the option, choose “None of these.”</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172493742720.png\" title=\"42.png\"/></p>", "options": ["<p>A2, B3 &amp; C1</p>", "<p>C1 &amp; B3</p>", "<p>A2 &amp; B3</p>", "<p>C3, A2 &amp; B1</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>A2:</strong> He traced his fingers along the rough bark of the ancient tree, feeling a sense of reverence for the wisdom it held within its silent embrace.</p>\n<p><strong>B3:</strong> With a flick of her wrist, she captured the moment on canvas, the colors blending together to form a masterpiece of light and shadow.</p>\n<p><strong>C1:</strong> The aroma of sizzling garlic filled the kitchen, mingling with the savory scent of tomatoes and basil simmering on the stove.</p>"}, {"question": "<p><strong>In the table given below two columns are given to connect the sentence. The sentence given in column A may or may not be connected with column B contextually and grammatically. You have to identify possible combination to combine the sentence from column A to column B. If any possible connections are not found from the option, choose “None of these.”</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172493751357.png\" title=\"43.png\"/></p>", "options": ["<p>A2, B3 &amp; C1</p>", "<p>C1 &amp; B3</p>", "<p>A2 &amp; B3</p>", "<p>C3, A2 &amp; B1</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>A2:</strong> They laughed until tears streamed down their faces, the shared joke bringing them closer together in a moment of pure joy.</p>\n<p><strong>B1:</strong> The old photograph brought back memories of days gone by, of laughter and love shared with those who were no longer here.</p>\n<p><strong>C3:</strong> Despite the storms that raged outside, they found solace in each other's arms, weathering the tempest together.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>The equity market's reaction to the US Federal Reserve's decision to cut rates by 50 basis points shows growing anticipation that the rate cycle in India too will turn soon. A lower cost of capital is always good news for the economy. The fairly steep cuts projected by the Fed raise concerns about the US economy slowing the median US GDP forecast has been lowered while the projection for unemployment has been upped. For now, however, the US economy seems to be chugging along and looks like it will manage to avoid a hard landing. That said, the labor market is weakening and the Fed probably believes the slowdown is likely to persist which is why it is trying to keep the momentum going by cutting rates.</p>\n<p>Back home, an immediate cut in policy rates at the October policy meeting is unlikely. The Reserve Bank of India (RBI) has been steadfast in wanting to see retail inflation durably down at 4% before it cuts. To be sure, the August inflation number came in at 3.7% year-on-year (y-o-y) but it was a tad above consensus and food prices did not come off comfortably enough. In addition, pressure points were visible in core inflation too, with the price rise in the health and education spaces somewhat elevated. Although inflation is expected to move up to 5% in September, the average for the July-September quarter would undershoot the RBI's projected 4.4%. Thereafter falling prices of food and energy could see headline inflation drifting down to around 4% by March.</p>\n<p>As such, there is a chance that the RBI might alter its stance from the current \"withdrawal of accommodation\" to neutral in October and cut the policy rate in December. At the same time, the fact that liquidity today is far easier than it was a few months back suggests the stance has already changed even if not articulated. The RBI may choose to formally announce the change in the stance in December and cut simultaneously. The fall in bond yields on Thursday the benchmark 10-year yield ended at 6.75%, its lowest since February 25, 2022 - suggests the bond markets are pricing in cuts soon. The chances of a cut in December are high especially if the dollar continues to weaken leading to an unwanted appreciation of the rupee. While the central bank can intervene in the market to stem the appreciation, it would be difficult not to follow competing economies in the region once they start easing monetary policy. Indonesia was quick to make a quarter-point cut on Wednesday and others like South Korea too also moved.</p>\n<p>Moreover, while the local economy grew at a reasonably good 6.7% in the June quarter, there are pockets of weakness; cars and trucks, for instance, have not been selling well, and the rural economy is yet to recover sustainably. While not the most reliable of indicators, the growth in factory output in July was flat at 4.8% y-o-y compared with June's 4.7% y-o-y. More importantly, on a seasonally-adjusted basis, industrial output contracted for the second consecutive month with consumer goods production very weak. The point is that while GDP could well grow at 7% this fiscal, the larger informal sector remains fragile with medium and small enterprises yet to recover from the Covid blows. Leaving interest rates elevated for too long could take a toll on small enterprises.</p><br><p><strong>What are the RBI's main concerns about cutting rates in the immediate future?</strong></p>", "options": ["<p>The level of food and energy prices</p>", "<p>The underperformance of the Indian GDP</p>", "<p>The retail inflation target of 4% not being durably achieved</p>", "<p>Rising unemployment in rural areas</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The RBI is focused on seeing retail inflation come down to 4% on a durable basis before cutting rates, which is explicitly mentioned in the passage.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>The equity market's reaction to the US Federal Reserve's decision to cut rates by 50 basis points shows growing anticipation that the rate cycle in India too will turn soon. A lower cost of capital is always good news for the economy. The fairly steep cuts projected by the Fed raise concerns about the US economy slowing the median US GDP forecast has been lowered while the projection for unemployment has been upped. For now, however, the US economy seems to be chugging along and looks like it will manage to avoid a hard landing. That said, the labor market is weakening and the Fed probably believes the slowdown is likely to persist which is why it is trying to keep the momentum going by cutting rates.</p>\n<p>Back home, an immediate cut in policy rates at the October policy meeting is unlikely. The Reserve Bank of India (RBI) has been steadfast in wanting to see retail inflation durably down at 4% before it cuts. To be sure, the August inflation number came in at 3.7% year-on-year (y-o-y) but it was a tad above consensus and food prices did not come off comfortably enough. In addition, pressure points were visible in core inflation too, with the price rise in the health and education spaces somewhat elevated. Although inflation is expected to move up to 5% in September, the average for the July-September quarter would undershoot the RBI's projected 4.4%. Thereafter falling prices of food and energy could see headline inflation drifting down to around 4% by March.</p>\n<p>As such, there is a chance that the RBI might alter its stance from the current \"withdrawal of accommodation\" to neutral in October and cut the policy rate in December. At the same time, the fact that liquidity today is far easier than it was a few months back suggests the stance has already changed even if not articulated. The RBI may choose to formally announce the change in the stance in December and cut simultaneously. The fall in bond yields on Thursday the benchmark 10-year yield ended at 6.75%, its lowest since February 25, 2022 - suggests the bond markets are pricing in cuts soon. The chances of a cut in December are high especially if the dollar continues to weaken leading to an unwanted appreciation of the rupee. While the central bank can intervene in the market to stem the appreciation, it would be difficult not to follow competing economies in the region once they start easing monetary policy. Indonesia was quick to make a quarter-point cut on Wednesday and others like South Korea too also moved.</p>\n<p>Moreover, while the local economy grew at a reasonably good 6.7% in the June quarter, there are pockets of weakness; cars and trucks, for instance, have not been selling well, and the rural economy is yet to recover sustainably. While not the most reliable of indicators, the growth in factory output in July was flat at 4.8% y-o-y compared with June's 4.7% y-o-y. More importantly, on a seasonally-adjusted basis, industrial output contracted for the second consecutive month with consumer goods production very weak. The point is that while GDP could well grow at 7% this fiscal, the larger informal sector remains fragile with medium and small enterprises yet to recover from the Covid blows. Leaving interest rates elevated for too long could take a toll on small enterprises.</p><br><p><strong>What is the expected trend for inflation by March, as per the passage?</strong></p>", "options": ["<p>It will rise to 5.5%</p>", "<p>It will fall to around 4%</p>", "<p>It will remain stable at 6%</p>", "<p>It will increase slightly to 4.7%</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage indicates that inflation is expected to drift down to around 4% by March, mainly due to falling food and energy prices.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>The equity market's reaction to the US Federal Reserve's decision to cut rates by 50 basis points shows growing anticipation that the rate cycle in India too will turn soon. A lower cost of capital is always good news for the economy. The fairly steep cuts projected by the Fed raise concerns about the US economy slowing the median US GDP forecast has been lowered while the projection for unemployment has been upped. For now, however, the US economy seems to be chugging along and looks like it will manage to avoid a hard landing. That said, the labor market is weakening and the Fed probably believes the slowdown is likely to persist which is why it is trying to keep the momentum going by cutting rates.</p>\n<p>Back home, an immediate cut in policy rates at the October policy meeting is unlikely. The Reserve Bank of India (RBI) has been steadfast in wanting to see retail inflation durably down at 4% before it cuts. To be sure, the August inflation number came in at 3.7% year-on-year (y-o-y) but it was a tad above consensus and food prices did not come off comfortably enough. In addition, pressure points were visible in core inflation too, with the price rise in the health and education spaces somewhat elevated. Although inflation is expected to move up to 5% in September, the average for the July-September quarter would undershoot the RBI's projected 4.4%. Thereafter falling prices of food and energy could see headline inflation drifting down to around 4% by March.</p>\n<p>As such, there is a chance that the RBI might alter its stance from the current \"withdrawal of accommodation\" to neutral in October and cut the policy rate in December. At the same time, the fact that liquidity today is far easier than it was a few months back suggests the stance has already changed even if not articulated. The RBI may choose to formally announce the change in the stance in December and cut simultaneously. The fall in bond yields on Thursday the benchmark 10-year yield ended at 6.75%, its lowest since February 25, 2022 - suggests the bond markets are pricing in cuts soon. The chances of a cut in December are high especially if the dollar continues to weaken leading to an unwanted appreciation of the rupee. While the central bank can intervene in the market to stem the appreciation, it would be difficult not to follow competing economies in the region once they start easing monetary policy. Indonesia was quick to make a quarter-point cut on Wednesday and others like South Korea too also moved.</p>\n<p>Moreover, while the local economy grew at a reasonably good 6.7% in the June quarter, there are pockets of weakness; cars and trucks, for instance, have not been selling well, and the rural economy is yet to recover sustainably. While not the most reliable of indicators, the growth in factory output in July was flat at 4.8% y-o-y compared with June's 4.7% y-o-y. More importantly, on a seasonally-adjusted basis, industrial output contracted for the second consecutive month with consumer goods production very weak. The point is that while GDP could well grow at 7% this fiscal, the larger informal sector remains fragile with medium and small enterprises yet to recover from the Covid blows. Leaving interest rates elevated for too long could take a toll on small enterprises.</p><br><p><strong>What can be inferred about the RBI’s stance if inflation remains within acceptable limits by December?</strong></p>", "options": ["<p>The RBI may choose to maintain its current rate</p>", "<p>The RBI is likely to cut rates and announce a change in stance</p>", "<p>The RBI will likely increase rates further</p>", "<p>The RBI will maintain a neutral stance without rate changes</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage suggests that if inflation behaves as expected, the RBI might formally change its stance to neutral in December and cut rates simultaneously.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>The equity market's reaction to the US Federal Reserve's decision to cut rates by 50 basis points shows growing anticipation that the rate cycle in India too will turn soon. A lower cost of capital is always good news for the economy. The fairly steep cuts projected by the Fed raise concerns about the US economy slowing the median US GDP forecast has been lowered while the projection for unemployment has been upped. For now, however, the US economy seems to be chugging along and looks like it will manage to avoid a hard landing. That said, the labor market is weakening and the Fed probably believes the slowdown is likely to persist which is why it is trying to keep the momentum going by cutting rates.</p>\n<p>Back home, an immediate cut in policy rates at the October policy meeting is unlikely. The Reserve Bank of India (RBI) has been steadfast in wanting to see retail inflation durably down at 4% before it cuts. To be sure, the August inflation number came in at 3.7% year-on-year (y-o-y) but it was a tad above consensus and food prices did not come off comfortably enough. In addition, pressure points were visible in core inflation too, with the price rise in the health and education spaces somewhat elevated. Although inflation is expected to move up to 5% in September, the average for the July-September quarter would undershoot the RBI's projected 4.4%. Thereafter falling prices of food and energy could see headline inflation drifting down to around 4% by March.</p>\n<p>As such, there is a chance that the RBI might alter its stance from the current \"withdrawal of accommodation\" to neutral in October and cut the policy rate in December. At the same time, the fact that liquidity today is far easier than it was a few months back suggests the stance has already changed even if not articulated. The RBI may choose to formally announce the change in the stance in December and cut simultaneously. The fall in bond yields on Thursday the benchmark 10-year yield ended at 6.75%, its lowest since February 25, 2022 - suggests the bond markets are pricing in cuts soon. The chances of a cut in December are high especially if the dollar continues to weaken leading to an unwanted appreciation of the rupee. While the central bank can intervene in the market to stem the appreciation, it would be difficult not to follow competing economies in the region once they start easing monetary policy. Indonesia was quick to make a quarter-point cut on Wednesday and others like South Korea too also moved.</p>\n<p>Moreover, while the local economy grew at a reasonably good 6.7% in the June quarter, there are pockets of weakness; cars and trucks, for instance, have not been selling well, and the rural economy is yet to recover sustainably. While not the most reliable of indicators, the growth in factory output in July was flat at 4.8% y-o-y compared with June's 4.7% y-o-y. More importantly, on a seasonally-adjusted basis, industrial output contracted for the second consecutive month with consumer goods production very weak. The point is that while GDP could well grow at 7% this fiscal, the larger informal sector remains fragile with medium and small enterprises yet to recover from the Covid blows. Leaving interest rates elevated for too long could take a toll on small enterprises.</p><br><p><strong>Why is the local economy's growth at 6.7% in the June quarter insufficient to remove concerns about rate cuts?</strong></p>", "options": ["<p>Due to weak sales in cars and trucks</p>", "<p>Because inflation has spiked</p>", "<p>Due to high unemployment rates</p>", "<p>Because industrial output is at record levels</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Although the economy grew at 6.7%, the passage highlights pockets of weakness, such as poor sales in cars and trucks, and slow recovery in the rural economy, which temper optimism.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>The equity market's reaction to the US Federal Reserve's decision to cut rates by 50 basis points shows growing anticipation that the rate cycle in India too will turn soon. A lower cost of capital is always good news for the economy. The fairly steep cuts projected by the Fed raise concerns about the US economy slowing the median US GDP forecast has been lowered while the projection for unemployment has been upped. For now, however, the US economy seems to be chugging along and looks like it will manage to avoid a hard landing. That said, the labor market is weakening and the Fed probably believes the slowdown is likely to persist which is why it is trying to keep the momentum going by cutting rates.</p>\n<p>Back home, an immediate cut in policy rates at the October policy meeting is unlikely. The Reserve Bank of India (RBI) has been steadfast in wanting to see retail inflation durably down at 4% before it cuts. To be sure, the August inflation number came in at 3.7% year-on-year (y-o-y) but it was a tad above consensus and food prices did not come off comfortably enough. In addition, pressure points were visible in core inflation too, with the price rise in the health and education spaces somewhat elevated. Although inflation is expected to move up to 5% in September, the average for the July-September quarter would undershoot the RBI's projected 4.4%. Thereafter falling prices of food and energy could see headline inflation drifting down to around 4% by March.</p>\n<p>As such, there is a chance that the RBI might alter its stance from the current \"withdrawal of accommodation\" to neutral in October and cut the policy rate in December. At the same time, the fact that liquidity today is far easier than it was a few months back suggests the stance has already changed even if not articulated. The RBI may choose to formally announce the change in the stance in December and cut simultaneously. The fall in bond yields on Thursday the benchmark 10-year yield ended at 6.75%, its lowest since February 25, 2022 - suggests the bond markets are pricing in cuts soon. The chances of a cut in December are high especially if the dollar continues to weaken leading to an unwanted appreciation of the rupee. While the central bank can intervene in the market to stem the appreciation, it would be difficult not to follow competing economies in the region once they start easing monetary policy. Indonesia was quick to make a quarter-point cut on Wednesday and others like South Korea too also moved.</p>\n<p>Moreover, while the local economy grew at a reasonably good 6.7% in the June quarter, there are pockets of weakness; cars and trucks, for instance, have not been selling well, and the rural economy is yet to recover sustainably. While not the most reliable of indicators, the growth in factory output in July was flat at 4.8% y-o-y compared with June's 4.7% y-o-y. More importantly, on a seasonally-adjusted basis, industrial output contracted for the second consecutive month with consumer goods production very weak. The point is that while GDP could well grow at 7% this fiscal, the larger informal sector remains fragile with medium and small enterprises yet to recover from the Covid blows. Leaving interest rates elevated for too long could take a toll on small enterprises.</p><br><p><strong>What can be inferred about the relationship between inflation and policy rates in India?</strong></p>", "options": ["<p>Inflation is expected to remain high, preventing rate cuts</p>", "<p>Falling inflation will likely prompt rate cuts</p>", "<p>Inflation has no significant impact on rate decisions</p>", "<p>Inflation and policy rates are expected to rise simultaneously</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage explains that if inflation falls to around 4%, the RBI could cut rates in December, implying that lower inflation creates conditions conducive to rate cuts.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>The equity market's reaction to the US Federal Reserve's decision to cut rates by 50 basis points shows growing anticipation that the rate cycle in India too will turn soon. A lower cost of capital is always good news for the economy. The fairly steep cuts projected by the Fed raise concerns about the US economy slowing the median US GDP forecast has been lowered while the projection for unemployment has been upped. For now, however, the US economy seems to be chugging along and looks like it will manage to avoid a hard landing. That said, the labor market is weakening and the Fed probably believes the slowdown is likely to persist which is why it is trying to keep the momentum going by cutting rates.</p>\n<p>Back home, an immediate cut in policy rates at the October policy meeting is unlikely. The Reserve Bank of India (RBI) has been steadfast in wanting to see retail inflation durably down at 4% before it cuts. To be sure, the August inflation number came in at 3.7% year-on-year (y-o-y) but it was a tad above consensus and food prices did not come off comfortably enough. In addition, pressure points were visible in core inflation too, with the price rise in the health and education spaces somewhat elevated. Although inflation is expected to move up to 5% in September, the average for the July-September quarter would undershoot the RBI's projected 4.4%. Thereafter falling prices of food and energy could see headline inflation drifting down to around 4% by March.</p>\n<p>As such, there is a chance that the RBI might alter its stance from the current \"withdrawal of accommodation\" to neutral in October and cut the policy rate in December. At the same time, the fact that liquidity today is far easier than it was a few months back suggests the stance has already changed even if not articulated. The RBI may choose to formally announce the change in the stance in December and cut simultaneously. The fall in bond yields on Thursday the benchmark 10-year yield ended at 6.75%, its lowest since February 25, 2022 - suggests the bond markets are pricing in cuts soon. The chances of a cut in December are high especially if the dollar continues to weaken leading to an unwanted appreciation of the rupee. While the central bank can intervene in the market to stem the appreciation, it would be difficult not to follow competing economies in the region once they start easing monetary policy. Indonesia was quick to make a quarter-point cut on Wednesday and others like South Korea too also moved.</p>\n<p>Moreover, while the local economy grew at a reasonably good 6.7% in the June quarter, there are pockets of weakness; cars and trucks, for instance, have not been selling well, and the rural economy is yet to recover sustainably. While not the most reliable of indicators, the growth in factory output in July was flat at 4.8% y-o-y compared with June's 4.7% y-o-y. More importantly, on a seasonally-adjusted basis, industrial output contracted for the second consecutive month with consumer goods production very weak. The point is that while GDP could well grow at 7% this fiscal, the larger informal sector remains fragile with medium and small enterprises yet to recover from the Covid blows. Leaving interest rates elevated for too long could take a toll on small enterprises.</p><br><p><strong>What is the passage's view on the role of small and medium enterprises (SMEs) in India's economic recovery?</strong></p>", "options": ["<p>SMEs have fully recovered from the impact of Covid</p>", "<p>SMEs are not significantly impacted by monetary policies</p>", "<p>SMEs have shown resilience and are leading growth</p>", "<p>SMEs remain fragile and have yet to recover</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The passage explicitly states that medium and small enterprises remain fragile and have yet to recover from the Covid-related impacts.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>The equity market's reaction to the US Federal Reserve's decision to cut rates by 50 basis points shows growing anticipation that the rate cycle in India too will turn soon. A lower cost of capital is always good news for the economy. The fairly steep cuts projected by the Fed raise concerns about the US economy slowing the median US GDP forecast has been lowered while the projection for unemployment has been upped. For now, however, the US economy seems to be chugging along and looks like it will manage to avoid a hard landing. That said, the labor market is weakening and the Fed probably believes the slowdown is likely to persist which is why it is trying to keep the momentum going by cutting rates.</p>\n<p>Back home, an immediate cut in policy rates at the October policy meeting is unlikely. The Reserve Bank of India (RBI) has been steadfast in wanting to see retail inflation durably down at 4% before it cuts. To be sure, the August inflation number came in at 3.7% year-on-year (y-o-y) but it was a tad above consensus and food prices did not come off comfortably enough. In addition, pressure points were visible in core inflation too, with the price rise in the health and education spaces somewhat elevated. Although inflation is expected to move up to 5% in September, the average for the July-September quarter would undershoot the RBI's projected 4.4%. Thereafter falling prices of food and energy could see headline inflation drifting down to around 4% by March.</p>\n<p>As such, there is a chance that the RBI might alter its stance from the current \"withdrawal of accommodation\" to neutral in October and cut the policy rate in December. At the same time, the fact that liquidity today is far easier than it was a few months back suggests the stance has already changed even if not articulated. The RBI may choose to formally announce the change in the stance in December and cut simultaneously. The fall in bond yields on Thursday the benchmark 10-year yield ended at 6.75%, its lowest since February 25, 2022 - suggests the bond markets are pricing in cuts soon. The chances of a cut in December are high especially if the dollar continues to weaken leading to an unwanted appreciation of the rupee. While the central bank can intervene in the market to stem the appreciation, it would be difficult not to follow competing economies in the region once they start easing monetary policy. Indonesia was quick to make a quarter-point cut on Wednesday and others like South Korea too also moved.</p>\n<p>Moreover, while the local economy grew at a reasonably good 6.7% in the June quarter, there are pockets of weakness; cars and trucks, for instance, have not been selling well, and the rural economy is yet to recover sustainably. While not the most reliable of indicators, the growth in factory output in July was flat at 4.8% y-o-y compared with June's 4.7% y-o-y. More importantly, on a seasonally-adjusted basis, industrial output contracted for the second consecutive month with consumer goods production very weak. The point is that while GDP could well grow at 7% this fiscal, the larger informal sector remains fragile with medium and small enterprises yet to recover from the Covid blows. Leaving interest rates elevated for too long could take a toll on small enterprises.</p><br><p><strong>According to the passage, why is an immediate rate cut by the RBI unlikely in October?</strong></p>", "options": ["<p>Because inflation remains well above 6%</p>", "<p>Due to the Fed's decision to raise rates</p>", "<p>The RBI wants to see durable inflation at 4%</p>", "<p>The government has imposed new fiscal policies</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The RBI is being cautious and wants to ensure that inflation stays at 4% durably before considering a rate cut, which is why an immediate cut is unlikely in October.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-57)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-57)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

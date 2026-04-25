@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-45)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>In the following questions three columns are given containing three Sentences/phrases/connectors each. In first column, sentences/phrases are P, Q and R, in the third column the sentences/phrases are V, W and X and in the second column the sentences/phrases S, T and U are given. The sentence/phrase from the first column may or may not connect with another sentence/phrase from the second or third column to make a grammatically and contextually correct sentence. Each question has five options, four of which display the sequence(s) in which the sentences/phrases can be joined to form a grammatically and contextually correct sentence. If none of the options given forms a correct sentence after combination, mark (e), i.e. “None of these” as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/173115714471.png\" title=\"54.PNG\"/></p>", "options": ["<p>PTV, QSW and RUX</p>", "<p>QUX, PSV and RTW</p>", "<p>RSW, PTX and QUV</p>", "<p>PTW, QUV and RSX</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>PTW: </strong>As the economy continues to fluctuate, financial analysts are calling on investors to brace themselves for potential market volatility and reassess their portfolios accordingly.</p>\n<p><strong>QUV: </strong>The CEO promised to lay out a detailed plan to restructure the company’s operations, aiming to cut down on unnecessary expenditures and improve overall efficiency.</p>\n<p><strong>RSX: </strong>The new legislation aims to phase out outdated industrial practices that contribute to pollution, encouraging businesses to adopt more sustainable solutions.</p>"}, {"question": "<p><strong>In the following questions three columns are given containing three Sentences/phrases/connectors each. In first column, sentences/phrases are P, Q and R, in the third column the sentences/phrases are V, W and X and in the second column the sentences/phrases S, T and U are given. The sentence/phrase from the first column may or may not connect with another sentence/phrase from the second or third column to make a grammatically and contextually correct sentence. Each question has five options, four of which display the sequence(s) in which the sentences/phrases can be joined to form a grammatically and contextually correct sentence. If none of the options given forms a correct sentence after combination, mark (e), i.e. “None of these” as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/173115721796.png\" title=\"55.PNG\"/></p>", "options": ["<p>PTV, QSW and RUX</p>", "<p>QUX, PSV and RTW</p>", "<p>RSW, PTX and QUV</p>", "<p>PTW, QUV and RSX</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>PSV: </strong>After lengthy discussions, both parties agreed to put aside their differences and work together toward achieving a common goal that benefits all stakeholders.</p>\n<p><strong>QUX: </strong>As technology continues to evolve, educators are being urged to look into new pedagogical methods that cater to the changing needs of students in a digital age.</p>\n<p><strong>RTW: </strong>Despite the mounting pressure from environmental groups, the corporation has yet to come up with a clear strategy for reducing its carbon footprint in the long term.</p>"}, {"question": "<p><strong>In the following questions three columns are given containing three Sentences/phrases/connectors each. In first column, sentences/phrases are P, Q and R, in the third column the sentences/phrases are V, W and X and in the second column the sentences/phrases S, T and U are given. The sentence/phrase from the first column may or may not connect with another sentence/phrase from the second or third column to make a grammatically and contextually correct sentence. Each question has five options, four of which display the sequence(s) in which the sentences/phrases can be joined to form a grammatically and contextually correct sentence. If none of the options given forms a correct sentence after combination, mark (e), i.e. “None of these” as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/173115726293.png\" title=\"56.PNG\"/></p>", "options": ["<p>PTV, QSW and RUX</p>", "<p>QUX, PSV and RTW</p>", "<p>RSW, PTX and QUV</p>", "<p>PTW, QUV and RSX</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>PTV: </strong>The research team is determined to dig deeper into the data, seeking to uncover trends that could provide new insights into consumer behavior.</p>\n<p><strong>QSW: </strong>As the meeting dragged on, participants started to bring up new points of concern, further complicating the decision-making process.</p>\n<p><strong>RUX: </strong>The board of directors decided to hold off on making any final decisions until they could gather more data and consult with key stakeholders.</p>"}, {"question": "<p><strong>In the following questions three columns are given containing three Sentences/phrases/connectors each. In first column, sentences/phrases are P, Q and R, in the third column the sentences/phrases are V, W and X and in the second column the sentences/phrases S, T and U are given. The sentence/phrase from the first column may or may not connect with another sentence/phrase from the second or third column to make a grammatically and contextually correct sentence. Each question has five options, four of which display the sequence(s) in which the sentences/phrases can be joined to form a grammatically and contextually correct sentence. If none of the options given forms a correct sentence after combination, mark (e), i.e. “None of these” as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/173115731078.png\" title=\"57.PNG\"/></p>", "options": ["<p>PTV, QSW and RUX</p>", "<p>QUX, PSV and RTW</p>", "<p>RSW, PTX and QUV</p>", "<p>PTW, QUV and RSX</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>PTX: </strong>In response to growing public demand, the company has decided to ramp up production of its eco-friendly products to meet the increased consumer interest.</p>\n<p><strong>QUV: </strong>The new initiative seeks to break down the barriers that prevent underrepresented groups from accessing high-level job opportunities in the tech industry.</p>\n<p><strong>RSW: </strong>Despite the challenging circumstances, the nonprofit organization managed to carry out its mission, providing critical resources to communities in need.</p>"}, {"question": "<p><strong>In the following questions three columns are given containing three Sentences/phrases/connectors each. In first column, sentences/phrases are P, Q and R, in the third column the sentences/phrases are V, W and X and in the second column the sentences/phrases S, T and U are given. The sentence/phrase from the first column may or may not connect with another sentence/phrase from the second or third column to make a grammatically and contextually correct sentence. Each question has five options, four of which display the sequence(s) in which the sentences/phrases can be joined to form a grammatically and contextually correct sentence. If none of the options given forms a correct sentence after combination, mark (e), i.e. “None of these” as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/173115736110.png\" title=\"58.PNG\"/></p>", "options": ["<p>PTV, QSW and RUX</p>", "<p>QUX, PSV and RTW</p>", "<p>RSW, PTX and QUV</p>", "<p>PTW, QUV and RSX</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>PTW: </strong>After thorough consideration, the council has agreed to push forward with the urban renewal project, which aims to revitalize neglected areas of the city.</p>\n<p><strong>QUV: </strong>The sudden surge in demand for electric vehicles has prompted automakers to scale up their production capabilities and expand their research into new technologies.</p>\n<p><strong>RSX: </strong>As the company faces increasing competition, its leadership team is being urged to think ahead and devise innovative strategies that will keep them ahead of rivals.</p>"}, {"question": "<p><strong>A sentence or a part of the sentence is highlighted. Four alternatives marked as (A), (B), (C) and (D) are given as substitutions for the highlighted part, one of which will improve the sentence. Choose the correct alternative. In case no improvement is needed, choose the option “No improvement is required” i.e. (E).</strong></p><br><p>Realizing the mistakes made in the initial attempt, the team decided to scrap their current strategy and start afresh, <strong>assigning to did up the project</strong> with a renewed focus and revised approach to ensure success.</p>", "options": ["<p>concluding to done out the project</p>", "<p>resolving to does over the project</p>", "<p>preferring to do up the project</p>", "<p>opting to do over the project</p>", "<p>no improvement is needed</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D</strong></p>\n<p>The correct option is: d) opting to do over the project</p>\n<p>The phrase \"opting to do over the project\" is the most appropriate choice to convey the idea of restarting or redoing the project. \"Opting to\" indicates a deliberate choice or decision, and \"do over\" is a phrasal verb meaning to redo or start again.</p>\n<p>Options (a), (b), and (c) introduce variations that are less idiomatic or disrupt the intended meaning:</p>\n<p>Option (a) \"concluding to done out the project\" is not idiomatic. \"Concluding\" does not fit well in this context, and \"done out\" is not a standard expression for restarting a project.</p>\n<p>Option (b) \"resolving to does over the project\" has tense agreement issues (\"does over\" should be \"do over\") and incorrect phrasing.</p>\n<p>Option (c) \"preferring to do up the project\" introduces a different meaning. \"Do up\" typically means to renovate or improve the appearance of something, which is not appropriate in this context.</p>\n<p>Therefore, option (d) \"opting to do over the project\" is the correct choice for maintaining proper grammar and conveying the intended meaning effectively.</p>"}, {"question": "<p><strong>A sentence or a part of the sentence is highlighted. Four alternatives marked as (A), (B), (C) and (D) are given as substitutions for the highlighted part, one of which will improve the sentence. Choose the correct alternative. In case no improvement is needed, choose the option “No improvement is required” i.e. (E).</strong></p><br><p>After a long week of work, <strong>I decided to sleep over</strong> on Saturday morning, relishing the luxury of staying in bed past my usual waking hour.</p>", "options": ["<p>I decided to sleep in</p>", "<p>I have decided to sleep over</p>", "<p>I had decided to sleep through</p>", "<p>I decided to sleep through</p>", "<p>no improvement is needed</p>"], "correctIndex": 0, "solution": "<p><strong>Answer</strong><strong>: A</strong></p>\n<p>The correct option is: a) I decided to sleep in</p>\n<p>The phrase \"to sleep in\" means to remain in bed longer than usual in the morning. It is the most appropriate expression for the context provided in the sentence.</p>\n<p>Options (b), (c), and (d) introduce variations that do not convey the intended meaning or are less idiomatic:</p>\n<p>Option (b) \"I have decided to sleep over\" suggests staying somewhere overnight, which is not the intended meaning.</p>\n<p>Option (c) \"I had decided to sleep through\" implies sleeping without waking up at all, which is not the intended meaning.</p>\n<p>Option (d) \"I decided to sleep through\" also implies sleeping without waking up at all, which is not the intended meaning.</p>\n<p>Therefore, option (a) \"I decided to sleep in\" is the correct choice for maintaining proper grammar and conveying the intended meaning effectively.</p>"}, {"question": "<p><strong>A sentence or a part of the sentence is highlighted. Four alternatives marked as (A), (B), (C) and (D) are given as substitutions for the highlighted part, one of which will improve the sentence. Choose the correct alternative. In case no improvement is needed, choose the option “No improvement is required” i.e. (E).</strong></p><br><p>After hours of negotiation, <strong>he totally gave up </strong>to his opponent's<strong> </strong>demands, recognizing that further resistance would only prolong the conflict and lead to more significant losses.</p>", "options": ["<p>he ultimately gave away</p>", "<p>he absolutely gave up</p>", "<p>he finally gave in</p>", "<p>he exactly gave back</p>", "<p>no improvement is needed</p>"], "correctIndex": 2, "solution": "<p><strong>Answer</strong><strong>: C</strong></p>\n<p>The correct option is: c) he finally gave in</p>\n<p>The phrase \"he finally gave in\" is idiomatic and effectively conveys the idea that he yielded or surrendered to his opponent's demands after hours of negotiation. \"Gave in\" means to yield or surrender, which fits well in the context of the sentence.</p>\n<p>Options (a), (b), and (d) introduce variations that either change the meaning or are less idiomatic:</p>\n<p>Option (a) \"he ultimately gave away\" changes the meaning. \"Gave away\" typically means to distribute or give something as a gift, which doesn't fit the context of yielding to demands.</p>\n<p>Option (b) \"he absolutely gave up\" also changes the meaning. \"Gave up\" typically means to quit or cease trying, which doesn't convey the sense of yielding after negotiation.</p>\n<p>Option (d) \"he exactly gave back\" is not idiomatic. \"Gave back\" typically means to return something, which doesn't fit the context of yielding to demands.</p>\n<p>Therefore, option (c) \"he finally gave in\" is the correct choice for maintaining proper grammar and conveying the intended meaning effectively.</p>"}, {"question": "<p><strong>A sentence or a part of the sentence is highlighted. Four alternatives marked as (A), (B), (C) and (D) are given as substitutions for the highlighted part, one of which will improve the sentence. Choose the correct alternative. In case no improvement is needed, choose the option “No improvement is required” i.e. (E).</strong></p><br><p>The new government's policies <strong>directed to bring in critical social change</strong>, fostering equality and prosperity for all citizens.</p>", "options": ["<p>intended to bring over vital social change</p>", "<p>marked to bring up crucial social change</p>", "<p>focused to bring in historic social change</p>", "<p>aimed to bring about significant social change</p>", "<p>no improvement is needed</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D</strong></p>\n<p>The correct option is: d) aimed to bring about significant social change. The phrase \"aimed to bring about significant social change\" is the most appropriate choice as it accurately conveys the intended meaning. It indicates that the policies were designed with the specific goal of achieving significant social change.</p>\n<p>Options (a), (b), and (c) introduce variations that either change the meaning or are less idiomatic:</p>\n<p>Option (a) \"intended to bring over vital social change\" introduces unnecessary words (\"over\" and \"vital\") and changes the meaning slightly.</p>\n<p>Option (b) \"marked to bring up crucial social change\" does not accurately convey the idea of directing policies toward social change. Additionally, \"bring up\" is not the appropriate phrasal verb in this context.</p>\n<p>Option (c) \"focused to bring in historic social change\" changes the meaning slightly and introduces the word \"historic,\" which may not be suitable depending on the context of the social change.</p>\n<p>Therefore, option (d) \"aimed to bring about significant social change\" is the correct choice for maintaining proper grammar and conveying the intended meaning effectively.</p>"}, {"question": "<p><strong>A sentence or a part of the sentence is highlighted. Four alternatives marked as (A), (B), (C) and (D) are given as substitutions for the highlighted part, one of which will improve the sentence. Choose the correct alternative. In case no improvement is needed, choose the option “No improvement is required” i.e. (E).</strong></p><br><p>After weeks of meticulous planning and preparation, the theatrical performance <strong>finally came off without a hitch</strong>, leaving the audience awestruck and applauding fervently for the talented cast and crew.</p>", "options": ["<p>ultimately came in without a hitch</p>", "<p>totally came out without a hitch</p>", "<p>surely came over without a hitch</p>", "<p>completely came through without a hitch</p>", "<p>no improvement is needed</p>"], "correctIndex": 4, "solution": "<p><strong>Answer</strong><strong>: E</strong></p>\n<p>The correct option is: e) no improvement is needed</p>\n<p>The sentence is grammatically correct and effectively conveys the intended meaning. The phrase \"finally came off without a hitch\" is idiomatic and clear in expressing the successful outcome of the theatrical performance.</p>\n<p>Options (a), (b), (c), and (d) introduce variations that either change the meaning or are less idiomatic:</p>\n<p>Option (a) \"ultimately came in without a hitch\" changes the meaning slightly and is less idiomatic than \"came off.\"</p>\n<p>Option (b) \"totally came out without a hitch\" introduces a different adverb \"totally,\" which alters the tone of the sentence.</p>\n<p>Option (c) \"surely came over without a hitch\" introduces \"surely,\" which implies a level of certainty that may not be appropriate in this context.</p>\n<p>Option (d) \"completely came through without a hitch\" changes the meaning slightly and may imply overcoming obstacles, which is not the intended meaning here.</p>\n<p>Therefore, option (e) \"no improvement is needed\" is the correct choice for maintaining proper grammar and conveying the intended meaning effectively.</p>"}, {"question": "<p><strong>In the sentence, identify the segment which is error-free and mark your answer accordingly.</strong></p><br><p>In most Indian homes, all financial decisions <strong>(A)/ </strong>is taken by the man without even consulting <strong>(B)/</strong>his wife, even in those cases what <strong>(C)/ </strong>the wife contributes for the household income <strong>(D)/</strong>  All correct <strong>(E)</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>All correct</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>In <strong>segment B</strong>, \"is taken by the man without even consulting,\" the subject \"all financial decisions\" is plural, so the correct verb form should be \"are\" instead of \"is.\" Next, in <strong>segment C</strong>, \"his wife, even in those cases what,\" the word \"what\" should be replaced with \"where\" or \"in which\" to be grammatically correct. In <strong>segment D</strong>, \"the wife contributes for the household income,\" the preposition \"for\" should be \"to\" to correctly indicate the contribution to the household income. Since segments B, C, and D all contain errors, the only segment that is grammatically correct and error-free is <strong>segment A</strong>: \"In most Indian homes, all financial decisions.\" The corrected sentence is:</p>\n<p>“In most Indian homes, all financial decisions are taken by the man without even consulting his wife, even in those cases where the wife contributes to the household income.”</p>"}, {"question": "<p><strong>In the sentence, identify the segment which is error-free and mark your answer accordingly.</strong></p><br><p>As patriarchy is deep entrenched in our society, <strong>(A)/</strong>men cannot be expected to head <strong>(B)/</strong>the advise of Justice Nagarathna and do “justice” by <strong>(C)/</strong>sharing their income with their wives. <strong>(D)/</strong> All correct <strong>(E)</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>All correct</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>In <strong>segment A</strong>, the phrase \"deep entrenched\" is incorrect. The correct phrase should be \"deeply entrenched\" because \"deeply\" is the appropriate adverb to describe the extent to which patriarchy is embedded in society. <strong>Segment B</strong> contains the word \"head,\" which is incorrect in this context. The correct word should be \"heed,\" meaning to pay attention to or follow. <strong>Segment C</strong> uses \"advise\" incorrectly; the correct noun form is \"advice.\" \"Advise\" is a verb, while \"advice\" is the noun needed here. <strong>Segment D</strong>, \"sharing their income with their wives,\" is grammatically correct and does not have any errors.The corrected sentence is:</p>\n<p>“As patriarchy is deeply entrenched in our society, men cannot be expected to heed the advice of Justice Nagarathna and do “justice” by sharing their income with their wives.”</p>"}, {"question": "<p><strong>In the sentence, identify the segment which is error-free and mark your answer accordingly.</strong></p><br><p>When there is a specific demand by a specific <strong>(A)/</strong>State for higher transfer of resources for a <strong>(B)/</strong>specific purpose, constitutionally there is no bar on <strong>(C)/</strong>giving more money to that State. <strong>(D)/ </strong>All correct <strong>(E)</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>All correct</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p><strong>Segment A</strong> introduces the context with \"When there is a specific demand by a specific State,\" which is clear and correctly structured. <strong>Segment B</strong> continues logically with \"for higher transfer of resources for a specific purpose,\" specifying the nature of the demand. <strong>Segment C</strong> maintains correct grammar with \"constitutionally there is no bar on,\" indicating there are no legal restrictions. Finally, <strong>Segment D</strong> concludes with \"giving more money to that State,\" which properly follows from the preceding segments.The corrected sentence is:</p>\n<p>“When there is a specific demand by a specific State for higher transfer of resources for a specific purpose, constitutionally there is no bar on giving more money to that State.”</p>"}, {"question": "<p><strong>In the sentence, identify the segment which is error-free and mark your answer accordingly.</strong></p><br><p>A Niti Aayog report on 2022 argued that <strong>(A)/</strong>purchasing a vehicle are a “major <strong>(B)/</strong>investment decision” between <strong>(C)/</strong>most Indian consumers. <strong>(D)/ </strong>All correct <strong>(E)</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>All correct</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>Segment A</strong>, \"A Niti Aayog report on 2022 argued that,\" is incorrect,the phrase \"on 2022\" should be \"in 2022\" to accurately reflect the time period. <strong>Segment B</strong> contains a grammatical error because \"purchasing a vehicle\" is a singular subject and thus should be followed by \"is\" instead of \"are.\" <strong>Segment C</strong> also has an issue; the word \"between\" should be \"for”. Finally, <strong>Segment D</strong>, \"most Indian consumers,\" is grammatically correct and logically fits with the rest of the sentence.The corrected sentence is:</p>\n<p>“A Niti Aayog report in 2022 argued that purchasing a vehicle is a “major investment decision” for most Indian consumers.”</p>"}, {"question": "<p><strong>In the sentence, identify the segment which is error-free and mark your answer accordingly.</strong></p><br><p>Dengue is endemic in more than 100 countries in <strong>(A)/</strong>the WHO region’s of Africa, <strong>(B)/</strong>Americas, the Eastern Mediterranean, <strong>(C)/ </strong>South-East Asia and Western’s Pacific. <strong>(D) /</strong> All correct <strong>(E)</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>No error</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>Segment A</strong>, \"Dengue is endemic in more than 100 countries in,\" is grammatically correct and appropriately sets up the context. <strong>Segment B</strong>, \"the WHO region’s of Africa,\" contains an error; the possessive form \"region’s\" should be \"regions\" to refer to multiple regions accurately. <strong>Segment C </strong>should use \"the Americas\" to align with standard usage. <strong>Segment D</strong> contains the error \"Western’s Pacific,\" where the possessive form \"Western’s\" should be corrected to \"Western\" to properly refer to the region.The corrected sentence is:</p>\n<p>“Dengue is endemic in more than 100 countries in the WHO regions of Africa, the Americas, the Eastern Mediterranean, South-East Asia and Western Pacific.”</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>India’s recent electoral results have highlighted a crucial issue that the nation can no longer afford to ignore: the tension between controlling food inflation and ensuring the welfare of farmers. With food prices remaining stubbornly high, the government’s traditional strategies of export curbs and increased imports have come under scrutiny. These measures, while aimed at protecting urban consumers, have left the farming community disgruntled and financially strained. For over 45 per cent of Indians who depend on agriculture for their livelihood, the past few years have been particularly challenging. The imposition of export bans on staples such as rice and onions has prevented farmers from capitalising on higher international prices. Simultaneously, the influx of cheaper imported goods has further depressed local prices, exacerbating the economic distress faced by farmers. This has led to a palpable sense of frustration and betrayal among those who feel that their interests have been sacrificed for the sake of urban consumers. The crux of the problem lies in the government’s dual mandate: to keep food prices affordable for the general population while also ensuring that farmers earn a fair income. The current approach of restricting exports of key commodities like rice and onions, coupled with lowering tariffs on imported goods, has primarily been an attempt to curb rising inflation. However, these policies have inadvertently suppressed farm incomes, sparking widespread discontent among rural voters who form a significant portion of India’s population. It is imperative for the government to reassess its food policy framework and find a more balanced approach. One viable solution could be to ease export restrictions on certain commodities where there are surplus stocks, such as rice. With state granaries overflowing and predictions of a favourable monsoon, allowing rice exports could help stabilise domestic prices and provide much-needed relief to farmers. Additionally, lifting export curbs on onions could address the acute dissatisfaction in key agricultural states like Maharashtra, where farmers have struggled to recover their production costs. Beyond immediate policy adjustments, there is a need for long-term structural reforms aimed at enhancing agricultural productivity and resilience. Investing in modern farming techniques, improving irrigation infrastructure, and providing better access to credit and markets can significantly boost crop yields and farmer incomes. Moreover, revising the government-mandated support prices to reflect actual production costs and market conditions more accurately would go a long way in ensuring fair compensation for farmers. Another crucial aspect is improving the efficiency and reach of the procurement system. Ensuring that government agencies buy crops at support prices, particularly in regions where farmers are struggling, can provide a safety net against market volatility. Combined with better storage and distribution facilities, this can help reduce postharvest losses and ensure that farmers receive the full benefit of their labour. Ultimately, addressing the food policy dilemma requires a holistic approach that balances the needs of both consumers and farmers. While controlling food inflation remains important, it should not come at the expense of rural livelihoods.</p><br><p><strong>Why are farmers disgruntled with the government's policies?</strong></p>", "options": ["<p>Due to lack of modern farming techniques</p>", "<p>Because of high production costs</p>", "<p>Because they cannot capitalize on higher international prices</p>", "<p>Due to insufficient irrigation facilities</p>", "<p>Because of inadequate access to credit</p>"], "correctIndex": 2, "solution": "<p><strong>Answer:</strong><strong> C</strong></p>\n<p>The passage explains that export bans prevent farmers from taking advantage of high international prices and cheaper imports depress local prices, worsening farmers' financial conditions. The passage highlights several reasons why farmers are unhappy with the government's policies, primarily focusing on the economic strain caused by these policies.</p>\n<p><strong>a).</strong> Due to lack of modern farming techniques: While the passage does mention the need for investing in modern farming techniques as a part of long-term reforms, it does not identify this as a primary reason for farmers' current discontent. Therefore, this is not the <strong>main reason for their disgruntlement.</strong></p>\n<p><strong>b).</strong> Because of high production costs: Although high production costs are a general concern for farmers, the passage does not specifically cite this as a reason for their dissatisfaction with the government's current policies.</p>\n<p><strong>c).</strong> Because they cannot capitalize on higher international prices: This is the correct answer. The passage clearly states that the imposition of export bans on staples such as rice and onions has prevented farmers from taking advantage of higher international prices. Additionally, the influx of cheaper imported goods has further depressed local prices, exacerbating the economic distress faced by farmers. This situation leads to their frustration and sense of betrayal, as their potential earnings are significantly reduced by these government policies.</p>\n<p><strong>d).</strong> Due to insufficient irrigation facilities: Similar to modern farming techniques, the passage suggests improving irrigation infrastructure as a necessary reform. However, it does not cite this as a primary cause of the current dissatisfaction among farmers.</p>\n<p><strong>e).</strong> Because of inadequate access to credit: Inadequate access to credit is mentioned as an area for improvement to enhance agricultural productivity and resilience, but it is not stated as a direct cause of the farmers' current disgruntlement with the government's policies.</p>\n<p>In summary, the primary reason for the farmers' discontent, as stated in the passage, is that the government's policies have prevented them from capitalizing on higher international prices and have further depressed local prices through the influx of cheaper imports. This has led to significant financial strain and frustration among the farming community.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>India’s recent electoral results have highlighted a crucial issue that the nation can no longer afford to ignore: the tension between controlling food inflation and ensuring the welfare of farmers. With food prices remaining stubbornly high, the government’s traditional strategies of export curbs and increased imports have come under scrutiny. These measures, while aimed at protecting urban consumers, have left the farming community disgruntled and financially strained. For over 45 per cent of Indians who depend on agriculture for their livelihood, the past few years have been particularly challenging. The imposition of export bans on staples such as rice and onions has prevented farmers from capitalising on higher international prices. Simultaneously, the influx of cheaper imported goods has further depressed local prices, exacerbating the economic distress faced by farmers. This has led to a palpable sense of frustration and betrayal among those who feel that their interests have been sacrificed for the sake of urban consumers. The crux of the problem lies in the government’s dual mandate: to keep food prices affordable for the general population while also ensuring that farmers earn a fair income. The current approach of restricting exports of key commodities like rice and onions, coupled with lowering tariffs on imported goods, has primarily been an attempt to curb rising inflation. However, these policies have inadvertently suppressed farm incomes, sparking widespread discontent among rural voters who form a significant portion of India’s population. It is imperative for the government to reassess its food policy framework and find a more balanced approach. One viable solution could be to ease export restrictions on certain commodities where there are surplus stocks, such as rice. With state granaries overflowing and predictions of a favourable monsoon, allowing rice exports could help stabilise domestic prices and provide much-needed relief to farmers. Additionally, lifting export curbs on onions could address the acute dissatisfaction in key agricultural states like Maharashtra, where farmers have struggled to recover their production costs. Beyond immediate policy adjustments, there is a need for long-term structural reforms aimed at enhancing agricultural productivity and resilience. Investing in modern farming techniques, improving irrigation infrastructure, and providing better access to credit and markets can significantly boost crop yields and farmer incomes. Moreover, revising the government-mandated support prices to reflect actual production costs and market conditions more accurately would go a long way in ensuring fair compensation for farmers. Another crucial aspect is improving the efficiency and reach of the procurement system. Ensuring that government agencies buy crops at support prices, particularly in regions where farmers are struggling, can provide a safety net against market volatility. Combined with better storage and distribution facilities, this can help reduce postharvest losses and ensure that farmers receive the full benefit of their labour. Ultimately, addressing the food policy dilemma requires a holistic approach that balances the needs of both consumers and farmers. While controlling food inflation remains important, it should not come at the expense of rural livelihoods.</p><br><p><strong>What role does the procurement system play in supporting farmers?</strong></p>", "options": ["<p>It helps to increase the export of agricultural products</p>", "<p>It ensures government agencies buy crops at support prices</p>", "<p>It distributes free seeds to farmers</p>", "<p>It sets the international market prices for crops</p>", "<p>It reduces the cost of fertilizers</p>"], "correctIndex": 1, "solution": "<p><strong>Answer:</strong><strong> B</strong></p>\n<p>The passage highlights that an efficient procurement system, where government agencies buy crops at support prices, provides a safety net for farmers against market volatility. The procurement system plays a crucial role in supporting farmers by offering them a stable and predictable source of income through government intervention.</p>\n<p><strong>a).</strong> It helps to increase the export of agricultural products: The procurement system is not primarily designed to increase exports. Its main function is to stabilize domestic agricultural markets and ensure farmers receive fair compensation for their produce.</p>\n<p><strong>b).</strong> It ensures government agencies buy crops at support prices: This is the correct answer. The passage explicitly mentions that ensuring government agencies buy crops at support prices can provide a safety net against market volatility. This means that when market prices are low, farmers can still sell their crops at a predetermined price to the government, protecting them from unpredictable market fluctuations and ensuring a minimum level of income.</p>\n<p><strong>c).</strong> It distributes free seeds to farmers: The distribution of free seeds is not a function of the procurement system. This task may fall under agricultural support programs, but it is not related to the procurement process described in the passage.</p>\n<p><strong>d).</strong> It sets the international market prices for crops: The procurement system does not influence international market prices. Instead, it focuses on stabilizing the domestic market by ensuring that farmers receive a fair price for their crops within the country.</p>\n<p><strong>e).</strong> It reduces the cost of fertilizers: Reducing fertilizer costs is not a role of the procurement system. Fertilizer subsidies or cost reductions are typically handled through separate agricultural support or subsidy programs.</p>\n<p>In summary, the procurement system's role, as described in the passage, is to ensure that government agencies purchase crops at support prices. This mechanism helps to protect farmers from the adverse effects of market volatility by guaranteeing them a minimum price for their produce, thereby providing financial stability and security.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>India’s recent electoral results have highlighted a crucial issue that the nation can no longer afford to ignore: the tension between controlling food inflation and ensuring the welfare of farmers. With food prices remaining stubbornly high, the government’s traditional strategies of export curbs and increased imports have come under scrutiny. These measures, while aimed at protecting urban consumers, have left the farming community disgruntled and financially strained. For over 45 per cent of Indians who depend on agriculture for their livelihood, the past few years have been particularly challenging. The imposition of export bans on staples such as rice and onions has prevented farmers from capitalising on higher international prices. Simultaneously, the influx of cheaper imported goods has further depressed local prices, exacerbating the economic distress faced by farmers. This has led to a palpable sense of frustration and betrayal among those who feel that their interests have been sacrificed for the sake of urban consumers. The crux of the problem lies in the government’s dual mandate: to keep food prices affordable for the general population while also ensuring that farmers earn a fair income. The current approach of restricting exports of key commodities like rice and onions, coupled with lowering tariffs on imported goods, has primarily been an attempt to curb rising inflation. However, these policies have inadvertently suppressed farm incomes, sparking widespread discontent among rural voters who form a significant portion of India’s population. It is imperative for the government to reassess its food policy framework and find a more balanced approach. One viable solution could be to ease export restrictions on certain commodities where there are surplus stocks, such as rice. With state granaries overflowing and predictions of a favourable monsoon, allowing rice exports could help stabilise domestic prices and provide much-needed relief to farmers. Additionally, lifting export curbs on onions could address the acute dissatisfaction in key agricultural states like Maharashtra, where farmers have struggled to recover their production costs. Beyond immediate policy adjustments, there is a need for long-term structural reforms aimed at enhancing agricultural productivity and resilience. Investing in modern farming techniques, improving irrigation infrastructure, and providing better access to credit and markets can significantly boost crop yields and farmer incomes. Moreover, revising the government-mandated support prices to reflect actual production costs and market conditions more accurately would go a long way in ensuring fair compensation for farmers. Another crucial aspect is improving the efficiency and reach of the procurement system. Ensuring that government agencies buy crops at support prices, particularly in regions where farmers are struggling, can provide a safety net against market volatility. Combined with better storage and distribution facilities, this can help reduce postharvest losses and ensure that farmers receive the full benefit of their labour. Ultimately, addressing the food policy dilemma requires a holistic approach that balances the needs of both consumers and farmers. While controlling food inflation remains important, it should not come at the expense of rural livelihoods.</p><br><p><strong>What long-term reforms are recommended to boost agricultural productivity and farmer incomes?</strong></p>", "options": ["<p>Expanding urban markets</p>", "<p>Reducing fuel prices</p>", "<p>Investing in modern farming techniques</p>", "<p>Increasing fertilizer prices</p>", "<p>Decreasing food subsidies</p>"], "correctIndex": 2, "solution": "<p><strong>Answer:</strong><strong> C</strong></p>\n<p>The passage recommends long-term reforms such as investing in modern farming techniques, improving irrigation infrastructure, and providing better access to credit and markets. The passage discusses several long-term reforms necessary to enhance agricultural productivity and improve farmer incomes.</p>\n<p><strong>a).</strong> Expanding urban markets: While expanding urban markets could potentially benefit some farmers by providing new sales channels, this is not mentioned in the passage as a recommended long-term reform for boosting agricultural productivity and farmer incomes. The focus is more on improving agricultural practices and infrastructure directly related to farming.</p>\n<p><strong>b).</strong> Reducing fuel prices: Although reducing fuel prices could lower the cost of agricultural operations, this specific measure is not highlighted in the passage. The long-term reforms suggested are more directly related to agricultural techniques and infrastructure rather than general cost reductions.</p>\n<p><strong>c).</strong> Investing in modern farming techniques: This is the correct answer. The passage explicitly mentions the need for long-term structural reforms such as investing in modern farming techniques and improving irrigation infrastructure. These measures are aimed at enhancing agricultural productivity, which in turn would increase farmer incomes. By adopting modern farming techniques, farmers can achieve higher crop yields and better manage resources. Improved irrigation infrastructure ensures that water is used more efficiently, which is critical for consistent agricultural output.</p>\n<p><strong>d).</strong> Increasing fertilizer prices: This would actually harm farmers by increasing their input costs, making it counterproductive to the goal of boosting incomes. The passage does not suggest this as a reform.</p>\n<p><strong>e).</strong> Decreasing food subsidies: Reducing food subsidies would likely increase the cost of food for consumers, which is not a focus of the passage. The recommended reforms aim to support farmers directly through improvements in agricultural practices and infrastructure rather than altering subsidy policies.</p>\n<p>In summary, the passage recommends investing in modern farming techniques and improving irrigation infrastructure as key long-term reforms. These initiatives are intended to directly enhance the efficiency and productivity of agricultural practices, thereby increasing farmer incomes and ensuring sustainable agricultural growth.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>India’s recent electoral results have highlighted a crucial issue that the nation can no longer afford to ignore: the tension between controlling food inflation and ensuring the welfare of farmers. With food prices remaining stubbornly high, the government’s traditional strategies of export curbs and increased imports have come under scrutiny. These measures, while aimed at protecting urban consumers, have left the farming community disgruntled and financially strained. For over 45 per cent of Indians who depend on agriculture for their livelihood, the past few years have been particularly challenging. The imposition of export bans on staples such as rice and onions has prevented farmers from capitalising on higher international prices. Simultaneously, the influx of cheaper imported goods has further depressed local prices, exacerbating the economic distress faced by farmers. This has led to a palpable sense of frustration and betrayal among those who feel that their interests have been sacrificed for the sake of urban consumers. The crux of the problem lies in the government’s dual mandate: to keep food prices affordable for the general population while also ensuring that farmers earn a fair income. The current approach of restricting exports of key commodities like rice and onions, coupled with lowering tariffs on imported goods, has primarily been an attempt to curb rising inflation. However, these policies have inadvertently suppressed farm incomes, sparking widespread discontent among rural voters who form a significant portion of India’s population. It is imperative for the government to reassess its food policy framework and find a more balanced approach. One viable solution could be to ease export restrictions on certain commodities where there are surplus stocks, such as rice. With state granaries overflowing and predictions of a favourable monsoon, allowing rice exports could help stabilise domestic prices and provide much-needed relief to farmers. Additionally, lifting export curbs on onions could address the acute dissatisfaction in key agricultural states like Maharashtra, where farmers have struggled to recover their production costs. Beyond immediate policy adjustments, there is a need for long-term structural reforms aimed at enhancing agricultural productivity and resilience. Investing in modern farming techniques, improving irrigation infrastructure, and providing better access to credit and markets can significantly boost crop yields and farmer incomes. Moreover, revising the government-mandated support prices to reflect actual production costs and market conditions more accurately would go a long way in ensuring fair compensation for farmers. Another crucial aspect is improving the efficiency and reach of the procurement system. Ensuring that government agencies buy crops at support prices, particularly in regions where farmers are struggling, can provide a safety net against market volatility. Combined with better storage and distribution facilities, this can help reduce postharvest losses and ensure that farmers receive the full benefit of their labour. Ultimately, addressing the food policy dilemma requires a holistic approach that balances the needs of both consumers and farmers. While controlling food inflation remains important, it should not come at the expense of rural livelihoods.</p><br><p><strong>Which strategies has the government traditionally used to control food prices?</strong></p>", "options": ["<p>Subsidizing farmer incomes</p>", "<p>Export curbs and increased imports</p>", "<p>Reducing fuel prices</p>", "<p>Increasing agricultural subsidies</p>", "<p>Promoting organic farming</p>"], "correctIndex": 1, "solution": "<p><strong>Answer:</strong><strong> B</strong></p>\n<p>The passage states that the government’s traditional strategies to control food prices involve curbing exports and increasing imports. The passage discusses the strategies that the government has traditionally employed to control food prices.</p>\n<p><strong>a).</strong> Subsidizing farmer incomes: The passage does not mention subsidizing farmer incomes as a traditional strategy used by the government to control food prices. Subsidies might support farmers, but they do not directly address food price control in the context described.</p>\n<p><strong>b).</strong> Export curbs and increased imports: This is the correct answer. The passage explicitly states that the government has used export curbs (restrictions on exporting agricultural products) and increased imports to control food prices. These measures aim to keep more food within the domestic market and bring in cheaper goods from abroad to stabilize or lower food prices for urban consumers.</p>\n<p><strong>c).</strong> Reducing fuel prices: Reducing fuel prices could lower overall production and transportation costs, potentially impacting food prices indirectly. However, the passage does not mention this as a traditional strategy for controlling food prices.</p>\n<p><strong>d).</strong> Increasing agricultural subsidies: While subsidies can help farmers by reducing their production costs, the passage does not highlight increasing agricultural subsidies as a traditional strategy for controlling food prices.</p>\n<p><strong>e).</strong> Promoting organic farming: Promoting organic farming could impact food quality and farming practices but is not mentioned in the passage as a method for controlling food prices.</p>\n<p>In summary, the passage identifies the traditional strategies used by the government to control food prices as imposing export curbs and increasing imports. These actions aim to keep domestic food supplies sufficient and prices stable by limiting the amount of food that leaves the country and by supplementing the market with imported goods.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>India’s recent electoral results have highlighted a crucial issue that the nation can no longer afford to ignore: the tension between controlling food inflation and ensuring the welfare of farmers. With food prices remaining stubbornly high, the government’s traditional strategies of export curbs and increased imports have come under scrutiny. These measures, while aimed at protecting urban consumers, have left the farming community disgruntled and financially strained. For over 45 per cent of Indians who depend on agriculture for their livelihood, the past few years have been particularly challenging. The imposition of export bans on staples such as rice and onions has prevented farmers from capitalising on higher international prices. Simultaneously, the influx of cheaper imported goods has further depressed local prices, exacerbating the economic distress faced by farmers. This has led to a palpable sense of frustration and betrayal among those who feel that their interests have been sacrificed for the sake of urban consumers. The crux of the problem lies in the government’s dual mandate: to keep food prices affordable for the general population while also ensuring that farmers earn a fair income. The current approach of restricting exports of key commodities like rice and onions, coupled with lowering tariffs on imported goods, has primarily been an attempt to curb rising inflation. However, these policies have inadvertently suppressed farm incomes, sparking widespread discontent among rural voters who form a significant portion of India’s population. It is imperative for the government to reassess its food policy framework and find a more balanced approach. One viable solution could be to ease export restrictions on certain commodities where there are surplus stocks, such as rice. With state granaries overflowing and predictions of a favourable monsoon, allowing rice exports could help stabilise domestic prices and provide much-needed relief to farmers. Additionally, lifting export curbs on onions could address the acute dissatisfaction in key agricultural states like Maharashtra, where farmers have struggled to recover their production costs. Beyond immediate policy adjustments, there is a need for long-term structural reforms aimed at enhancing agricultural productivity and resilience. Investing in modern farming techniques, improving irrigation infrastructure, and providing better access to credit and markets can significantly boost crop yields and farmer incomes. Moreover, revising the government-mandated support prices to reflect actual production costs and market conditions more accurately would go a long way in ensuring fair compensation for farmers. Another crucial aspect is improving the efficiency and reach of the procurement system. Ensuring that government agencies buy crops at support prices, particularly in regions where farmers are struggling, can provide a safety net against market volatility. Combined with better storage and distribution facilities, this can help reduce postharvest losses and ensure that farmers receive the full benefit of their labour. Ultimately, addressing the food policy dilemma requires a holistic approach that balances the needs of both consumers and farmers. While controlling food inflation remains important, it should not come at the expense of rural livelihoods.</p><br><p><strong>What is one suggested solution to help stabilize domestic prices and relieve farmers?</strong></p>", "options": ["<p>Increase tariffs on imported goods</p>", "<p>Ease export restrictions on commodities with surplus stocks</p>", "<p>Provide direct cash transfers to farmers</p>", "<p>Increase subsidies on fertilizers</p>", "<p>Ban all agricultural imports</p>"], "correctIndex": 1, "solution": "<p><strong>Answer:</strong> <strong>B</strong></p>\n<p>The passage suggests easing export restrictions on surplus commodities like rice to help stabilize domestic prices and provide relief to farmers. The passage suggests several solutions to help stabilize domestic prices and relieve the financial strain on farmers.</p>\n<p><strong>a).</strong> Increase tariffs on imported goods: While increasing tariffs on imports could theoretically protect domestic farmers by making imported goods more expensive, this is not suggested in the passage. Instead, the passage discusses the negative impact of cheaper imported goods on local prices but does not recommend increasing tariffs as a solution.</p>\n<p><strong>b).</strong> Ease export restrictions on commodities with surplus stocks: This is the correct answer. The passage specifically mentions easing export restrictions on commodities where there are surplus stocks, such as rice, as a viable solution. By allowing these exports, the government can help stabilize domestic prices and provide much-needed relief to farmers. This approach could help farmers capitalize on higher international prices and reduce the oversupply in the domestic market, thus supporting their incomes.</p>\n<p><strong>c).</strong> Provide direct cash transfers to farmers: Direct cash transfers could support farmers financially, but this solution is not mentioned in the passage. The focus of the suggested solutions is more on policy adjustments related to trade and market dynamics.</p>\n<p><strong>d).</strong> Increase subsidies on fertilizers: While increasing fertilizer subsidies might reduce input costs for farmers, this specific measure is not recommended in the passage. The suggested solutions revolve around improving market conditions and structural reforms rather than increasing input subsidies.</p>\n<p><strong>e).</strong> Ban all agricultural imports: Banning all agricultural imports could lead to unintended consequences, such as food shortages and increased prices for consumers. The passage does not recommend this extreme measure. Instead, it suggests more balanced approaches that can benefit both farmers and consumers.</p>\n<p>In summary, the passage suggests that easing export restrictions on commodities with surplus stocks is a practical solution to help stabilize domestic prices and provide financial relief to farmers. This measure allows farmers to benefit from higher international prices while reducing excess supply in the domestic market, thereby supporting their incomes and reducing economic distress.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>India’s recent electoral results have highlighted a crucial issue that the nation can no longer afford to ignore: the tension between controlling food inflation and ensuring the welfare of farmers. With food prices remaining stubbornly high, the government’s traditional strategies of export curbs and increased imports have come under scrutiny. These measures, while aimed at protecting urban consumers, have left the farming community disgruntled and financially strained. For over 45 per cent of Indians who depend on agriculture for their livelihood, the past few years have been particularly challenging. The imposition of export bans on staples such as rice and onions has prevented farmers from capitalising on higher international prices. Simultaneously, the influx of cheaper imported goods has further depressed local prices, exacerbating the economic distress faced by farmers. This has led to a palpable sense of frustration and betrayal among those who feel that their interests have been sacrificed for the sake of urban consumers. The crux of the problem lies in the government’s dual mandate: to keep food prices affordable for the general population while also ensuring that farmers earn a fair income. The current approach of restricting exports of key commodities like rice and onions, coupled with lowering tariffs on imported goods, has primarily been an attempt to curb rising inflation. However, these policies have inadvertently suppressed farm incomes, sparking widespread discontent among rural voters who form a significant portion of India’s population. It is imperative for the government to reassess its food policy framework and find a more balanced approach. One viable solution could be to ease export restrictions on certain commodities where there are surplus stocks, such as rice. With state granaries overflowing and predictions of a favourable monsoon, allowing rice exports could help stabilise domestic prices and provide much-needed relief to farmers. Additionally, lifting export curbs on onions could address the acute dissatisfaction in key agricultural states like Maharashtra, where farmers have struggled to recover their production costs. Beyond immediate policy adjustments, there is a need for long-term structural reforms aimed at enhancing agricultural productivity and resilience. Investing in modern farming techniques, improving irrigation infrastructure, and providing better access to credit and markets can significantly boost crop yields and farmer incomes. Moreover, revising the government-mandated support prices to reflect actual production costs and market conditions more accurately would go a long way in ensuring fair compensation for farmers. Another crucial aspect is improving the efficiency and reach of the procurement system. Ensuring that government agencies buy crops at support prices, particularly in regions where farmers are struggling, can provide a safety net against market volatility. Combined with better storage and distribution facilities, this can help reduce postharvest losses and ensure that farmers receive the full benefit of their labour. Ultimately, addressing the food policy dilemma requires a holistic approach that balances the needs of both consumers and farmers. While controlling food inflation remains important, it should not come at the expense of rural livelihoods.</p><br><p><strong>In the context of the passage, which word is the best synonym for \"disgruntled\"?</strong></p>", "options": ["<p>Excited</p>", "<p>Satisfied</p>", "<p>Content</p>", "<p>Dissatisfied</p>", "<p>Indifferent</p>"], "correctIndex": 3, "solution": "<p><strong>Answer:</strong><strong> D</strong></p>\n<p>In the passage, \"disgruntled\" is used to describe the feelings of the farming community in response to government policies that have negatively impacted their financial situation. The word \"disgruntled\" means unhappy, dissatisfied, or frustrated. The best synonym among the options provided is \"dissatisfied,\" as it accurately captures the sense of frustration and discontent expressed by the farmers.</p>\n<p><strong>a). Excited:</strong> This implies a positive emotion, which is the opposite of disgruntled.</p>\n<p><strong>b). Satisfied:</strong> This also implies a positive emotion, contrary to the meaning of disgruntled.</p>\n<p><strong>c). Content:</strong> This means being happy or satisfied, which does not match the negative connotation of disgruntled.</p>\n<p><strong>e). Indifferent:</strong> This implies a lack of emotion or concern, which does not accurately reflect the frustration and dissatisfaction described in the passage.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>India’s recent electoral results have highlighted a crucial issue that the nation can no longer afford to ignore: the tension between controlling food inflation and ensuring the welfare of farmers. With food prices remaining stubbornly high, the government’s traditional strategies of export curbs and increased imports have come under scrutiny. These measures, while aimed at protecting urban consumers, have left the farming community disgruntled and financially strained. For over 45 per cent of Indians who depend on agriculture for their livelihood, the past few years have been particularly challenging. The imposition of export bans on staples such as rice and onions has prevented farmers from capitalising on higher international prices. Simultaneously, the influx of cheaper imported goods has further depressed local prices, exacerbating the economic distress faced by farmers. This has led to a palpable sense of frustration and betrayal among those who feel that their interests have been sacrificed for the sake of urban consumers. The crux of the problem lies in the government’s dual mandate: to keep food prices affordable for the general population while also ensuring that farmers earn a fair income. The current approach of restricting exports of key commodities like rice and onions, coupled with lowering tariffs on imported goods, has primarily been an attempt to curb rising inflation. However, these policies have inadvertently suppressed farm incomes, sparking widespread discontent among rural voters who form a significant portion of India’s population. It is imperative for the government to reassess its food policy framework and find a more balanced approach. One viable solution could be to ease export restrictions on certain commodities where there are surplus stocks, such as rice. With state granaries overflowing and predictions of a favourable monsoon, allowing rice exports could help stabilise domestic prices and provide much-needed relief to farmers. Additionally, lifting export curbs on onions could address the acute dissatisfaction in key agricultural states like Maharashtra, where farmers have struggled to recover their production costs. Beyond immediate policy adjustments, there is a need for long-term structural reforms aimed at enhancing agricultural productivity and resilience. Investing in modern farming techniques, improving irrigation infrastructure, and providing better access to credit and markets can significantly boost crop yields and farmer incomes. Moreover, revising the government-mandated support prices to reflect actual production costs and market conditions more accurately would go a long way in ensuring fair compensation for farmers. Another crucial aspect is improving the efficiency and reach of the procurement system. Ensuring that government agencies buy crops at support prices, particularly in regions where farmers are struggling, can provide a safety net against market volatility. Combined with better storage and distribution facilities, this can help reduce postharvest losses and ensure that farmers receive the full benefit of their labour. Ultimately, addressing the food policy dilemma requires a holistic approach that balances the needs of both consumers and farmers. While controlling food inflation remains important, it should not come at the expense of rural livelihoods.</p><br><p><strong>What is the primary theme of the passage?</strong></p>", "options": ["<p>The impact of modern farming techniques on agricultural productivity</p>", "<p>The challenges of balancing food inflation control with farmer welfare</p>", "<p>The benefits of increasing agricultural exports</p>", "<p>The need for technological advancements in agriculture</p>", "<p>The role of government subsidies in supporting farmers</p>"], "correctIndex": 1, "solution": "<p><strong>Answer:</strong><strong> B</strong></p>\n<p>The primary theme of the passage revolves around the tension and challenges the government faces in balancing the need to control food inflation with ensuring the welfare of farmers. The passage discusses how traditional government measures, such as export curbs and increased imports, have aimed to protect urban consumers but have negatively impacted farmers, causing economic distress and frustration. It emphasizes the need for a more balanced approach to food policy that addresses both the needs of consumers and the livelihood of farmers. The other options, while related to agriculture, do not capture the central conflict and primary focus of the passage as accurately as option b.</p>\n<p><strong>a).</strong> The impact of modern farming techniques on agricultural productivity: While the passage mentions the need for investing in modern farming techniques as part of long-term reforms, this is not the central theme. The focus is not primarily on how these techniques impact productivity but on the broader issue of balancing food prices and farmer welfare.</p>\n<p><strong>b).</strong> The challenges of balancing food inflation control with farmer welfare: This is the correct answer. The passage extensively discusses the tension between controlling food prices for consumers and ensuring that farmers can earn a fair income. It highlights the consequences of government policies aimed at curbing inflation, such as export curbs and increased imports, which have negatively impacted farmers. The central issue is finding a balance between these conflicting needs.</p>\n<p><strong>c).</strong> The benefits of increasing agricultural exports: Increasing agricultural exports is suggested as a potential solution to help farmers, particularly in the context of surplus stocks. However, the passage does not focus on the benefits of exports as the main theme. Instead, it is part of a broader discussion on resolving the tension between food prices and farmer incomes.</p>\n<p><strong>d).</strong> The need for technological advancements in agriculture: Technological advancements, such as modern farming techniques and improved irrigation infrastructure, are mentioned as necessary long-term reforms. However, these are not the central theme. The passage's primary focus is on the immediate policy issues and economic challenges faced by farmers due to current government strategies.</p>\n<p><strong>e).</strong> The role of government subsidies in supporting farmers: Government subsidies are not a major focus of the passage. While the text does touch on the need for fair compensation and support prices for farmers, the central theme is not about subsidies. It is more about the overall policy approach to balancing food inflation and farmer welfare.</p>\n<p>In summary, while options (a), (c), (d), and (e) are related to aspects of agricultural policy and farmer support, they do not capture the main conflict described in the passage. Option (b) is the most accurate representation of the primary theme, as the passage is primarily concerned with the challenges of balancing the control of food inflation with ensuring the welfare of farmers.</p>"}, {"question": "<p><strong>Below in each questions some sentences are given, find the odd sentence out and rearrange the remaining sentences to make a coherent paragraph. If the given sentence is correct as it is, choose option E.</strong></p><br><p><strong>A).</strong> The author’s new novel, which explores themes of identity and transformation, has received critical acclaim.</p>\n<p><strong>B).</strong> After years of writing and revising, she finally published a work that exceeded her own expectations.</p>\n<p><strong>C).</strong> The protagonist's journey, marked by various trials and personal growth, captivates readers from the first page.</p>\n<p><strong>D).</strong> Her previous works, although well-received, did not achieve the same level of recognition as this latest book.</p>\n<p><strong>E).</strong> The novel's intricate plot and richly developed characters have set a new standard in contemporary literature.</p>", "options": ["<p>BACE, D</p>", "<p>ACEB, D</p>", "<p>CAEB, D</p>", "<p>DBAE, C</p>", "<p>None of the above</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>Rearranged paragraph:</strong> A-C-E-B</p>\n<p><strong>Odd one out:</strong> D (It focuses on past works rather than the novel in question.)</p>"}, {"question": "<p><strong>Below in each questions some sentences are given, find the odd sentence out and rearrange the remaining sentences to make a coherent paragraph. If the given sentence is correct as it is, choose option E.</strong></p><br><p><strong>A).</strong> The technological advancements, which have revolutionized various industries, are continually evolving.</p>\n<p><strong>B).</strong> One notable example is the development of artificial intelligence, which is transforming fields from healthcare to finance.</p>\n<p><strong>C).</strong> Many experts predict that future innovations will further enhance our capabilities and redefine existing paradigms.</p>\n<p><strong>D).</strong> The company’s latest product, designed to integrate seamlessly with other devices, exemplifies cutting-edge technology.</p>\n<p><strong>E).</strong> Despite these advancements, some individuals remain skeptical about the impact of technology on society.</p>", "options": ["<p>AECD, B</p>", "<p>ABDC, E</p>", "<p>BACE, D</p>", "<p>CEAB, D</p>", "<p>None of the above</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>Rearranged paragraph:</strong> A - B - D - C</p>\n<p><strong>Odd one out:</strong> E (It introduces skepticism, which diverges from the discussion of technological advancements and their impact.)</p>"}, {"question": "<p><strong>Below in each questions some sentences are given, find the odd sentence out and rearrange the remaining sentences to make a coherent paragraph. If the given sentence is correct as it is, choose option E.</strong></p><br><p><strong>A).</strong> The historical site, which dates back to the 12th century, attracts scholars and tourists alike.</p>\n<p><strong>B).</strong> The restoration efforts, funded by international grants, aim to preserve the site's architectural integrity.</p>\n<p><strong>C).</strong> In addition to its historical significance, the site offers a unique insight into medieval construction techniques.</p>\n<p><strong>D).</strong> The city, known for its modern skyline and bustling economy, contrasts sharply with the ancient ruins.</p>\n<p><strong>E).</strong> Guided tours provide visitors with detailed information about the site's cultural and historical context.</p>", "options": ["<p>ABCD, E</p>", "<p>BACD, E</p>", "<p>ABCE, D</p>", "<p>CADE, B</p>", "<p>None of the above</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>Rearranged paragraph:</strong> A - B - C - E</p>\n<p><strong>Odd one out:</strong> D (It contrasts the historical site with the modern city, which is unrelated to the focus on the site itself.)</p>"}, {"question": "<p><strong>Below in each questions some sentences are given, find the odd sentence out and rearrange the remaining sentences to make a coherent paragraph. If the given sentence is correct as it is, choose option E.</strong></p><br><p><strong>A).</strong> The groundbreaking study, which utilized advanced imaging techniques, has revealed previously unknown details about the human brain’s functions.</p>\n<p><strong>B).</strong> The research team, composed of leading neuroscientists and data analysts, worked collaboratively to interpret the complex results of their experiments.</p>\n<p><strong>C).</strong> The findings, published in a prestigious medical journal, have sparked considerable debate within the scientific community regarding their implications for cognitive science.</p>\n<p><strong>D).</strong> The laboratory, equipped with state-of-the-art technology, allowed researchers to conduct experiments with unprecedented precision and accuracy.</p>\n<p><strong>E).</strong> The implications of the study extend beyond neuroscience, potentially influencing fields such as artificial intelligence and behavioral psychology.</p>", "options": ["<p>BACE, D</p>", "<p>CDAB, E</p>", "<p>BCDE, A</p>", "<p>ACED, B</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>Rearranged paragraph:</strong>B - A - C - E</p>\n<p><strong>Odd one out:</strong> D (While it describes the laboratory, which is important, it is less directly related to the study’s results, impact, and broader implications discussed in the other sentences.)</p>"}, {"question": "<p><strong>Below in each questions some sentences are given, find the odd sentence out and rearrange the remaining sentences to make a coherent paragraph. If the given sentence is correct as it is, choose option E.</strong></p><br><p><strong>a).</strong> Engaging in regular physical activity has been proven to reduce the risk of chronic diseases such as heart disease, diabetes, and certain types of cancer, thereby improving overall health and longevity.</p>\n<p><strong>b).</strong> Exercise promotes mental health by releasing endorphins and reducing symptoms of anxiety and depression, contributing to a better quality of life.</p>\n<p><strong>c).</strong> Maintaining a sedentary lifestyle is equally beneficial to health as regular exercise, as it allows the body to rest and recover more effectively.</p>\n<p><strong>d).</strong> Regular physical activity can enhance cognitive functions, such as memory and attention, and improve academic and work performance.</p>\n<p><strong>e).</strong> Participating in group exercise activities, such as team sports or fitness classes, fosters social connections and provides a sense of community and support.</p>", "options": ["<p>a</p>", "<p>b</p>", "<p>c</p>", "<p>d</p>", "<p>e</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>Rearranged paragraph:</strong>B - A - C - E</p>\n<p><strong>Odd Sentence: </strong>C (It contradicts the theme by suggesting that a sedentary lifestyle is equally beneficial to health, which is not supported by evidence and goes against the benefits of regular exercise.)</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-45)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-45)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-52)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>In the given question, a part of the sentences is printed in bold. Below the sentence alternatives to the bold part are given at (A), (B), (C) (D), and (E) which may help improve the sentence. Choose the correct alternative.</strong></p><br><p>The erudite professor's <strong>erudition was evident in</strong> his comprehensive analysis of historical dialectics, illuminating the interplay of socio-political forces shaping civilizations throughout the ages.</p>", "options": ["<p>erudition were evident in</p>", "<p>erudition can be evident in</p>", "<p>erudition was evident with</p>", "<p>erudition was evident</p>", "<p>No correction required</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>The erudite professor's <strong>erudition was evident in</strong> his comprehensive analysis of historical dialectics, illuminating the interplay of socio-political forces shaping civilizations throughout the ages.</p>"}, {"question": "<p><strong>In the given question, a part of the sentences is printed in bold. Below the sentence alternatives to the bold part are given at (A), (B), (C) (D), and (E) which may help improve the sentence. Choose the correct alternative.</strong></p><br><p>Her philanthropic <strong>endeavors extends beyond mere</strong> altruism, manifesting as a multifaceted initiative aimed at fostering sustainable development and social equity in marginalized communities.</p>", "options": ["<p>endeavors extended beyond mere</p>", "<p>endeavors extended beyond merely</p>", "<p>endeavors extended mere</p>", "<p>endeavor extend beyond mere</p>", "<p>No correction required</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Her philanthropic <strong>endeavors extended beyond mere</strong> altruism, manifesting as a multifaceted initiative aimed at fostering sustainable development and social equity in marginalized communities.</p>"}, {"question": "<p><strong>In the given question, a part of the sentences is printed in bold. Below the sentence alternatives to the bold part are given at (A), (B), (C) (D), and (E) which may help improve the sentence. Choose the correct alternative.</strong></p><br><p>The labyrinthine plot of the mystery novel kept readers on the <strong>edge of their seats, </strong>as they unraveled layers of intrigue and deception to uncover the truth hidden within its pages.</p>", "options": ["<p>edge his seats</p>", "<p>edge in her seats</p>", "<p>edge of their seats</p>", "<p>edge with their seats</p>", "<p>No correction required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The labyrinthine plot of the mystery novel kept readers on the <strong>edge of their seats, </strong>as they unraveled layers of intrigue and deception to uncover the truth hidden within its pages.</p>"}, {"question": "<p><strong>In the given question, a part of the sentences is printed in bold. Below the sentence alternatives to the bold part are given at (A), (B), (C) (D), and (E) which may help improve the sentence. Choose the correct alternative.</strong></p><br><p><strong>Despite of the vicissitudes of fate</strong>, his unwavering resilience and tenacity propelled him towards success, epitomizing the triumph of the human spirit over adversity.</p>", "options": ["<p>Despite of the vicissitudes fate</p>", "<p>Despite vicissitudes of fate</p>", "<p>Despite the vicissitudes fate</p>", "<p>Despite the vicissitudes of fate</p>", "<p>No correction required</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>Despite the vicissitudes of fat</strong>e, his unwavering resilience and tenacity propelled him towards success, epitomizing the triumph of the human spirit over adversity.</p>"}, {"question": "<p><strong>In the given question, a part of the sentences is printed in bold. Below the sentence alternatives to the bold part are given at (A), (B), (C) (D), and (E) which may help improve the sentence. Choose the correct alternative.</strong></p><br><p>The prodigious virtuoso's performance was a tour de force of musical virtuosity, as <strong>he can navigate the intricate passage</strong> of the concerto with consummate skill and artistic flair.</p>", "options": ["<p>he navigates the intricate passages</p>", "<p>he navigate the intricated passages</p>", "<p>he navigated the intricate passages</p>", "<p>he navigated the intricately passages</p>", "<p>No correction required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The prodigious virtuoso's performance was a tour de force of musical virtuosity, as <strong>he navigated the intricate passages</strong> of the concerto with consummate skill and artistic flair.</p>"}, {"question": "<p><strong>Two statements are given which are grammatically and contextually correct. Connect them by choosing the word given below the statements in the best possible way without changing the intended meaning. Choose the best possible option as your answer accordingly from the options to form a correct, coherent sentence.</strong></p><br><p><strong>I).</strong> You need to finalize the contract with the client.</p>\n<p><strong>II).</strong> Review all terms and conditions carefully.</p>\n<p><strong>A).</strong> For finalizing</p>\n<p><strong>B).</strong> When finalizing</p>\n<p><strong>C).</strong> In finalizing</p>", "options": ["<p>Only A</p>", "<p>Only B</p>", "<p>Only A &amp; B</p>", "<p>All three</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The phrase \"<strong>When finalizing</strong>\" appropriately combines the sentences:</p>\n<p>\"When finalizing the contract with the client, review all terms and conditions carefully.\"</p>"}, {"question": "<p><strong>Two statements are given which are grammatically and contextually correct. Connect them by choosing the word given below the statements in the best possible way without changing the intended meaning. Choose the best possible option as your answer accordingly from the options to form a correct, coherent sentence.</strong></p><br><p><strong>I). </strong>You are planning to host a conference.</p>\n<p><strong>II).</strong> Arrange for guest speakers and venue.</p>\n<p><strong>A).</strong> While hosting</p>\n<p><strong>B).</strong> To host</p>\n<p><strong>C).</strong> Upon hosting</p>", "options": ["<p>Only A</p>", "<p>Only B</p>", "<p>Only A &amp; C</p>", "<p>All three</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The phrase \"<strong>To host</strong>\" appropriately combines the sentences:</p>\n<p>\"To host a conference, arrange for guest speakers and venue.\"</p>"}, {"question": "<p><strong>Two statements are given which are grammatically and contextually correct. Connect them by choosing the word given below the statements in the best possible way without changing the intended meaning. Choose the best possible option as your answer accordingly from the options to form a correct, coherent sentence.</strong></p><br><p><strong>I).</strong> You need to update your software.</p>\n<p><strong>II)</strong>. Check for compatibility with your operating system.</p>\n<p><strong>A).</strong> When updating</p>\n<p><strong>B).</strong> To ensure</p>\n<p><strong>C).</strong> While updating</p>", "options": ["<p>Only A</p>", "<p>Only B</p>", "<p>Only A &amp; C</p>", "<p>All three</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Both \"<strong>When updating</strong>\" and \"<strong>While updating</strong>\" fit contextually:</p>\n<p>\"When updating your software, check for compatibility with your operating system.\"</p>\n<p>\"While updating your software, check for compatibility with your operating system.\"</p>"}, {"question": "<p><strong>In each of the following sentences there are two blank spaces. Below each sentence five pairs of words are given. Find out which pair of words can be filled up in the blanks in the sentence in the same sequence to make the sentence grammatically and meaningfully correct.</strong></p><br><p><strong>India finds itself at a crossroads, _______ with the dual challenge of sustaining growth momentum while addressing underlying structural _______.</strong></p>", "options": ["<p>grappling, constraints</p>", "<p>wrestling, dilemmas</p>", "<p>entangled, barriers</p>", "<p>contending, opportunities</p>", "<p>engaging, deficiencies</p>"], "correctIndex": 0, "solution": "<p><strong>Answer</strong><strong>: A</strong></p>\n<p>The correct answer is: a) grappling, constraints</p>\n<p>\"Grappling\" is the appropriate word for the first blank. It means struggling with or wrestling with a difficult problem or challenge. In the context of the sentence, it effectively conveys the idea that India is facing a significant challenge.</p>\n<p>\"Constraints\" is the suitable word for the second blank. It refers to limitations or restrictions that hinder progress or development. In the context, it highlights the underlying structural issues that hinder India's growth momentum.</p>\n<p>So, the completed sentence would be: \"India finds itself at a crossroads, grappling with the dual challenge of sustaining growth momentum while addressing underlying structural constraints.\"</p>\n<p>This means that India is facing a critical juncture where it must deal with both sustaining its growth and overcoming limitations or restrictions in its structural framework.</p>\n<p><strong>b).</strong> wrestling, dilemmas: \"Wrestling\" suggests struggling or contending with something, which fits the context, but \"dilemmas\" doesn't convey the same sense of structural limitations as \"constraints\" does.</p>\n<p><strong>c).</strong> entangled, barriers: \"Entangled\" means caught up in or involved in something complicated, which doesn't quite convey the same sense as \"grappling\" in struggling with a challenge.</p>\n<p>\"Barriers\" is appropriate for the second blank, but it doesn't convey the same sense of struggling with a challenge as \"constraints\" does.</p>\n<p><strong>d).</strong> contending, Opportunities: \"Contending\" means competing or dealing with something, which is similar in meaning to \"grappling.\"</p>\n<p>\"Opportunities\" in the second blank is the incorrect word choice. The sentence indicates that India is facing challenges, not opportunities. Therefore, this option does not align with the intended meaning of the sentence.</p>\n<p><strong>e).</strong> engaging, deficiencies: \"Engaging\" means participating or becoming involved with something, which doesn't convey the same sense of struggling with a challenge as \"grappling\" does. It also lacks the intensity implied by \"grappling.\"</p>\n<p>\"Deficiencies\" means shortcomings or inadequacies, which is somewhat similar to \"constraints\" but doesn't specifically convey the idea of structural limitations as \"constraints\" does.</p>\n<p>In summary, option (a) \"grappling, constraints\" provides the best fit for maintaining both the coherence and meaning of the sentence. It effectively conveys the idea that India is facing significant challenges in sustaining its growth momentum due to underlying structural limitations.</p>"}, {"question": "<p><strong>In each of the following sentences there are two blank spaces. Below each sentence five pairs of words are given. Find out which pair of words can be filled up in the blanks in the sentence in the same sequence to make the sentence grammatically and meaningfully correct.</strong></p><br><p><strong>The World Bank’s _______ regarding fiscal consolidation underscores the importance of prudent fiscal management in safeguarding macroeconomic stability and ________ investor confidence.</strong></p>", "options": ["<p>projections, enhancing</p>", "<p>assessments, boosting</p>", "<p>prognosis, bolstering</p>", "<p>diagnosis, stimulating</p>", "<p>analysis, promoting</p>"], "correctIndex": 2, "solution": "<p><strong>Answer</strong><strong>: C</strong></p>\n<p>The correct answer is: c) prognosis, bolstering</p>\n<p>\"Prognosis\" is the appropriate word for the first blank. It refers to a forecast or prediction, especially in relation to the likely outcome of a situation. In the context of the sentence, it suggests that the World Bank's forecast or assessment regarding fiscal consolidation underscores the importance of prudent fiscal management.</p>\n<p>\"Bolstering\" is the suitable word for the second blank. It means strengthening or reinforcing. In the context, it implies that prudent fiscal management safeguards macroeconomic stability and strengthens or reinforces investor confidence.</p>\n<p>So, the completed sentence would be: \"The World Bank’s prognosis regarding fiscal consolidation underscores the importance of prudent fiscal management in safeguarding macroeconomic stability and bolstering investor confidence.\"</p>\n<p>This means that the World Bank's forecast or assessment emphasizes the significance of careful fiscal management in maintaining macroeconomic stability and strengthening investor confidence.</p>\n<p><strong>a).</strong> projections, enhancing: \"Projections\" in the first blank works well in the context of forecasting, but \"enhancing\" in the second blank doesn't convey the same sense of strengthening or reinforcing as \"bolstering\" does.</p>\n<p><strong>b).</strong> assessments, boosting: \"Assessments\" in the first blank is suitable for evaluating a situation, but \"boosting\" in the second blank doesn't convey the same sense of strengthening or reinforcing as \"bolstering\" does.</p>\n<p><strong>d).</strong> diagnosis, stimulating: \"Diagnosis\" refers to the identification of the nature or cause of a problem, which doesn't fit well in the context of the sentence discussing the World Bank's assessment or forecast regarding fiscal consolidation.</p>\n<p>\"Stimulating\" means encouraging or prompting, which doesn't convey the same sense of strengthening or reinforcing as \"bolstering\" does.</p>\n<p><strong>e).</strong> analysis, promoting: \"Analysis\" refers to a detailed examination or investigation of something, which doesn't convey the same sense of forecasting or predicting as \"prognosis\" does. It also lacks the specificity implied by \"prognosis.\"</p>\n<p>\"Promoting\" means advocating or encouraging something, which doesn't convey the same sense of strengthening or reinforcing as \"bolstering\" does.</p>\n<p>In summary, option (c) \"prognosis, bolstering\" provides the best fit for maintaining both the coherence and meaning of the sentence, accurately conveying the idea that the World Bank's forecast emphasizes the importance of prudent fiscal management in safeguarding macroeconomic stability and reinforcing investor confidence.</p>"}, {"question": "<p><strong>In each of the following sentences there are two blank spaces. Below each sentence five pairs of words are given. Find out which pair of words can be filled up in the blanks in the sentence in the same sequence to make the sentence grammatically and meaningfully correct.</strong></p><br><p><strong>Questions of terrorism, militancy, insurgency and other forms of organized violence that _______ destruction, death and suffering must be understood within the _______ of “good” and “evil”.</strong></p>", "options": ["<p>cause, context</p>", "<p>impose, realm</p>", "<p>bring, perspective</p>", "<p>perpetrate, spectrum</p>", "<p>wreak, paradigm</p>"], "correctIndex": 4, "solution": "<p><strong>Answer</strong><strong>: E</strong></p>\n<p>The correct answer is: e) wreak, paradigm</p>\n<p>\"Wreak\" is the appropriate word for the first blank. It means to cause or inflict (damage or harm) in a violent or devastating way. In the context of the sentence, it effectively conveys the idea that terrorism, militancy, insurgency, and other forms of organized violence cause destruction, death, and suffering.</p>\n<p>\"Paradigm\" is the suitable word for the second blank. It refers to a typical example or pattern of something; in this context, it suggests the framework or model through which these questions must be understood. Here, it implies that these issues should be understood within the broader context of moral concepts such as \"good\" and \"evil.\"</p>\n<p>So, the completed sentence would be: \"Questions of terrorism, militancy, insurgency, and other forms of organized violence that wreak destruction, death, and suffering must be understood within the paradigm of 'good' and 'evil'.\"</p>\n<p>This means that these forms of violence, which cause significant harm, should be analysed and comprehended within the broader framework of moral judgments about right and wrong.</p>\n<p><strong>a).</strong> cause, context: \"Cause\" fits well in terms of indicating the action of creating destruction, but \"context\" doesn't convey the same sense as \"paradigm\" in terms of providing a broader framework for understanding.</p>\n<p><strong>b).</strong> impose, realm: \"Impose\" doesn't convey the same sense of causing destruction as \"wreak\" does.</p>\n<p>\"Realm\" refers to a field or domain, but it doesn't convey the same sense as \"paradigm\" in terms of providing a broader framework for understanding.</p>\n<p><strong>c).</strong> bring, perspective: \"Bring\" doesn't convey the same sense of causing destruction as \"wreak\" does.</p>\n<p>\"Perspective\" is similar to \"paradigm\" in suggesting a broader framework, but \"paradigm\" is more commonly used in this context.</p>\n<p><strong>d).</strong> perpetrate, spectrum: \"Perpetrate\" means to commit or carry out (an illegal, immoral, or harmful act), which conveys a sense of action but doesn't fit well in the context of causing destruction, death, and suffering.</p>\n<p>\"Spectrum\" refers to a range or variety of things, which doesn't convey the same sense as \"paradigm\" in terms of providing a broader framework or model for understanding.</p>\n<p>In summary, option (e) \"wreak, paradigm\" provides the best fit for maintaining both the coherence and meaning of the sentence. It effectively conveys the idea that questions about organized violence should be understood within the broader framework of moral concepts.</p>"}, {"question": "<p><strong>In each of the following sentences there are two blank spaces. Below each sentence five pairs of words are given. Find out which pair of words can be filled up in the blanks in the sentence in the same sequence to make the sentence grammatically and meaningfully correct.</strong></p><br><p><strong>India, the world’s second largest wheat consumer, grapples with the aftermath of consecutive years of diminished wheat production, attributed to relentless heat waves.</strong></p>", "options": ["<p>contends, oppressive</p>", "<p>grapples, relentless</p>", "<p>contends, persistent</p>", "<p>copes, scorching</p>", "<p>deals, extreme</p>"], "correctIndex": 1, "solution": "<p><strong>Answer</strong><strong>: B</strong></p>\n<p>The correct answer is: b) grapples, relentless</p>\n<p>\"Grapples\" is the appropriate word for the first blank. It means to struggle with or wrestle with something, especially a difficult problem or situation. In the context of the sentence, it effectively conveys the idea that India is dealing with the aftermath of consecutive years of diminished wheat production.</p>\n<p>\"Relentless\" is the suitable word for the second blank. It means continuous and unceasing, often implying harshness or severity. In the context, it describes the nature of the heat waves that are attributed to the diminished wheat production.</p>\n<p>So, the completed sentence would be: \"India, the world’s second-largest wheat consumer, grapples with the aftermath of consecutive years of diminished wheat production, attributed to relentless heat waves.\"</p>\n<p>This means that India is struggling with the consequences of reduced wheat production, which are exacerbated by the continuous and severe heat waves.</p>\n<p><strong>a).</strong> contends, oppressive: \"Contends\" means struggles or competes with, which is similar in meaning to \"grapples.\"</p>\n<p>\"Oppressive\" describes the nature of the heat waves but doesn't convey the same sense of continuous severity as \"relentless\" does.</p>\n<p><strong>c).</strong> contends, persistent: \"Contends\" means struggles or competes with, which is similar in meaning to \"grapples.\"</p>\n<p>\"Persistent\" means continuing firmly or obstinately, but it lacks the sense of harshness or severity conveyed by \"relentless.\"</p>\n<p><strong>d).</strong> copes, scorching: \"Copes\" means deals effectively with something difficult, which fits the context but is not as intense as \"grapples\" in conveying the struggle.</p>\n<p>\"Scorching\" describes the nature of the heat waves but doesn't convey the same sense of continuous severity as \"relentless\" does.</p>\n<p><strong>e).</strong> deals, extreme: \"Deals\" means handles or manages something, which is similar in meaning to \"grapples.\"</p>\n<p>\"Extreme\" describes the nature of the heat waves but doesn't convey the same sense of continuous severity as \"relentless\" does.</p>\n<p>In summary, option (b) \"grapples, relentless\" provides the best fit for maintaining both the coherence and meaning of the sentence. It effectively conveys the idea that India is struggling with the aftermath of reduced wheat production exacerbated by continuous and severe heat waves.</p>"}, {"question": "<p><strong>In each of the following sentences there are two blank spaces. Below each sentence five pairs of words are given. Find out which pair of words can be filled up in the blanks in the sentence in the same sequence to make the sentence grammatically and meaningfully correct.</strong></p><br><p><strong>The Citizenship Amendment Act (CAA) _______ raises many questions of constitutional and political significance, like whether the Citizenship Amendment Act (CAA) violates the principle of equality _______ in Article 14 of the Constitution by failing the tests of reasonable classification and non-arbitrariness?</strong></p>", "options": ["<p>issue, epitomized</p>", "<p>puzzle, governed</p>", "<p>controversy, encapsulated</p>", "<p>conundrum, enshrined</p>", "<p>issue, embodied</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D</strong></p>\n<p>The correct answer is: d) conundrum, enshrined</p>\n<p>\"Conundrum\" is the appropriate word for the first blank. It means a confusing and difficult problem or question. In the context of the sentence, it effectively conveys the idea that the Citizenship Amendment Act raises many complex and challenging questions.</p>\n<p>\"Enshrined\" is the suitable word for the second blank. It means to preserve or protect (a right, tradition, or principle) as if in a shrine or sacred place. In the context, it refers to the principle of equality enshrined in Article 14 of the Constitution, highlighting its importance and sanctity.</p>\n<p>So, the completed sentence would be: \"The Citizenship Amendment Act (CAA) conundrum raises many questions of constitutional and political significance, like whether the Citizenship Amendment Act (CAA) violates the principle of equality enshrined in Article 14 of the Constitution by failing the tests of reasonable classification and non-arbitrariness.\"</p>\n<p>This means that the complexities surrounding the Citizenship Amendment Act give rise to numerous questions, particularly regarding its potential violation of the fundamental principle of equality protected in the Constitution.</p>\n<p><strong>a).</strong> issue, epitomized: \"Issue\" refers to a subject or problem for discussion, but it doesn't convey the same sense of complexity and difficulty as \"conundrum\" does. It also lacks the intensity implied by \"conundrum.\"</p>\n<p>\"Epitomized\" means represented by a perfect example or typical instance, which doesn't convey the same sense as \"enshrined\" in terms of protecting a principle.</p>\n<p><strong>b).</strong> puzzle, governed: \"Puzzle\" refers to something that is difficult to understand or solve, similar to \"conundrum,\" but it lacks the same intensity and complexity.</p>\n<p>\"Governed\" implies being controlled or regulated by a governing authority, which doesn't convey the same sense as \"enshrined\" in terms of protecting a principle.</p>\n<p><strong>c).</strong> controversy, encapsulated: \"Controversy\" refers to a disagreement or dispute, which is similar in meaning to \"conundrum\" but lacks the same sense of complexity and difficulty.</p>\n<p>\"Encapsulated\" means summarized or expressed concisely, which doesn't convey the same sense as \"enshrined\" in terms of protecting a principle.</p>\n<p><strong>e)</strong>. issue, embodied: \"Issue\" refers to a subject or problem for discussion, which is similar in meaning to \"conundrum\" but lacks the same sense of complexity and difficulty.</p>\n<p>\"Embodied\" means represented or expressed in a tangible form, which doesn't convey the same sense as \"enshrined\" in terms of protecting a principle.</p>\n<p>In summary, option (d) \"conundrum, enshrined\" provides the best fit for maintaining both the coherence and meaning of the sentence. It effectively conveys the idea that the Citizenship Amendment Act presents many complex and challenging questions, particularly regarding its potential violation of the principle of equality protected in the Constitution.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Bilateral ties with the Maldives achieved a much- needed reset earlier this week when President Mohamed Muizzu visited India. He met Prime Minister (PM) Narendra Modi, and the two sides announced a new vision document for a comprehensive economic and maritime security partnership. \"The Maldives will remain a true friend, committed to our shared vision of peace and development of our countries and our region,\" President Muizzu said during the visit. This iteration marks a remarkable turnaround in relations, which had hit rock bottom last year when Muizzu won his election on an \"India Out\" plank. Malé's political leadership quickly realized that the anti-India rhetoric may be useful in domestic politics, but it has undesirable economic and geopolitical consequences. New Delhi, for its part, has been willing to forget the acrimonious past to repair its ties with a close neighbour. This is smart diplomacy at a time of great churn in global power relations, especially in the backdrop of China's power ambitions.</p>\n<p>The Indian Ocean Region is India's strategic backyard, but the sensitivities in its neighbourhood are such that nationalism in some countries often acquires an anti-India edge, even if for the wrong reasons. The good part is that the political leadership in India seems to recognize this conundrum and has played the game well. New Delhi was quick to help when Colombo faced an economic meltdown in 2022, and public anger forced the then political leadership to flee. The few- strings-attached aid diplomacy helped to put at rest the suspicions that a large section of the Sinhala majority in that country harboured against India for what it perceived to be Delhi's support for the Tamil nationalist cause. New Delhi has also walked the extra mile to engage with the new dispensation in Colombo. President Anura Dissanayake belongs to the Janatha Vimukthi Peramuna, a fierce critic of Indian initiatives in Sri Lanka. This history, however, did not prevent India from engaging with Dissanayake in February or welcome his rise to office in September. External affairs minister S Jaishankar was the first foreign leader to visit Colombo after the new President took office.</p>\n<p>This is a track that could extend to Dhaka as well. The uprising in Bangladesh and subsequent ouster of Sheikh Hasina from the PM's office has threatened Delhi's close ties with Dhaka. However, the new head of State, Muhammad Yunus, has assured that he wants friendly ties with India. Hilsa diplomacy and holidays for Durga puja suggests that Dhaka is aware of India's sensitivities and may not want to play the anti-India card for the radicals at home. There is clearly a case to fireproof bilateral relations from regime change and ensure continuity in policies and preferences, even at a time when Hasina is in safe harbour in India.</p>\n<p>As India seeks to pull its weight as an emerging economic power and seek its due place in global affairs, it will need to be secure about its neighborhood. There is clearly a newfound confidence that all attempts in the neighborhood to project national sovereignty need not be seen as anti-India. This confidence also underlines India's outreach to Asean-in his address at the 21st Asean-India Summit in Vientiane, Laos, PM Modi spoke about India's role as a Vishwabandhu (friend to the world)-and its participation in forums such as Quad. While Delhi may not be able to compete with Beijing's aid diplomacy yet, geography and soft power should help its outreach to affirm old friends and win new allies. The signs are there to see.</p><br><p><strong>What geopolitical concern is mentioned in the passage related to China's ambitions?</strong></p>", "options": ["<p>China's rising economic power could affect bilateral ties between India and Maldives</p>", "<p>China's territorial claims are threatening India&rsquo;s maritime security</p>", "<p>China's power ambitions form the backdrop of India-Maldives relations</p>", "<p>China has been mediating between India and Maldives</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The passage emphasizes that smart diplomacy between India and Maldives is happening in the backdrop of China's power ambitions, highlighting a regional geopolitical concern.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Bilateral ties with the Maldives achieved a much- needed reset earlier this week when President Mohamed Muizzu visited India. He met Prime Minister (PM) Narendra Modi, and the two sides announced a new vision document for a comprehensive economic and maritime security partnership. \"The Maldives will remain a true friend, committed to our shared vision of peace and development of our countries and our region,\" President Muizzu said during the visit. This iteration marks a remarkable turnaround in relations, which had hit rock bottom last year when Muizzu won his election on an \"India Out\" plank. Malé's political leadership quickly realized that the anti-India rhetoric may be useful in domestic politics, but it has undesirable economic and geopolitical consequences. New Delhi, for its part, has been willing to forget the acrimonious past to repair its ties with a close neighbour. This is smart diplomacy at a time of great churn in global power relations, especially in the backdrop of China's power ambitions.</p>\n<p>The Indian Ocean Region is India's strategic backyard, but the sensitivities in its neighbourhood are such that nationalism in some countries often acquires an anti-India edge, even if for the wrong reasons. The good part is that the political leadership in India seems to recognize this conundrum and has played the game well. New Delhi was quick to help when Colombo faced an economic meltdown in 2022, and public anger forced the then political leadership to flee. The few- strings-attached aid diplomacy helped to put at rest the suspicions that a large section of the Sinhala majority in that country harboured against India for what it perceived to be Delhi's support for the Tamil nationalist cause. New Delhi has also walked the extra mile to engage with the new dispensation in Colombo. President Anura Dissanayake belongs to the Janatha Vimukthi Peramuna, a fierce critic of Indian initiatives in Sri Lanka. This history, however, did not prevent India from engaging with Dissanayake in February or welcome his rise to office in September. External affairs minister S Jaishankar was the first foreign leader to visit Colombo after the new President took office.</p>\n<p>This is a track that could extend to Dhaka as well. The uprising in Bangladesh and subsequent ouster of Sheikh Hasina from the PM's office has threatened Delhi's close ties with Dhaka. However, the new head of State, Muhammad Yunus, has assured that he wants friendly ties with India. Hilsa diplomacy and holidays for Durga puja suggests that Dhaka is aware of India's sensitivities and may not want to play the anti-India card for the radicals at home. There is clearly a case to fireproof bilateral relations from regime change and ensure continuity in policies and preferences, even at a time when Hasina is in safe harbour in India.</p>\n<p>As India seeks to pull its weight as an emerging economic power and seek its due place in global affairs, it will need to be secure about its neighborhood. There is clearly a newfound confidence that all attempts in the neighborhood to project national sovereignty need not be seen as anti-India. This confidence also underlines India's outreach to Asean-in his address at the 21st Asean-India Summit in Vientiane, Laos, PM Modi spoke about India's role as a Vishwabandhu (friend to the world)-and its participation in forums such as Quad. While Delhi may not be able to compete with Beijing's aid diplomacy yet, geography and soft power should help its outreach to affirm old friends and win new allies. The signs are there to see.</p><br><p><strong>How did India's handling of nationalist sentiments in its neighboring countries reflect its diplomatic approach?</strong></p>", "options": ["<p>By respecting national sovereignty while maintaining friendly relations</p>", "<p>By asserting dominance over smaller nations</p>", "<p>By avoiding involvement in domestic issues</p>", "<p>By interfering in political affairs for geopolitical gain</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The passage highlights how India navigated nationalist sentiments in Sri Lanka and other neighboring countries without taking an antagonistic approach, while maintaining positive diplomatic relations.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Bilateral ties with the Maldives achieved a much- needed reset earlier this week when President Mohamed Muizzu visited India. He met Prime Minister (PM) Narendra Modi, and the two sides announced a new vision document for a comprehensive economic and maritime security partnership. \"The Maldives will remain a true friend, committed to our shared vision of peace and development of our countries and our region,\" President Muizzu said during the visit. This iteration marks a remarkable turnaround in relations, which had hit rock bottom last year when Muizzu won his election on an \"India Out\" plank. Malé's political leadership quickly realized that the anti-India rhetoric may be useful in domestic politics, but it has undesirable economic and geopolitical consequences. New Delhi, for its part, has been willing to forget the acrimonious past to repair its ties with a close neighbour. This is smart diplomacy at a time of great churn in global power relations, especially in the backdrop of China's power ambitions.</p>\n<p>The Indian Ocean Region is India's strategic backyard, but the sensitivities in its neighbourhood are such that nationalism in some countries often acquires an anti-India edge, even if for the wrong reasons. The good part is that the political leadership in India seems to recognize this conundrum and has played the game well. New Delhi was quick to help when Colombo faced an economic meltdown in 2022, and public anger forced the then political leadership to flee. The few- strings-attached aid diplomacy helped to put at rest the suspicions that a large section of the Sinhala majority in that country harboured against India for what it perceived to be Delhi's support for the Tamil nationalist cause. New Delhi has also walked the extra mile to engage with the new dispensation in Colombo. President Anura Dissanayake belongs to the Janatha Vimukthi Peramuna, a fierce critic of Indian initiatives in Sri Lanka. This history, however, did not prevent India from engaging with Dissanayake in February or welcome his rise to office in September. External affairs minister S Jaishankar was the first foreign leader to visit Colombo after the new President took office.</p>\n<p>This is a track that could extend to Dhaka as well. The uprising in Bangladesh and subsequent ouster of Sheikh Hasina from the PM's office has threatened Delhi's close ties with Dhaka. However, the new head of State, Muhammad Yunus, has assured that he wants friendly ties with India. Hilsa diplomacy and holidays for Durga puja suggests that Dhaka is aware of India's sensitivities and may not want to play the anti-India card for the radicals at home. There is clearly a case to fireproof bilateral relations from regime change and ensure continuity in policies and preferences, even at a time when Hasina is in safe harbour in India.</p>\n<p>As India seeks to pull its weight as an emerging economic power and seek its due place in global affairs, it will need to be secure about its neighborhood. There is clearly a newfound confidence that all attempts in the neighborhood to project national sovereignty need not be seen as anti-India. This confidence also underlines India's outreach to Asean-in his address at the 21st Asean-India Summit in Vientiane, Laos, PM Modi spoke about India's role as a Vishwabandhu (friend to the world)-and its participation in forums such as Quad. While Delhi may not be able to compete with Beijing's aid diplomacy yet, geography and soft power should help its outreach to affirm old friends and win new allies. The signs are there to see.</p><br><p><strong>What inference can be made about Bangladesh’s new leadership based on the passage?</strong></p>", "options": ["<p>They will adopt an anti-India stance</p>", "<p>They are keen on maintaining friendly ties with India</p>", "<p>They will distance themselves from India</p>", "<p>They are not interested in diplomatic relations</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage mentions that Bangladesh’s new head of state, Muhammad Yunus, has expressed a desire to maintain friendly relations with India, signaling continuity despite regime change.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Bilateral ties with the Maldives achieved a much- needed reset earlier this week when President Mohamed Muizzu visited India. He met Prime Minister (PM) Narendra Modi, and the two sides announced a new vision document for a comprehensive economic and maritime security partnership. \"The Maldives will remain a true friend, committed to our shared vision of peace and development of our countries and our region,\" President Muizzu said during the visit. This iteration marks a remarkable turnaround in relations, which had hit rock bottom last year when Muizzu won his election on an \"India Out\" plank. Malé's political leadership quickly realized that the anti-India rhetoric may be useful in domestic politics, but it has undesirable economic and geopolitical consequences. New Delhi, for its part, has been willing to forget the acrimonious past to repair its ties with a close neighbour. This is smart diplomacy at a time of great churn in global power relations, especially in the backdrop of China's power ambitions.</p>\n<p>The Indian Ocean Region is India's strategic backyard, but the sensitivities in its neighbourhood are such that nationalism in some countries often acquires an anti-India edge, even if for the wrong reasons. The good part is that the political leadership in India seems to recognize this conundrum and has played the game well. New Delhi was quick to help when Colombo faced an economic meltdown in 2022, and public anger forced the then political leadership to flee. The few- strings-attached aid diplomacy helped to put at rest the suspicions that a large section of the Sinhala majority in that country harboured against India for what it perceived to be Delhi's support for the Tamil nationalist cause. New Delhi has also walked the extra mile to engage with the new dispensation in Colombo. President Anura Dissanayake belongs to the Janatha Vimukthi Peramuna, a fierce critic of Indian initiatives in Sri Lanka. This history, however, did not prevent India from engaging with Dissanayake in February or welcome his rise to office in September. External affairs minister S Jaishankar was the first foreign leader to visit Colombo after the new President took office.</p>\n<p>This is a track that could extend to Dhaka as well. The uprising in Bangladesh and subsequent ouster of Sheikh Hasina from the PM's office has threatened Delhi's close ties with Dhaka. However, the new head of State, Muhammad Yunus, has assured that he wants friendly ties with India. Hilsa diplomacy and holidays for Durga puja suggests that Dhaka is aware of India's sensitivities and may not want to play the anti-India card for the radicals at home. There is clearly a case to fireproof bilateral relations from regime change and ensure continuity in policies and preferences, even at a time when Hasina is in safe harbour in India.</p>\n<p>As India seeks to pull its weight as an emerging economic power and seek its due place in global affairs, it will need to be secure about its neighborhood. There is clearly a newfound confidence that all attempts in the neighborhood to project national sovereignty need not be seen as anti-India. This confidence also underlines India's outreach to Asean-in his address at the 21st Asean-India Summit in Vientiane, Laos, PM Modi spoke about India's role as a Vishwabandhu (friend to the world)-and its participation in forums such as Quad. While Delhi may not be able to compete with Beijing's aid diplomacy yet, geography and soft power should help its outreach to affirm old friends and win new allies. The signs are there to see.</p><br><p><strong>What is implied by the phrase \"fireproof bilateral relations from regime change\" in the passage?</strong></p>", "options": ["<p>Ensuring that relations remain unaffected by leadership changes</p>", "<p>Ending diplomatic relations during political transitions</p>", "<p>Creating new treaties with every regime</p>", "<p>Ignoring diplomatic concerns during regime changes</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The phrase suggests that India aims to maintain strong and stable relations with its neighbors even when political leadership changes, ensuring continuity in diplomatic ties.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Bilateral ties with the Maldives achieved a much- needed reset earlier this week when President Mohamed Muizzu visited India. He met Prime Minister (PM) Narendra Modi, and the two sides announced a new vision document for a comprehensive economic and maritime security partnership. \"The Maldives will remain a true friend, committed to our shared vision of peace and development of our countries and our region,\" President Muizzu said during the visit. This iteration marks a remarkable turnaround in relations, which had hit rock bottom last year when Muizzu won his election on an \"India Out\" plank. Malé's political leadership quickly realized that the anti-India rhetoric may be useful in domestic politics, but it has undesirable economic and geopolitical consequences. New Delhi, for its part, has been willing to forget the acrimonious past to repair its ties with a close neighbour. This is smart diplomacy at a time of great churn in global power relations, especially in the backdrop of China's power ambitions.</p>\n<p>The Indian Ocean Region is India's strategic backyard, but the sensitivities in its neighbourhood are such that nationalism in some countries often acquires an anti-India edge, even if for the wrong reasons. The good part is that the political leadership in India seems to recognize this conundrum and has played the game well. New Delhi was quick to help when Colombo faced an economic meltdown in 2022, and public anger forced the then political leadership to flee. The few- strings-attached aid diplomacy helped to put at rest the suspicions that a large section of the Sinhala majority in that country harboured against India for what it perceived to be Delhi's support for the Tamil nationalist cause. New Delhi has also walked the extra mile to engage with the new dispensation in Colombo. President Anura Dissanayake belongs to the Janatha Vimukthi Peramuna, a fierce critic of Indian initiatives in Sri Lanka. This history, however, did not prevent India from engaging with Dissanayake in February or welcome his rise to office in September. External affairs minister S Jaishankar was the first foreign leader to visit Colombo after the new President took office.</p>\n<p>This is a track that could extend to Dhaka as well. The uprising in Bangladesh and subsequent ouster of Sheikh Hasina from the PM's office has threatened Delhi's close ties with Dhaka. However, the new head of State, Muhammad Yunus, has assured that he wants friendly ties with India. Hilsa diplomacy and holidays for Durga puja suggests that Dhaka is aware of India's sensitivities and may not want to play the anti-India card for the radicals at home. There is clearly a case to fireproof bilateral relations from regime change and ensure continuity in policies and preferences, even at a time when Hasina is in safe harbour in India.</p>\n<p>As India seeks to pull its weight as an emerging economic power and seek its due place in global affairs, it will need to be secure about its neighborhood. There is clearly a newfound confidence that all attempts in the neighborhood to project national sovereignty need not be seen as anti-India. This confidence also underlines India's outreach to Asean-in his address at the 21st Asean-India Summit in Vientiane, Laos, PM Modi spoke about India's role as a Vishwabandhu (friend to the world)-and its participation in forums such as Quad. While Delhi may not be able to compete with Beijing's aid diplomacy yet, geography and soft power should help its outreach to affirm old friends and win new allies. The signs are there to see.</p><br><p><strong>Which of the following represents an example of India’s \"smart diplomacy\" as mentioned in the passage?</strong></p>", "options": ["<p>Criticizing China&rsquo;s role in the Indian Ocean</p>", "<p>Forgiving past anti-India sentiments in Maldives to repair relations</p>", "<p>Offering military support to Sri Lanka during its crisis</p>", "<p>Imposing economic sanctions on Bangladesh after regime change</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage discusses how India was willing to overlook previous acrimony and anti-India rhetoric in Maldives in favor of repairing diplomatic ties, reflecting smart diplomacy.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Bilateral ties with the Maldives achieved a much- needed reset earlier this week when President Mohamed Muizzu visited India. He met Prime Minister (PM) Narendra Modi, and the two sides announced a new vision document for a comprehensive economic and maritime security partnership. \"The Maldives will remain a true friend, committed to our shared vision of peace and development of our countries and our region,\" President Muizzu said during the visit. This iteration marks a remarkable turnaround in relations, which had hit rock bottom last year when Muizzu won his election on an \"India Out\" plank. Malé's political leadership quickly realized that the anti-India rhetoric may be useful in domestic politics, but it has undesirable economic and geopolitical consequences. New Delhi, for its part, has been willing to forget the acrimonious past to repair its ties with a close neighbour. This is smart diplomacy at a time of great churn in global power relations, especially in the backdrop of China's power ambitions.</p>\n<p>The Indian Ocean Region is India's strategic backyard, but the sensitivities in its neighbourhood are such that nationalism in some countries often acquires an anti-India edge, even if for the wrong reasons. The good part is that the political leadership in India seems to recognize this conundrum and has played the game well. New Delhi was quick to help when Colombo faced an economic meltdown in 2022, and public anger forced the then political leadership to flee. The few- strings-attached aid diplomacy helped to put at rest the suspicions that a large section of the Sinhala majority in that country harboured against India for what it perceived to be Delhi's support for the Tamil nationalist cause. New Delhi has also walked the extra mile to engage with the new dispensation in Colombo. President Anura Dissanayake belongs to the Janatha Vimukthi Peramuna, a fierce critic of Indian initiatives in Sri Lanka. This history, however, did not prevent India from engaging with Dissanayake in February or welcome his rise to office in September. External affairs minister S Jaishankar was the first foreign leader to visit Colombo after the new President took office.</p>\n<p>This is a track that could extend to Dhaka as well. The uprising in Bangladesh and subsequent ouster of Sheikh Hasina from the PM's office has threatened Delhi's close ties with Dhaka. However, the new head of State, Muhammad Yunus, has assured that he wants friendly ties with India. Hilsa diplomacy and holidays for Durga puja suggests that Dhaka is aware of India's sensitivities and may not want to play the anti-India card for the radicals at home. There is clearly a case to fireproof bilateral relations from regime change and ensure continuity in policies and preferences, even at a time when Hasina is in safe harbour in India.</p>\n<p>As India seeks to pull its weight as an emerging economic power and seek its due place in global affairs, it will need to be secure about its neighborhood. There is clearly a newfound confidence that all attempts in the neighborhood to project national sovereignty need not be seen as anti-India. This confidence also underlines India's outreach to Asean-in his address at the 21st Asean-India Summit in Vientiane, Laos, PM Modi spoke about India's role as a Vishwabandhu (friend to the world)-and its participation in forums such as Quad. While Delhi may not be able to compete with Beijing's aid diplomacy yet, geography and soft power should help its outreach to affirm old friends and win new allies. The signs are there to see.</p><br><p><strong>What could be a reason for India’s confidence in handling national sovereignty issues in its neighborhood?</strong></p>", "options": ["<p>India's geographical advantage and soft power</p>", "<p>India&rsquo;s military superiority in the region</p>", "<p>India&rsquo;s economic dependence on neighboring countries</p>", "<p>India&rsquo;s partnerships with global superpowers</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The passage mentions that India’s confidence in managing relations with neighboring countries is supported by its geographic position and soft power.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Bilateral ties with the Maldives achieved a much- needed reset earlier this week when President Mohamed Muizzu visited India. He met Prime Minister (PM) Narendra Modi, and the two sides announced a new vision document for a comprehensive economic and maritime security partnership. \"The Maldives will remain a true friend, committed to our shared vision of peace and development of our countries and our region,\" President Muizzu said during the visit. This iteration marks a remarkable turnaround in relations, which had hit rock bottom last year when Muizzu won his election on an \"India Out\" plank. Malé's political leadership quickly realized that the anti-India rhetoric may be useful in domestic politics, but it has undesirable economic and geopolitical consequences. New Delhi, for its part, has been willing to forget the acrimonious past to repair its ties with a close neighbour. This is smart diplomacy at a time of great churn in global power relations, especially in the backdrop of China's power ambitions.</p>\n<p>The Indian Ocean Region is India's strategic backyard, but the sensitivities in its neighbourhood are such that nationalism in some countries often acquires an anti-India edge, even if for the wrong reasons. The good part is that the political leadership in India seems to recognize this conundrum and has played the game well. New Delhi was quick to help when Colombo faced an economic meltdown in 2022, and public anger forced the then political leadership to flee. The few- strings-attached aid diplomacy helped to put at rest the suspicions that a large section of the Sinhala majority in that country harboured against India for what it perceived to be Delhi's support for the Tamil nationalist cause. New Delhi has also walked the extra mile to engage with the new dispensation in Colombo. President Anura Dissanayake belongs to the Janatha Vimukthi Peramuna, a fierce critic of Indian initiatives in Sri Lanka. This history, however, did not prevent India from engaging with Dissanayake in February or welcome his rise to office in September. External affairs minister S Jaishankar was the first foreign leader to visit Colombo after the new President took office.</p>\n<p>This is a track that could extend to Dhaka as well. The uprising in Bangladesh and subsequent ouster of Sheikh Hasina from the PM's office has threatened Delhi's close ties with Dhaka. However, the new head of State, Muhammad Yunus, has assured that he wants friendly ties with India. Hilsa diplomacy and holidays for Durga puja suggests that Dhaka is aware of India's sensitivities and may not want to play the anti-India card for the radicals at home. There is clearly a case to fireproof bilateral relations from regime change and ensure continuity in policies and preferences, even at a time when Hasina is in safe harbour in India.</p>\n<p>As India seeks to pull its weight as an emerging economic power and seek its due place in global affairs, it will need to be secure about its neighborhood. There is clearly a newfound confidence that all attempts in the neighborhood to project national sovereignty need not be seen as anti-India. This confidence also underlines India's outreach to Asean-in his address at the 21st Asean-India Summit in Vientiane, Laos, PM Modi spoke about India's role as a Vishwabandhu (friend to the world)-and its participation in forums such as Quad. While Delhi may not be able to compete with Beijing's aid diplomacy yet, geography and soft power should help its outreach to affirm old friends and win new allies. The signs are there to see.</p><br><p><strong>How has India balanced its foreign policy with respect to regime changes in neighboring countries?</strong></p>", "options": ["<p>By cutting ties with unfriendly regimes</p>", "<p>By avoiding involvement in the political affairs of neighboring countries</p>", "<p>By supporting opposition parties</p>", "<p>By maintaining diplomatic engagement regardless of leadership</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The passage provides examples of India continuing to engage diplomatically with neighboring countries, such as Sri Lanka and Bangladesh, even after regime changes, reflecting a balanced approach.</p>"}, {"question": "<p><strong>In the following questions, two sentences I and II have been given. In each sentence some words have been highlighted which may or may not be grammatically or contextually correct at its current place. Words in sentence I may be exchanged with words in sentence II and vice versa, to make both the sentences grammatically and contextually correct. If both the sentences are correct as it is, choose ‘no exchange required’ as your answer.</strong></p><br><p><strong>I).</strong> The idea to <strong>prevent(A)</strong> the dividend, dividend reinvestment and transfer options and call it “income distribution cum capital withdrawal plan\" is <strong>schemes</strong> <strong>(B) </strong>at <strong>labelling(C)</strong> the option better.</p>\n<p><strong>II).</strong> inter-scheme transfers will be put in a straight jacket to <strong>rename</strong> <strong>(D)</strong> funds from mis-using the facility to park non-performing stocks, risky bonds and other <strong>unwanted(E)</strong> securities in <strong>aimed (F)</strong> that are not flagship, closed-end or largely retail.</p>", "options": ["<p>A-D &amp; B-F</p>", "<p>B-D &amp; C-F</p>", "<p>B-E</p>", "<p>A-D, B-E, C-F</p>", "<p>No exchange required</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Correct sentences:</p>\n<p><strong>I).</strong> The idea to <strong>rename</strong> the dividend, dividend reinvestment and transfer options and call it “income distribution cum capital withdrawal plan\" is <strong>aimed</strong> at <strong>labelling</strong> the option better.</p>\n<p><strong>II).</strong> inter-scheme transfers will be put in a straight jacket to <strong>prevent</strong> funds from mis-using the facility to park non-performing stocks, risky bonds and other <strong>unwanted</strong> securities in <strong>schemes </strong>that are not flagship, closed-end or largely retail.</p>\n<p>Therefore, option A is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, two sentences I and II have been given. In each sentence some words have been highlighted which may or may not be grammatically or contextually correct at its current place. Words in sentence I may be exchanged with words in sentence II and vice versa, to make both the sentences grammatically and contextually correct. If both the sentences are correct as it is, choose ‘no exchange required’ as your answer.</strong></p><br><p><strong>I).</strong> Under the special <strong>festival </strong><strong>(A)</strong> advance scheme, an interest-free loan of `10,000 to all central government employees will be <strong>offered</strong><strong>(B)</strong> as a one-time facility to be <strong>recovered</strong><strong>(C)</strong> in a maximum of 10 instalments.</p>\n<p><strong>II).</strong> Measures by the government to <strong>stimulate</strong><strong>(D) </strong>demand must not <strong>burden</strong><strong>(E)</strong> the common citizen with future <strong>inflation</strong><strong>(F)</strong> and must not put government debt on an unsustainable path.</p>", "options": ["<p>A-D &amp; B-F</p>", "<p>B-D &amp; C-F</p>", "<p>B-E</p>", "<p>A-D, B-E, C-F</p>", "<p>No exchange required</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>The highlighted words are placed appropriately in the context of the sentence, so no interchange is required. Therefore, option E is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, two sentences I and II have been given. In each sentence some words have been highlighted which may or may not be grammatically or contextually correct at its current place. Words in sentence I may be exchanged with words in sentence II and vice versa, to make both the sentences grammatically and contextually correct. If both the sentences are correct as it is, choose ‘no exchange required’ as your answer.</strong></p><br><p><strong>I).</strong> One of the most basic <strong>truths</strong><strong>(A)</strong> about life is that it keeps changing constantly, a person might be on the top of the <strong>things</strong> <strong>(B) </strong>one day and the next day, fortune may <strong>make</strong> <strong>(C)</strong> him to come down to abysmal levels.</p>\n<p><strong>II).</strong> It is in times like these, when <strong>world</strong> <strong>(D)</strong> are not fine, people <strong>should</strong><strong>(E)</strong> go an extra mile to <strong>force </strong><strong>(F) </strong>things better.</p>", "options": ["<p>A-D &amp; B-F</p>", "<p>B-D &amp; C-F</p>", "<p>B-E</p>", "<p>A-D, B-E, C-F</p>", "<p>No exchange required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>Correct Sentences:</p>\n<p><strong>I).</strong> One of the most basic truths about life is that it keeps changing constantly, a person might be on the top of the <strong>world</strong> one day and the next day, fortune may <strong>force</strong> him to come down to abysmal levels.</p>\n<p><strong>II).</strong> It is in times like these, when <strong>things</strong> are not fine, people should go an extra mile to <strong>make </strong>things better.</p>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, two sentences I and II have been given. In each sentence some words have been highlighted which may or may not be grammatically or contextually correct at its current place. Words in sentence I may be exchanged with words in sentence II and vice versa, to make both the sentences grammatically and contextually correct. If both the sentences are correct as it is, choose ‘no exchange required’ as your answer.</strong></p><br><p><strong>I).</strong> Though Cotton is <strong>grown</strong><strong>(A)</strong> on 5 per cent of the total crop <strong>social</strong> <strong>(B),</strong> it uses up to  55 per cent of all <strong>pesticides</strong><strong>(C).</strong></p>\n<p><strong>II).</strong> The switchover from the <strong>conventional</strong><strong>(D)</strong> cotton to Bt cotton has led to a <strong>area </strong><strong>(E)</strong> and economic <strong>transformation</strong><strong>(F)</strong> of the villages in past three-four years.</p>", "options": ["<p>A-D &amp; B-F</p>", "<p>B-D &amp; C-F</p>", "<p>B-E</p>", "<p>A-D, B-E, C-F</p>", "<p>No exchange required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Correct sentences:</p>\n<p><strong>I).</strong> Though Cotton is grown on 5 per cent of the total crop <strong>area</strong>, it uses up to  per cent of all pesticides.</p>\n<p><strong>II).</strong> The switchover from the conventional cotton to Bt cotton has led to a <strong>social</strong> and economic transformation of the villages in past three-four years.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, two sentences I and II have been given. In each sentence some words have been highlighted which may or may not be grammatically or contextually correct at its current place. Words in sentence I may be exchanged with words in sentence II and vice versa, to make both the sentences grammatically and contextually correct. If both the sentences are correct as it is, choose ‘no exchange required’ as your answer.</strong></p><br><p><strong>I).</strong> Foreign exchange reserves, also called Forex reserves, are, in a <strong>strict(A) </strong>sense, only foreign-currency deposits <strong>held(B)</strong> by nationals and monetary <strong>authorities (C).</strong></p>\n<p><strong>II).</strong> However, in popular usage and in the list below, it also <strong>includes (D) </strong>gold reserves, special drawing rights (SDRs) and IMF reserve position because this total figure, which is usually more accurately <strong>termed (E) </strong>as official reserves or international reserves or official international reserves, is more readily available and also arguably more <strong>meaningful (F)</strong>.</p>", "options": ["<p>A-D &amp; B-F</p>", "<p>B-D &amp; C-F</p>", "<p>B-E</p>", "<p>A-D, B-E, C-F</p>", "<p>No exchange required</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>The highlighted words are placed appropriately in the context of the sentence, so no interchange is required. Therefore, option E is the correct answer.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-52)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-52)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

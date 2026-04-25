@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-4)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>In an era marked by a perpetual struggle for democracy, the recent findings of a comprehensive study shed light on a disquieting reality: global skepticism regarding the fairness of elections and a disturbing inclination towards strong, undemocratic leadership. This revelation, while unsettling, serves as a clarion call for introspection and action. At the heart of this disconcerting narrative lies a fundamental question: are democratic institutions fulfilling their mandate? The answer, according to the International Institute for Democracy and Electoral Assistance, is a sobering “no.” The study, spanning 19 countries and encompassing diverse sociopolitical landscapes, underscores a pervasive sentiment of disillusionment among citizens regarding the integrity of electoral processes. From the bustling streets of Brazil to the vibrant democracies of India and the United States, doubts linger like an ominous cloud over the sanctity of the ballot box. What drives this skepticism? It is a multifaceted confluence of factors ranging from allegations of electoral malpractice to the erosion of trust in political institutions. In an age where disinformation proliferates unchecked across digital platforms and where populist rhetoric often eclipses substantive debate, the bedrock of democracy trembles under the weight of doubt. Furthermore, the allure of a “strong leader,” unencumbered by the constraints of parliamentary democracy, poses a grave threat to the very essence of democratic governance. But amidst this gloom, there exists a glimmer of hope ~ a beacon of resilience embodied by the collective will of citizens yearning for a more just and equitable society. The study serves as a wake-up call, compelling us to re-evaluate the foundations of our democratic systems and to fortify them against the encroaching tide of authoritarianism. It is incumbent upon policymakers, civil society, and ordinary citizens alike to heed this call to action ~ to champion transparency, accountability, and inclusivity in our electoral processes. Furthermore, the study underscores the imperative of economic prosperity as a linchpin of democratic stability. In a stark indictment of current economic paradigms, only a minority of citizens across surveyed nations believe they are faring better economically than their parents. This economic disillusionment, coupled with political disenchantment, creates fertile ground for the proliferation of authoritarian ideologies. The study is a reminder that democracy is not a static entity but a living, breathing organism that requires constant nurturing and vigilance. The findings serve as a sobering reminder of the fragility of democracy in the face of global challenges. They underscore the imperative of collective action in safeguarding the principles of transparency, accountability, and inclusivity upon which democracy rests. As we navigate an uncertain future, let us heed the lessons of the past and stand united in defence of democracy, for it is not merely a political system but a beacon of hope for a better tomorrow.</p><br><p><strong>According to the passage, what factors contribute to the skepticism towards electoral processes?</strong></p>", "options": ["<p>Allegations of electoral malpractice and erosion of trust in political institutions</p>", "<p>Lack of access to digital platforms</p>", "<p>Populist rhetoric and substantive debate</p>", "<p>Economic prosperity and political stability</p>", "<p>Transparency and inclusivity in electoral processes</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The passage mentions allegations of electoral malpractice and erosion of trust in political institutions as contributing factors.</p>\n<p>The passage explicitly mentions several factors contributing to skepticism towards electoral processes. One of the primary factors highlighted is \"allegations of electoral malpractice,\" indicating instances where the fairness or integrity of elections is called into question. Additionally, the passage discusses the \"erosion of trust in political institutions,\" which implies a loss of confidence in the bodies responsible for overseeing electoral processes. These factors create doubts among citizens regarding the integrity of elections and contribute to the overall skepticism towards electoral processes.</p>\n<p>Option b) Lack of access to digital platforms is not mentioned in the passage in the context of contributing to skepticism towards electoral processes. While the passage does acknowledge the proliferation of disinformation on digital platforms, it does not directly link this to skepticism towards electoral processes.</p>\n<p>Option c) Populist rhetoric and substantive debate are mentioned in the passage, but they are not specifically identified as factors contributing to skepticism towards electoral processes. Rather, the passage suggests that populist rhetoric often overshadows substantive debate, which could indirectly impact the electoral landscape.</p>\n<p>Option d) Economic prosperity and political stability are not identified as factors contributing to skepticism towards electoral processes in the passage. Instead, the passage discusses economic disillusionment and political disenchantment as separate but related phenomena that can create fertile ground for authoritarian ideologies.</p>\n<p>Option e) Transparency and inclusivity in electoral processes are presented as necessary actions to fortify democratic systems, rather than contributing factors to skepticism towards electoral processes. While the lack of transparency and inclusivity could indeed foster skepticism, the passage does not explicitly state this as a contributing factor.</p>\n<p>Therefore, option A is the correct answer.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>In an era marked by a perpetual struggle for democracy, the recent findings of a comprehensive study shed light on a disquieting reality: global skepticism regarding the fairness of elections and a disturbing inclination towards strong, undemocratic leadership. This revelation, while unsettling, serves as a clarion call for introspection and action. At the heart of this disconcerting narrative lies a fundamental question: are democratic institutions fulfilling their mandate? The answer, according to the International Institute for Democracy and Electoral Assistance, is a sobering “no.” The study, spanning 19 countries and encompassing diverse sociopolitical landscapes, underscores a pervasive sentiment of disillusionment among citizens regarding the integrity of electoral processes. From the bustling streets of Brazil to the vibrant democracies of India and the United States, doubts linger like an ominous cloud over the sanctity of the ballot box. What drives this skepticism? It is a multifaceted confluence of factors ranging from allegations of electoral malpractice to the erosion of trust in political institutions. In an age where disinformation proliferates unchecked across digital platforms and where populist rhetoric often eclipses substantive debate, the bedrock of democracy trembles under the weight of doubt. Furthermore, the allure of a “strong leader,” unencumbered by the constraints of parliamentary democracy, poses a grave threat to the very essence of democratic governance. But amidst this gloom, there exists a glimmer of hope ~ a beacon of resilience embodied by the collective will of citizens yearning for a more just and equitable society. The study serves as a wake-up call, compelling us to re-evaluate the foundations of our democratic systems and to fortify them against the encroaching tide of authoritarianism. It is incumbent upon policymakers, civil society, and ordinary citizens alike to heed this call to action ~ to champion transparency, accountability, and inclusivity in our electoral processes. Furthermore, the study underscores the imperative of economic prosperity as a linchpin of democratic stability. In a stark indictment of current economic paradigms, only a minority of citizens across surveyed nations believe they are faring better economically than their parents. This economic disillusionment, coupled with political disenchantment, creates fertile ground for the proliferation of authoritarian ideologies. The study is a reminder that democracy is not a static entity but a living, breathing organism that requires constant nurturing and vigilance. The findings serve as a sobering reminder of the fragility of democracy in the face of global challenges. They underscore the imperative of collective action in safeguarding the principles of transparency, accountability, and inclusivity upon which democracy rests. As we navigate an uncertain future, let us heed the lessons of the past and stand united in defence of democracy, for it is not merely a political system but a beacon of hope for a better tomorrow.</p><br><p><strong>How does the passage describe the impact of disinformation and populist rhetoric on democracy?</strong></p>", "options": ["<p>They foster substantive debate and strengthen democratic institutions.</p>", "<p>They have little effect on the integrity of electoral processes.</p>", "<p>They erode the foundations of democracy and undermine trust.</p>", "<p>They promote transparency and inclusivity in governance.</p>", "<p>They encourage citizens to engage more actively in political processes.</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The passage states that disinformation proliferates unchecked and populist rhetoric often eclipses substantive debate, leading to doubts about the integrity of democracy. Thus, option c) is correct.</p>\n<p>The passage portrays disinformation and populist rhetoric in a negative light, suggesting that they have a detrimental impact on democracy. Specifically, the passage states that disinformation proliferates unchecked across digital platforms and that populist rhetoric often eclipses substantive debate. This characterization implies that disinformation and populist rhetoric contribute to a climate where the foundations of democracy are weakened and trust in democratic institutions is undermined.</p>\n<p>Option a) They foster substantive debate and strengthen democratic institutions, is incorrect because the passage suggests the opposite, stating that populist rhetoric often overshadows substantive debate.</p>\n<p>Option b) They have little effect on the integrity of electoral processes, is also incorrect as the passage indicates that disinformation can lead to doubts about the integrity of electoral processes.</p>\n<p>Option d) They promote transparency and inclusivity in governance, is not supported by the passage. Instead, the passage implies that disinformation and populist rhetoric hinder transparency and inclusivity in governance.</p>\n<p>Option e) They encourage citizens to engage more actively in political processes, is not supported by the passage. Instead, the passage suggests that disinformation and populist rhetoric may have a negative impact on citizens' engagement by overshadowing substantive debate and eroding trust in democratic institutions.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>In an era marked by a perpetual struggle for democracy, the recent findings of a comprehensive study shed light on a disquieting reality: global skepticism regarding the fairness of elections and a disturbing inclination towards strong, undemocratic leadership. This revelation, while unsettling, serves as a clarion call for introspection and action. At the heart of this disconcerting narrative lies a fundamental question: are democratic institutions fulfilling their mandate? The answer, according to the International Institute for Democracy and Electoral Assistance, is a sobering “no.” The study, spanning 19 countries and encompassing diverse sociopolitical landscapes, underscores a pervasive sentiment of disillusionment among citizens regarding the integrity of electoral processes. From the bustling streets of Brazil to the vibrant democracies of India and the United States, doubts linger like an ominous cloud over the sanctity of the ballot box. What drives this skepticism? It is a multifaceted confluence of factors ranging from allegations of electoral malpractice to the erosion of trust in political institutions. In an age where disinformation proliferates unchecked across digital platforms and where populist rhetoric often eclipses substantive debate, the bedrock of democracy trembles under the weight of doubt. Furthermore, the allure of a “strong leader,” unencumbered by the constraints of parliamentary democracy, poses a grave threat to the very essence of democratic governance. But amidst this gloom, there exists a glimmer of hope ~ a beacon of resilience embodied by the collective will of citizens yearning for a more just and equitable society. The study serves as a wake-up call, compelling us to re-evaluate the foundations of our democratic systems and to fortify them against the encroaching tide of authoritarianism. It is incumbent upon policymakers, civil society, and ordinary citizens alike to heed this call to action ~ to champion transparency, accountability, and inclusivity in our electoral processes. Furthermore, the study underscores the imperative of economic prosperity as a linchpin of democratic stability. In a stark indictment of current economic paradigms, only a minority of citizens across surveyed nations believe they are faring better economically than their parents. This economic disillusionment, coupled with political disenchantment, creates fertile ground for the proliferation of authoritarian ideologies. The study is a reminder that democracy is not a static entity but a living, breathing organism that requires constant nurturing and vigilance. The findings serve as a sobering reminder of the fragility of democracy in the face of global challenges. They underscore the imperative of collective action in safeguarding the principles of transparency, accountability, and inclusivity upon which democracy rests. As we navigate an uncertain future, let us heed the lessons of the past and stand united in defence of democracy, for it is not merely a political system but a beacon of hope for a better tomorrow.</p><br><p><strong>What does the passage propose as necessary actions to fortify democratic systems?</strong></p>", "options": ["<p>Increased censorship on digital platforms</p>", "<p>Limiting the power of civil society</p>", "<p>Championing transparency, accountability, and inclusivity</p>", "<p>Promoting populist rhetoric</p>", "<p>Encouraging the concentration of power in a single leader</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The passage proposes championing transparency, accountability, and inclusivity in electoral processes as necessary actions to fortify democratic systems, making option c) the correct answer.</p>\n<p>The passage proposes championing transparency, accountability, and inclusivity in electoral processes as necessary actions to fortify democratic systems. It emphasizes the importance of policymakers, civil society, and ordinary citizens alike heeding the call to action to uphold these principles in order to strengthen democracy. Transparency ensures that the electoral process is open and accessible, accountability holds individuals and institutions responsible for their actions, and inclusivity ensures that diverse voices are heard and represented in the democratic process.</p>\n<p>Option a) Increased censorship on digital platforms contradicts the passage's emphasis on addressing disinformation and promoting transparency. Censorship could hinder free expression and access to information, which are vital for democratic participation.</p>\n<p>Option b) Limiting the power of civil society goes against the passage's suggestion of collective action involving policymakers, civil society, and ordinary citizens in safeguarding democracy. Limiting civil society's power could weaken democratic accountability and oversight mechanisms.</p>\n<p>Option d) Promoting populist rhetoric is presented in the passage as a negative influence on democracy, as it often overshadows substantive debate and undermines trust in democratic institutions. Therefore, promoting it would not fortify democratic systems.</p>\n<p>Option e) Encouraging the concentration of power in a single leader is antithetical to democracy, which is characterized by the distribution and balancing of power among different branches and levels of government. Concentrating power in a single leader would undermine democratic principles such as checks and balances and could lead to authoritarianism.</p>\n<p>Therefore, option c) Championing transparency, accountability, and inclusivity aligns with the passage's recommendations for strengthening democratic systems by addressing key principles essential for democratic governance.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>In an era marked by a perpetual struggle for democracy, the recent findings of a comprehensive study shed light on a disquieting reality: global skepticism regarding the fairness of elections and a disturbing inclination towards strong, undemocratic leadership. This revelation, while unsettling, serves as a clarion call for introspection and action. At the heart of this disconcerting narrative lies a fundamental question: are democratic institutions fulfilling their mandate? The answer, according to the International Institute for Democracy and Electoral Assistance, is a sobering “no.” The study, spanning 19 countries and encompassing diverse sociopolitical landscapes, underscores a pervasive sentiment of disillusionment among citizens regarding the integrity of electoral processes. From the bustling streets of Brazil to the vibrant democracies of India and the United States, doubts linger like an ominous cloud over the sanctity of the ballot box. What drives this skepticism? It is a multifaceted confluence of factors ranging from allegations of electoral malpractice to the erosion of trust in political institutions. In an age where disinformation proliferates unchecked across digital platforms and where populist rhetoric often eclipses substantive debate, the bedrock of democracy trembles under the weight of doubt. Furthermore, the allure of a “strong leader,” unencumbered by the constraints of parliamentary democracy, poses a grave threat to the very essence of democratic governance. But amidst this gloom, there exists a glimmer of hope ~ a beacon of resilience embodied by the collective will of citizens yearning for a more just and equitable society. The study serves as a wake-up call, compelling us to re-evaluate the foundations of our democratic systems and to fortify them against the encroaching tide of authoritarianism. It is incumbent upon policymakers, civil society, and ordinary citizens alike to heed this call to action ~ to champion transparency, accountability, and inclusivity in our electoral processes. Furthermore, the study underscores the imperative of economic prosperity as a linchpin of democratic stability. In a stark indictment of current economic paradigms, only a minority of citizens across surveyed nations believe they are faring better economically than their parents. This economic disillusionment, coupled with political disenchantment, creates fertile ground for the proliferation of authoritarian ideologies. The study is a reminder that democracy is not a static entity but a living, breathing organism that requires constant nurturing and vigilance. The findings serve as a sobering reminder of the fragility of democracy in the face of global challenges. They underscore the imperative of collective action in safeguarding the principles of transparency, accountability, and inclusivity upon which democracy rests. As we navigate an uncertain future, let us heed the lessons of the past and stand united in defence of democracy, for it is not merely a political system but a beacon of hope for a better tomorrow.</p><br><p><strong>What does the passage suggest about the relationship between economic disillusionment and political disenchantment?</strong></p>", "options": ["<p>They are unrelated phenomena</p>", "<p>Economic prosperity alleviates political disenchantment</p>", "<p>Political disenchantment exacerbates economic disillusionment</p>", "<p>They create fertile ground for authoritarian ideologies.</p>", "<p>Authoritarian ideologies have no impact on economic prosperity.</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The passage suggests that economic disillusionment, coupled with political disenchantment, creates fertile ground for authoritarian ideologies, making option d) the correct answer.</p>\n<p>The passage suggests that there is a relationship between economic disillusionment and political disenchantment, stating that when coupled together, they create fertile ground for the proliferation of authoritarian ideologies. This implies that economic disillusionment, which refers to a feeling of disappointment or dissatisfaction with one's economic situation, and political disenchantment, which refers to a loss of faith or disillusionment with the political system or its institutions, can interact and reinforce each other, leading to conditions conducive to the rise of authoritarian ideologies.</p>\n<p>Option a) They are unrelated phenomena is not supported by the passage, as it explicitly states that economic disillusionment and political disenchantment, when combined, contribute to the proliferation of authoritarian ideologies.</p>\n<p>Option b) Economic prosperity alleviates political disenchantment is not supported by the passage. While economic prosperity may contribute to overall satisfaction and stability, the passage suggests that economic disillusionment can still coexist with political disenchantment, particularly when economic prosperity is not widely shared among the population.</p>\n<p>Option c) Political disenchantment exacerbates economic disillusionment is not explicitly mentioned in the passage. While it is possible that political disenchantment could have an impact on economic sentiment, the passage does not specifically address this relationship.</p>\n<p>Option e) Authoritarian ideologies have no impact on economic prosperity is not supported by the passage. While the passage discusses the relationship between economic disillusionment, political disenchantment, and authoritarian ideologies, it does not suggest that authoritarian ideologies have no impact on economic prosperity.</p>\n<p>Therefore, option d) They create fertile ground for authoritarian ideologies is the most appropriate answer, as it aligns with the passage's assertion regarding the relationship between economic disillusionment, political disenchantment, and the rise of authoritarianism.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>In an era marked by a perpetual struggle for democracy, the recent findings of a comprehensive study shed light on a disquieting reality: global skepticism regarding the fairness of elections and a disturbing inclination towards strong, undemocratic leadership. This revelation, while unsettling, serves as a clarion call for introspection and action. At the heart of this disconcerting narrative lies a fundamental question: are democratic institutions fulfilling their mandate? The answer, according to the International Institute for Democracy and Electoral Assistance, is a sobering “no.” The study, spanning 19 countries and encompassing diverse sociopolitical landscapes, underscores a pervasive sentiment of disillusionment among citizens regarding the integrity of electoral processes. From the bustling streets of Brazil to the vibrant democracies of India and the United States, doubts linger like an ominous cloud over the sanctity of the ballot box. What drives this skepticism? It is a multifaceted confluence of factors ranging from allegations of electoral malpractice to the erosion of trust in political institutions. In an age where disinformation proliferates unchecked across digital platforms and where populist rhetoric often eclipses substantive debate, the bedrock of democracy trembles under the weight of doubt. Furthermore, the allure of a “strong leader,” unencumbered by the constraints of parliamentary democracy, poses a grave threat to the very essence of democratic governance. But amidst this gloom, there exists a glimmer of hope ~ a beacon of resilience embodied by the collective will of citizens yearning for a more just and equitable society. The study serves as a wake-up call, compelling us to re-evaluate the foundations of our democratic systems and to fortify them against the encroaching tide of authoritarianism. It is incumbent upon policymakers, civil society, and ordinary citizens alike to heed this call to action ~ to champion transparency, accountability, and inclusivity in our electoral processes. Furthermore, the study underscores the imperative of economic prosperity as a linchpin of democratic stability. In a stark indictment of current economic paradigms, only a minority of citizens across surveyed nations believe they are faring better economically than their parents. This economic disillusionment, coupled with political disenchantment, creates fertile ground for the proliferation of authoritarian ideologies. The study is a reminder that democracy is not a static entity but a living, breathing organism that requires constant nurturing and vigilance. The findings serve as a sobering reminder of the fragility of democracy in the face of global challenges. They underscore the imperative of collective action in safeguarding the principles of transparency, accountability, and inclusivity upon which democracy rests. As we navigate an uncertain future, let us heed the lessons of the past and stand united in defence of democracy, for it is not merely a political system but a beacon of hope for a better tomorrow.</p><br><p><strong>What is the central concern highlighted in the passage?</strong></p>", "options": ["<p>The rise of authoritarian leadership</p>", "<p>Global skepticism towards democratic processes</p>", "<p>Economic prosperity as a linchpin of democracy</p>", "<p>The need for collective action in safeguarding democracy</p>", "<p>The role of disinformation in undermining democracy</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage primarily discusses global skepticism regarding the fairness of elections and the inclination towards strong, undemocratic leadership, making option b) the correct answer.</p>\n<p>The central concern highlighted in the passage is the global skepticism towards democratic processes. The passage discusses the findings of a comprehensive study that sheds light on this disquieting reality, emphasizing doubts and disillusionment among citizens regarding the fairness and integrity of electoral processes across diverse sociopolitical landscapes. It highlights the pervasive sentiment of skepticism towards the sanctity of the ballot box, which spans countries like Brazil, India, and the United States. The passage underscores various factors contributing to this skepticism, such as allegations of electoral malpractice, erosion of trust in political institutions, the proliferation of disinformation, and the allure of strong, undemocratic leadership.</p>\n<p>Option a) The rise of authoritarian leadership is a related concern mentioned in the passage, particularly in the context of the threat posed by the allure of \"strong leaders\" unencumbered by the constraints of parliamentary democracy. However, the central concern emphasized in the passage is the skepticism towards democratic processes rather than solely the rise of authoritarian leadership.</p>\n<p>Option c) Economic prosperity as a linchpin of democracy is discussed in the passage, but it is not the central concern highlighted. While the passage acknowledges the importance of economic prosperity for democratic stability, the primary focus is on the skepticism towards democratic processes and the factors contributing to it.</p>\n<p>Option d) The need for collective action in safeguarding democracy is indeed emphasized in the passage as a response to the challenges facing democratic systems. However, it is presented more as a solution or course of action rather than the central concern itself.</p>\n<p>Option e) The role of disinformation in undermining democracy is discussed in the passage as one of the contributing factors to skepticism towards democratic processes. While important, it is not the central concern around which the passage revolves.</p>\n<p>Therefore, option b) Global skepticism towards democratic processes is the most appropriate answer, as it aligns with the primary focus and emphasis of the passage on the challenges and concerns related to the integrity and trustworthiness of democratic systems worldwide.</p>"}, {"question": "<p><strong>Below, a passage is given with six blanks labelled (A-F). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>Globalization has transformed the world into a closely interconnected community, where goods, services, and ideas flow across borders with unprecedented ease. <strong>(A) ____________,</strong> advances in technology have facilitated communication and transportation, enabling businesses to expand their operations internationally. Furthermore, international trade agreements and economic policies <strong>(B) ____________</strong> barriers to trade, fostering greater economic integration among countries.</p>\n<p>However, globalization has also led to concerns about cultural homogenization and the loss of cultural diversity. <strong>(C) ____________,</strong> the spread of Western media and consumerism has contributed to the erosion of traditional cultures and values in many parts of the world. Additionally, the dominance of multinational corporations <strong>(D) ____________</strong> local businesses, leading to the decline of small-scale industries and traditional practices.</p>\n<p>Despite these challenges, globalization has brought about significant benefits, including increased access to global markets, <strong>(E) ____________</strong> economic growth, and improved living standards for many people. Moreover, it has facilitated cultural exchange and collaboration, <strong>(F) ____________</strong> understanding and appreciation among diverse cultures.</p><br><p><strong>Which word comes in the blank labelled B?</strong></p>", "options": ["<p>remove</p>", "<p>impose</p>", "<p>enforce</p>", "<p>decrease</p>", "<p>diminish</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>\"<strong>Remove</strong>\" means to take away or eliminate, fitting the context of how international trade agreements and economic policies eliminate barriers to trade, thereby fostering greater economic integration among countries.</p>\n<p>Therefore, option A is the correct answer.</p>"}, {"question": "<p><strong>Below, a passage is given with six blanks labelled (A-F). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>Globalization has transformed the world into a closely interconnected community, where goods, services, and ideas flow across borders with unprecedented ease. <strong>(A) ____________,</strong> advances in technology have facilitated communication and transportation, enabling businesses to expand their operations internationally. Furthermore, international trade agreements and economic policies <strong>(B) ____________</strong> barriers to trade, fostering greater economic integration among countries.</p>\n<p>However, globalization has also led to concerns about cultural homogenization and the loss of cultural diversity. <strong>(C) ____________,</strong> the spread of Western media and consumerism has contributed to the erosion of traditional cultures and values in many parts of the world. Additionally, the dominance of multinational corporations <strong>(D) ____________</strong> local businesses, leading to the decline of small-scale industries and traditional practices.</p>\n<p>Despite these challenges, globalization has brought about significant benefits, including increased access to global markets, <strong>(E) ____________</strong> economic growth, and improved living standards for many people. Moreover, it has facilitated cultural exchange and collaboration, <strong>(F) ____________</strong> understanding and appreciation among diverse cultures.</p><br><p><strong>Which word comes in the blank labelled C?</strong></p>", "options": ["<p>Nonetheless</p>", "<p>Hence</p>", "<p>Furthermore</p>", "<p>Consequently</p>", "<p>Therefore</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>\"<strong>Nonetheless</strong>\" indicates contrast or contradiction, emphasizing that despite the benefits of globalization, there are concerns about cultural homogenization and loss of diversity.</p>\n<p>Therefore, option A is the correct answer.</p>"}, {"question": "<p><strong>Below, a passage is given with six blanks labelled (A-F). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>Globalization has transformed the world into a closely interconnected community, where goods, services, and ideas flow across borders with unprecedented ease. <strong>(A) ____________,</strong> advances in technology have facilitated communication and transportation, enabling businesses to expand their operations internationally. Furthermore, international trade agreements and economic policies <strong>(B) ____________</strong> barriers to trade, fostering greater economic integration among countries.</p>\n<p>However, globalization has also led to concerns about cultural homogenization and the loss of cultural diversity. <strong>(C) ____________,</strong> the spread of Western media and consumerism has contributed to the erosion of traditional cultures and values in many parts of the world. Additionally, the dominance of multinational corporations <strong>(D) ____________</strong> local businesses, leading to the decline of small-scale industries and traditional practices.</p>\n<p>Despite these challenges, globalization has brought about significant benefits, including increased access to global markets, <strong>(E) ____________</strong> economic growth, and improved living standards for many people. Moreover, it has facilitated cultural exchange and collaboration, <strong>(F) ____________</strong> understanding and appreciation among diverse cultures.</p><br><p><strong>Which word comes in the blank labelled D?</strong></p>", "options": ["<p>outsource</p>", "<p>foster</p>", "<p>bolster</p>", "<p>undermine</p>", "<p>empower</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>\"<strong>Undermine</strong>\" means to weaken or subvert, fitting the context of how the dominance of multinational corporations weakens local businesses, leading to the decline of small-scale industries and traditional practices.</p>\n<p>Therefore, option D is the correct answer.</p>"}, {"question": "<p><strong>Below, a passage is given with six blanks labelled (A-F). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>Globalization has transformed the world into a closely interconnected community, where goods, services, and ideas flow across borders with unprecedented ease. <strong>(A) ____________,</strong> advances in technology have facilitated communication and transportation, enabling businesses to expand their operations internationally. Furthermore, international trade agreements and economic policies <strong>(B) ____________</strong> barriers to trade, fostering greater economic integration among countries.</p>\n<p>However, globalization has also led to concerns about cultural homogenization and the loss of cultural diversity. <strong>(C) ____________,</strong> the spread of Western media and consumerism has contributed to the erosion of traditional cultures and values in many parts of the world. Additionally, the dominance of multinational corporations <strong>(D) ____________</strong> local businesses, leading to the decline of small-scale industries and traditional practices.</p>\n<p>Despite these challenges, globalization has brought about significant benefits, including increased access to global markets, <strong>(E) ____________</strong> economic growth, and improved living standards for many people. Moreover, it has facilitated cultural exchange and collaboration, <strong>(F) ____________</strong> understanding and appreciation among diverse cultures.</p><br><p><strong>Which word comes in the blank labelled E?</strong></p>", "options": ["<p>stimulate</p>", "<p>impede</p>", "<p>stagnate</p>", "<p>hinder</p>", "<p>deteriorate</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>\"<strong>Stimulate</strong>\" means to encourage or promote, fitting the context of how globalization stimulates economic growth by increasing access to global markets.</p>\n<p>Therefore, option A is the correct answer.</p>"}, {"question": "<p><strong>Below, a passage is given with six blanks labelled (A-F). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>Globalization has transformed the world into a closely interconnected community, where goods, services, and ideas flow across borders with unprecedented ease. <strong>(A) ____________,</strong> advances in technology have facilitated communication and transportation, enabling businesses to expand their operations internationally. Furthermore, international trade agreements and economic policies <strong>(B) ____________</strong> barriers to trade, fostering greater economic integration among countries.</p>\n<p>However, globalization has also led to concerns about cultural homogenization and the loss of cultural diversity. <strong>(C) ____________,</strong> the spread of Western media and consumerism has contributed to the erosion of traditional cultures and values in many parts of the world. Additionally, the dominance of multinational corporations <strong>(D) ____________</strong> local businesses, leading to the decline of small-scale industries and traditional practices.</p>\n<p>Despite these challenges, globalization has brought about significant benefits, including increased access to global markets, <strong>(E) ____________</strong> economic growth, and improved living standards for many people. Moreover, it has facilitated cultural exchange and collaboration, <strong>(F) ____________</strong> understanding and appreciation among diverse cultures.</p><br><p><strong>Which word comes in the blank labelled F?</strong></p>", "options": ["<p>encouraging</p>", "<p>inhibiting</p>", "<p>discouraging</p>", "<p>restraining</p>", "<p>fostering</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>\"<strong>Fostering</strong>\" means promoting or encouraging, fitting the context of how globalization facilitates cultural exchange and collaboration, thereby fostering understanding and appreciation among diverse cultures.</p>\n<p>Therefore, option E is the correct answer.</p>"}, {"question": "<p><strong>In each of the following questions, a highlighted word is given and used in the three statements. You have to identify in which of the following statements the word is incorrectly used, and mark it as your answer.</strong></p><br><p><strong>EXONERATE</strong></p>\n<p><strong>I).</strong> After a thorough investigation, new evidence emerged that helped to <strong>exonerate</strong> the wrongly accused individual, leading to their release from prison.</p>\n<p><strong>II).</strong> The security footage was crucial in <strong>exonerating</strong> the suspect, as it clearly showed that they were not present at the scene of the crime.</p>\n<p><strong>III).</strong> The evidence presented during the trial served to <strong>exonerate</strong> the defendant, proving beyond a doubt that he was guilty of the crime.</p>", "options": ["<p>Only I</p>", "<p>Only II</p>", "<p>Only III</p>", "<p>Both I and II</p>", "<p>Both II and III</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>I).</strong> In this sentence, \"exonerate\" is correctly used to convey the idea of clearing someone from blame or wrongdoing, particularly in the context of being wrongly accused or convicted.</p>\n<p><strong>II).</strong> In this sentence, \"exonerating\" is used correctly to describe the role of the security footage in proving the innocence of the suspect.</p>\n<p><strong>III).</strong> In this sentence, \"exonerate\" is used incorrectly. The sentence contradicts itself, as it first mentions that the evidence exonerates the defendant (clears him of guilt) and then states that the evidence proves he was guilty. A more appropriate term might be \"incriminate\" or \"prove.\"</p>\n<p>So, Sentences I and II use <strong>exonerate</strong> in a grammatically correct and contextually meaningful manner.</p>\n<p>Therefore, option c) Only III is the correct choice.</p>"}, {"question": "<p><strong>In each of the following questions, a highlighted word is given and used in the three statements. You have to identify in which of the following statements the word is incorrectly used, and mark it as your answer.</strong></p><br><p><strong>TRAVESTY</strong></p>\n<p><strong>I).</strong> The unfair treatment of the employees during the restructuring process was a <strong>travesty</strong> of justice, leaving many without proper compensation.</p>\n<p><strong>II).</strong> The seamless integration of the artist's work into the project was a <strong>travesty</strong>, highlighting the collaborative efforts and enhancing the overall creativity.</p>\n<p><strong>III).</strong> The unauthorized use of the artist's work without giving credit was a <strong>travesty</strong>, undermining the value of creativity and intellectual property.</p>", "options": ["<p>Only I</p>", "<p>Only II</p>", "<p>Only III</p>", "<p>Both I and II</p>", "<p>Both II and III</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>I).</strong> In this sentence, \"travesty\" is correctly used to describe the unjust and disgraceful treatment of the employees, emphasizing the violation of justice in the situation.</p>\n<p><strong>II).</strong> In this sentence, \"travesty\" is used incorrectly. The sentence suggests a positive and successful integration, which contradicts the usual negative connotation of \"travesty.\" A more suitable term might be \"triumph\" or \"success.\"</p>\n<p><strong>III).</strong> In this sentence, \"travesty\" is used correctly to express the injustice and violation of the artist's rights through the unauthorized use of their work.</p>\n<p>So, Sentences I and III use <strong>travesty</strong> in a grammatically correct and contextually meaningful manner.</p>\n<p>Therefore, option b) Only II is the correct choice.</p>"}, {"question": "<p><strong>In each of the following questions, a highlighted word is given and used in the three statements. You have to identify in which of the following statements the word is incorrectly used, and mark it as your answer.</strong></p><br><p><strong>INDIGNATION</strong></p>\n<p><strong>I).</strong> The employee expressed her <strong>indignation</strong> at the unfair treatment, demanding a resolution to the issue.</p>\n<p><strong>II).</strong> The journalist's article sparked widespread <strong>indignation</strong> as it exposed the corruption within the government.</p>\n<p><strong>III).</strong> Upon hearing the heartwarming story, she couldn't contain her <strong>indignation</strong> and burst into tears of joy.</p>", "options": ["<p>Only I</p>", "<p>Only II</p>", "<p>Only III</p>", "<p>Both I and II</p>", "<p>Both II and III</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>I).</strong> In this sentence, \"indignation\" is correctly used to convey the employee's strong displeasure and resentment in response to the perceived unfair treatment.</p>\n<p><strong>II).</strong> In this sentence, \"indignation\" is appropriately used to describe the public's strong and justified anger or displeasure upon learning about the corruption revealed in the journalist's article.</p>\n<p><strong>III).</strong> In this sentence, \"indignation\" is used incorrectly. \"Indignation\" typically refers to a feeling of anger or resentment, which doesn't align with the context of tears of joy. A more suitable term might be \"emotion\" or \"happiness.\"</p>\n<p>So, Sentences I and II use <strong>indignation</strong> in a grammatically correct and contextually meaningful manner.</p>\n<p>Therefore, option c) Only III is the correct choice.</p>"}, {"question": "<p><strong>Below is a table consisting of three columns labelled I, II, and III. Column I contains phrases labelled as A, B, and C, while Column II contains phrases labelled as D, E, and F, and Column III includes phrases labelled as G, H, and I. Your task is to determine the sequence in which these phrases can be combined to form a grammatically and contextually correct and coherent sentence. You will be provided with five options to choose from. If none of the options provided creates a coherent sentence after combination, select \"None of these\" as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/173140437983.png\" title=\"54.png\"/></p>", "options": ["<p>B + D + H</p>", "<p>C + E + G</p>", "<p>B + F + I</p>", "<p>C + D + I</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>The combination that creates a coherent sentence is \"C + E + G.\"</strong><br/><strong>The complete sentence would be:</strong> \"Rural women often lack access to information and resources about menopause, leading to uncertainty and fear, but increasing awareness can encourage them to embrace this new phase with confidence.\"</p>"}, {"question": "<p><strong>Below is a table consisting of three columns labelled I, II, and III. Column I contains phrases labelled as A, B, and C, while Column II contains phrases labelled as D, E, and F, and Column III includes phrases labelled as G, H, and I. Your task is to determine the sequence in which these phrases can be combined to form a grammatically and contextually correct and coherent sentence. You will be provided with five options to choose from. If none of the options provided creates a coherent sentence after combination, select \"None of these\" as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/173140444490.png\" title=\"50.png\"/></p>", "options": ["<p>A + D + I</p>", "<p>B + D + H</p>", "<p>C + F + I</p>", "<p>A + E + H</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong><br/><strong>The combination that creates a coherent sentence is \"A + D + I.\"</strong><br/><strong>The complete sentence would be:</strong> \"Experts say that wearing headphones while driving can be as dangerous as talking without them because it leads to auditory distractions and impairs hearing sirens and horns.\"</p>"}, {"question": "<p><strong>Below is a table consisting of three columns labelled I, II, and III. Column I contains phrases labelled as A, B, and C, while Column II contains phrases labelled as D, E, and F, and Column III includes phrases labelled as G, H, and I. Your task is to determine the sequence in which these phrases can be combined to form a grammatically and contextually correct and coherent sentence. You will be provided with five options to choose from. If none of the options provided creates a coherent sentence after combination, select \"None of these\" as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/173140457192.png\" title=\"51.png\"/></p>", "options": ["<p>C + E + G</p>", "<p>C + E + H</p>", "<p>A + E + H</p>", "<p>A + F + G</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong><br/><strong>The combination that creates a coherent sentence is \"A + F + G.\"</strong><br/><strong>The complete sentence would be:</strong> \"The ongoing climate crisis has prompted nations worldwide to rethink their energy policies, focusing on renewable sources to reduce carbon emissions and combat the devastating effects of global warming.\"</p>"}, {"question": "<p><strong>Below is a table consisting of three columns labelled I, II, and III. Column I contains phrases labelled as A, B, and C, while Column II contains phrases labelled as D, E, and F, and Column III includes phrases labelled as G, H, and I. Your task is to determine the sequence in which these phrases can be combined to form a grammatically and contextually correct and coherent sentence. You will be provided with five options to choose from. If none of the options provided creates a coherent sentence after combination, select \"None of these\" as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/173140463437.png\" title=\"52.png\"/></p>", "options": ["<p>C + D + I</p>", "<p>A + F + G</p>", "<p>B + F + H</p>", "<p>A + D + I</p>", "<p>None of these</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong><br/>None of the given combinations forms a coherent sentence. Therefore, the correct answer is \"None of these.\"</p>"}, {"question": "<p><strong>Below is a table consisting of three columns labelled I, II, and III. Column I contains phrases labelled as A, B, and C, while Column II contains phrases labelled as D, E, and F, and Column III includes phrases labelled as G, H, and I. Your task is to determine the sequence in which these phrases can be combined to form a grammatically and contextually correct and coherent sentence. You will be provided with five options to choose from. If none of the options provided creates a coherent sentence after combination, select \"None of these\" as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/173140470416.png\" title=\"53.png\"/></p>", "options": ["<p>C + E + H</p>", "<p>A + D + H</p>", "<p>B + F + I</p>", "<p>C + D + I</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong><br/><strong>The combination that creates a coherent sentence is \"C + E + H.\"</strong><br/><strong>The complete sentence would be:</strong> \"Focusing solely on high yields can reduce farmers’ net income, as the marginal returns on additional fertilizers have declined significantly, requiring more inputs to achieve similar outputs over time.\"</p>"}, {"question": "<p><strong>A sentence or a part of the sentence is highlighted. Four alternatives marked as (A), (B), (C) and (D) are given as substitutions for the highlighted part, one of which will improve the sentence. Choose the correct alternative. In case no improvement is needed, choose the option “No improvement is required” i.e. (E).</strong></p><br><p>Realizing the mistakes made in the initial attempt, the team decided to scrap their current strategy and start afresh, <strong>assigning to did up the project</strong> with a renewed focus and revised approach to ensure success.</p>", "options": ["<p>concluding to done out the project</p>", "<p>resolving to does over the project</p>", "<p>preferring to do up the project</p>", "<p>opting to do over the project</p>", "<p>no improvement is needed</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D</strong></p>\n<p>The correct option is: d) opting to do over the project</p>\n<p>The phrase \"opting to do over the project\" is the most appropriate choice to convey the idea of restarting or redoing the project. \"Opting to\" indicates a deliberate choice or decision, and \"do over\" is a phrasal verb meaning to redo or start again.</p>\n<p>Options (a), (b), and (c) introduce variations that are less idiomatic or disrupt the intended meaning:</p>\n<p>Option (a) \"concluding to done out the project\" is not idiomatic. \"Concluding\" does not fit well in this context, and \"done out\" is not a standard expression for restarting a project.</p>\n<p>Option (b) \"resolving to does over the project\" has tense agreement issues (\"does over\" should be \"do over\") and incorrect phrasing.</p>\n<p>Option (c) \"preferring to do up the project\" introduces a different meaning. \"Do up\" typically means to renovate or improve the appearance of something, which is not appropriate in this context.</p>\n<p>Therefore, option (d) \"opting to do over the project\" is the correct choice for maintaining proper grammar and conveying the intended meaning effectively.</p>"}, {"question": "<p><strong>A sentence or a part of the sentence is highlighted. Four alternatives marked as (A), (B), (C) and (D) are given as substitutions for the highlighted part, one of which will improve the sentence. Choose the correct alternative. In case no improvement is needed, choose the option “No improvement is required” i.e. (E).</strong></p><br><p>After a long week of work, <strong>I decided to sleep over</strong> on Saturday morning, relishing the luxury of staying in bed past my usual waking hour.</p>", "options": ["<p>I decided to sleep in</p>", "<p>I have decided to sleep over</p>", "<p>I had decided to sleep through</p>", "<p>I decided to sleep through</p>", "<p>no improvement is needed</p>"], "correctIndex": 0, "solution": "<p><strong>Answer</strong><strong>: A</strong></p>\n<p>The correct option is: a) I decided to sleep in</p>\n<p>The phrase \"to sleep in\" means to remain in bed longer than usual in the morning. It is the most appropriate expression for the context provided in the sentence.</p>\n<p>Options (b), (c), and (d) introduce variations that do not convey the intended meaning or are less idiomatic:</p>\n<p>Option (b) \"I have decided to sleep over\" suggests staying somewhere overnight, which is not the intended meaning.</p>\n<p>Option (c) \"I had decided to sleep through\" implies sleeping without waking up at all, which is not the intended meaning.</p>\n<p>Option (d) \"I decided to sleep through\" also implies sleeping without waking up at all, which is not the intended meaning.</p>\n<p>Therefore, option (a) \"I decided to sleep in\" is the correct choice for maintaining proper grammar and conveying the intended meaning effectively.</p>"}, {"question": "<p><strong>A sentence or a part of the sentence is highlighted. Four alternatives marked as (A), (B), (C) and (D) are given as substitutions for the highlighted part, one of which will improve the sentence. Choose the correct alternative. In case no improvement is needed, choose the option “No improvement is required” i.e. (E).</strong></p><br><p>After hours of negotiation, <strong>he totally gave up </strong>to his opponent's<strong> </strong>demands, recognizing that further resistance would only prolong the conflict and lead to more significant losses.</p>", "options": ["<p>he ultimately gave away</p>", "<p>he absolutely gave up</p>", "<p>he finally gave in</p>", "<p>he exactly gave back</p>", "<p>no improvement is needed</p>"], "correctIndex": 2, "solution": "<p><strong>Answer</strong><strong>: C</strong></p>\n<p>The correct option is: c) he finally gave in</p>\n<p>The phrase \"he finally gave in\" is idiomatic and effectively conveys the idea that he yielded or surrendered to his opponent's demands after hours of negotiation. \"Gave in\" means to yield or surrender, which fits well in the context of the sentence.</p>\n<p>Options (a), (b), and (d) introduce variations that either change the meaning or are less idiomatic:</p>\n<p>Option (a) \"he ultimately gave away\" changes the meaning. \"Gave away\" typically means to distribute or give something as a gift, which doesn't fit the context of yielding to demands.</p>\n<p>Option (b) \"he absolutely gave up\" also changes the meaning. \"Gave up\" typically means to quit or cease trying, which doesn't convey the sense of yielding after negotiation.</p>\n<p>Option (d) \"he exactly gave back\" is not idiomatic. \"Gave back\" typically means to return something, which doesn't fit the context of yielding to demands.</p>\n<p>Therefore, option (c) \"he finally gave in\" is the correct choice for maintaining proper grammar and conveying the intended meaning effectively.</p>"}, {"question": "<p><strong>A sentence or a part of the sentence is highlighted. Four alternatives marked as (A), (B), (C) and (D) are given as substitutions for the highlighted part, one of which will improve the sentence. Choose the correct alternative. In case no improvement is needed, choose the option “No improvement is required” i.e. (E).</strong></p><br><p>The new government's policies <strong>directed to bring in critical social change</strong>, fostering equality and prosperity for all citizens.</p>", "options": ["<p>intended to bring over vital social change</p>", "<p>marked to bring up crucial social change</p>", "<p>focused to bring in historic social change</p>", "<p>aimed to bring about significant social change</p>", "<p>no improvement is needed</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D</strong></p>\n<p>The correct option is: d) aimed to bring about significant social change. The phrase \"aimed to bring about significant social change\" is the most appropriate choice as it accurately conveys the intended meaning. It indicates that the policies were designed with the specific goal of achieving significant social change.</p>\n<p>Options (a), (b), and (c) introduce variations that either change the meaning or are less idiomatic:</p>\n<p>Option (a) \"intended to bring over vital social change\" introduces unnecessary words (\"over\" and \"vital\") and changes the meaning slightly.</p>\n<p>Option (b) \"marked to bring up crucial social change\" does not accurately convey the idea of directing policies toward social change. Additionally, \"bring up\" is not the appropriate phrasal verb in this context.</p>\n<p>Option (c) \"focused to bring in historic social change\" changes the meaning slightly and introduces the word \"historic,\" which may not be suitable depending on the context of the social change.</p>\n<p>Therefore, option (d) \"aimed to bring about significant social change\" is the correct choice for maintaining proper grammar and conveying the intended meaning effectively.</p>"}, {"question": "<p><strong>A sentence or a part of the sentence is highlighted. Four alternatives marked as (A), (B), (C) and (D) are given as substitutions for the highlighted part, one of which will improve the sentence. Choose the correct alternative. In case no improvement is needed, choose the option “No improvement is required” i.e. (E).</strong></p><br><p>After weeks of meticulous planning and preparation, the theatrical performance <strong>finally came off without a hitch</strong>, leaving the audience awestruck and applauding fervently for the talented cast and crew.</p>", "options": ["<p>ultimately came in without a hitch</p>", "<p>totally came out without a hitch</p>", "<p>surely came over without a hitch</p>", "<p>completely came through without a hitch</p>", "<p>no improvement is needed</p>"], "correctIndex": 4, "solution": "<p><strong>Answer</strong><strong>: E</strong></p>\n<p>The correct option is: e) no improvement is needed</p>\n<p>The sentence is grammatically correct and effectively conveys the intended meaning. The phrase \"finally came off without a hitch\" is idiomatic and clear in expressing the successful outcome of the theatrical performance.</p>\n<p>Options (a), (b), (c), and (d) introduce variations that either change the meaning or are less idiomatic:</p>\n<p>Option (a) \"ultimately came in without a hitch\" changes the meaning slightly and is less idiomatic than \"came off.\"</p>\n<p>Option (b) \"totally came out without a hitch\" introduces a different adverb \"totally,\" which alters the tone of the sentence.</p>\n<p>Option (c) \"surely came over without a hitch\" introduces \"surely,\" which implies a level of certainty that may not be appropriate in this context.</p>\n<p>Option (d) \"completely came through without a hitch\" changes the meaning slightly and may imply overcoming obstacles, which is not the intended meaning here.</p>\n<p>Therefore, option (e) \"no improvement is needed\" is the correct choice for maintaining proper grammar and conveying the intended meaning effectively.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-4)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-4)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-38)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>Given below is a set of five sentences that, when properly sequenced, form a coherent paragraph. Arrange the sentences in the correct sequence and answer the questions that follow.</strong></p>\n<p><strong>A). </strong>Community ties and local engagement, <strong>(1)</strong> in rural areas, 80% of women expressed <strong>(2)</strong> their commitment to voting, influenced by <strong>(3)</strong> prioritized development-related concerns <strong>(4)</strong> while 53.7% of urban women. <strong>(5)</strong></p>\n<p><strong>B).</strong> The survey, which included over 500 young women aged 18 to 23, highlighted that rural women exhibit a stronger commitment to voting compared to their urban counterparts.</p>\n<p><strong>C).</strong> Ultimately, education was seen as crucial for encouraging more women to vote, highlighting the importance of ________ approaches to women's empowerment across the urban-rural spectrum.</p>\n<p><strong>D).</strong> My research explored voting patterns among young women in rural Padrauna, Uttar Pradesh, and urban New Delhi, revealing significant differences in electoral behaviour.</p>\n<p><strong>E).</strong> Both rural and urban women cited a lack of information as a major reason for not voting, emphasizing the need for better access to unbiased, factual information.</p><br><p>Which of the following pairs represent the <strong>THIRD</strong> and <strong>FOURTH</strong> sentences of the coherent paragraph after rearrangement?</p>", "options": ["<p>E and B</p>", "<p>D and C</p>", "<p>A and C</p>", "<p>A and E</p>", "<p>D and A</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>This paragraph discusses voting patterns among young women in India, highlighting differences between rural and urban areas and the factors influencing their electoral behaviour.</p>\n<p><strong>Sentence D is the first sentence</strong> as it presents the main focus of the research, which is exploring voting patterns among young women in different regions.</p>\n<p><strong>Sentence B follows as the second sentence</strong>, providing details about the survey conducted, including the number of participants and the contrast between rural and urban women's commitment to voting.</p>\n<p><strong><u>Sentence A comes next as the third sentence</u></strong>, following B, elaborating on the findings by presenting specific percentages of women in rural and urban areas expressing their commitment to voting and the factors influencing their decisions.</p>\n<p><strong><u>Sentence E is the fourth sentence</u></strong>, discussing the common reasons cited by both rural and urban women for not voting, emphasizing the importance of better access to information.</p>\n<p><strong>Sentence C is the last sentence</strong>, highlighting the role of education in encouraging more women to vote and stressing the need for tailored approaches to women's empowerment across different regions.</p>\n<p><strong>The correct sequence is DBAEC.</strong></p>\n<p><strong>Therefore, the correct answer is \"A and E.\"</strong></p>"}, {"question": "<p><strong>Given below is a set of five sentences that, when properly sequenced, form a coherent paragraph. Arrange the sentences in the correct sequence and answer the questions that follow.</strong></p>\n<p><strong>A). </strong>Community ties and local engagement, <strong>(1)</strong> in rural areas, 80% of women expressed <strong>(2)</strong> their commitment to voting, influenced by <strong>(3)</strong> prioritized development-related concerns <strong>(4)</strong> while 53.7% of urban women. <strong>(5)</strong></p>\n<p><strong>B).</strong> The survey, which included over 500 young women aged 18 to 23, highlighted that rural women exhibit a stronger commitment to voting compared to their urban counterparts.</p>\n<p><strong>C).</strong> Ultimately, education was seen as crucial for encouraging more women to vote, highlighting the importance of ________ approaches to women's empowerment across the urban-rural spectrum.</p>\n<p><strong>D).</strong> My research explored voting patterns among young women in rural Padrauna, Uttar Pradesh, and urban New Delhi, revealing significant differences in electoral behaviour.</p>\n<p><strong>E).</strong> Both rural and urban women cited a lack of information as a major reason for not voting, emphasizing the need for better access to unbiased, factual information.</p><br><p><strong>Which of the following words should fill in the blank in sentence C?</strong></p>", "options": ["<p>tailored</p>", "<p>spontaneous</p>", "<p>clandestine</p>", "<p>standardized</p>", "<p>exhilarating</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>To answer this question, let's first understand the context of sentence C:</strong></p>\n<p>\"Ultimately, education was seen as crucial for encouraging more women to vote, highlighting the importance of ________ approaches to women's empowerment across the urban-rural spectrum.\"</p>\n<p>This sentence stresses the importance of education in empowering women to vote. It emphasizes the need for inclusive approaches to empower women in both urban and rural areas.</p>\n<p><u>The blank requires an adjective indicating customized or personalized strategies for enhancing women's empowerment in diverse settings</u>.</p>\n<p><strong>Now, let's understand the meanings of the words given as options to fill in the blank:</strong></p>\n<p><strong>Tailored:</strong> customized or specially designed to fit a particular situation, need, or individual.</p>\n<p><strong>Spontaneous:</strong> occurring naturally or without premeditation; impulsive.</p>\n<p><strong>Clandestine:</strong> kept secret or done secretively, especially because illicit.</p>\n<p><strong>Standardized:</strong> made consistent or uniform according to a standard or set of standards.</p>\n<p><strong>Exhilarating:</strong> making one feel very happy, animated, or elated; thrilling.</p>\n<p><u>So, given the context of the sentence, the most suitable word to fill in the blank in sentence C is \"tailored</u>.\" <u>This word aligns well with the need for customized or personalized approaches to women's empowerment across various urban and rural contexts</u>.</p>\n<p><strong>Therefore, the correct answer is \"tailored.\"</strong></p>"}, {"question": "<p><strong>Given below is a set of five sentences that, when properly sequenced, form a coherent paragraph. Arrange the sentences in the correct sequence and answer the questions that follow.</strong></p>\n<p><strong>A). </strong>Community ties and local engagement, <strong>(1)</strong> in rural areas, 80% of women expressed <strong>(2)</strong> their commitment to voting, influenced by <strong>(3)</strong> prioritized development-related concerns <strong>(4)</strong> while 53.7% of urban women. <strong>(5)</strong></p>\n<p><strong>B).</strong> The survey, which included over 500 young women aged 18 to 23, highlighted that rural women exhibit a stronger commitment to voting compared to their urban counterparts.</p>\n<p><strong>C).</strong> Ultimately, education was seen as crucial for encouraging more women to vote, highlighting the importance of ________ approaches to women's empowerment across the urban-rural spectrum.</p>\n<p><strong>D).</strong> My research explored voting patterns among young women in rural Padrauna, Uttar Pradesh, and urban New Delhi, revealing significant differences in electoral behaviour.</p>\n<p><strong>E).</strong> Both rural and urban women cited a lack of information as a major reason for not voting, emphasizing the need for better access to unbiased, factual information.</p><br><p><strong>Which of the following is the correct arrangement of the sentences?</strong></p>", "options": ["<p>ECADB</p>", "<p>DBAEC</p>", "<p>BDCEA</p>", "<p>CDABE</p>", "<p>EBCDA</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>This paragraph discusses voting patterns among young women in India, highlighting differences between rural and urban areas and the factors influencing their electoral behaviour.</p>\n<p><strong>Sentence D is the first sentence</strong> as it presents the main focus of the research, which is exploring voting patterns among young women in different regions.</p>\n<p><strong>Sentence B follows as the second sentence</strong>, providing details about the survey conducted, including the number of participants and the contrast between rural and urban women's commitment to voting.</p>\n<p><strong>Sentence A comes next as the third sentence</strong>, following B, elaborating on the findings by presenting specific percentages of women in rural and urban areas expressing their commitment to voting and the factors influencing their decisions.</p>\n<p><strong>Sentence E is the fourth sentence</strong>, discussing the common reasons cited by both rural and urban women for not voting, emphasizing the importance of better access to information.</p>\n<p><strong>Sentence C is the last sentence</strong>, highlighting the role of education in encouraging more women to vote and stressing the need for tailored approaches to women's empowerment across different regions.</p>\n<p><strong>Therefore, the correct arrangement of the sentences is \"DBAEC.\"</strong></p>"}, {"question": "<p><strong>Given below is a set of five sentences that, when properly sequenced, form a coherent paragraph. Arrange the sentences in the correct sequence and answer the questions that follow.</strong></p>\n<p><strong>A). </strong>Community ties and local engagement, <strong>(1)</strong> in rural areas, 80% of women expressed <strong>(2)</strong> their commitment to voting, influenced by <strong>(3)</strong> prioritized development-related concerns <strong>(4)</strong> while 53.7% of urban women. <strong>(5)</strong></p>\n<p><strong>B).</strong> The survey, which included over 500 young women aged 18 to 23, highlighted that rural women exhibit a stronger commitment to voting compared to their urban counterparts.</p>\n<p><strong>C).</strong> Ultimately, education was seen as crucial for encouraging more women to vote, highlighting the importance of ________ approaches to women's empowerment across the urban-rural spectrum.</p>\n<p><strong>D).</strong> My research explored voting patterns among young women in rural Padrauna, Uttar Pradesh, and urban New Delhi, revealing significant differences in electoral behaviour.</p>\n<p><strong>E).</strong> Both rural and urban women cited a lack of information as a major reason for not voting, emphasizing the need for better access to unbiased, factual information.</p><br><p>Which of the following is the <strong>concluding sentence</strong> of the coherent paragraph after rearrangement?</p>", "options": ["<p>Sentence A</p>", "<p>Sentence D</p>", "<p>Sentence E</p>", "<p>Sentence B</p>", "<p>Sentence C</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>This paragraph discusses voting patterns among young women in India, highlighting differences between rural and urban areas and the factors influencing their electoral behaviour.</p>\n<p><strong>Sentence D is the first sentence</strong> as it presents the main focus of the research, which is exploring voting patterns among young women in different regions.</p>\n<p><strong>Sentence B follows as the second sentence</strong>, providing details about the survey conducted, including the number of participants and the contrast between rural and urban women's commitment to voting.</p>\n<p><strong>Sentence A comes next as the third sentence</strong>, following B, elaborating on the findings by presenting specific percentages of women in rural and urban areas expressing their commitment to voting and the factors influencing their decisions.</p>\n<p><strong>Sentence E is the fourth sentence</strong>, discussing the common reasons cited by both rural and urban women for not voting, emphasizing the importance of better access to information.</p>\n<p><strong>Sentence C is the last sentence</strong>, highlighting the role of education in encouraging more women to vote and stressing the need for tailored approaches to women's empowerment across different regions.</p>\n<p><strong>The correct sequence is DBAEC.</strong></p>\n<p><strong>Therefore, the correct answer is \"Sentence C.\"</strong></p>"}, {"question": "<p><strong>Given below is a set of five sentences that, when properly sequenced, form a coherent paragraph. Arrange the sentences in the correct sequence and answer the questions that follow.</strong></p>\n<p><strong>A). </strong>Community ties and local engagement, <strong>(1)</strong> in rural areas, 80% of women expressed <strong>(2)</strong> their commitment to voting, influenced by <strong>(3)</strong> prioritized development-related concerns <strong>(4)</strong> while 53.7% of urban women. <strong>(5)</strong></p>\n<p><strong>B).</strong> The survey, which included over 500 young women aged 18 to 23, highlighted that rural women exhibit a stronger commitment to voting compared to their urban counterparts.</p>\n<p><strong>C).</strong> Ultimately, education was seen as crucial for encouraging more women to vote, highlighting the importance of ________ approaches to women's empowerment across the urban-rural spectrum.</p>\n<p><strong>D).</strong> My research explored voting patterns among young women in rural Padrauna, Uttar Pradesh, and urban New Delhi, revealing significant differences in electoral behaviour.</p>\n<p><strong>E).</strong> Both rural and urban women cited a lack of information as a major reason for not voting, emphasizing the need for better access to unbiased, factual information.</p><br><p><strong>Which of the following sequences correctly arranges the jumbled-up segments of sentence A to form a coherent sentence?</strong></p>", "options": ["<p>1 - 4 - 5 - 2 - 3</p>", "<p>3 - 1 - 5 - 2 - 4</p>", "<p>4 - 2 - 1 - 5 - 3</p>", "<p>4 - 1 - 5 - 3 - 2</p>", "<p>2 - 3 - 1 - 5 - 4</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p><strong>The correct sequence of the scattered segments is 2 - 3 - 1 - 5 - 4.</strong></p>\n<p><strong>(2), \"in rural areas, 80% of women expressed,\" sets the context</strong> by providing specific information about women in rural areas.</p>\n<p><strong>(3), \"their commitment to voting, influenced by,\" is the second part</strong> as it explains what the women in rural areas expressed, connecting their commitment to voting with some influence.</p>\n<p><strong>(1), \"community ties and local engagement,\" comes next as the third part</strong>, elaborating on what influences the commitment of the women in rural areas to voting mentioned earlier.</p>\n<p><strong>(5), \"while 53.7% of urban women,\" is the fourth part of the sentence</strong>, providing contrasting information about urban women.</p>\n<p><strong>(4), \"prioritized development-related concerns,\" concludes the sentence</strong>, emphasizing the specific factors influencing the commitment of urban women to voting.</p>\n<p><strong>The complete sentence would be:</strong> \"In rural areas, 80% of women expressed their commitment to voting, influenced by community ties and local engagement, while 53.7% of urban women prioritized development-related concerns.\"</p>"}, {"question": "<p><strong>In each of the following questions a sentence is divided into five parts. Out of these five parts a combination of two parts is erroneous, remaining are error free. You are required to find out which combination is erroneous from the given options.</strong></p><br><p>Western powers joined Ukraine last weekend <strong>(A)/</strong> to marked two years of Russian <strong>(B)/</strong> aggression on its territory, <strong>(C)/</strong> as concerns grows that the <strong>(D)/</strong> conflict could spread into Europe <strong>(E).</strong></p>", "options": ["<p>A and C</p>", "<p>B and D</p>", "<p>C and E</p>", "<p>D and E</p>", "<p>A and D</p>"], "correctIndex": 1, "solution": "<p><strong>Answer</strong><strong>: B</strong></p>\n<p>B and D</p>\n<p>Part B: \"...to marked two years of Russian...\"</p>\n<p>The correct form is \"to mark\" instead of \"to marked\" to maintain proper verb usage.</p>\n<p>Corrected: \"...to mark two years of Russian...\"</p>\n<p>Part D: \"...as concerns grows...\"</p>\n<p>The correct form is \"grow\" instead of \"grows\" to match the plural noun \"concerns.\"</p>\n<p>Corrected: \"...as concerns grow...\"</p>\n<p><strong>After corrections, the sentence reads: “</strong>Western powers joined Ukraine last weekend to mark two years of Russian aggression on its territory, as concerns grow that the conflict could spread into Europe.<strong>”</strong></p>"}, {"question": "<p><strong>In each of the following questions a sentence is divided into five parts. Out of these five parts a combination of two parts is erroneous, remaining are error free. You are required to find out which combination is erroneous from the given options.</strong></p><br><p>The learning outcomes of students from <strong>(A)/</strong> Classes 3 to 10 in all subjects in Delhi schools <strong>(B)/</strong> hovered among 30% and 50% in 2021, <strong>(C)/</strong> even as the performance was <strong>(D)/</strong> above the national average to many classes <strong>(E).</strong></p>", "options": ["<p>A and D</p>", "<p>B and C</p>", "<p>C and E</p>", "<p>D and E</p>", "<p>C and D</p>"], "correctIndex": 2, "solution": "<p><strong>Answer</strong><strong>: C</strong></p>\n<p>C and E</p>\n<p>Part C: \"...hovered among 30% and 50% in 2021...\"</p>\n<p>The error in Part C involves the incorrect use of \"among\" with specific percentages. The correct preposition to use with distinct percentages is \"between.\" Also, it is better to use \"between\" when dealing with a range.</p>\n<p>Corrected: \"...hovered between 30% and 50% in 2021...\"</p>\n<p>Part E: \"...above the national average to many classes...\"</p>\n<p>The error in Part E involves the preposition \"to,\" which is incorrect in this context. The correct preposition is \"for\" when indicating performance in classes.</p>\n<p>Corrected: \"...above the national average for many classes...\"</p>\n<p><strong>After corrections, the sentence reads: “</strong>The learning outcomes of students from Classes 3 to 10 in all subjects in Delhi schools hovered between 30% and 50% in 2021, even as the performance was above the national average for many classes.<strong>”</strong></p>"}, {"question": "<p><strong>In each of the following questions a sentence is divided into five parts. Out of these five parts a combination of two parts is erroneous, remaining are error free. You are required to find out which combination is erroneous from the given options.</strong></p><br><p>The damage to the cable systems in the Red Sea <strong>(A)/</strong> as a result of the ongoing conflict in the region expose the grave <strong>(B)/</strong> vulnerabilities of India’s Internet and overseas <strong>(C)/</strong> telecom connectivity systems if infrastructure passing <strong>(D)/</strong> through the region is further impact <strong>(E).</strong></p>", "options": ["<p>A and D</p>", "<p>B and E</p>", "<p>B and C</p>", "<p>D and E</p>", "<p>C and D</p>"], "correctIndex": 1, "solution": "<p><strong>Answer</strong><strong>: B</strong></p>\n<p>B and E</p>\n<p>Part B: \"...expose the grave...\"</p>\n<p>The error in Part B involves the subject-verb agreement. The subject \"damage\" is singular, so the verb should be \"exposes,\" not \"expose.\"</p>\n<p>Part E: \"... through the region is further impact...\"</p>\n<p>The error in Part E involves the use of the incorrect form \"impact\" after \"is further.\" The correct form is \"impacted\" to maintain proper verb usage.</p>\n<p><strong>After corrections, the sentence reads: “</strong>The damage to the cable systems in the Red Sea as a result of the ongoing conflict in the region exposes the grave vulnerabilities of India’s Internet and overseas telecom connectivity systems if infrastructure passing through the region is further impacted.<strong>”</strong></p>"}, {"question": "<p><strong>In each of the following questions a sentence is divided into five parts. Out of these five parts a combination of two parts is erroneous, remaining are error free. You are required to find out which combination is erroneous from the given options.</strong></p><br><p>As per the information furnished by <strong>(A)/</strong> the Forest Department in the State Assembly, <strong>(B)/</strong> as many as 59 leopard skins <strong>(C)/</strong> were seize from wildlife smugglers <strong>(D)/</strong> between 2018 to 2023 <strong>(E).</strong></p>", "options": ["<p>A and D</p>", "<p>B and E</p>", "<p>B and C</p>", "<p>D and E</p>", "<p>C and D</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D</strong></p>\n<p>D and E</p>\n<p>Part D: \"...were seize from wildlife smugglers...\"</p>\n<p>The error in Part D is the use of \"seize\" instead of the correct past tense \"seized.\" The verb should agree with the past time frame specified in the sentence.</p>\n<p>The correction involves changing \"seize\" to \"seized.\"</p>\n<p>Corrected: \"... were seized from wildlife smugglers...\"</p>\n<p>Part E: \"...between 2018 to 2023...\"</p>\n<p>The correct preposition to use with \"between\" is \"and,\" not \"to.\"</p>\n<p>Corrected: \"...between 2018 and 2023...\"</p>\n<p><strong>After corrections, the sentence reads: “</strong>As per the information furnished by the Forest Department in the State Assembly, as many as 59 leopard skins were seized from wildlife smugglers between 2018 and 2023.<strong>”</strong></p>"}, {"question": "<p><strong>In each of the following questions a sentence is divided into five parts. Out of these five parts a combination of two parts is erroneous, remaining are error free. You are required to find out which combination is erroneous from the given options.</strong></p><br><p>The Union Environment Ministry plan to set up <strong>(A)/</strong> and coordinate an International Big Cat Alliance (IBCA),<strong> (B)/</strong> along the lines of the International Solar Alliance, <strong>(C)/</strong> an India-headquartered initiate to promote <strong>(D)/</strong> solar installations globally <strong>(E).</strong></p>", "options": ["<p>A and D</p>", "<p>B and E</p>", "<p>B and C</p>", "<p>D and E</p>", "<p>C and D</p>"], "correctIndex": 0, "solution": "<p><strong>Answer</strong><strong>: A</strong></p>\n<p>A and D</p>\n<p>Part A: \"The Union Environment Ministry plan to set up...\"</p>\n<p>The error in Part A involves the subject-verb agreement. \"Plan\" should be \"plans\" to match the singular subject \"The Union Environment Ministry.\"</p>\n<p>Part A Correction: \"The Union Environment Ministry plans to set up...\"</p>\n<p>Part D: \"...an India-headquartered initiate to promote...\"</p>\n<p>The error in Part D involves the incorrect use of the word \"initiate.\" It should be \"initiative\" to convey the intended meaning of a new plan or project.</p>\n<p>Part D Correction: \"...an India-headquartered initiative to promote...\"</p>\n<p><strong>After corrections, the sentence reads: “</strong>The Union Environment Ministry plans to set up and coordinate an International Big Cat Alliance (IBCA), along the lines of the International Solar Alliance, an India-headquartered initiative to promote solar installations globally.<strong>”</strong></p>"}, {"question": "<p><strong>Given below each statement should be placed in the blank space provided so as to make a meaningful and grammatically correct sentence. If none of the sentence is appropriate mark E as the answer.</strong></p><br><p><strong>As the effects of climate change become more pronounced, nations worldwide are grappling with how to address the issue. Governments are implementing policies to reduce carbon emissions, and individuals are making lifestyle changes to lower their carbon footprints. However, the problem is not solely environmental; it is also economic and social. To effectively combat climate change, ________________________.</strong></p>", "options": ["<p>individuals must continue to focus on recycling and conserving energy in their homes</p>", "<p>global cooperation and comprehensive strategies addressing economic and social dimensions are essential</p>", "<p>businesses should prioritize profit over sustainability</p>", "<p>technological advancements alone will solve the problem</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The paragraph discusses the multifaceted nature of climate change, highlighting that it is not just an environmental issue but also an economic and social one. Therefore, the most suitable completion emphasizes the need for a comprehensive and cooperative approach, aligning with the complexity of the problem.</p>"}, {"question": "<p><strong>Given below each statement should be placed in the blank space provided so as to make a meaningful and grammatically correct sentence. If none of the sentence is appropriate mark E as the answer.</strong></p><br><p><strong>The rise of artificial intelligence (AI) has been met with both excitement and concern. On one hand, AI has the potential to revolutionize industries, improve efficiency, and create new opportunities. On the other hand, there are fears about job displacement, privacy issues, and ethical dilemmas. As AI continues to develop, it is crucial that ________________________.</strong></p>", "options": ["<p>the public remains uninformed about its potential dangers</p>", "<p>governments and organizations establish regulations to ensure its ethical and equitable use</p>", "<p>all industries adopt AI technologies as quickly as possible</p>", "<p>we ignore the concerns and focus solely on technological advancement</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The paragraph outlines both the positive potential and the concerns associated with AI. Thus, the completion should focus on balancing these aspects by ensuring ethical and equitable use, which is best addressed through regulations.</p>"}, {"question": "<p><strong>Given below each statement should be placed in the blank space provided so as to make a meaningful and grammatically correct sentence. If none of the sentence is appropriate mark E as the answer.</strong></p><br><p><strong>The popularity of electric vehicles (EVs) is on the rise, driven by advancements in technology and increasing environmental awareness. Consumers are drawn to EVs for their lower operating costs and reduced environmental impact. However, the widespread adoption of EVs faces several challenges, such as limited charging infrastructure and higher upfront costs. To overcome these obstacles, ________________________.</strong></p>", "options": ["<p>consumers need to be better educated about the benefits of EVs</p>", "<p>the government must cut subsidies and tax incentives for EVs</p>", "<p>there needs to be substantial investment in charging infrastructure and incentives to lower costs</p>", "<p>car manufacturers should focus on traditional fuel vehicles</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The paragraph discusses the current benefits and challenges of EVs. To address these challenges and encourage widespread adoption, significant investment in infrastructure and cost-lowering incentives is necessary.</p>"}, {"question": "<p><strong>Given below each statement should be placed in the blank space provided so as to make a meaningful and grammatically correct sentence. If none of the sentence is appropriate mark E as the answer.</strong></p><br><p><strong>The rapid growth of urban areas poses significant challenges for city planners and residents alike. With increasing population density, cities are experiencing more traffic congestion, pollution, and strain on public services. To create more livable urban environments, city planners must focus on ________________________.</strong></p>", "options": ["<p>expanding road networks to accommodate more cars</p>", "<p>limiting the construction of new housing developments</p>", "<p>encouraging residents to move to rural areas</p>", "<p>developing sustainable public transportation systems and green spaces</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The paragraph identifies the challenges of urban growth, such as traffic congestion and pollution. The best solution focuses on sustainable development, which includes public transportation and green spaces to improve livability.</p>"}, {"question": "<p><strong>Given below each statement should be placed in the blank space provided so as to make a meaningful and grammatically correct sentence. If none of the sentence is appropriate mark E as the answer.</strong></p><br><p><strong>The healthcare sector is undergoing a transformation with the integration of digital technologies. Electronic health records, telemedicine, and AI-driven diagnostics are changing the way healthcare is delivered. These advancements promise to improve patient outcomes and increase efficiency. Nevertheless, there are concerns about data security and the digital divide. To ensure that the benefits of digital healthcare are fully realized, ________________________.</strong></p>", "options": ["<p>efforts must be made to enhance data security and bridge the digital divide</p>", "<p>the focus should be on cutting costs rather than improving technology</p>", "<p>healthcare providers should revert to traditional methods</p>", "<p>patient interactions should be minimized to reduce data usage</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The paragraph highlights the benefits and concerns of digital healthcare. The most effective completion addresses these concerns by emphasizing the importance of data security and ensuring equitable access to digital healthcare solutions.</p>"}, {"question": "<p><strong>In the following questions, each sentence is given with two blanks where two words are omitted. Also it is followed by a word given in brackets. You are required to fill those blanks with the appropriate words from the given options. </strong></p><br><p><strong>The country scores quite low in terms of _________________ (suggest) equal access for men and women to economic participation and opportunity, with less than 40 per cent parity. On the other hand, though there are increases in salary and income parity, the percentages of women in technical and senior posts have _________________ (plummet).</strong></p>", "options": ["<p>Planning, Reduced</p>", "<p>Ensuring, Decreased</p>", "<p>Reclining, Increased</p>", "<p>Ensuring, Increased</p>", "<p>No replacement required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>Ensuring – </strong>make certain.</p>\n<p><strong>Reclining – </strong>lean or lie back with the upper body.</p>\n<p>The sentence conveys that the country didn't provide equal access to men and women, so disparities occurred. This can be termed as <strong>\"ensuring\" </strong>and <strong>\"decreased\"</strong>. Therefore, <strong>option B</strong> is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, each sentence is given with two blanks where two words are omitted. Also it is followed by a word given in brackets. You are required to fill those blanks with the appropriate words from the given options. </strong></p><br><p><strong>The amount of activism that has been done in this matter outside the jurisdiction of the judiciary, be it a quick notification of __________________ (exonerate) of his membership or the extra promptness taken in getting him to vacate his house, the message to the general public was that it was more of an act of _______________ (evince) than of following the procedure.</strong></p>", "options": ["<p>Termination, Revenge</p>", "<p>Renovation, Renouncement</p>", "<p>Implementation, Declaring</p>", "<p>Prevention, Endangering</p>", "<p>No replacement required</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>Termination – </strong>ending; closing.</p>\n<p><strong>Renovation – </strong>action of improving or repairing.</p>\n<p><strong>Renouncement – </strong>giving up or rejecting something.</p>\n<p><strong>Endangering – </strong>put at risk or in danger.</p>\n<p>The sentence conveys that something has been done as a reaction for an action. Instead of following the procedure, they have been terminated. Therefore, <strong>option A</strong> is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, each sentence is given with two blanks where two words are omitted. Also it is followed by a word given in brackets. You are required to fill those blanks with the appropriate words from the given options. </strong></p><br><p><strong>Sometimes the sarcoma tumor goes _______________ (persuade) in limbs or an inappropriate surgery is done. To address this, a meeting focusing on making general orthopedic surgeons and others aware of right ways to _________________ (ameliorate) bone tumour and its diagnosis, orgainsed in the Capital.</strong></p>", "options": ["<p>Diagnosed, Recollect</p>", "<p>Inundated, Relocate</p>", "<p>Undiagnosed, Evaluate</p>", "<p>Diagnosed, Cure</p>", "<p>No replacement required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>Inundated – </strong>overwhelm with things.</p>\n<p>If the tumor is diagnosed, no meeting is required regarding the discussion. It has been undiagnosed so that the surgeons need to meet and discuss it. The blank will use <strong>\"undiagnosed\" </strong>and <strong>\"evaluate\" </strong>respectively. Therefore, <strong>option C</strong> is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, each sentence is given with two blanks where two words are omitted. Also it is followed by a word given in brackets. You are required to fill those blanks with the appropriate words from the given options. </strong></p><br><p><strong>As the long-distance market and high cost was ___________________ (exhaustible) in commencing commercial operations, the export of trial shipment of pomegranate would help in building capacities amongst Indian exporters and US importers by __________________ (innovating) that quality fruits are exported.</strong></p>", "options": ["<p>Collective, Enervating</p>", "<p>Prohibitive, Ensuring</p>", "<p>Inevitable, Prohibiting</p>", "<p>Ignorable, Normalizing</p>", "<p>No replacement required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>Prohibitive – </strong>officially refuse to allow.</p>\n<p><strong>Enervating – </strong>making you feel weak.</p>\n<p><strong>Inevitable – </strong>unavoidable.</p>\n<p>The export of trial shipments will tell whether the product is in good condition or not. So, the blank will use <strong>\"prohibitive\" </strong>and <strong>\"ensuring\". </strong>Therefore, <strong>option B</strong> is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, each sentence is given with two blanks where two words are omitted. Also it is followed by a word given in brackets. You are required to fill those blanks with the appropriate words from the given options. </strong></p><br><p><strong>The government needs to build on this good beginning with administrative and financial support and ensure that the interests of other commercial groups – already paddy _____________ (producing) mills and miller associations are complaining about the potentially lower yield are not allowed to _________________ (handle) the fight against pollution.</strong></p>", "options": ["<p>Shelling, Undercut</p>", "<p>Shielding, Tackle</p>", "<p>Prompting, Explore</p>", "<p>Exerting, Combat</p>", "<p>No replacement required</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>Shelling – </strong>remove the shell or extract.</p>\n<p><strong>Undercut – </strong>offer goods at a lower price.</p>\n<p><strong>Shielding – </strong>protect from danger.</p>\n<p><strong>Prompting – </strong>encouragement, reminding.</p>\n<p><strong>Exerting – </strong>make physical or mental effort.</p>\n<p>The word <strong>\"mills\"</strong> is a noun, the blank will use a verb to explain what that mill is doing, so <strong>\"shelling\" </strong>will be used. Therefore, <strong>option A</strong> is the correct answer.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Seventy-nine years after Hiroshima and Nagasaki were subject to unprecedented devastation following the U.S.'s act of drop- ping atomic bombs on these cities, Nihon Hidankyo, the organization that worked for the welfare of the survivors - called the hibakusha - and steadfastly sought to build consensus on the need for the abolition of nuclear weapons, has been awarded the Nobel Peace Prize for 2024. Today, there are barely more than a lakh survivor of the bombings, with the average age of the hibakusha more than 86 years. An estimated 1.5 lakh people died due to the bombings, and many more later due to the after-effects of the exposure to radioactivity. The horrors of the atomic bombings and the inaction by the post war government, largely due to U.S. censorship of news of the suffering of the hibakusha, crystallized in the formation of the Hidankyo which lobbied and agitated for medical and welfare benefits to the hibakusha and took a steadfast position against atomic weapons. This is emphasized in their slogan, \"no more hibakusha\". Besides their activism in Japan, the Hidankyo also went on tours to several countries, including India, to share their suffering and sensitize the world to the horrors of the use of atomic weapons. The Nobel Committee must be commended for recognizing the Hidankyo, whose activism as some scholars aver, helped shift the political discourse in Japan towards greater democracy and justice and sensitize the public to the doctrine of pacifism, which was incorporated into Japan's Constitution after its defeat in the Second World War.</p>\n<p>Yet, despite the activism of anti-war organizations and social movements in these the selflessness of the Hidankyo and the fact that they were the direct sufferers of the use of atomic weapons stand out - nuclear states continue to deploy weapons in their arsenal and use them for sabrerattling. A case in point is Russia's recent and unambiguous statement that it will not hesitate to use its nuclear weapons to retaliate against a conventional attack and its use of this threat to brazenly prolong its invasion of Ukraine. There is also the fact that countries such as Israel have surreptitiously acquired nuclear weapons, leading to a nuclear arms race in volatile regions such as West Asia. Existing mechanisms for nuclear non-proliferation also seem to be vitiated by geopolitics even as the nuclear powers have shown little appetite for serious disarmament. Against such a sad reality, the recognition for the Hidankyo, whose hibakusha members are in the evening of their lives, should at least remind the world yet again about the horrors of atomic bomb attacks and stir a debate on meaningful nuclear disarmament.</p><br><p><strong>What significant event is being commemorated 79 years after Hiroshima and Nagasaki?</strong></p>", "options": ["<p>The dropping of atomic bombs on Hiroshima and Nagasaki</p>", "<p>The end of World War II</p>", "<p>The formation of Nihon Hidankyo</p>", "<p>The signing of the Treaty on the Non-Proliferation of nuclear weapons</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The passage discusses the impact of the atomic bombings and their aftermath, marking the significance of the event being commemorated.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Seventy-nine years after Hiroshima and Nagasaki were subject to unprecedented devastation following the U.S.'s act of drop- ping atomic bombs on these cities, Nihon Hidankyo, the organization that worked for the welfare of the survivors - called the hibakusha - and steadfastly sought to build consensus on the need for the abolition of nuclear weapons, has been awarded the Nobel Peace Prize for 2024. Today, there are barely more than a lakh survivor of the bombings, with the average age of the hibakusha more than 86 years. An estimated 1.5 lakh people died due to the bombings, and many more later due to the after-effects of the exposure to radioactivity. The horrors of the atomic bombings and the inaction by the post war government, largely due to U.S. censorship of news of the suffering of the hibakusha, crystallized in the formation of the Hidankyo which lobbied and agitated for medical and welfare benefits to the hibakusha and took a steadfast position against atomic weapons. This is emphasized in their slogan, \"no more hibakusha\". Besides their activism in Japan, the Hidankyo also went on tours to several countries, including India, to share their suffering and sensitize the world to the horrors of the use of atomic weapons. The Nobel Committee must be commended for recognizing the Hidankyo, whose activism as some scholars aver, helped shift the political discourse in Japan towards greater democracy and justice and sensitize the public to the doctrine of pacifism, which was incorporated into Japan's Constitution after its defeat in the Second World War.</p>\n<p>Yet, despite the activism of anti-war organizations and social movements in these the selflessness of the Hidankyo and the fact that they were the direct sufferers of the use of atomic weapons stand out - nuclear states continue to deploy weapons in their arsenal and use them for sabrerattling. A case in point is Russia's recent and unambiguous statement that it will not hesitate to use its nuclear weapons to retaliate against a conventional attack and its use of this threat to brazenly prolong its invasion of Ukraine. There is also the fact that countries such as Israel have surreptitiously acquired nuclear weapons, leading to a nuclear arms race in volatile regions such as West Asia. Existing mechanisms for nuclear non-proliferation also seem to be vitiated by geopolitics even as the nuclear powers have shown little appetite for serious disarmament. Against such a sad reality, the recognition for the Hidankyo, whose hibakusha members are in the evening of their lives, should at least remind the world yet again about the horrors of atomic bomb attacks and stir a debate on meaningful nuclear disarmament.</p><br><p><strong>What is the primary mission of Nihon Hidankyo?</strong></p>", "options": ["<p>To promote the use of nuclear weapons</p>", "<p>To advocate for the welfare of atomic bomb survivors</p>", "<p>To lobby for military intervention in global conflicts</p>", "<p>To support the government in its nuclear policies</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage states that Nihon Hidankyo works for the welfare of hibakusha and seeks consensus on nuclear disarmament.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Seventy-nine years after Hiroshima and Nagasaki were subject to unprecedented devastation following the U.S.'s act of drop- ping atomic bombs on these cities, Nihon Hidankyo, the organization that worked for the welfare of the survivors - called the hibakusha - and steadfastly sought to build consensus on the need for the abolition of nuclear weapons, has been awarded the Nobel Peace Prize for 2024. Today, there are barely more than a lakh survivor of the bombings, with the average age of the hibakusha more than 86 years. An estimated 1.5 lakh people died due to the bombings, and many more later due to the after-effects of the exposure to radioactivity. The horrors of the atomic bombings and the inaction by the post war government, largely due to U.S. censorship of news of the suffering of the hibakusha, crystallized in the formation of the Hidankyo which lobbied and agitated for medical and welfare benefits to the hibakusha and took a steadfast position against atomic weapons. This is emphasized in their slogan, \"no more hibakusha\". Besides their activism in Japan, the Hidankyo also went on tours to several countries, including India, to share their suffering and sensitize the world to the horrors of the use of atomic weapons. The Nobel Committee must be commended for recognizing the Hidankyo, whose activism as some scholars aver, helped shift the political discourse in Japan towards greater democracy and justice and sensitize the public to the doctrine of pacifism, which was incorporated into Japan's Constitution after its defeat in the Second World War.</p>\n<p>Yet, despite the activism of anti-war organizations and social movements in these the selflessness of the Hidankyo and the fact that they were the direct sufferers of the use of atomic weapons stand out - nuclear states continue to deploy weapons in their arsenal and use them for sabrerattling. A case in point is Russia's recent and unambiguous statement that it will not hesitate to use its nuclear weapons to retaliate against a conventional attack and its use of this threat to brazenly prolong its invasion of Ukraine. There is also the fact that countries such as Israel have surreptitiously acquired nuclear weapons, leading to a nuclear arms race in volatile regions such as West Asia. Existing mechanisms for nuclear non-proliferation also seem to be vitiated by geopolitics even as the nuclear powers have shown little appetite for serious disarmament. Against such a sad reality, the recognition for the Hidankyo, whose hibakusha members are in the evening of their lives, should at least remind the world yet again about the horrors of atomic bomb attacks and stir a debate on meaningful nuclear disarmament.</p><br><p><strong>What impact did the atomic bombings have on Japan's political discourse?</strong></p>", "options": ["<p>They led to increased military spending</p>", "<p>They had no significant impact on political discourse</p>", "<p>They caused Japan to withdraw from international treaties</p>", "<p>They shifted the discourse towards greater democracy and justice</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The passage indicates that Hidankyo's activism helped shift Japan's political discourse towards democracy and justice.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Seventy-nine years after Hiroshima and Nagasaki were subject to unprecedented devastation following the U.S.'s act of drop- ping atomic bombs on these cities, Nihon Hidankyo, the organization that worked for the welfare of the survivors - called the hibakusha - and steadfastly sought to build consensus on the need for the abolition of nuclear weapons, has been awarded the Nobel Peace Prize for 2024. Today, there are barely more than a lakh survivor of the bombings, with the average age of the hibakusha more than 86 years. An estimated 1.5 lakh people died due to the bombings, and many more later due to the after-effects of the exposure to radioactivity. The horrors of the atomic bombings and the inaction by the post war government, largely due to U.S. censorship of news of the suffering of the hibakusha, crystallized in the formation of the Hidankyo which lobbied and agitated for medical and welfare benefits to the hibakusha and took a steadfast position against atomic weapons. This is emphasized in their slogan, \"no more hibakusha\". Besides their activism in Japan, the Hidankyo also went on tours to several countries, including India, to share their suffering and sensitize the world to the horrors of the use of atomic weapons. The Nobel Committee must be commended for recognizing the Hidankyo, whose activism as some scholars aver, helped shift the political discourse in Japan towards greater democracy and justice and sensitize the public to the doctrine of pacifism, which was incorporated into Japan's Constitution after its defeat in the Second World War.</p>\n<p>Yet, despite the activism of anti-war organizations and social movements in these the selflessness of the Hidankyo and the fact that they were the direct sufferers of the use of atomic weapons stand out - nuclear states continue to deploy weapons in their arsenal and use them for sabrerattling. A case in point is Russia's recent and unambiguous statement that it will not hesitate to use its nuclear weapons to retaliate against a conventional attack and its use of this threat to brazenly prolong its invasion of Ukraine. There is also the fact that countries such as Israel have surreptitiously acquired nuclear weapons, leading to a nuclear arms race in volatile regions such as West Asia. Existing mechanisms for nuclear non-proliferation also seem to be vitiated by geopolitics even as the nuclear powers have shown little appetite for serious disarmament. Against such a sad reality, the recognition for the Hidankyo, whose hibakusha members are in the evening of their lives, should at least remind the world yet again about the horrors of atomic bomb attacks and stir a debate on meaningful nuclear disarmament.</p><br><p><strong>What can be inferred about the role of the United States regarding the hibakusha?</strong></p>", "options": ["<p>The U.S. supported the hibakusha's advocacy efforts</p>", "<p>The U.S. censored news about the suffering of hibakusha</p>", "<p>The U.S. facilitated medical aid for the hibakusha</p>", "<p>The U.S. was indifferent to the hibakusha's plight</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage notes that U.S. censorship of news related to the hibakusha's suffering significantly impacted their advocacy.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Seventy-nine years after Hiroshima and Nagasaki were subject to unprecedented devastation following the U.S.'s act of drop- ping atomic bombs on these cities, Nihon Hidankyo, the organization that worked for the welfare of the survivors - called the hibakusha - and steadfastly sought to build consensus on the need for the abolition of nuclear weapons, has been awarded the Nobel Peace Prize for 2024. Today, there are barely more than a lakh survivor of the bombings, with the average age of the hibakusha more than 86 years. An estimated 1.5 lakh people died due to the bombings, and many more later due to the after-effects of the exposure to radioactivity. The horrors of the atomic bombings and the inaction by the post war government, largely due to U.S. censorship of news of the suffering of the hibakusha, crystallized in the formation of the Hidankyo which lobbied and agitated for medical and welfare benefits to the hibakusha and took a steadfast position against atomic weapons. This is emphasized in their slogan, \"no more hibakusha\". Besides their activism in Japan, the Hidankyo also went on tours to several countries, including India, to share their suffering and sensitize the world to the horrors of the use of atomic weapons. The Nobel Committee must be commended for recognizing the Hidankyo, whose activism as some scholars aver, helped shift the political discourse in Japan towards greater democracy and justice and sensitize the public to the doctrine of pacifism, which was incorporated into Japan's Constitution after its defeat in the Second World War.</p>\n<p>Yet, despite the activism of anti-war organizations and social movements in these the selflessness of the Hidankyo and the fact that they were the direct sufferers of the use of atomic weapons stand out - nuclear states continue to deploy weapons in their arsenal and use them for sabrerattling. A case in point is Russia's recent and unambiguous statement that it will not hesitate to use its nuclear weapons to retaliate against a conventional attack and its use of this threat to brazenly prolong its invasion of Ukraine. There is also the fact that countries such as Israel have surreptitiously acquired nuclear weapons, leading to a nuclear arms race in volatile regions such as West Asia. Existing mechanisms for nuclear non-proliferation also seem to be vitiated by geopolitics even as the nuclear powers have shown little appetite for serious disarmament. Against such a sad reality, the recognition for the Hidankyo, whose hibakusha members are in the evening of their lives, should at least remind the world yet again about the horrors of atomic bomb attacks and stir a debate on meaningful nuclear disarmament.</p><br><p><strong>What recent action by Russia illustrates the continued threat of nuclear weapons?</strong></p>", "options": ["<p>Signing a disarmament treaty</p>", "<p>Retaliating with conventional forces</p>", "<p>Declaring they will not hesitate to use nuclear weapons if attacked</p>", "<p>Reducing their nuclear arsenal</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The passage explicitly states that Russia has threatened to use nuclear weapons in response to conventional attacks.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Seventy-nine years after Hiroshima and Nagasaki were subject to unprecedented devastation following the U.S.'s act of drop- ping atomic bombs on these cities, Nihon Hidankyo, the organization that worked for the welfare of the survivors - called the hibakusha - and steadfastly sought to build consensus on the need for the abolition of nuclear weapons, has been awarded the Nobel Peace Prize for 2024. Today, there are barely more than a lakh survivor of the bombings, with the average age of the hibakusha more than 86 years. An estimated 1.5 lakh people died due to the bombings, and many more later due to the after-effects of the exposure to radioactivity. The horrors of the atomic bombings and the inaction by the post war government, largely due to U.S. censorship of news of the suffering of the hibakusha, crystallized in the formation of the Hidankyo which lobbied and agitated for medical and welfare benefits to the hibakusha and took a steadfast position against atomic weapons. This is emphasized in their slogan, \"no more hibakusha\". Besides their activism in Japan, the Hidankyo also went on tours to several countries, including India, to share their suffering and sensitize the world to the horrors of the use of atomic weapons. The Nobel Committee must be commended for recognizing the Hidankyo, whose activism as some scholars aver, helped shift the political discourse in Japan towards greater democracy and justice and sensitize the public to the doctrine of pacifism, which was incorporated into Japan's Constitution after its defeat in the Second World War.</p>\n<p>Yet, despite the activism of anti-war organizations and social movements in these the selflessness of the Hidankyo and the fact that they were the direct sufferers of the use of atomic weapons stand out - nuclear states continue to deploy weapons in their arsenal and use them for sabrerattling. A case in point is Russia's recent and unambiguous statement that it will not hesitate to use its nuclear weapons to retaliate against a conventional attack and its use of this threat to brazenly prolong its invasion of Ukraine. There is also the fact that countries such as Israel have surreptitiously acquired nuclear weapons, leading to a nuclear arms race in volatile regions such as West Asia. Existing mechanisms for nuclear non-proliferation also seem to be vitiated by geopolitics even as the nuclear powers have shown little appetite for serious disarmament. Against such a sad reality, the recognition for the Hidankyo, whose hibakusha members are in the evening of their lives, should at least remind the world yet again about the horrors of atomic bomb attacks and stir a debate on meaningful nuclear disarmament.</p><br><p><strong>How does the passage characterize the attitude of nuclear powers toward disarmament?</strong></p>", "options": ["<p>Eager and committed</p>", "<p>Indifferent and resistant</p>", "<p>Collaborative and supportive</p>", "<p>Optimistic and proactive</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage suggests that nuclear powers show little appetite for serious disarmament, indicating indifference.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Seventy-nine years after Hiroshima and Nagasaki were subject to unprecedented devastation following the U.S.'s act of drop- ping atomic bombs on these cities, Nihon Hidankyo, the organization that worked for the welfare of the survivors - called the hibakusha - and steadfastly sought to build consensus on the need for the abolition of nuclear weapons, has been awarded the Nobel Peace Prize for 2024. Today, there are barely more than a lakh survivor of the bombings, with the average age of the hibakusha more than 86 years. An estimated 1.5 lakh people died due to the bombings, and many more later due to the after-effects of the exposure to radioactivity. The horrors of the atomic bombings and the inaction by the post war government, largely due to U.S. censorship of news of the suffering of the hibakusha, crystallized in the formation of the Hidankyo which lobbied and agitated for medical and welfare benefits to the hibakusha and took a steadfast position against atomic weapons. This is emphasized in their slogan, \"no more hibakusha\". Besides their activism in Japan, the Hidankyo also went on tours to several countries, including India, to share their suffering and sensitize the world to the horrors of the use of atomic weapons. The Nobel Committee must be commended for recognizing the Hidankyo, whose activism as some scholars aver, helped shift the political discourse in Japan towards greater democracy and justice and sensitize the public to the doctrine of pacifism, which was incorporated into Japan's Constitution after its defeat in the Second World War.</p>\n<p>Yet, despite the activism of anti-war organizations and social movements in these the selflessness of the Hidankyo and the fact that they were the direct sufferers of the use of atomic weapons stand out - nuclear states continue to deploy weapons in their arsenal and use them for sabrerattling. A case in point is Russia's recent and unambiguous statement that it will not hesitate to use its nuclear weapons to retaliate against a conventional attack and its use of this threat to brazenly prolong its invasion of Ukraine. There is also the fact that countries such as Israel have surreptitiously acquired nuclear weapons, leading to a nuclear arms race in volatile regions such as West Asia. Existing mechanisms for nuclear non-proliferation also seem to be vitiated by geopolitics even as the nuclear powers have shown little appetite for serious disarmament. Against such a sad reality, the recognition for the Hidankyo, whose hibakusha members are in the evening of their lives, should at least remind the world yet again about the horrors of atomic bomb attacks and stir a debate on meaningful nuclear disarmament.</p><br><p><strong>What does the passage suggest is necessary for meaningful nuclear disarmament?</strong></p>", "options": ["<p>public awareness and activism</p>", "<p>more nuclear weapons</p>", "<p>international military alliances</p>", "<p>increased military spending</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The passage underscores the importance of recognizing the horrors of atomic bombings to stir debate and action toward nuclear disarmament.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-38)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-38)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

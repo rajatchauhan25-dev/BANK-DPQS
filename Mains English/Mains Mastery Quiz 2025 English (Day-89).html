@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-89)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>In the table given below two columns are given to connect the sentence. The sentence given in column A may or may not be connected with column B contextually and grammatically. You have to identify possible combination to combine the sentence from column A to column B. If any possible connections are not found from the option, choose “None of these” as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172914519660.png\" title=\"45.png\"/></p>", "options": ["<p>A2, B1 &amp; C3</p>", "<p>Only C1 &amp; A3</p>", "<p>A1, B2 &amp; C3</p>", "<p>Only C3 &amp; A2</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>A2:</strong> The recent surge in remote work has reshaped traditional office dynamics and employee productivity.</p>\n<p><strong>C3:</strong> Public health initiatives are crucial for combating the rise of preventable diseases in urban areas.</p>"}, {"question": "<p><strong>In the table given below two columns are given to connect the sentence. The sentence given in column A may or may not be connected with column B contextually and grammatically. You have to identify possible combination to combine the sentence from column A to column B. If any possible connections are not found from the option, choose “None of these” as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172914534236.png\" title=\"46.png\"/></p>", "options": ["<p>A2, B1 &amp; C3</p>", "<p>Only C1 &amp; A3</p>", "<p>A1, B3 &amp; C2</p>", "<p>B1, C3 &amp; A2</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>A1:</strong> Sustainable practices in agriculture are essential for ensuring food security and protecting ecosystems.</p>\n<p><strong>B3:</strong> The novel's intricate plot weaves together themes of love, loss, and redemption, captivating readers.</p>\n<p><strong>C2:</strong> Technological advancements are revolutionizing communication, bridging gaps between diverse cultures.</p>"}, {"question": "<p><strong>In the table given below two columns are given to connect the sentence. The sentence given in column A may or may not be connected with column B contextually and grammatically. You have to identify possible combination to combine the sentence from column A to column B. If any possible connections are not found from the option, choose “None of these” as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172914545177.png\" title=\"47.png\"/></p>", "options": ["<p>A2, B1 &amp; C3</p>", "<p>B2, A3 &amp; C1</p>", "<p>Only B3 &amp; C2</p>", "<p>Only B2 &amp; A3</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>A3:</strong> Social movements are increasingly leveraging digital platforms to amplify their messages and engage supporters.</p>\n<p><strong>B2:</strong> The dynamics of supply and demand significantly influence market prices and consumer behavior.</p>\n<p><strong>C1 </strong>is wrong because cultural heritage preservation is a singular noun; it should follow 'plays,' not 'play.'</p>\n<p> </p>"}, {"question": "<p><strong>In the table given below two columns are given to connect the sentence. The sentence given in column A may or may not be connected with column B contextually and grammatically. You have to identify possible combination to combine the sentence from column A to column B. If any possible connections are not found from the option, choose “None of these” as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172914565923.png\" title=\"48.png\"/></p>", "options": ["<p>A2, B1 &amp; C3</p>", "<p>B2, C1 &amp; A3</p>", "<p>Only B3 &amp; C2</p>", "<p>B1, C2 &amp; A3</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>A2: </strong>Ethical consumption trends are prompting businesses to adopt transparent practices and sustainable sourcing.</p>\n<p><strong>B1:</strong> The economic implications of inflation are profoundly felt across various sectors, impacting consumer spending.</p>\n<p><strong>C3:</strong> Collaborative efforts between nations are essential for addressing transnational issues like climate change.</p>"}, {"question": "<p><strong>In the table given below two columns are given to connect the sentence. The sentence given in column A may or may not be connected with column B contextually and grammatically. You have to identify possible combination to combine the sentence from column A to column B. If any possible connections are not found from the option, choose “None of these” as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172914581222.png\" title=\"49.png\"/></p>", "options": ["<p>A2, B1 &amp; C3</p>", "<p>B2, C1 &amp; A3</p>", "<p>A1, B3 &amp; C2</p>", "<p>Only C3 &amp; A2</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>A3:</strong> The juxtaposition of tradition and modernity creates a rich tapestry of cultural expression in urban centers.</p>\n<p><strong>B2:</strong> The exploration of new frontiers in space technology expands our understanding of the universe.</p>\n<p><strong>C1:</strong> Educational reform is necessary to equip students with skills relevant to a rapidly changing job market.</p>"}, {"question": "<p><strong>In each of the questions below two phrases have been highlighted in bold. You are required to replace it with correct phrases in order to make the sentence grammatically and contextually correct.</strong></p><br><p>After years of working closely together on various projects, the two colleagues had unfortunately <strong>fell off</strong> over a significant disagreement, leading to a <strong>tense affinity </strong>and noticeable tension in the office.</p>", "options": ["<p>fell out; false connection</p>", "<p>fallen in; hard relation</p>", "<p>fallen for; stressed association</p>", "<p>fallen off; tensed alliance</p>", "<p>fallen out; strained relationship</p>"], "correctIndex": 4, "solution": "<p><strong>Answer</strong><strong>: E</strong></p>\n<p>The correct answer is: e) fallen out; strained relationship</p>\n<p>\"fallen out\": This phrase accurately conveys the idea that the two colleagues had a disagreement that led to a deterioration in their relationship. \"Fell off\" is incorrect in this context because it suggests a decrease or decline in performance or interest, rather than a disagreement.</p>\n<p>\"strained relationship\": This phrase effectively describes the result of the disagreement, indicating that the relationship between the colleagues has become tense and difficult.</p>\n<p>Option (e) is the most fitting choice as it accurately and coherently conveys the intended meaning of the sentence. The other options either use less appropriate language or convey a slightly different meaning.</p>\n<p>a). fell out; false connection: \"Fell out\" is correct, but \"false connection\" does not accurately describe the result of the disagreement. \"False connection\" suggests a relationship that was never genuine, which is not the intended meaning here.</p>\n<p>b). fallen in; hard relation: \"Fallen in\" is incorrect because it does not describe a disagreement. \"Hard relation\" is also not idiomatic or commonly used to describe a tense relationship.</p>\n<p>c). fallen for; stressed association: \"Fallen for\" typically means to develop romantic feelings for someone, which is not appropriate here. \"Stressed association\" is not a common or idiomatic phrase to describe a strained relationship.</p>\n<p>d). fallen off; tensed alliance: \"Fallen off\" is incorrect in this context because it suggests a decline rather than a disagreement. \"Tensed alliance\" is not a common phrase and doesn't fit well in the context of describing a personal relationship.</p>\n<p>In summary, option (e) is the most appropriate as it accurately conveys that the colleagues had a disagreement leading to a strained relationship.</p>"}, {"question": "<p><strong>In each of the questions below two phrases have been highlighted in bold. You are required to replace it with correct phrases in order to make the sentence grammatically and contextually correct.</strong></p><br><p>During the lively debate, she voiced her strong <strong>opinion in</strong> the need for comprehensive environmental reforms, emphasizing the urgency of <strong>conveying climate change</strong> through innovative policies and sustainable practices.</p>", "options": ["<p>opinion for; directing climate change</p>", "<p>opinion to; managing climate change</p>", "<p>opinion about; addressing climate change</p>", "<p>opinion on; handling climate change</p>", "<p>opinion over; treating climate change</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The correct answer is: c) opinion about; addressing climate change</p>\n<p>\"opinion about\": This phrase is commonly used to express someone's thoughts or beliefs regarding a particular topic. \"Opinion for\" and \"opinion to\" are not idiomatic in this context. \"Opinion on\" is also correct but \"about\" fits more naturally here.</p>\n<p>\"addressing climate change\": This phrase accurately conveys the idea of taking action to deal with or resolve the issue of climate change. \"Directing climate change\" and \"managing climate change\" do not fit well, as they imply controlling or guiding climate change rather than mitigating its effects. \"Handling climate change\" and \"treating climate change\" are less precise and not as commonly used in the context of environmental reforms.</p>\n<p>a). opinion for; directing climate change: \"Opinion for\" is not a common phrase; \"for\" is not the correct preposition. \"Directing climate change\" is not appropriate because it implies controlling the phenomenon, which is not possible.</p>\n<p>b). opinion to; managing climate change: \"Opinion to\" is not idiomatic. \"Managing climate change\" suggests trying to control it, which doesn't fit the context of implementing reforms.</p>\n<p>d). opinion on; handling climate change: \"Opinion on\" is grammatically correct, but \"handling climate change\" is less precise and not the best phrase to describe taking comprehensive action against climate change.</p>\n<p>e). opinion over; treating climate change: \"Opinion over\" is not correct usage. \"Treating climate change\" sounds like a medical approach, which is not suitable for describing environmental reforms.</p>\n<p>In summary, option (c) is the most appropriate as it clearly and effectively conveys her strong opinion about the need for comprehensive environmental reforms and emphasizes the urgency of addressing climate change.</p>"}, {"question": "<p><strong>In each of the questions below two phrases have been highlighted in bold. You are required to replace it with correct phrases in order to make the sentence grammatically and contextually correct.</strong></p><br><p>The unexpected drop in sales figures was a significant <strong>cause in concern</strong> among the company's executives, <strong>ruling an urgent</strong> meeting to strategize potential solutions and address underlying issues.</p>", "options": ["<p>cause for concern; prompting an urgent</p>", "<p>cause of concern; pushing an urgent</p>", "<p>cause to concern; prodding an urgent</p>", "<p>cause with concern; managing an urgent</p>", "<p>cause by concern; conducting an urgent</p>"], "correctIndex": 0, "solution": "<p><strong>Answer</strong><strong>: A</strong></p>\n<p>The correct answer is: a) cause for concern; prompting an urgent</p>\n<p>\"cause for concern\": This phrase is the correct idiomatic expression to indicate that something is worrying or alarming. \"Cause for concern\" means that the drop in sales figures is a reason for the executives to be worried.</p>\n<p>\"prompting an urgent\": This phrase effectively conveys that the concern led to the immediate decision to hold a meeting. \"Prompting\" means causing or triggering an action.</p>\n<p>b). cause of concern; pushing an urgent: \"Cause of concern\" is not incorrect but less commonly used than \"cause for concern.\" \"Pushing an urgent\" is not the correct phrase; \"pushing\" doesn't fit well in this context and \"urgent\" as a standalone adjective is incomplete without a noun.</p>\n<p>c). cause to concern; prodding an urgent: \"Cause to concern\" is not idiomatic. \"Prodding an urgent\" is incorrect; \"prodding\" suggests urging someone to do something, and \"urgent\" is incomplete without a noun.</p>\n<p>d). cause with concern; managing an urgent: \"Cause with concern\" is incorrect usage. \"Managing an urgent\" is incomplete and doesn't convey the intended meaning of organizing an immediate meeting.</p>\n<p>e). cause by concern; conducting an urgent: \"Cause by concern\" is incorrect usage. \"Conducting an urgent\" is incomplete; \"urgent\" is an adjective and needs a noun to make sense.</p>\n<p>In summary, option (a) is the most appropriate as it correctly uses the idiomatic expression \"cause for concern\" and conveys the action taken in response to the concern by saying \"prompting an urgent meeting.\"</p>"}, {"question": "<p><strong>In each of the questions below two phrases have been highlighted in bold. You are required to replace it with correct phrases in order to make the sentence grammatically and contextually correct.</strong></p><br><p>After several hours of anxious waiting, we were relieved when our friend finally <strong>began to come of</strong> from the anaesthesia, gradually waking up and becoming more alert with <strong>each going moment</strong>.</p>", "options": ["<p>began to come by; each coming moment</p>", "<p>began to come off; each moving moment</p>", "<p>began to come over; each driving moment</p>", "<p>began to come round; each passing moment</p>", "<p>began to come about; each advancing moment</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D</strong></p>\n<p>The correct answer is: d) began to come round; each passing moment</p>\n<p>1). \"began to come round\": This phrase is a common idiom that means to regain consciousness after anaesthesia or a similar condition. It accurately describes the process of someone waking up from anaesthesia.</p>\n<p>2). \"each passing moment\": This phrase effectively conveys the passage of time and the gradual process of becoming more alert. \"Passing moment\" is idiomatic and commonly used to describe the progression of time.</p>\n<p>a). began to come by; each coming moment: \"Began to come by\" is incorrect in this context. \"Come by\" typically means to visit or obtain, which doesn't fit the context of regaining consciousness. \"Each coming moment\" is less idiomatic than \"each passing moment.\"</p>\n<p>b). began to come off; each moving moment: \"Began to come off\" is not the correct phrase for regaining consciousness; \"come off\" can mean to detach or be removed. \"Each moving moment\" is not idiomatic and doesn't effectively convey the passage of time.</p>\n<p>c). began to come over; each driving moment: \"Began to come over\" is incorrect in this context. \"Come over\" typically means to visit or to be overwhelmed by a feeling, which doesn't fit here. \"Each driving moment\" is not idiomatic and doesn't convey the intended meaning.</p>\n<p>e). began to come about; each advancing moment: \"Began to come about\" is incorrect in this context. \"Come about\" means to happen or occur, which doesn't fit the context of regaining consciousness. \"Each advancing moment\" is less idiomatic and not as commonly used as \"each passing moment.\"</p>\n<p>In summary, option (d) is the most appropriate as it correctly uses the idiom \"began to come round\" to describe regaining consciousness and \"each passing moment\" to convey the gradual progression of becoming more alert.</p>"}, {"question": "<p><strong>In each of the questions below two phrases have been highlighted in bold. You are required to replace it with correct phrases in order to make the sentence grammatically and contextually correct.</strong></p><br><p>It's no surprise that <strong>she beats in music</strong>, as she seems to <strong>take down</strong> her father, who was a renowned pianist and composer.</p>", "options": ["<p>she exceeds in music; take off</p>", "<p>she outperforms in music; take over</p>", "<p>she outplays in music; take up</p>", "<p>she outshines in music; take for</p>", "<p>she excels in music; take after</p>"], "correctIndex": 4, "solution": "<p><strong>Answer</strong><strong>: E</strong></p>\n<p>The correct answer is: e) she excels in music; take after</p>\n<p>\"she excels in music\": This phrase means she is very good at or proficient in music. \"Excels\" is the appropriate verb to indicate high competence or outstanding ability.</p>\n<p>\"take after\": This phrase means to resemble a parent or ancestor in character or appearance. It accurately describes her having inherited musical talent from her father.</p>\n<p>a). she exceeds in music; take off: \"She exceeds in music\" is not the correct verb; \"exceeds\" is typically used in the context of surpassing limits or expectations, not for general proficiency. \"Take off\" means to leave the ground (for an aircraft) or to become successful quickly, which does not fit the context of resembling a parent.</p>\n<p>b). she outperforms in music; take over: \"She outperforms in music\" suggests she does better than others but is not commonly used to describe general proficiency. \"Take over\" means to assume control of something, which is not appropriate in this context.</p>\n<p>c). she outplays in music; take up: \"She outplays in music\" means she plays better than others, which is more specific than the intended meaning. \"Take up\" means to start doing a particular activity, not to resemble a parent.</p>\n<p>d). she outshines in music; take for: \"She outshines in music\" means she performs better than others, similar to \"outplays,\" but it is more about comparison than proficiency. \"Take for\" means to mistake someone for something else, which does not fit the context.</p>\n<p>In summary, option (e) is the most appropriate as it correctly uses \"excels\" to indicate proficiency in music and \"take after\" to indicate resembling her father in musical talent.</p>"}, {"question": "<p><strong>The following statement has three blanks which are to be filled with the options given below. Find the right combination of words which when placed in the same order as given in the option can most suitably complete the sentence without changing the meaning of the statement.</strong></p><br><p><strong>The ____________ artist captured the essence of nature with ____________ brushstrokes, creating ____________ landscapes that seemed to come alive.</strong></p>", "options": ["<p>talented, bold, dynamic</p>", "<p>amateur, delicate, monotonous</p>", "<p>visionary, expressive, vibrant</p>", "<p>traditional, precise, dull</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>Visionary:</strong>having or showing a keen imagination, foresight, or perception of future possibilities.</p>\n<p><strong>Expressive:</strong>full of expression.</p>\n<p><strong>Vibrant:</strong> full of energy and life.</p>\n<p>In the context of the sentence, it describes an artist who is imaginative and perceptive, using expressive brushstrokes to create vivid and lively landscapes. These choices convey the sense of creativity and liveliness associated with the artist's work.</p>"}, {"question": "<p><strong>The following statement has three blanks which are to be filled with the options given below. Find the right combination of words which when placed in the same order as given in the option can most suitably complete the sentence without changing the meaning of the statement.</strong></p><br><p><strong>In the realm of business, it's essential to foster ____________, encourage ____________, and embrace ____________ to stay ahead of the competition.</strong></p>", "options": ["<p>innovation, diversity, adaptability</p>", "<p>rigidity, stagnation, tradition</p>", "<p>conformity, resistance, stagnation</p>", "<p>hierarchy, monotony, inflexibility</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>Innovation</strong>: the introduction of new ideas, methods, or products.</p>\n<p><strong>Diversity</strong>: the inclusion of individuals representing diverse groups in an organization or setting.</p>\n<p><strong>Adaptability</strong>: the ability to adjust to new conditions or changes.</p>\n<p>In the context of the sentence, it emphasizes the importance of fostering innovation, encouraging diversity of ideas and perspectives, and embracing adaptability to succeed in the competitive business environment.</p>"}, {"question": "<p><strong>The following statement has three blanks which are to be filled with the options given below. Find the right combination of words which when placed in the same order as given in the option can most suitably complete the sentence without changing the meaning of the statement.</strong></p><br><p><strong>The ____________ novel delves deep into the complexities of human relationships, offering ____________ insights into the human psyche and ____________ commentary on societal norms.</strong></p>", "options": ["<p>poignant, profound, incisive</p>", "<p>frivolous, superficial, shallow</p>", "<p>philosophical, enlightening, critical</p>", "<p>romantic, entertaining, uplifting</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>Poignant:</strong> evoking a keen sense of sadness or regret; emotionally moving.</p>\n<p><strong>Profound:</strong> having deep insight or understanding; intellectually deep.</p>\n<p><strong>Incisive:</strong> remarkably clear and direct; sharp and penetrating in thought or expression.</p>\n<p>In the context of the sentence, it describes a novel that deeply explores human relationships, offering emotionally moving and intellectually deep insights into the human psyche while also providing sharp and penetrating commentary on societal norms.</p>"}, {"question": "<p><strong>The following statement has three blanks which are to be filled with the options given below. Find the right combination of words which when placed in the same order as given in the option can most suitably complete the sentence without changing the meaning of the statement.</strong></p><br><p><strong>To build a successful career, it's crucial to possess ____________, cultivate ____________, and demonstrate ____________ in every endeavor.</strong></p>", "options": ["<p>humility, incompetence, insincerity</p>", "<p>laziness, apathy, deceit</p>", "<p>arrogance, indifference, dishonesty</p>", "<p>ambition, perseverance, integrity</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>Ambition</strong>: a strong desire to achieve something, typically requiring determination and hard work.</p>\n<p><strong>Perseverance</strong>: persistence in doing something despite difficulty or delay in achieving success.</p>\n<p><strong>Integrity</strong>: the quality of being honest and having strong moral principles.</p>\n<p>In the context of the sentence, it emphasizes the importance of having a strong desire to succeed (ambition), persistence in the face of challenges (perseverance), and maintaining honesty and moral principles (integrity) in every aspect of one's career.</p>"}, {"question": "<p><strong>The following statement has three blanks which are to be filled with the options given below. Find the right combination of words which when placed in the same order as given in the option can most suitably complete the sentence without changing the meaning of the statement.</strong></p><br><p><strong>The ____________ landscape was dotted with ____________ trees and ____________ flowers, creating a picturesque scene.</strong></p>", "options": ["<p>serene, towering, vibrant</p>", "<p>desolate, withered, sparse</p>", "<p>lush, blooming, fragrant</p>", "<p>barren, stunted, lifeless</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>Lush</strong>: growing luxuriantly; rich and abundant.</p>\n<p><strong>Blooming</strong>: producing flowers; in full bloom or flourishing.</p>\n<p><strong>Fragrant</strong>: having a pleasant and sweet smell.</p>\n<p>In the context of the sentence, it describes a landscape that is rich and abundant, with trees and flowers in full bloom, emitting a pleasant fragrance.</p>"}, {"question": "<p><strong>The passage given below contains words and a sentence that has been highlighted. There are questions given following the passage which need to be solved after a careful reading. Read the same and answer the questions that follow:</strong></p>\n<p>The proliferation of plastic in our society is hitting extreme levels that should be of concern to all nations.  Annually, we produce around 359 million tonnes of plastic with the global market being valued at USD 568.9 billion in 2019, and projected to reach almost USD 1 trillion by 2035. Of this volume, 49.3 per cent is produced in the Asia-Pacific region. It is also where 38 per cent of all plastic is consumed. Eight million tonnes of this plastic will end up in the world’s oceans every year, most of which is fed from rivers, which serve as direct conduits of trash from some of the world’s fastest growing cities into the marine environment. Our relationship with plastic is short term focused. The plastic produced is designed to be single use. We use it once and then discard it. We like to think this is being recycled but only 9 per cent of all plastic waste ever produced has been recycled. About 12 per cent has been incinerated, while 79 per cent has accumulated in landfills, dumps or the natural environment as plastic waste, clogging our drains, endangering marine life and causing health concerns to local people.</p>\n<p>There are also massive economic costs associated with marine plastic pollution. <strong><em>Conservative estimates publication in March 2020 place the direct damage by the blue economy in the ASEAN region at USD 2.1 billion per year. </em></strong>Notably, this only covers the direct costs to three industries: shipping, fisheries and aquaculture, and marine tourism. Boats can get tangled up in abandoned or discarded fishing nets, or they might find their engines clogged up with bits of plastic junk. Whilst, “Ghost fishing” by derelict fishing gear results in reduced catch sizes. Tourists are also less likely to visit polluted beaches and seas – after all, who wants to dive near damaged coral reefs? This USD 2.1 billion per year figure is expected to rise significantly under a “business-as-usual” scenario, as plastics production is projected to triple between 2020 and 2050. These economic costs also leave tremendous social costs in their wake. In addition to being intimately tied to the fishing and tourism industries for their livelihoods, residents of coastal communities suffer from the damaging health effects of plastic pollution and rubbish brought in by the tides. It is essential that we start developing solutions to prevent our oceans from becoming more polluted by plastics and other debris, and beyond that, to actually clean up our oceans.</p>\n<p>Solving the marine plastics pollution problem can – and must – be approached from multiple angles. The first step is identifying plastic products that can be substituted with non-plastic, recycled or biodegradable materials. By <strong>(A) throughout </strong>with product designers, we can find alternatives to single-use plastics and design re-useable products. Countries need to adopt circular and <strong>(B) incentives </strong>economic principles <strong>(C) engaging</strong> the plastics value chain to achieve this. Plastics are cheap because they are <strong>(D) produced</strong> with oil which is heavily subsidized and can be cheaper to produce, with less economic <strong>(E) sustainable </strong>to use recycled plastics. We need price structures that internalize the negative externalities of plastic use and encourage the use of alternative materials or reused and recycled plastics.</p>\n<p>Creating the tools and technology to help governments and organizations measure and monitor plastic waste within their cities. The United Nations Economic and Social Commission for Asia and the Pacific (ESCAP) Closing the Loop project is helping cities create smarter policy strategies to combat the problem. In 2018, ESCAP banned single use plastics in all catering operations. All single use items were replaced with reusable items, or more sustainable single-use options and charged at an extra fee to promote behavioral change among staff and visitors. This initiative is expected to prevent nearly nine tons of waste annually by rethinking our way of working. Extended responsibility can be applied in the retail (packaging) sector, where producers are responsible for the collection and recycling of products that they release into the market. Clean-up events on beaches and rivers, and awareness-raising initiatives to inform the public about how their actions contribute to marine plastics pollution (or to its solution), along with bans and levies on disposable plastic bags. Government ministries at the national and local levels, need to work in developing, implementing, and overseeing policies, which also involves industrial manufacturers, NGOs, and volunteer organizations. All these stakeholders need to act coherently and in synergy with one another instead of in silos. Not only do they need the will, but also the resources and funds to do so.</p>\n<p>The Organization for Economic Co-operation and Development (OECD), in partnership with ESCAP, the Indonesian Coordinating Ministry of Maritime and Investments Affairs, Coordinating Body on the Seas of East Asia (COBSEA), and the ASEAN Secretariat, discussed these issues at the recent OECD Regional Policy Dialogue forum on the 15th and 16th of December. OECD and ESCAP are working together to provide expertise in policy coherence and sustainable financing to support countries in finding sustainable solutions to these challenges. Events such as the OECD Regional Policy Dialogue forum, allow regional actors to exchange information and to develop co-operative efforts to address marine plastics pollution. Together, we can lay the groundwork for solutions that will restore cleaner, plastic-free seas in Southeast Asia.</p><br><p><strong>Which of the following given statements is true in the context of the passage?</strong></p>", "options": ["<p>Annually, we produce around 360 million tonnes of plastic</p>", "<p>Of the total 50 per cent is produced in the Asia-Pacific region.</p>", "<p>Only 19 per cent of all plastic waste ever produced has been recycled.</p>", "<p>In 2008, ESCAP banned single use plastics in all catering operations.</p>", "<p>All statements are false</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>The corrections in all the given statements can be listed as:</p>\n<p><strong>a). </strong>359 million tonnes</p>\n<p><strong>b). </strong>3 per cent</p>\n<p><strong>c).</strong> 9 per cent</p>\n<p><strong>d). </strong>In 2018</p>\n<p>A simple reading and matching of the options can clarify the given statements.</p>"}, {"question": "<p><strong>The passage given below contains words and a sentence that has been highlighted. There are questions given following the passage which need to be solved after a careful reading. Read the same and answer the questions that follow:</strong></p>\n<p>The proliferation of plastic in our society is hitting extreme levels that should be of concern to all nations.  Annually, we produce around 359 million tonnes of plastic with the global market being valued at USD 568.9 billion in 2019, and projected to reach almost USD 1 trillion by 2035. Of this volume, 49.3 per cent is produced in the Asia-Pacific region. It is also where 38 per cent of all plastic is consumed. Eight million tonnes of this plastic will end up in the world’s oceans every year, most of which is fed from rivers, which serve as direct conduits of trash from some of the world’s fastest growing cities into the marine environment. Our relationship with plastic is short term focused. The plastic produced is designed to be single use. We use it once and then discard it. We like to think this is being recycled but only 9 per cent of all plastic waste ever produced has been recycled. About 12 per cent has been incinerated, while 79 per cent has accumulated in landfills, dumps or the natural environment as plastic waste, clogging our drains, endangering marine life and causing health concerns to local people.</p>\n<p>There are also massive economic costs associated with marine plastic pollution. <strong><em>Conservative estimates publication in March 2020 place the direct damage by the blue economy in the ASEAN region at USD 2.1 billion per year. </em></strong>Notably, this only covers the direct costs to three industries: shipping, fisheries and aquaculture, and marine tourism. Boats can get tangled up in abandoned or discarded fishing nets, or they might find their engines clogged up with bits of plastic junk. Whilst, “Ghost fishing” by derelict fishing gear results in reduced catch sizes. Tourists are also less likely to visit polluted beaches and seas – after all, who wants to dive near damaged coral reefs? This USD 2.1 billion per year figure is expected to rise significantly under a “business-as-usual” scenario, as plastics production is projected to triple between 2020 and 2050. These economic costs also leave tremendous social costs in their wake. In addition to being intimately tied to the fishing and tourism industries for their livelihoods, residents of coastal communities suffer from the damaging health effects of plastic pollution and rubbish brought in by the tides. It is essential that we start developing solutions to prevent our oceans from becoming more polluted by plastics and other debris, and beyond that, to actually clean up our oceans.</p>\n<p>Solving the marine plastics pollution problem can – and must – be approached from multiple angles. The first step is identifying plastic products that can be substituted with non-plastic, recycled or biodegradable materials. By <strong>(A) throughout </strong>with product designers, we can find alternatives to single-use plastics and design re-useable products. Countries need to adopt circular and <strong>(B) incentives </strong>economic principles <strong>(C) engaging</strong> the plastics value chain to achieve this. Plastics are cheap because they are <strong>(D) produced</strong> with oil which is heavily subsidized and can be cheaper to produce, with less economic <strong>(E) sustainable </strong>to use recycled plastics. We need price structures that internalize the negative externalities of plastic use and encourage the use of alternative materials or reused and recycled plastics.</p>\n<p>Creating the tools and technology to help governments and organizations measure and monitor plastic waste within their cities. The United Nations Economic and Social Commission for Asia and the Pacific (ESCAP) Closing the Loop project is helping cities create smarter policy strategies to combat the problem. In 2018, ESCAP banned single use plastics in all catering operations. All single use items were replaced with reusable items, or more sustainable single-use options and charged at an extra fee to promote behavioral change among staff and visitors. This initiative is expected to prevent nearly nine tons of waste annually by rethinking our way of working. Extended responsibility can be applied in the retail (packaging) sector, where producers are responsible for the collection and recycling of products that they release into the market. Clean-up events on beaches and rivers, and awareness-raising initiatives to inform the public about how their actions contribute to marine plastics pollution (or to its solution), along with bans and levies on disposable plastic bags. Government ministries at the national and local levels, need to work in developing, implementing, and overseeing policies, which also involves industrial manufacturers, NGOs, and volunteer organizations. All these stakeholders need to act coherently and in synergy with one another instead of in silos. Not only do they need the will, but also the resources and funds to do so.</p>\n<p>The Organization for Economic Co-operation and Development (OECD), in partnership with ESCAP, the Indonesian Coordinating Ministry of Maritime and Investments Affairs, Coordinating Body on the Seas of East Asia (COBSEA), and the ASEAN Secretariat, discussed these issues at the recent OECD Regional Policy Dialogue forum on the 15th and 16th of December. OECD and ESCAP are working together to provide expertise in policy coherence and sustainable financing to support countries in finding sustainable solutions to these challenges. Events such as the OECD Regional Policy Dialogue forum, allow regional actors to exchange information and to develop co-operative efforts to address marine plastics pollution. Together, we can lay the groundwork for solutions that will restore cleaner, plastic-free seas in Southeast Asia.</p><br><p><strong>The words highlighted above and numbered A-E need to be properly arranged. Find the best sequence that makes the given sentences meaningful</strong></p>", "options": ["<p>CEADB</p>", "<p>ABECD</p>", "<p>BDCAE</p>", "<p>DEACB</p>", "<p>Other than the given options</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The best sequence of the words is in option (a). The correct sentences after rearrangement would be:</p>\n<p>By <strong>(C) engaging </strong>with product designers, we can find alternatives to single-use plastics and design re-useable products. Countries need to adopt circular and <strong>(E) sustainable </strong>economic principles <strong>(A) throughout</strong> the plastics value chain to achieve this. Plastics are cheap because they are <strong>(D) produced</strong> with oil which is heavily subsidized and can be cheaper to produce, with less economic <strong>(B) incentives</strong> to use recycled plastics.</p>\n<p>The best option hence would be (a).</p>"}, {"question": "<p><strong>The passage given below contains words and a sentence that has been highlighted. There are questions given following the passage which need to be solved after a careful reading. Read the same and answer the questions that follow:</strong></p>\n<p>The proliferation of plastic in our society is hitting extreme levels that should be of concern to all nations.  Annually, we produce around 359 million tonnes of plastic with the global market being valued at USD 568.9 billion in 2019, and projected to reach almost USD 1 trillion by 2035. Of this volume, 49.3 per cent is produced in the Asia-Pacific region. It is also where 38 per cent of all plastic is consumed. Eight million tonnes of this plastic will end up in the world’s oceans every year, most of which is fed from rivers, which serve as direct conduits of trash from some of the world’s fastest growing cities into the marine environment. Our relationship with plastic is short term focused. The plastic produced is designed to be single use. We use it once and then discard it. We like to think this is being recycled but only 9 per cent of all plastic waste ever produced has been recycled. About 12 per cent has been incinerated, while 79 per cent has accumulated in landfills, dumps or the natural environment as plastic waste, clogging our drains, endangering marine life and causing health concerns to local people.</p>\n<p>There are also massive economic costs associated with marine plastic pollution. <strong><em>Conservative estimates publication in March 2020 place the direct damage by the blue economy in the ASEAN region at USD 2.1 billion per year. </em></strong>Notably, this only covers the direct costs to three industries: shipping, fisheries and aquaculture, and marine tourism. Boats can get tangled up in abandoned or discarded fishing nets, or they might find their engines clogged up with bits of plastic junk. Whilst, “Ghost fishing” by derelict fishing gear results in reduced catch sizes. Tourists are also less likely to visit polluted beaches and seas – after all, who wants to dive near damaged coral reefs? This USD 2.1 billion per year figure is expected to rise significantly under a “business-as-usual” scenario, as plastics production is projected to triple between 2020 and 2050. These economic costs also leave tremendous social costs in their wake. In addition to being intimately tied to the fishing and tourism industries for their livelihoods, residents of coastal communities suffer from the damaging health effects of plastic pollution and rubbish brought in by the tides. It is essential that we start developing solutions to prevent our oceans from becoming more polluted by plastics and other debris, and beyond that, to actually clean up our oceans.</p>\n<p>Solving the marine plastics pollution problem can – and must – be approached from multiple angles. The first step is identifying plastic products that can be substituted with non-plastic, recycled or biodegradable materials. By <strong>(A) throughout </strong>with product designers, we can find alternatives to single-use plastics and design re-useable products. Countries need to adopt circular and <strong>(B) incentives </strong>economic principles <strong>(C) engaging</strong> the plastics value chain to achieve this. Plastics are cheap because they are <strong>(D) produced</strong> with oil which is heavily subsidized and can be cheaper to produce, with less economic <strong>(E) sustainable </strong>to use recycled plastics. We need price structures that internalize the negative externalities of plastic use and encourage the use of alternative materials or reused and recycled plastics.</p>\n<p>Creating the tools and technology to help governments and organizations measure and monitor plastic waste within their cities. The United Nations Economic and Social Commission for Asia and the Pacific (ESCAP) Closing the Loop project is helping cities create smarter policy strategies to combat the problem. In 2018, ESCAP banned single use plastics in all catering operations. All single use items were replaced with reusable items, or more sustainable single-use options and charged at an extra fee to promote behavioral change among staff and visitors. This initiative is expected to prevent nearly nine tons of waste annually by rethinking our way of working. Extended responsibility can be applied in the retail (packaging) sector, where producers are responsible for the collection and recycling of products that they release into the market. Clean-up events on beaches and rivers, and awareness-raising initiatives to inform the public about how their actions contribute to marine plastics pollution (or to its solution), along with bans and levies on disposable plastic bags. Government ministries at the national and local levels, need to work in developing, implementing, and overseeing policies, which also involves industrial manufacturers, NGOs, and volunteer organizations. All these stakeholders need to act coherently and in synergy with one another instead of in silos. Not only do they need the will, but also the resources and funds to do so.</p>\n<p>The Organization for Economic Co-operation and Development (OECD), in partnership with ESCAP, the Indonesian Coordinating Ministry of Maritime and Investments Affairs, Coordinating Body on the Seas of East Asia (COBSEA), and the ASEAN Secretariat, discussed these issues at the recent OECD Regional Policy Dialogue forum on the 15th and 16th of December. OECD and ESCAP are working together to provide expertise in policy coherence and sustainable financing to support countries in finding sustainable solutions to these challenges. Events such as the OECD Regional Policy Dialogue forum, allow regional actors to exchange information and to develop co-operative efforts to address marine plastics pollution. Together, we can lay the groundwork for solutions that will restore cleaner, plastic-free seas in Southeast Asia.</p><br><p><strong>Which of the following have been given as solutions for solving the maritime plastic problem as per the passage?</strong></p>\n<p><strong>(i).</strong> Clean-up events on beaches and rivers, and awareness-raising initiatives</p>\n<p><strong>(ii).</strong> We need price structures that internalize the negative externalities of plastic use</p>\n<p><strong>(iii). </strong>All these stakeholders need to act coherently and in synergy with one another instead of in silos.</p>", "options": ["<p>Only (ii)</p>", "<p>All (i), (ii) and (iii)</p>", "<p>Only (iii)</p>", "<p>None is given</p>", "<p>Both (a) and (c)</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>A careful reading of the third and the fourth paragraphs will lead us to the correct answer.</p>\n<p>We can see that all the given statements have been mentioned in these respective paragraphs.</p>\n<p>Hence, option (b) is the correct answer.</p>"}, {"question": "<p><strong>The passage given below contains words and a sentence that has been highlighted. There are questions given following the passage which need to be solved after a careful reading. Read the same and answer the questions that follow:</strong></p>\n<p>The proliferation of plastic in our society is hitting extreme levels that should be of concern to all nations.  Annually, we produce around 359 million tonnes of plastic with the global market being valued at USD 568.9 billion in 2019, and projected to reach almost USD 1 trillion by 2035. Of this volume, 49.3 per cent is produced in the Asia-Pacific region. It is also where 38 per cent of all plastic is consumed. Eight million tonnes of this plastic will end up in the world’s oceans every year, most of which is fed from rivers, which serve as direct conduits of trash from some of the world’s fastest growing cities into the marine environment. Our relationship with plastic is short term focused. The plastic produced is designed to be single use. We use it once and then discard it. We like to think this is being recycled but only 9 per cent of all plastic waste ever produced has been recycled. About 12 per cent has been incinerated, while 79 per cent has accumulated in landfills, dumps or the natural environment as plastic waste, clogging our drains, endangering marine life and causing health concerns to local people.</p>\n<p>There are also massive economic costs associated with marine plastic pollution. <strong><em>Conservative estimates publication in March 2020 place the direct damage by the blue economy in the ASEAN region at USD 2.1 billion per year. </em></strong>Notably, this only covers the direct costs to three industries: shipping, fisheries and aquaculture, and marine tourism. Boats can get tangled up in abandoned or discarded fishing nets, or they might find their engines clogged up with bits of plastic junk. Whilst, “Ghost fishing” by derelict fishing gear results in reduced catch sizes. Tourists are also less likely to visit polluted beaches and seas – after all, who wants to dive near damaged coral reefs? This USD 2.1 billion per year figure is expected to rise significantly under a “business-as-usual” scenario, as plastics production is projected to triple between 2020 and 2050. These economic costs also leave tremendous social costs in their wake. In addition to being intimately tied to the fishing and tourism industries for their livelihoods, residents of coastal communities suffer from the damaging health effects of plastic pollution and rubbish brought in by the tides. It is essential that we start developing solutions to prevent our oceans from becoming more polluted by plastics and other debris, and beyond that, to actually clean up our oceans.</p>\n<p>Solving the marine plastics pollution problem can – and must – be approached from multiple angles. The first step is identifying plastic products that can be substituted with non-plastic, recycled or biodegradable materials. By <strong>(A) throughout </strong>with product designers, we can find alternatives to single-use plastics and design re-useable products. Countries need to adopt circular and <strong>(B) incentives </strong>economic principles <strong>(C) engaging</strong> the plastics value chain to achieve this. Plastics are cheap because they are <strong>(D) produced</strong> with oil which is heavily subsidized and can be cheaper to produce, with less economic <strong>(E) sustainable </strong>to use recycled plastics. We need price structures that internalize the negative externalities of plastic use and encourage the use of alternative materials or reused and recycled plastics.</p>\n<p>Creating the tools and technology to help governments and organizations measure and monitor plastic waste within their cities. The United Nations Economic and Social Commission for Asia and the Pacific (ESCAP) Closing the Loop project is helping cities create smarter policy strategies to combat the problem. In 2018, ESCAP banned single use plastics in all catering operations. All single use items were replaced with reusable items, or more sustainable single-use options and charged at an extra fee to promote behavioral change among staff and visitors. This initiative is expected to prevent nearly nine tons of waste annually by rethinking our way of working. Extended responsibility can be applied in the retail (packaging) sector, where producers are responsible for the collection and recycling of products that they release into the market. Clean-up events on beaches and rivers, and awareness-raising initiatives to inform the public about how their actions contribute to marine plastics pollution (or to its solution), along with bans and levies on disposable plastic bags. Government ministries at the national and local levels, need to work in developing, implementing, and overseeing policies, which also involves industrial manufacturers, NGOs, and volunteer organizations. All these stakeholders need to act coherently and in synergy with one another instead of in silos. Not only do they need the will, but also the resources and funds to do so.</p>\n<p>The Organization for Economic Co-operation and Development (OECD), in partnership with ESCAP, the Indonesian Coordinating Ministry of Maritime and Investments Affairs, Coordinating Body on the Seas of East Asia (COBSEA), and the ASEAN Secretariat, discussed these issues at the recent OECD Regional Policy Dialogue forum on the 15th and 16th of December. OECD and ESCAP are working together to provide expertise in policy coherence and sustainable financing to support countries in finding sustainable solutions to these challenges. Events such as the OECD Regional Policy Dialogue forum, allow regional actors to exchange information and to develop co-operative efforts to address marine plastics pollution. Together, we can lay the groundwork for solutions that will restore cleaner, plastic-free seas in Southeast Asia.</p><br><p><span style=\"color: #000000;\"><strong>What can be marked as a suitable title for the given passage?</strong></span></p>", "options": ["<p>Plastic waste is costing humans and the nature alike</p>", "<p>The price that we pay to have been born as humans</p>", "<p>Environment and humans: both spoiling each other</p>", "<p>The price of plastic waste and solutions to turn the tide</p>", "<p>The doomsday and the plastic waste spoiling the marine life</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>One simple reading of the passage can clarify the format in which the passage has been written.</p>\n<p>First two paragraphs talk about the problem and the next two paragraphs list down the possible solutions to address the problem.</p>\n<p>Therefore, the best title that encapsulates both the ideas is (d).</p>"}, {"question": "<p><strong>The passage given below contains words and a sentence that has been highlighted. There are questions given following the passage which need to be solved after a careful reading. Read the same and answer the questions that follow:</strong></p>\n<p>The proliferation of plastic in our society is hitting extreme levels that should be of concern to all nations.  Annually, we produce around 359 million tonnes of plastic with the global market being valued at USD 568.9 billion in 2019, and projected to reach almost USD 1 trillion by 2035. Of this volume, 49.3 per cent is produced in the Asia-Pacific region. It is also where 38 per cent of all plastic is consumed. Eight million tonnes of this plastic will end up in the world’s oceans every year, most of which is fed from rivers, which serve as direct conduits of trash from some of the world’s fastest growing cities into the marine environment. Our relationship with plastic is short term focused. The plastic produced is designed to be single use. We use it once and then discard it. We like to think this is being recycled but only 9 per cent of all plastic waste ever produced has been recycled. About 12 per cent has been incinerated, while 79 per cent has accumulated in landfills, dumps or the natural environment as plastic waste, clogging our drains, endangering marine life and causing health concerns to local people.</p>\n<p>There are also massive economic costs associated with marine plastic pollution. <strong><em>Conservative estimates publication in March 2020 place the direct damage by the blue economy in the ASEAN region at USD 2.1 billion per year. </em></strong>Notably, this only covers the direct costs to three industries: shipping, fisheries and aquaculture, and marine tourism. Boats can get tangled up in abandoned or discarded fishing nets, or they might find their engines clogged up with bits of plastic junk. Whilst, “Ghost fishing” by derelict fishing gear results in reduced catch sizes. Tourists are also less likely to visit polluted beaches and seas – after all, who wants to dive near damaged coral reefs? This USD 2.1 billion per year figure is expected to rise significantly under a “business-as-usual” scenario, as plastics production is projected to triple between 2020 and 2050. These economic costs also leave tremendous social costs in their wake. In addition to being intimately tied to the fishing and tourism industries for their livelihoods, residents of coastal communities suffer from the damaging health effects of plastic pollution and rubbish brought in by the tides. It is essential that we start developing solutions to prevent our oceans from becoming more polluted by plastics and other debris, and beyond that, to actually clean up our oceans.</p>\n<p>Solving the marine plastics pollution problem can – and must – be approached from multiple angles. The first step is identifying plastic products that can be substituted with non-plastic, recycled or biodegradable materials. By <strong>(A) throughout </strong>with product designers, we can find alternatives to single-use plastics and design re-useable products. Countries need to adopt circular and <strong>(B) incentives </strong>economic principles <strong>(C) engaging</strong> the plastics value chain to achieve this. Plastics are cheap because they are <strong>(D) produced</strong> with oil which is heavily subsidized and can be cheaper to produce, with less economic <strong>(E) sustainable </strong>to use recycled plastics. We need price structures that internalize the negative externalities of plastic use and encourage the use of alternative materials or reused and recycled plastics.</p>\n<p>Creating the tools and technology to help governments and organizations measure and monitor plastic waste within their cities. The United Nations Economic and Social Commission for Asia and the Pacific (ESCAP) Closing the Loop project is helping cities create smarter policy strategies to combat the problem. In 2018, ESCAP banned single use plastics in all catering operations. All single use items were replaced with reusable items, or more sustainable single-use options and charged at an extra fee to promote behavioral change among staff and visitors. This initiative is expected to prevent nearly nine tons of waste annually by rethinking our way of working. Extended responsibility can be applied in the retail (packaging) sector, where producers are responsible for the collection and recycling of products that they release into the market. Clean-up events on beaches and rivers, and awareness-raising initiatives to inform the public about how their actions contribute to marine plastics pollution (or to its solution), along with bans and levies on disposable plastic bags. Government ministries at the national and local levels, need to work in developing, implementing, and overseeing policies, which also involves industrial manufacturers, NGOs, and volunteer organizations. All these stakeholders need to act coherently and in synergy with one another instead of in silos. Not only do they need the will, but also the resources and funds to do so.</p>\n<p>The Organization for Economic Co-operation and Development (OECD), in partnership with ESCAP, the Indonesian Coordinating Ministry of Maritime and Investments Affairs, Coordinating Body on the Seas of East Asia (COBSEA), and the ASEAN Secretariat, discussed these issues at the recent OECD Regional Policy Dialogue forum on the 15th and 16th of December. OECD and ESCAP are working together to provide expertise in policy coherence and sustainable financing to support countries in finding sustainable solutions to these challenges. Events such as the OECD Regional Policy Dialogue forum, allow regional actors to exchange information and to develop co-operative efforts to address marine plastics pollution. Together, we can lay the groundwork for solutions that will restore cleaner, plastic-free seas in Southeast Asia.</p><br><p><strong>What have the OECD and ESCAP started working on together?</strong></p>", "options": ["<p>To exchange information and to develop co-operative efforts to address marine plastics pollution</p>", "<p>Developing solutions to prevent our oceans from becoming more polluted by plastics and other debris</p>", "<p>To provide expertise in policy coherence and sustainable financing to support countries in finding sustainable solutions</p>", "<p>To address the massive economic costs associated with marine plastic pollution</p>", "<p>None of the above</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The reason for the coming together of these two organizations can be discovered in the lines given below:</p>\n<p>The Organisation for Economic Co-operation and Development (OECD), in partnership with ESCAP, the Indonesian Coordinating Ministry of Maritime and Investments Affairs, Coordinating Body on the Seas of East Asia (COBSEA), and the ASEAN Secretariat, discussed these issues at the recent OECD Regional Policy Dialogue forum on the 15th and 16th of December. <strong><em>OECD and ESCAP are working together to provide</em></strong> expertise in policy coherence and sustainable financing to support countries in finding sustainable solutions to these challenges.</p>\n<p>The other options hence can be ruled out.</p>"}, {"question": "<p><strong>Read each question to find out whether there is any grammatical error in it. The error, if any, will be in one part of the sentence. Choose the option with that part as your answer. If there is no error, mark(e) as your answer.</strong></p><br><p>Families who were caught together<strong>/A</strong> at the US-Mexico border and separated<strong>/B</strong> are now being offered an opportunity<strong>/C</strong> to reunite and stay together<strong>/D</strong>.No error<strong>/E</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: </strong><strong>A</strong></p>\n<p>The error is in part A of the sentence.</p>\n<p>Replace ‘who’ with ‘which’(even though family consist of member/people it is an entity and not a member by itself so it should be represented by ‘which’)</p>\n<p><strong>The corrected sentence :</strong> Families <strong>which </strong>were caught together at the US-Mexico border and separated are now being offered an opportunity to reunite and stay together.</p>"}, {"question": "<p><strong>Read each question to find out whether there is any grammatical error in it. The error, if any, will be in one part of the sentence. Choose the option with that part as your answer. If there is no error, mark(e) as your answer.</strong></p><br><p>He was right pretty much <strong>/A</strong> when he said  almost all the people<strong>/B</strong> fail to change their behaviour and continue to<strong>/C</strong> blame the system for all their problems<strong>/D.</strong>No error<strong>/E</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: </strong><strong>A </strong></p>\n<p>The error is in part A of the sentence.</p>\n<p>He was right - is the main idea.</p>\n<p>Pretty much - nearly right(to agree that he was right)</p>\n<p>He was pretty much right - is the correct phrase.</p>\n<p><strong>The corrected sentence : </strong>He was <strong>pretty much right</strong> when he said  almost all the people fail to change their behaviour and continue to blame the system for all their problems.</p>"}, {"question": "<p><strong>Read each question to find out whether there is any grammatical error in it. The error, if any, will be in one part of the sentence. Choose the option with that part as your answer. If there is no error, mark(e) as your answer.</strong></p><br><p>The human eardrum is able to receive<strong>/A</strong> and transmit signals across a radio<strong>/B</strong> frequency range more greater than<strong>/C </strong>what we can hear with the human ear<strong>/D.</strong>No error<strong>/E</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 2, "solution": "<p><strong>Answer:  </strong><strong>C</strong></p>\n<p>Part C is erroneous.</p>\n<p>More greater(redundancy in the degree of comparison) - it is wrong</p>\n<p><strong>The corrected sentences :  </strong></p>\n<p><strong>Replace ‘more’ with ‘far’ - </strong>The human eardrum is able to receive and transmit signals across a radio frequency range <strong>far </strong>greater than what we can hear with the human ear.</p>\n<p><strong>Simply remove more -</strong> The human eardrum is able to receive and transmit signals across a radio frequency range greater than what we can hear with the human ear.</p>"}, {"question": "<p><strong>Read each question to find out whether there is any grammatical error in it. The error, if any, will be in one part of the sentence. Choose the option with that part as your answer. If there is no error, mark(e) as your answer.</strong></p><br><p>Students should always stay motivated and stop seeking<strong>/A </strong>motivation from outside instead one must<strong>/B</strong> always ask themselves one question time and again,<strong>/C</strong> “Did I take a forward step today that leads to my success ?”<strong>/D</strong>.No error<strong>/E</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: </strong><strong>E </strong></p>\n<p>The given sentence is error free as it is grammatically correct and meaningful.</p>"}, {"question": "<p><strong>Read each question to find out whether there is any grammatical error in it. The error, if any, will be in one part of the sentence. Choose the option with that part as your answer. If there is no error, mark(e) as your answer.</strong></p><br><p>During the pandemic the<strong>/A</strong> companies were providing more and more benefits to their<strong>/B</strong> employees and the employees fell for the<strong>/C</strong> furniture and gift hampers not knowing what was coming for them<strong>/D</strong>.No error<strong>/E</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: </strong><strong>B</strong></p>\n<p>Error is in part B of the sentence.</p>\n<p>Replace ‘their’ with ‘its’. Company is an entity(not a living thing) and usage of ‘their’ is inappropriate.</p>\n<p><strong>The corrected sentence :</strong> During the pandemic the companies were providing more and more benefits to their employees and the employees fell for the furniture and gift hampers not knowing what was coming for them.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-89)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-89)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-56)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>In the table given below two columns are given to connect the sentence. The sentence given in column A may or may not be connected with column B contextually and grammatically. You have to identify possible combination to combine the sentence from column A to column B. If any possible connections are not found from the option, choose “None of these.”</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172717764781.png\" title=\"464.PNG\"/></p>", "options": ["<p>AE, BD &amp; CF</p>", "<p>AF, BD &amp; CE</p>", "<p>BE, AF &amp; CD</p>", "<p>CD, BF &amp; AE</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>AE:</strong> The virus was found to be lethal to infants and adult mice by the scientists.</p>\n<p><strong>BF:</strong> There is no specific antiviral treatment available for the Chandipura virus.</p>\n<p><strong>CD:</strong> Containing the vectors, and maintaining good nutrition, health, hygiene and awareness can help with controlling the virus.</p>"}, {"question": "<p><strong>In the table given below two columns are given to connect the sentence. The sentence given in column A may or may not be connected with column B contextually and grammatically. You have to identify possible combination to combine the sentence from column A to column B. If any possible connections are not found from the option, choose “None of these.”</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172717782757.png\" title=\"465.PNG\"/></p>", "options": ["<p>AE, BD &amp; CF</p>", "<p>AF, BD &amp; CE</p>", "<p>BE, AF &amp; CD</p>", "<p>CD, BF &amp; AE</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>AF:</strong> The juxtaposition of the protagonist's internal turmoil with the serene natural landscapes in the novel serves as a poignant metaphor for the discord between human nature and the environment.</p>\n<p><strong>BD:</strong> Among dietary factors, low fruit and vegetable consumption contributed to most cancer cases and deaths.</p>\n<p><strong>CE: </strong>Despite the plethora of technological advancements aimed at enhancing productivity, the persistent challenge of maintaining a work-life balance continues to elude even the most organized professionals.\"</p>"}, {"question": "<p><strong>In the table given below two columns are given to connect the sentence. The sentence given in column A may or may not be connected with column B contextually and grammatically. You have to identify possible combination to combine the sentence from column A to column B. If any possible connections are not found from the option, choose “None of these.”</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172717798241.png\" title=\"466.PNG\"/></p>", "options": ["<p>AE, BD &amp; CF</p>", "<p>AF, BD &amp; CE</p>", "<p>BE, AF &amp; CD</p>", "<p>CD, BF &amp; AE</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>AE:</strong> The intricacies of quantum mechanics, which delve into the probabilistic nature of subatomic particles, challenge our classical understanding of physics and demand a paradigm shift in our conceptual framework.</p>\n<p><strong>BD:</strong> As the global economy becomes increasingly interconnected, the repercussions of localized fiscal policies reverberate across borders, necessitating a nuanced approach to international economic strategy.</p>\n<p><strong>CF:</strong> The perennial debate between free will and determinism in philosophical discourse underscores the complexity of human consciousness and the limitations of our understanding of the mind.</p>"}, {"question": "<p><strong>In the table given below two columns are given to connect the sentence. The sentence given in column A may or may not be connected with column B contextually and grammatically. You have to identify possible combination to combine the sentence from column A to column B. If any possible connections are not found from the option, choose “None of these.”</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172717810096.png\" title=\"467.PNG\"/></p>", "options": ["<p>AE, BD &amp; CF</p>", "<p>AF, BD &amp; CE</p>", "<p>BE, AF &amp; CD</p>", "<p>CD, BF &amp; AE</p>", "<p>None of these</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p><strong>AD:</strong> The confluence of multiple disciplines, such as neuroscience, psychology, and artificial intelligence, in the study of cognitive science, highlights the interdisciplinary nature required to unravel the mysteries of human cognition.</p>\n<p><strong>BE:</strong> In the realm of bioethics, the advent of CRISPR technology has sparked intense debate over the moral implications of gene editing, raising questions about the boundaries of scientific intervention in human genetics.</p>\n<p><strong>CF:</strong> The poet's use of allegory and symbolism not only enriches the textual fabric of the work but also invites readers to engage in a deeper, more introspective analysis of the themes presented.</p>"}, {"question": "<p><strong>In the table given below two columns are given to connect the sentence. The sentence given in column A may or may not be connected with column B contextually and grammatically. You have to identify possible combination to combine the sentence from column A to column B. If any possible connections are not found from the option, choose “None of these.”</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172717821951.png\" title=\"468.PNG\"/></p>", "options": ["<p>AE, BD &amp; CF</p>", "<p>AF, BD &amp; CE</p>", "<p>BE, AF &amp; CD</p>", "<p>CD, BF &amp; AE</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>AF:</strong> The geopolitical ramifications of climate change, exacerbated by the increasing frequency of extreme weather events, necessitate a reevaluation of national security policies to address the multifaceted nature of the threat.</p>\n<p><strong>BE:</strong> The economist's model, which integrates elements of behavioral economics with traditional macroeconomic theory, offers a novel perspective on consumer behavior and market dynamics.</p>\n<p><strong>CD:</strong> Scientists have for long believed that a network of tunnels exists under the surface of the moon, but it’s for the first time that the evidence has been found for one.</p>"}, {"question": "<p><strong>Read the paragraph carefully and answer the following questions: </strong></p>\n<p>In the crucible of conflict, Ukraine finds itself at a critical juncture, grappling with the harsh reality of war’s relentless toll. As the spectre of Russian aggression looms large, Ukraine’s Parliament has passed a <strong>____(A)____</strong> law aimed at bolstering the depleted ranks of the country’s military. This move comes amidst a backdrop of escalating hostilities, with vital infrastructure such as the Trypilska thermal power plant falling prey to devastating missile strikes. The passage of the mobilisation law underscores the urgent need for reinforcements in the face of an increasingly emboldened adversary. With the Ukrainian military stretched thin, the call for additional troops is not just a strategic imperative but a matter of existential urgency. However, the efficacy of this measure remains uncertain, as logistical challenges and doubts about the adequacy of Western aid persist. At the heart of the debate lies the delicate balance between national defence and societal sacrifice. The prospect of conscription inevitably evokes mixed emotions, as families grapple with the prospect of their loved ones being thrust into harm’s way. Yet, amidst the <strong>____(B)____</strong> and apprehension, there remains a resolute determination to defend Ukraine’s sovereignty at all costs. Indeed, the passage of the mobilisation law is a testament to Ukraine’s unwavering commitment to resist foreign aggression and safeguard its hard-won freedoms. It is a solemn acknowledgment of the sacrifices borne by its men and women in uniform, who have <strong><u>(C) valiantly</u></strong> defended their homeland against overwhelming odds. However, the challenges facing Ukraine extend beyond the battlefield. The recent <strong><u>(D)</u></strong><u> <strong>onslaught</strong></u> on critical infrastructure highlights the nature of Russia’s hybrid warfare tactics, which seek to undermine Ukraine’s resilience and sow discord among its populace. As energy facilities lie in ruins and cities plunge into darkness, the need for international solidarity and support becomes ever more pressing. Yet, amidst the chaos and destruction, there are glimmers of hope. The resilience of the Ukrainian people, undaunted in the face of adversity, serves as a beacon of inspiration to the world. From the front lines to the halls of Parliament, there is a <strong>____(E)____</strong> sense of unity and resolve to confront the challenges ahead. As Ukraine braces itself for the trials yet to come, it does so with a resolve forged in the crucible of conflict. The passage of the mobilisation law may mark the beginning of a new chapter in Ukraine’s struggle, but it is a chapter written with the spirit of a nation determined to defend its sovereignty and uphold its values. In the end, the true measure of Ukraine’s resilience lies not in the passing of laws or the strength of its military, but in the unwavering resolve of its people to stand tall in the face of adversity. And it is this spirit of defiance that will ultimately determine Ukraine’s fate in the <strong>____(F)____</strong> days ahead.</p><br><p><strong>Which of the following words can fit in the blank A?</strong></p>", "options": ["<p>benign</p>", "<p>tranquil</p>", "<p>serene</p>", "<p>contentious</p>", "<p>dubious</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The word that best fits in the blank A is (d) \"contentious\".</p>\n<p><strong>a).</strong> <strong>benign - </strong>This word means harmless or gentle. In the context of the passage, it doesn't fit because it doesn't convey the seriousness or contentious nature of the law being passed. The situation described involves conflict and aggression, so \"benign\" would be an inappropriate choice.</p>\n<p><strong>b).</strong> <strong>tranquil -</strong> Tranquil means calm or peaceful. Again, in the context of the passage which discusses the harsh reality of war, escalating hostilities, and missile strikes on vital infrastructure, \"tranquil\" would be out of place. The situation described is anything but peaceful.</p>\n<p><strong>c).</strong> <strong>serene -</strong> Serene means calm, peaceful, or untroubled. Similar to \"tranquil,\" it doesn't fit the context of the passage which describes a country grappling with the toll of war and facing increasing aggression from Russia. The atmosphere depicted is far from serene.</p>\n<p><strong>d).</strong> <strong>contentious -</strong> Contentious means causing or likely to cause an argument; controversial. This word fits well with the passage, as it describes the situation where Ukraine's Parliament is passing a law in the midst of escalating hostilities and amid doubts and debates about its efficacy and implications. The passage suggests that the decision to pass this law is not without disagreement or controversy.</p>\n<p><strong>e). dubious -</strong> Dubious means hesitating or doubting. While doubts are mentioned in the passage regarding the adequacy of Western aid and the efficacy of the mobilization law, the term \"dubious\" doesn't quite capture the contentious nature of the situation. It's more about uncertainty than about the controversial or disputed nature of the law itself.</p>\n<p>Therefore, \"contentious\" (d) is the most appropriate word to fill in the blank A, as it accurately reflects the controversial and debated nature of the law passed by Ukraine's Parliament.</p>"}, {"question": "<p><strong>Read the paragraph carefully and answer the following questions: </strong></p>\n<p>In the crucible of conflict, Ukraine finds itself at a critical juncture, grappling with the harsh reality of war’s relentless toll. As the spectre of Russian aggression looms large, Ukraine’s Parliament has passed a <strong>____(A)____</strong> law aimed at bolstering the depleted ranks of the country’s military. This move comes amidst a backdrop of escalating hostilities, with vital infrastructure such as the Trypilska thermal power plant falling prey to devastating missile strikes. The passage of the mobilisation law underscores the urgent need for reinforcements in the face of an increasingly emboldened adversary. With the Ukrainian military stretched thin, the call for additional troops is not just a strategic imperative but a matter of existential urgency. However, the efficacy of this measure remains uncertain, as logistical challenges and doubts about the adequacy of Western aid persist. At the heart of the debate lies the delicate balance between national defence and societal sacrifice. The prospect of conscription inevitably evokes mixed emotions, as families grapple with the prospect of their loved ones being thrust into harm’s way. Yet, amidst the <strong>____(B)____</strong> and apprehension, there remains a resolute determination to defend Ukraine’s sovereignty at all costs. Indeed, the passage of the mobilisation law is a testament to Ukraine’s unwavering commitment to resist foreign aggression and safeguard its hard-won freedoms. It is a solemn acknowledgment of the sacrifices borne by its men and women in uniform, who have <strong><u>(C) valiantly</u></strong> defended their homeland against overwhelming odds. However, the challenges facing Ukraine extend beyond the battlefield. The recent <strong><u>(D)</u></strong><u> <strong>onslaught</strong></u> on critical infrastructure highlights the nature of Russia’s hybrid warfare tactics, which seek to undermine Ukraine’s resilience and sow discord among its populace. As energy facilities lie in ruins and cities plunge into darkness, the need for international solidarity and support becomes ever more pressing. Yet, amidst the chaos and destruction, there are glimmers of hope. The resilience of the Ukrainian people, undaunted in the face of adversity, serves as a beacon of inspiration to the world. From the front lines to the halls of Parliament, there is a <strong>____(E)____</strong> sense of unity and resolve to confront the challenges ahead. As Ukraine braces itself for the trials yet to come, it does so with a resolve forged in the crucible of conflict. The passage of the mobilisation law may mark the beginning of a new chapter in Ukraine’s struggle, but it is a chapter written with the spirit of a nation determined to defend its sovereignty and uphold its values. In the end, the true measure of Ukraine’s resilience lies not in the passing of laws or the strength of its military, but in the unwavering resolve of its people to stand tall in the face of adversity. And it is this spirit of defiance that will ultimately determine Ukraine’s fate in the <strong>____(F)____</strong> days ahead.</p><br><p><strong>Which of the following words can fit in the blank B?</strong></p>", "options": ["<p>euphoria</p>", "<p>vivacity</p>", "<p>anguish</p>", "<p>besiege</p>", "<p>attrition</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The word that best fits in the blank A is (c) \"anguish\".</p>\n<p><strong>a). Euphoria:</strong> This word refers to a feeling of intense excitement, happiness, or joy. However, in the context of the passage, which discusses the harsh reality of war, missile strikes on infrastructure, and the urgent need for reinforcements in the military, \"euphoria\" would be an inappropriate choice as it doesn't align with the somber and serious tone of the text.</p>\n<p><strong>b). Vivacity:</strong> Vivacity refers to liveliness and energy. While this word could be used to describe certain emotions or situations, it doesn't accurately capture the sense of mixed emotions, apprehension, and seriousness conveyed in the passage. Therefore, it's not the best fit for the blank.</p>\n<p><strong>c). Anguish:</strong> Anguish refers to extreme suffering, grief, or distress. This word aligns well with the context of the passage, which discusses the emotional turmoil experienced by families as they face the possibility of their loved ones being sent into harm's way. The word \"anguish\" effectively conveys the intense emotions associated with such a situation.</p>\n<p><strong>d). Besiege:</strong> To besiege means to surround and harass, typically with the intent of capturing or forcing someone or something to surrender. While the word \"besiege\" could be relevant in the broader context of the passage, it doesn't directly address the emotions experienced by families or the societal impact of the mobilisation law, which are the focus of the blank.</p>\n<p><strong>e). Attrition:</strong> Attrition refers to the gradual reduction or weakening of something over time, often due to sustained pressure or continuous losses. While attrition could be a relevant concept in discussions of military strategy or the toll of conflict, it doesn't directly address the emotions or societal impact mentioned in the passage. Therefore, it's not the most appropriate choice for the blank.</p>\n<p>In summary, \"anguish\" (c) is the most appropriate word choice for the blank B. It accurately conveys the sense of distress and emotional turmoil experienced by families and individuals as they confront the realities of war and the potential consequences of the mobilization law.</p>"}, {"question": "<p><strong>Read the paragraph carefully and answer the following questions: </strong></p>\n<p>In the crucible of conflict, Ukraine finds itself at a critical juncture, grappling with the harsh reality of war’s relentless toll. As the spectre of Russian aggression looms large, Ukraine’s Parliament has passed a <strong>____(A)____</strong> law aimed at bolstering the depleted ranks of the country’s military. This move comes amidst a backdrop of escalating hostilities, with vital infrastructure such as the Trypilska thermal power plant falling prey to devastating missile strikes. The passage of the mobilisation law underscores the urgent need for reinforcements in the face of an increasingly emboldened adversary. With the Ukrainian military stretched thin, the call for additional troops is not just a strategic imperative but a matter of existential urgency. However, the efficacy of this measure remains uncertain, as logistical challenges and doubts about the adequacy of Western aid persist. At the heart of the debate lies the delicate balance between national defence and societal sacrifice. The prospect of conscription inevitably evokes mixed emotions, as families grapple with the prospect of their loved ones being thrust into harm’s way. Yet, amidst the <strong>____(B)____</strong> and apprehension, there remains a resolute determination to defend Ukraine’s sovereignty at all costs. Indeed, the passage of the mobilisation law is a testament to Ukraine’s unwavering commitment to resist foreign aggression and safeguard its hard-won freedoms. It is a solemn acknowledgment of the sacrifices borne by its men and women in uniform, who have <strong><u>(C) valiantly</u></strong> defended their homeland against overwhelming odds. However, the challenges facing Ukraine extend beyond the battlefield. The recent <strong><u>(D)</u></strong><u> <strong>onslaught</strong></u> on critical infrastructure highlights the nature of Russia’s hybrid warfare tactics, which seek to undermine Ukraine’s resilience and sow discord among its populace. As energy facilities lie in ruins and cities plunge into darkness, the need for international solidarity and support becomes ever more pressing. Yet, amidst the chaos and destruction, there are glimmers of hope. The resilience of the Ukrainian people, undaunted in the face of adversity, serves as a beacon of inspiration to the world. From the front lines to the halls of Parliament, there is a <strong>____(E)____</strong> sense of unity and resolve to confront the challenges ahead. As Ukraine braces itself for the trials yet to come, it does so with a resolve forged in the crucible of conflict. The passage of the mobilisation law may mark the beginning of a new chapter in Ukraine’s struggle, but it is a chapter written with the spirit of a nation determined to defend its sovereignty and uphold its values. In the end, the true measure of Ukraine’s resilience lies not in the passing of laws or the strength of its military, but in the unwavering resolve of its people to stand tall in the face of adversity. And it is this spirit of defiance that will ultimately determine Ukraine’s fate in the <strong>____(F)____</strong> days ahead.</p><br><p>Which of the following words can replace “<strong>valiantly</strong>” used in the sentence?</p>", "options": ["<p>timorously</p>", "<p>cravenly</p>", "<p>recreantly</p>", "<p>valorously</p>", "<p>ambivalently<strong> </strong></p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The word that can replace \"valiantly\" in the sentence is \"d) valorously.\" It fits the context of describing the courageous and brave actions of the Ukrainian military in defending their homeland.</p>\n<p><strong>a). timorously -</strong> This word means timidly or fearfully, which is the opposite of what is being conveyed in the sentence. It suggests hesitation or lack of bravery, which doesn't fit the context.</p>\n<p><strong>b). cravenly -</strong> This word means cowardly or lacking in courage. Similar to \"timorously,\" it conveys the opposite meaning of what is intended in the sentence. It implies a lack of bravery rather than courageous action.</p>\n<p><strong>c). recreantly -</strong> This word means showing cowardice or lacking loyalty. Like \"cravenly,\" it suggests a lack of courage or commitment, which doesn't align with the context of the sentence where the actions of the Ukrainian military are being praised.</p>\n<p><strong>d). valorously -</strong> This word means courageously or bravely. It perfectly fits the context of the sentence, as it describes the heroic actions of the Ukrainian military in defending their homeland against overwhelming odds.</p>\n<p><strong>e). ambivalently -</strong> This word means having mixed feelings or uncertainty. It doesn't fit the context of the sentence, which is praising the courageous actions of the Ukrainian military. Using \"ambivalently\" would imply a lack of clear determination or commitment, which contradicts the tone of the sentence.</p>"}, {"question": "<p><strong>Read the paragraph carefully and answer the following questions: </strong></p>\n<p>In the crucible of conflict, Ukraine finds itself at a critical juncture, grappling with the harsh reality of war’s relentless toll. As the spectre of Russian aggression looms large, Ukraine’s Parliament has passed a <strong>____(A)____</strong> law aimed at bolstering the depleted ranks of the country’s military. This move comes amidst a backdrop of escalating hostilities, with vital infrastructure such as the Trypilska thermal power plant falling prey to devastating missile strikes. The passage of the mobilisation law underscores the urgent need for reinforcements in the face of an increasingly emboldened adversary. With the Ukrainian military stretched thin, the call for additional troops is not just a strategic imperative but a matter of existential urgency. However, the efficacy of this measure remains uncertain, as logistical challenges and doubts about the adequacy of Western aid persist. At the heart of the debate lies the delicate balance between national defence and societal sacrifice. The prospect of conscription inevitably evokes mixed emotions, as families grapple with the prospect of their loved ones being thrust into harm’s way. Yet, amidst the <strong>____(B)____</strong> and apprehension, there remains a resolute determination to defend Ukraine’s sovereignty at all costs. Indeed, the passage of the mobilisation law is a testament to Ukraine’s unwavering commitment to resist foreign aggression and safeguard its hard-won freedoms. It is a solemn acknowledgment of the sacrifices borne by its men and women in uniform, who have <strong><u>(C) valiantly</u></strong> defended their homeland against overwhelming odds. However, the challenges facing Ukraine extend beyond the battlefield. The recent <strong><u>(D)</u></strong><u> <strong>onslaught</strong></u> on critical infrastructure highlights the nature of Russia’s hybrid warfare tactics, which seek to undermine Ukraine’s resilience and sow discord among its populace. As energy facilities lie in ruins and cities plunge into darkness, the need for international solidarity and support becomes ever more pressing. Yet, amidst the chaos and destruction, there are glimmers of hope. The resilience of the Ukrainian people, undaunted in the face of adversity, serves as a beacon of inspiration to the world. From the front lines to the halls of Parliament, there is a <strong>____(E)____</strong> sense of unity and resolve to confront the challenges ahead. As Ukraine braces itself for the trials yet to come, it does so with a resolve forged in the crucible of conflict. The passage of the mobilisation law may mark the beginning of a new chapter in Ukraine’s struggle, but it is a chapter written with the spirit of a nation determined to defend its sovereignty and uphold its values. In the end, the true measure of Ukraine’s resilience lies not in the passing of laws or the strength of its military, but in the unwavering resolve of its people to stand tall in the face of adversity. And it is this spirit of defiance that will ultimately determine Ukraine’s fate in the <strong>____(F)____</strong> days ahead.</p><br><p>What is the appropriate synonym for the term \"<strong>onslaught</strong>\" as used in the passage?</p>", "options": ["<p>foray</p>", "<p>incursion</p>", "<p>ambush</p>", "<p>plunder</p>", "<p>assault</p>"], "correctIndex": 4, "solution": "<p><strong>Answer</strong><strong>: E</strong></p>\n<p>The synonym for \"onslaught\" as used in the passage is \"assault\" (e).</p>\n<p><strong>a). Foray:</strong> While a foray can imply a sudden attack or raid, it doesn't quite capture the sense of a sustained and intense attack, which is more in line with the meaning of \"onslaught\" in this context.</p>\n<p><strong>b). Incursion:</strong> This term refers to a sudden invasion or attack into territory, which is somewhat similar to \"onslaught\" but lacks the connotation of a relentless or overwhelming assault.</p>\n<p><strong>c). Ambush:</strong> An ambush involves a surprise attack from a concealed position, typically targeting a specific group or individual, rather than the widespread and continuous nature of an \"onslaught.\"</p>\n<p><strong>d). Plunder:</strong> Plunder refers to the act of stealing goods or valuables, usually during or after a conflict, but it doesn't specifically denote the act of an aggressive attack or assault.</p>\n<p><strong>e). Assault:</strong> This is the correct synonym for \"onslaught\" in this context. An assault involves a violent attack or barrage of attacks, often with the intention of causing harm or destruction, which aligns well with the description of the attack on critical infrastructure in the passage.</p>\n<p>Therefore, \"assault\" best captures the meaning conveyed by \"onslaught\" in this context.</p>"}, {"question": "<p><strong>Read the paragraph carefully and answer the following questions: </strong></p>\n<p>In the crucible of conflict, Ukraine finds itself at a critical juncture, grappling with the harsh reality of war’s relentless toll. As the spectre of Russian aggression looms large, Ukraine’s Parliament has passed a <strong>____(A)____</strong> law aimed at bolstering the depleted ranks of the country’s military. This move comes amidst a backdrop of escalating hostilities, with vital infrastructure such as the Trypilska thermal power plant falling prey to devastating missile strikes. The passage of the mobilisation law underscores the urgent need for reinforcements in the face of an increasingly emboldened adversary. With the Ukrainian military stretched thin, the call for additional troops is not just a strategic imperative but a matter of existential urgency. However, the efficacy of this measure remains uncertain, as logistical challenges and doubts about the adequacy of Western aid persist. At the heart of the debate lies the delicate balance between national defence and societal sacrifice. The prospect of conscription inevitably evokes mixed emotions, as families grapple with the prospect of their loved ones being thrust into harm’s way. Yet, amidst the <strong>____(B)____</strong> and apprehension, there remains a resolute determination to defend Ukraine’s sovereignty at all costs. Indeed, the passage of the mobilisation law is a testament to Ukraine’s unwavering commitment to resist foreign aggression and safeguard its hard-won freedoms. It is a solemn acknowledgment of the sacrifices borne by its men and women in uniform, who have <strong><u>(C) valiantly</u></strong> defended their homeland against overwhelming odds. However, the challenges facing Ukraine extend beyond the battlefield. The recent <strong><u>(D)</u></strong><u> <strong>onslaught</strong></u> on critical infrastructure highlights the nature of Russia’s hybrid warfare tactics, which seek to undermine Ukraine’s resilience and sow discord among its populace. As energy facilities lie in ruins and cities plunge into darkness, the need for international solidarity and support becomes ever more pressing. Yet, amidst the chaos and destruction, there are glimmers of hope. The resilience of the Ukrainian people, undaunted in the face of adversity, serves as a beacon of inspiration to the world. From the front lines to the halls of Parliament, there is a <strong>____(E)____</strong> sense of unity and resolve to confront the challenges ahead. As Ukraine braces itself for the trials yet to come, it does so with a resolve forged in the crucible of conflict. The passage of the mobilisation law may mark the beginning of a new chapter in Ukraine’s struggle, but it is a chapter written with the spirit of a nation determined to defend its sovereignty and uphold its values. In the end, the true measure of Ukraine’s resilience lies not in the passing of laws or the strength of its military, but in the unwavering resolve of its people to stand tall in the face of adversity. And it is this spirit of defiance that will ultimately determine Ukraine’s fate in the <strong>____(F)____</strong> days ahead.</p><br><p><strong>Which of the following words cannot fit in the blank E?</strong></p>", "options": ["<p>certain</p>", "<p>obscure</p>", "<p>palpable</p>", "<p>prominent</p>", "<p>conspicuous<strong> </strong></p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The word that cannot fit in the blank labelled (E) is: b) obscure</p>\n<p>The word that cannot fit in the blank E is \"obscure.\" All the other options - \"certain,\" \"palpable,\" \"prominent,\" and \"conspicuous\" - convey a sense of visibility, clarity, or prominence, which aligns with the context of the sentence. \"Obscure\" means unclear or hidden, which doesn't fit the tone or meaning of the sentence.</p>\n<p><strong>a). \"Certain\" -</strong> This word implies a definite or unmistakable sense of unity and resolve among the Ukrainian people, which fits well with the context of the sentence.</p>\n<p><strong>b). \"Obscure\" -</strong> This word means unclear or hidden, which doesn't align with the context of the sentence. The sentence is describing a sense of unity and resolve that is visible and evident, not hidden or unclear.</p>\n<p><strong>c). \"Palpable\" -</strong> \"Palpable\" means able to be touched or felt, often used metaphorically to describe something that is easily perceived or understood. In this context, it suggests that the sense of unity and resolve among the Ukrainian people is tangible and strongly felt, making it an appropriate choice.</p>\n<p><strong>d). \"Prominent\" -</strong> \"Prominent\" means standing out or easily noticeable, which fits well with the idea that there is a visible and significant sense of unity and resolve among the Ukrainian people.</p>\n<p><strong>e). \"Conspicuous\" -</strong> Similar to \"prominent,\" \"conspicuous\" means attracting attention or standing out, which makes it a suitable choice for describing the sense of unity and resolve among the Ukrainian people in the sentence.</p>\n<p>Therefore, \"b) obscure \" is the word that cannot fit in the blank (E).</p>"}, {"question": "<p><strong>Read the paragraph carefully and answer the following questions: </strong></p>\n<p>In the crucible of conflict, Ukraine finds itself at a critical juncture, grappling with the harsh reality of war’s relentless toll. As the spectre of Russian aggression looms large, Ukraine’s Parliament has passed a <strong>____(A)____</strong> law aimed at bolstering the depleted ranks of the country’s military. This move comes amidst a backdrop of escalating hostilities, with vital infrastructure such as the Trypilska thermal power plant falling prey to devastating missile strikes. The passage of the mobilisation law underscores the urgent need for reinforcements in the face of an increasingly emboldened adversary. With the Ukrainian military stretched thin, the call for additional troops is not just a strategic imperative but a matter of existential urgency. However, the efficacy of this measure remains uncertain, as logistical challenges and doubts about the adequacy of Western aid persist. At the heart of the debate lies the delicate balance between national defence and societal sacrifice. The prospect of conscription inevitably evokes mixed emotions, as families grapple with the prospect of their loved ones being thrust into harm’s way. Yet, amidst the <strong>____(B)____</strong> and apprehension, there remains a resolute determination to defend Ukraine’s sovereignty at all costs. Indeed, the passage of the mobilisation law is a testament to Ukraine’s unwavering commitment to resist foreign aggression and safeguard its hard-won freedoms. It is a solemn acknowledgment of the sacrifices borne by its men and women in uniform, who have <strong><u>(C) valiantly</u></strong> defended their homeland against overwhelming odds. However, the challenges facing Ukraine extend beyond the battlefield. The recent <strong><u>(D)</u></strong><u> <strong>onslaught</strong></u> on critical infrastructure highlights the nature of Russia’s hybrid warfare tactics, which seek to undermine Ukraine’s resilience and sow discord among its populace. As energy facilities lie in ruins and cities plunge into darkness, the need for international solidarity and support becomes ever more pressing. Yet, amidst the chaos and destruction, there are glimmers of hope. The resilience of the Ukrainian people, undaunted in the face of adversity, serves as a beacon of inspiration to the world. From the front lines to the halls of Parliament, there is a <strong>____(E)____</strong> sense of unity and resolve to confront the challenges ahead. As Ukraine braces itself for the trials yet to come, it does so with a resolve forged in the crucible of conflict. The passage of the mobilisation law may mark the beginning of a new chapter in Ukraine’s struggle, but it is a chapter written with the spirit of a nation determined to defend its sovereignty and uphold its values. In the end, the true measure of Ukraine’s resilience lies not in the passing of laws or the strength of its military, but in the unwavering resolve of its people to stand tall in the face of adversity. And it is this spirit of defiance that will ultimately determine Ukraine’s fate in the <strong>____(F)____</strong> days ahead.</p><br><p><strong>Which of the following words cannot fit in the blank F?</strong></p>", "options": ["<p>tranquil</p>", "<p>furious</p>", "<p>turbulent</p>", "<p>raucous</p>", "<p>tumultuous<strong> </strong></p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The word that cannot fit in the blank (F) is: a) tranquil</p>\n<p>The word \"tranquil\" cannot fit in the blank F. The passage describes a situation of conflict, turmoil, and adversity, so a word suggesting calmness or peace like \"tranquil\" would be out of place. Therefore, the correct answer is a) tranquil.</p>\n<p><strong>a). tranquil -</strong> This word means calm, peaceful, or free from disturbance. Given the description of Ukraine grappling with war, conflict, and devastation, the idea of tranquillity doesn't align with the situation presented in the passage.</p>\n<p><strong>b). furious -</strong> This word means extremely angry or full of intense emotion. Given the context of escalating hostilities, missile strikes on infrastructure, and the urgent need for reinforcements in the face of aggression, the idea of fury fits well with the description of the situation.</p>\n<p><strong>c). turbulent -</strong> This word means characterized by conflict, disorder, or agitation. It perfectly encapsulates the atmosphere described in the passage, with Ukraine facing challenges of war, destruction of infrastructure, and the need for societal sacrifice amidst escalating hostilities.</p>\n<p><strong>d). raucous -</strong> This word means harsh-sounding, disorderly, or loud. While it doesn't directly describe the situation in Ukraine, it could be interpreted as fitting due to the chaos and destruction caused by warfare and the urgency conveyed in the passage.</p>\n<p><strong>e). tumultuous -</strong> This word means characterized by confusion, disorder, or upheaval. It aptly describes the state of affairs in Ukraine as depicted in the passage, with escalating conflict, devastation of infrastructure, and the urgent need for reinforcements.</p>\n<p>In summary, all options except \"tranquil\" are suitable to describe the tumultuous and challenging situation faced by Ukraine, with options b), c), d), and e) directly aligning with the context provided.</p>\n<p>Therefore, \"a) tranquil\" is the word that cannot fit in the blank (F).</p>"}, {"question": "<p><strong>Select the most appropriate words that are both grammatically and contextually correct to replace the words given in bold</strong></p><br><p>The board of directors decided to <strong><u>postpone</u></strong> the company’s strategy in order to <strong><u>punch</u></strong> the challenges posed by new competitors in the market.</p>", "options": ["<p>reinforce, ignore</p>", "<p>modify, address</p>", "<p>abolish, avoid</p>", "<p>delay, acknowledge</p>", "<p>No replacement required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The board of directors decided to \"modify\" the company’s strategy in order to \"address\" the challenges posed by new competitors in the market. \"Modify\" means to make changes, and \"address\" means to deal with or confront a challenge.</p>"}, {"question": "<p><strong>Select the most appropriate words that are both grammatically and contextually correct to replace the words given in bold</strong></p><br><p>In an attempt to <strong><u>accept</u></strong> the negative impact of pollution, the city implemented a policy aimed at <strong><u>modifying</u></strong> the use of private vehicles.</p>", "options": ["<p>amplify, encouraging</p>", "<p>mitigate, reducing</p>", "<p>worsen, prohibiting</p>", "<p>ignore, increasing</p>", "<p>No replacement required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>In an attempt to \"mitigate\" the negative impact of pollution, the city implemented a policy aimed at \"reducing\" the use of private vehicles. \"Mitigate\" means to lessen the severity of something, and \"reducing\" is the appropriate action to lessen vehicle use and, thus, pollution.</p>"}, {"question": "<p><strong>Select the most appropriate words that are both grammatically and contextually correct to replace the words given in bold</strong></p><br><p>The professor’s lecture sought to <strong><u>generate</u> </strong>complex concepts and <strong><u>debar</u></strong> students to think critically about current scientific challenges.</p>", "options": ["<p>simplify, encourage</p>", "<p>complicate, dismiss</p>", "<p>obscure, prevent</p>", "<p>negate, discourage</p>", "<p>No replacement required</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The professor’s lecture sought to \"simplify\" complex concepts and \"encourage\" students to think critically about current scientific challenges. \"Simplify\" means to make something easier to understand, and \"encourage\" refers to motivating or prompting students to think critically.</p>"}, {"question": "<p><strong>Select the most appropriate words that are both grammatically and contextually correct to replace the words given in bold</strong></p><br><p>The company was forced to <strong><u>generate</u> </strong>its expansion plans after its financial projections were <strong><u>collapsed</u></strong> by unexpected market fluctuations.</p>", "options": ["<p>accelerate, confirmed</p>", "<p>expedite, enhanced</p>", "<p>pursue, verified</p>", "<p>suspend, undermined</p>", "<p>No replacement required</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The company was forced to \"suspend\" its expansion plans after its financial projections were \"undermined\" by unexpected market fluctuations. \"Suspend\" means to temporarily stop or put on hold, and \"undermined\" refers to weakening or damaging the financial projections.</p>"}, {"question": "<p><strong>Select the most appropriate words that are both grammatically and contextually correct to replace the words given in bold</strong></p><br><p>To <strong><u>restore</u> </strong>trust among its users, the social media platform introduced stricter privacy policies that aim to <strong><u>prevent</u></strong> data breaches.</p>", "options": ["<p>erode, promote</p>", "<p>stubble, incumbent</p>", "<p>undermine, encourage</p>", "<p>exploit, attract</p>", "<p>No replacement required</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>To \"restore\" trust among its users, the social media platform introduced stricter privacy policies that aim to \"prevent\" data breaches. \"Restore\" means to bring back or rebuild, and \"prevent\" means to stop something from happening, in this case, data breaches.</p>"}, {"question": "<p><strong>The passage given below has some information based on which certain questions have been formulated. Certain words and phrases have also been highlighted in order for you to locate them while answering some of the questions. </strong></p>\n<p>It started with a backlash against globalisation that took two forms: economic and cultural. The economic backlash was straightforward. The poor and the unemployed in the developed world began to feel that they had no stake in the globalised system, and demanded to know why their governments’ policies benefited people in faraway lands such as China and India with what used to be their jobs. They wanted to reduce the growing inequality in every “developed” economy and go back to the security of older, more familiar economic ways, in which each generation assumed they would earn more and live better than their parents did.</p>\n<p>The cultural backlash derived from the same resentment but expressed itself in a different arena: the political <strong><em>denunciation</em></strong> of global trade led to hostility towards foreigners, as more and more people sought the comforts of traditional identity and ways of life. Animated often by bitter working-class and lower-middle class resentment of global elites, the “masses” rejected the entire brew of liberal politics, cosmopolitans and technocrats, trade agreements, immigration, multiculturalism and secularism in the name of cultural rootedness, religious or ethnic identity and nationalist authenticity.</p>\n<p>The phenomenon of “deglobalisation” has its regional implications too. Europe, once seen as a “poster child” for the virtues of regional integration, became the epitome of its limitations, since the “idea of Europe” crumbled quickly under the onslaught of the pandemic. It is clear that the sheer complexity and immeasurability of our interdependence requires more global governance, not less. Turning our backs on multilateral institutions at the first sign of weakness is unfortunate. The only hope for the future lies in international solidarity. <strong><em>When the current pandemic is over, the globe learns lessons about what happened, and how international systems and institutions can be strengthened and radically reformed in order to forestall its recurrence. </em></strong>The same can be said about the ongoing war and sanctions.</p><br><p><strong>The phrase <em><u>‘hostility towards foreigners’</u></em> is most likely the meaning of which of the following options given below? </strong></p>", "options": ["<p>Racism</p>", "<p>Xenocentrism</p>", "<p>Neologism</p>", "<p>Ethnocentrism</p>", "<p>Clautrophobic</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The line in which the given phrase has been used defines the way in which certain places reject the idea of doing business with the outsiders. It is the sheer dislike that they carry towards global relations in business which has been termed as a cultural backlash as per the passage. From the given options; the word <strong>‘ethnocentrism’</strong> will be the best to explain the above ideology as it can be understood as a cultural bias that one’s own beliefs and set of rules are ideal and correct and no other culture should be considered better.</p>\n<p>The other words can be understood as below:</p>\n<p><strong><em>Racism </em></strong>is differential treatment for someone who is not among one of us.</p>\n<p><strong><em>Xenocentrism </em></strong>is the ideology that the other (foreign) culture is superior and not ours</p>\n<p><strong><em>Neologism </em></strong>means finding new words</p>\n<p><strong><em>Clautrophobic </em></strong>refers to the fear of closed spaces, feeling suffocated due to closed spaces.</p>\n<p><strong>The best answer hence, can be marked as option (d).<br/></strong></p>"}, {"question": "<p><strong>The passage given below has some information based on which certain questions have been formulated. Certain words and phrases have also been highlighted in order for you to locate them while answering some of the questions. </strong></p>\n<p>It started with a backlash against globalisation that took two forms: economic and cultural. The economic backlash was straightforward. The poor and the unemployed in the developed world began to feel that they had no stake in the globalised system, and demanded to know why their governments’ policies benefited people in faraway lands such as China and India with what used to be their jobs. They wanted to reduce the growing inequality in every “developed” economy and go back to the security of older, more familiar economic ways, in which each generation assumed they would earn more and live better than their parents did.</p>\n<p>The cultural backlash derived from the same resentment but expressed itself in a different arena: the political <strong><em>denunciation</em></strong> of global trade led to hostility towards foreigners, as more and more people sought the comforts of traditional identity and ways of life. Animated often by bitter working-class and lower-middle class resentment of global elites, the “masses” rejected the entire brew of liberal politics, cosmopolitans and technocrats, trade agreements, immigration, multiculturalism and secularism in the name of cultural rootedness, religious or ethnic identity and nationalist authenticity.</p>\n<p>The phenomenon of “deglobalisation” has its regional implications too. Europe, once seen as a “poster child” for the virtues of regional integration, became the epitome of its limitations, since the “idea of Europe” crumbled quickly under the onslaught of the pandemic. It is clear that the sheer complexity and immeasurability of our interdependence requires more global governance, not less. Turning our backs on multilateral institutions at the first sign of weakness is unfortunate. The only hope for the future lies in international solidarity. <strong><em>When the current pandemic is over, the globe learns lessons about what happened, and how international systems and institutions can be strengthened and radically reformed in order to forestall its recurrence. </em></strong>The same can be said about the ongoing war and sanctions.</p><br><p><strong>With which of the following will the author most likely agree with?</strong></p>", "options": ["<p>The idea of multilateralism has been a virtue since long but today we can&rsquo;t be quite sure of its prospects.</p>", "<p>The idea of our common humanity ought to be strengthened &mdash; and not destroyed as the &lsquo;virus and the war&rsquo; have done</p>", "<p>The world is a stage and every culture should get an equal opportunity for growth all by itself without any foreign dependency</p>", "<p>The poor should not have any say in the policy making and strategic realms as those who do not understand are not directly affected as well</p>", "<p>None of the above</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The author has stressed on ‘global solidarity’ or ‘international solidarity’ which means that the world has to understand that it needs to come together and grow rather than cutting each other out. The author has shown disregard by mentioning that it would be a sign of weakness if we turn our backs (reject the idea of) multilateralism (the participation of three or more parties in any act)</p>\n<p>This shows that the author would certainly agree with something of the sort.</p>\n<p>Option (a) creates a doubt on the author’s ideology so this can be eliminated. Option (c) is also opposite as it talks about <strong>not </strong>being dependent. (d) makes no sense as this nowhere resonates with the author’s perception.</p>\n<p>Therefore, the best would be to mark option (b) as the answer.</p>"}, {"question": "<p><strong>The passage given below has some information based on which certain questions have been formulated. Certain words and phrases have also been highlighted in order for you to locate them while answering some of the questions. </strong></p>\n<p>It started with a backlash against globalisation that took two forms: economic and cultural. The economic backlash was straightforward. The poor and the unemployed in the developed world began to feel that they had no stake in the globalised system, and demanded to know why their governments’ policies benefited people in faraway lands such as China and India with what used to be their jobs. They wanted to reduce the growing inequality in every “developed” economy and go back to the security of older, more familiar economic ways, in which each generation assumed they would earn more and live better than their parents did.</p>\n<p>The cultural backlash derived from the same resentment but expressed itself in a different arena: the political <strong><em>denunciation</em></strong> of global trade led to hostility towards foreigners, as more and more people sought the comforts of traditional identity and ways of life. Animated often by bitter working-class and lower-middle class resentment of global elites, the “masses” rejected the entire brew of liberal politics, cosmopolitans and technocrats, trade agreements, immigration, multiculturalism and secularism in the name of cultural rootedness, religious or ethnic identity and nationalist authenticity.</p>\n<p>The phenomenon of “deglobalisation” has its regional implications too. Europe, once seen as a “poster child” for the virtues of regional integration, became the epitome of its limitations, since the “idea of Europe” crumbled quickly under the onslaught of the pandemic. It is clear that the sheer complexity and immeasurability of our interdependence requires more global governance, not less. Turning our backs on multilateral institutions at the first sign of weakness is unfortunate. The only hope for the future lies in international solidarity. <strong><em>When the current pandemic is over, the globe learns lessons about what happened, and how international systems and institutions can be strengthened and radically reformed in order to forestall its recurrence. </em></strong>The same can be said about the ongoing war and sanctions.</p><br><p><strong>Which of the given titles would suit the given passage to the best?</strong></p>", "options": ["<p>It&rsquo;s time to unlearn and relearn</p>", "<p>The dynamics of multilateralism and polity</p>", "<p>The world must live and work together again</p>", "<p>Interdependence can help save the economy</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The first option is too general as it doesn’t give any clue about what is supposed to be unlearnt and viz-a-viz what. A title is supposed to give a blueprint or a hint for the read who wishes to understand what he/she is going to get after reading the content. So, this option can be eliminated. The second option if taken, would have been correct, had the passage given more details about multilateralism as a topic which is not the case. Economy is not the only prerogative for the author which helps us cancel the fourth option as well.</p>\n<p>The correct idea of the paragraph is being reflected through the third option as when we read the passage, we can find a similarity between the option and the explanation of the author.</p>\n<p>So, the best answer would be option (c).</p>"}, {"question": "<p><strong>The passage given below has some information based on which certain questions have been formulated. Certain words and phrases have also been highlighted in order for you to locate them while answering some of the questions. </strong></p>\n<p>It started with a backlash against globalisation that took two forms: economic and cultural. The economic backlash was straightforward. The poor and the unemployed in the developed world began to feel that they had no stake in the globalised system, and demanded to know why their governments’ policies benefited people in faraway lands such as China and India with what used to be their jobs. They wanted to reduce the growing inequality in every “developed” economy and go back to the security of older, more familiar economic ways, in which each generation assumed they would earn more and live better than their parents did.</p>\n<p>The cultural backlash derived from the same resentment but expressed itself in a different arena: the political <strong><em>denunciation</em></strong> of global trade led to hostility towards foreigners, as more and more people sought the comforts of traditional identity and ways of life. Animated often by bitter working-class and lower-middle class resentment of global elites, the “masses” rejected the entire brew of liberal politics, cosmopolitans and technocrats, trade agreements, immigration, multiculturalism and secularism in the name of cultural rootedness, religious or ethnic identity and nationalist authenticity.</p>\n<p>The phenomenon of “deglobalisation” has its regional implications too. Europe, once seen as a “poster child” for the virtues of regional integration, became the epitome of its limitations, since the “idea of Europe” crumbled quickly under the onslaught of the pandemic. It is clear that the sheer complexity and immeasurability of our interdependence requires more global governance, not less. Turning our backs on multilateral institutions at the first sign of weakness is unfortunate. The only hope for the future lies in international solidarity. <strong><em>When the current pandemic is over, the globe learns lessons about what happened, and how international systems and institutions can be strengthened and radically reformed in order to forestall its recurrence. </em></strong>The same can be said about the ongoing war and sanctions.</p><br><p><strong>Which of the following cannot be inferred from the passage?</strong></p>", "options": ["<p>The countries of Europe have always set an example before the world when it comes to economic inclusion</p>", "<p>The world should take its lessons as the pandemic gets over and try to prevent something like this in the coming future</p>", "<p>The poor and the unemployed in the developed countries felt discriminated due to the non-availability of jobs for them</p>", "<p>The pandemic, the war and the sanctions have done everything possible to disturb the solidarity between the countries of the world</p>", "<p>All of the above</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The first option might be true but it doesn’t hold good in the given context because the author has pointed out in the third paragraph very clearly that even Europe that has always carried an image of prioritising regional integration turned its back to multilateralism under the onslaught of the pandemic. So, as per the passage, the image that Europe carried has now been shattered.</p>\n<p>The author has said that an event of this sort should be forestalled in the future and lessons for the same should be learnt now which makes the second option a correct inference. The third option can be upheld from the first paragraph because, it describes how they feel like outsiders in their own country due to their jobs being enjoyed by the Indians and the Chinese. The last line pretty much supports the fourth option as well.</p>\n<p>So, the one that cannot be inferred is option (a).</p>"}, {"question": "<p><strong>The passage given below has some information based on which certain questions have been formulated. Certain words and phrases have also been highlighted in order for you to locate them while answering some of the questions. </strong></p>\n<p>It started with a backlash against globalisation that took two forms: economic and cultural. The economic backlash was straightforward. The poor and the unemployed in the developed world began to feel that they had no stake in the globalised system, and demanded to know why their governments’ policies benefited people in faraway lands such as China and India with what used to be their jobs. They wanted to reduce the growing inequality in every “developed” economy and go back to the security of older, more familiar economic ways, in which each generation assumed they would earn more and live better than their parents did.</p>\n<p>The cultural backlash derived from the same resentment but expressed itself in a different arena: the political <strong><em>denunciation</em></strong> of global trade led to hostility towards foreigners, as more and more people sought the comforts of traditional identity and ways of life. Animated often by bitter working-class and lower-middle class resentment of global elites, the “masses” rejected the entire brew of liberal politics, cosmopolitans and technocrats, trade agreements, immigration, multiculturalism and secularism in the name of cultural rootedness, religious or ethnic identity and nationalist authenticity.</p>\n<p>The phenomenon of “deglobalisation” has its regional implications too. Europe, once seen as a “poster child” for the virtues of regional integration, became the epitome of its limitations, since the “idea of Europe” crumbled quickly under the onslaught of the pandemic. It is clear that the sheer complexity and immeasurability of our interdependence requires more global governance, not less. Turning our backs on multilateral institutions at the first sign of weakness is unfortunate. The only hope for the future lies in international solidarity. <strong><em>When the current pandemic is over, the globe learns lessons about what happened, and how international systems and institutions can be strengthened and radically reformed in order to forestall its recurrence. </em></strong>The same can be said about the ongoing war and sanctions.</p><br><p><strong>Which of the given options would fill the word <em>‘denunciation’</em> used above correctly?</strong></p>", "options": ["<p>The talks were dependent on a <strong>___________</strong> of terrorism.</p>", "<p>All children will tend to suffer from <strong>___________</strong> from their parents and siblings</p>", "<p>He has never had any<strong> __________</strong> to earn a lot of money.</p>", "<p>When the teacher made a <strong>___________</strong> of the school superintendent, she was quickly fired.</p>", "<p>The school was made famous by its <strong>__________</strong> with Charles Dickens.</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D<br/></strong></p>\n<p>The word ‘denunciation’ means public condemnation or criticism of someone or something. This word can correctly fit the fourth sentence as; it describes a situation in which a teacher having criticised a school superintendent lost the job.</p>\n<p>The other words that would fit the remaining sentences would be;</p>\n<p><strong><em>Renunciation</em></strong> for the first sentence; which means the formal rejection of something. The sentence would then mean that the talks will begin only when terrorism will be formally rejected by the party involved.</p>\n<p><strong><em>Separation</em></strong>would make sense in the second blank whereas <strong><em>Aspiration </em></strong>would fill the third sentence appropriately. The word <strong><em>Association </em></strong>will fit the best in the last sentence.</p>\n<p>Therefore, the correct answer is given in option (d)<strong><br/></strong></p>"}, {"question": "<p><strong>The passage given below has some information based on which certain questions have been formulated. Certain words and phrases have also been highlighted in order for you to locate them while answering some of the questions. </strong></p>\n<p>It started with a backlash against globalisation that took two forms: economic and cultural. The economic backlash was straightforward. The poor and the unemployed in the developed world began to feel that they had no stake in the globalised system, and demanded to know why their governments’ policies benefited people in faraway lands such as China and India with what used to be their jobs. They wanted to reduce the growing inequality in every “developed” economy and go back to the security of older, more familiar economic ways, in which each generation assumed they would earn more and live better than their parents did.</p>\n<p>The cultural backlash derived from the same resentment but expressed itself in a different arena: the political <strong><em>denunciation</em></strong> of global trade led to hostility towards foreigners, as more and more people sought the comforts of traditional identity and ways of life. Animated often by bitter working-class and lower-middle class resentment of global elites, the “masses” rejected the entire brew of liberal politics, cosmopolitans and technocrats, trade agreements, immigration, multiculturalism and secularism in the name of cultural rootedness, religious or ethnic identity and nationalist authenticity.</p>\n<p>The phenomenon of “deglobalisation” has its regional implications too. Europe, once seen as a “poster child” for the virtues of regional integration, became the epitome of its limitations, since the “idea of Europe” crumbled quickly under the onslaught of the pandemic. It is clear that the sheer complexity and immeasurability of our interdependence requires more global governance, not less. Turning our backs on multilateral institutions at the first sign of weakness is unfortunate. The only hope for the future lies in international solidarity. <strong><em>When the current pandemic is over, the globe learns lessons about what happened, and how international systems and institutions can be strengthened and radically reformed in order to forestall its recurrence. </em></strong>The same can be said about the ongoing war and sanctions.</p><br><p><strong>The author is most likely to be a… </strong></p>", "options": ["<p>Politician</p>", "<p>Editor of a newspaper</p>", "<p>An ex-Diplomat</p>", "<p>Media person</p>", "<p>Advisor</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The best of the given options would be an ex-diplomat because the author seems to be quite clear and sure about the way in which the countries have worked in tandem with each other in the past and that’s the reason the present world order that has been disturbed due to various factors has become an area of concern for him/her.</p>\n<p>Politicians use a slightly different tone while expressing themselves and are generally not so neutral so this can be eliminated.</p>\n<p>An editor and a media person are two confusing similar options so, both would be cancelled. Advisor is a very general role and can relate to any field so, this can be eliminated as well.</p>\n<p>Thus, the correct answer would be option (c).</p>"}, {"question": "<p><strong>The passage given below has some information based on which certain questions have been formulated. Certain words and phrases have also been highlighted in order for you to locate them while answering some of the questions. </strong></p>\n<p>It started with a backlash against globalisation that took two forms: economic and cultural. The economic backlash was straightforward. The poor and the unemployed in the developed world began to feel that they had no stake in the globalised system, and demanded to know why their governments’ policies benefited people in faraway lands such as China and India with what used to be their jobs. They wanted to reduce the growing inequality in every “developed” economy and go back to the security of older, more familiar economic ways, in which each generation assumed they would earn more and live better than their parents did.</p>\n<p>The cultural backlash derived from the same resentment but expressed itself in a different arena: the political <strong><em>denunciation</em></strong> of global trade led to hostility towards foreigners, as more and more people sought the comforts of traditional identity and ways of life. Animated often by bitter working-class and lower-middle class resentment of global elites, the “masses” rejected the entire brew of liberal politics, cosmopolitans and technocrats, trade agreements, immigration, multiculturalism and secularism in the name of cultural rootedness, religious or ethnic identity and nationalist authenticity.</p>\n<p>The phenomenon of “deglobalisation” has its regional implications too. Europe, once seen as a “poster child” for the virtues of regional integration, became the epitome of its limitations, since the “idea of Europe” crumbled quickly under the onslaught of the pandemic. It is clear that the sheer complexity and immeasurability of our interdependence requires more global governance, not less. Turning our backs on multilateral institutions at the first sign of weakness is unfortunate. The only hope for the future lies in international solidarity. <strong><em>When the current pandemic is over, the globe learns lessons about what happened, and how international systems and institutions can be strengthened and radically reformed in order to forestall its recurrence. </em></strong>The same can be said about the ongoing war and sanctions.</p><br><p><strong>Choose the part of the highlighted sentence below which has an error in it</strong></p>", "options": ["<p>When the current pandemic is over, the</p>", "<p>globe learns lessons about what happened,</p>", "<p>and how international systems and institutions</p>", "<p>can be strengthened and radically reformed</p>", "<p>in order to forestall its recurrence.</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The given sentence carries a concerned tone as to making the people aware about their responsibilities once the pandemic is over so that if anything happens in the future, it can be faced or prevented even before it happens.</p>\n<p>The word ‘must’ should be used before ‘learn’ (without an ‘s’) as the author says that the world should learn the lessons.</p>\n<p>The second part should be ‘globe must learn lessons about what happened’ in order for the sentence to be grammatically correct.</p>\n<p>Thus, option (b) is the correct answer.</p>\n<p> </p>"}, {"question": "<p><strong>A sentence with four parts is given in each question. You have to find the part/s that has/have any grammatical error. If the sentence is correct, mark ‘no error” as your answer.</strong></p><br><p>The way forward is to shore up port-led industrialisation,<strong>(A)/</strong> by way of clusters around smart port cities, so as to reduce logistics costs, <strong>(B)/</strong> slash movement time for cargo and<strong>(C)/</strong> generally boosts the economies of scale and scope.<strong>(D)/</strong></p>", "options": ["<p>A and C</p>", "<p>B and D</p>", "<p>Only D</p>", "<p>B and C</p>", "<p>No error</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>In part B, “logistics” should be replaced with “logistical” as we need an adjective before the noun “costs”.</p>\n<p>In part D, “boosts” should be replaced with “boost” as we need the base form of verb (V1) after “to”; in part B we have “to”.</p>\n<p>Other parts are correct.                            </p>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>A sentence with four parts is given in each question. You have to find the part/s that has/have any grammatical error. If the sentence is correct, mark ‘no error” as your answer.</strong></p><br><p>Ideated and conceptualized by Pulkit Ahuja, a serial entrepreneur, <strong>(A)/</strong> inventor, and owner of multiple patents and author of 2 books including the financial bestseller \"Googled by God\", <strong>(B)/</strong> the Proxgy core team consist of a myriad of industry stalwarts <strong>(C)/ </strong>from data science, hardware, car rental, travel, marketing, and retail domains. <strong>(D)/</strong></p>", "options": ["<p>B and D</p>", "<p>A and B</p>", "<p>Only C</p>", "<p>Only A</p>", "<p>No error</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>In part C, “consist” should be replaced with “consists” as the subject “the Proxgy core team” is singular, and after singular subject we should use verb+s.</p>\n<p>Other parts are correct.              </p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>A sentence with four parts is given in each question. You have to find the part/s that has/have any grammatical error. If the sentence is correct, mark ‘no error” as your answer.</strong></p><br><p>It is evident that the stringent COVID-19 <strong>(A)/ </strong>lockdowns in force through the first third<strong> (B)/</strong> of the quarter, and substantially in May,<strong>(C)/ </strong>hollowed out demand. <strong>(D)/</strong></p>", "options": ["<p>A and B</p>", "<p>B and C</p>", "<p>B and D</p>", "<p>A and D</p>", "<p>No error</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>The sentence is grammatically correct. Therefore, option E is the correct answer.</p>"}, {"question": "<p><strong>A sentence with four parts is given in each question. You have to find the part/s that has/have any grammatical error. If the sentence is correct, mark ‘no error” as your answer.</strong></p><br><p>Beside conventional solar cells,<strong> (A)/</strong> other technologies like perovskite solar cells <strong>(B)/</strong> and solar photovoltaic glass <strong>(C)/</strong> is offering brighter hopes.<strong>(D)/</strong></p>", "options": ["<p>A and D</p>", "<p>Only D</p>", "<p>Only A</p>", "<p>B and C</p>", "<p>No error</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>In part A, “Beside” should be replaced with “Besides” as we have the sense of “In addition to”.</p>\n<p>In part D, “is” should be replaced with “are” as the subject is plural.</p>\n<p>Other parts are correct.</p>\n<p>Therefore, option A is the correct answer.</p>"}, {"question": "<p><strong>A sentence with four parts is given in each question. You have to find the part/s that has/have any grammatical error. If the sentence is correct, mark ‘no error” as your answer.</strong></p><br><p>It was left to the government to keep the bottom<strong>(A)/</strong> from falling out on demand as the Centre’s pandemic mitigation expenditure<strong>(B)/</strong> helped to expand its consumption spending <strong>(C)/</strong>by 16.4% year-on-year and softened the overall blow to GDP.<strong>(D)/</strong></p>", "options": ["<p>Only D</p>", "<p>A and D</p>", "<p>Only C</p>", "<p>A and B</p>", "<p>No error</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>In part C, “to” should not be used after “help” as help will not take “to”.</p>\n<p>Therefore, option C is the correct answer.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-56)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-56)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

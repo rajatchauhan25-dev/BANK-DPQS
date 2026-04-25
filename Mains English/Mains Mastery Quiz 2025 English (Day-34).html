@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-34)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>In the given question, sentences are given in jumbled form. Rearrange them in proper order and answer the questions that follow.</strong></p>\n<p>Rearrange the following sentences to form a coherent paragraph:</p>\n<p><strong>A).</strong> When crops are destroyed or homes swept away, it’s the poorest households that face hunger, homelessness, and a future defined by loss.</p>\n<p><strong>B).</strong> Every flood, heatwave, and storm disproportionately affects those least equipped to handle the aftermath.</p>\n<p><strong>C).</strong> Rural and low-income communities, often lacking resources for recovery, are left increasingly vulnerable.</p>\n<p><strong>D).</strong> Extreme weather events were recorded on 255 of the first 274 days this year, underscoring a relentless increase that demands both immediate action and long-term strategic shifts.</p>\n<p><strong>E).</strong> The implications of these events go beyond the physical destruction they bring in their wake.</p><br><p><strong>Which of the following is the penultimate sentence after rearrangement?</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 2, "solution": "<p><strong>Answer</strong><strong>: C</strong></p>\n<p>The passage discusses the disproportionate impact of extreme weather events on rural and low-income communities. It highlights how these communities, lacking resources for recovery, are more vulnerable to the destruction caused by floods, heatwaves, and storms, and the long-term consequences they face in terms of hunger, homelessness, and loss. The passage underscores the urgent need for both immediate action and long-term strategic shifts to address this growing issue.</p>\n<p><strong>Sentence D</strong> begins with the alarming statistics about extreme weather events in the first part of the year, drawing attention to the growing urgency.</p>\n<p><strong>Sentence E</strong> expands on the implications, pointing out that these events cause more than just physical destruction.</p>\n<p><strong>Sentence B</strong> then builds on this by explaining that these extreme weather events disproportionately affect those least prepared to cope with them.</p>\n<p><strong>Sentence C</strong> specifies that rural and low-income communities, who lack the resources for recovery, are particularly vulnerable.</p>\n<p><strong>Sentence A</strong> concludes by emphasizing how these communities are most affected, facing hunger, homelessness, and loss.</p>\n<p>So, the correct sequence is: <strong>D – E – B – C – A.</strong></p>\n<p>The penultimate sentence in a paragraph is the one that appears just before the last sentence and serves as a bridge or transition to the final point. In this sequence, Sentence C, \" Rural and low-income communities, often lacking resources for recovery, are left increasingly vulnerable. \" is the penultimate sentence.</p>"}, {"question": "<p><strong>In the given question, sentences are given in jumbled form. Rearrange them in proper order and answer the questions that follow.</strong></p>\n<p>Rearrange the following sentences to form a coherent paragraph:</p>\n<p><strong>A).</strong> When crops are destroyed or homes swept away, it’s the poorest households that face hunger, homelessness, and a future defined by loss.</p>\n<p><strong>B).</strong> Every flood, heatwave, and storm disproportionately affects those least equipped to handle the aftermath.</p>\n<p><strong>C).</strong> Rural and low-income communities, often lacking resources for recovery, are left increasingly vulnerable.</p>\n<p><strong>D).</strong> Extreme weather events were recorded on 255 of the first 274 days this year, underscoring a relentless increase that demands both immediate action and long-term strategic shifts.</p>\n<p><strong>E).</strong> The implications of these events go beyond the physical destruction they bring in their wake.</p><br><p><strong>Which of the following is the second sentence after rearrangement?</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 4, "solution": "<p><strong>Answer</strong><strong>: E</strong></p>\n<p>The passage discusses the disproportionate impact of extreme weather events on rural and low-income communities. It highlights how these communities, lacking resources for recovery, are more vulnerable to the destruction caused by floods, heatwaves, and storms, and the long-term consequences they face in terms of hunger, homelessness, and loss. The passage underscores the urgent need for both immediate action and long-term strategic shifts to address this growing issue.</p>\n<p><strong>Sentence D</strong> begins with the alarming statistics about extreme weather events in the first part of the year, drawing attention to the growing urgency.</p>\n<p><strong>Sentence E</strong> expands on the implications, pointing out that these events cause more than just physical destruction.</p>\n<p><strong>Sentence B</strong> then builds on this by explaining that these extreme weather events disproportionately affect those least prepared to cope with them.</p>\n<p><strong>Sentence C</strong> specifies that rural and low-income communities, who lack the resources for recovery, are particularly vulnerable.</p>\n<p><strong>Sentence A</strong> concludes by emphasizing how these communities are most affected, facing hunger, homelessness, and loss.</p>\n<p>So, the correct sequence is: <strong>D – E – B – C – A.</strong></p>\n<p>Sentence E, \" The implications of these events go beyond the physical destruction they bring in their wake.  \" is the second sentence.</p>"}, {"question": "<p><strong>In the given question, sentences are given in jumbled form. Rearrange them in proper order and answer the questions that follow.</strong></p>\n<p>Rearrange the following sentences to form a coherent paragraph:</p>\n<p><strong>A).</strong> When crops are destroyed or homes swept away, it’s the poorest households that face hunger, homelessness, and a future defined by loss.</p>\n<p><strong>B).</strong> Every flood, heatwave, and storm disproportionately affects those least equipped to handle the aftermath.</p>\n<p><strong>C).</strong> Rural and low-income communities, often lacking resources for recovery, are left increasingly vulnerable.</p>\n<p><strong>D).</strong> Extreme weather events were recorded on 255 of the first 274 days this year, underscoring a relentless increase that demands both immediate action and long-term strategic shifts.</p>\n<p><strong>E).</strong> The implications of these events go beyond the physical destruction they bring in their wake.</p><br><p><strong>Which of the following is the hind most statement after rearrangement?</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 0, "solution": "<p><strong>Answer</strong><strong>: A</strong></p>\n<p>The passage discusses the disproportionate impact of extreme weather events on rural and low-income communities. It highlights how these communities, lacking resources for recovery, are more vulnerable to the destruction caused by floods, heatwaves, and storms, and the long-term consequences they face in terms of hunger, homelessness, and loss. The passage underscores the urgent need for both immediate action and long-term strategic shifts to address this growing issue.</p>\n<p><strong>Sentence D</strong> begins with the alarming statistics about extreme weather events in the first part of the year, drawing attention to the growing urgency.</p>\n<p><strong>Sentence E</strong> expands on the implications, pointing out that these events cause more than just physical destruction.</p>\n<p><strong>Sentence B</strong> then builds on this by explaining that these extreme weather events disproportionately affect those least prepared to cope with them.</p>\n<p><strong>Sentence C</strong> specifies that rural and low-income communities, who lack the resources for recovery, are particularly vulnerable.</p>\n<p><strong>Sentence A</strong> concludes by emphasizing how these communities are most affected, facing hunger, homelessness, and loss.</p>\n<p>So, the correct sequence is: <strong>D – E – B – C – A.</strong></p>\n<p>The hindmost statement, also known as the last sentence, is the final statement that concludes the paragraph. The hindmost or last sentence is Sentence A: \" When crops are destroyed or homes swept away, it’s the poorest households that face hunger, homelessness, and a future defined by loss.\"</p>"}, {"question": "<p><strong>In the given question, sentences are given in jumbled form. Rearrange them in proper order and answer the questions that follow.</strong></p>\n<p>Rearrange the following sentences to form a coherent paragraph:</p>\n<p><strong>A).</strong> When crops are destroyed or homes swept away, it’s the poorest households that face hunger, homelessness, and a future defined by loss.</p>\n<p><strong>B).</strong> Every flood, heatwave, and storm disproportionately affects those least equipped to handle the aftermath.</p>\n<p><strong>C).</strong> Rural and low-income communities, often lacking resources for recovery, are left increasingly vulnerable.</p>\n<p><strong>D).</strong> Extreme weather events were recorded on 255 of the first 274 days this year, underscoring a relentless increase that demands both immediate action and long-term strategic shifts.</p>\n<p><strong>E).</strong> The implications of these events go beyond the physical destruction they bring in their wake.</p><br><p><strong>Which of the following is the introductory statement after rearrangement?</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D</strong></p>\n<p>The passage discusses the disproportionate impact of extreme weather events on rural and low-income communities. It highlights how these communities, lacking resources for recovery, are more vulnerable to the destruction caused by floods, heatwaves, and storms, and the long-term consequences they face in terms of hunger, homelessness, and loss. The passage underscores the urgent need for both immediate action and long-term strategic shifts to address this growing issue.</p>\n<p><strong>Sentence D</strong> begins with the alarming statistics about extreme weather events in the first part of the year, drawing attention to the growing urgency.</p>\n<p><strong>Sentence E</strong> expands on the implications, pointing out that these events cause more than just physical destruction.</p>\n<p><strong>Sentence B</strong> then builds on this by explaining that these extreme weather events disproportionately affect those least prepared to cope with them.</p>\n<p><strong>Sentence C</strong> specifies that rural and low-income communities, who lack the resources for recovery, are particularly vulnerable.</p>\n<p><strong>Sentence A</strong> concludes by emphasizing how these communities are most affected, facing hunger, homelessness, and loss.</p>\n<p>So, the correct sequence is: <strong>D – E – B – C – A.</strong></p>\n<p>The introductory statement after rearrangement is sentence D: “Extreme weather events were recorded on 255 of the first 274 days this year, underscoring a relentless increase that demands both immediate action and long-term strategic shifts.”</p>"}, {"question": "<p><strong>In the given question, sentences are given in jumbled form. Rearrange them in proper order and answer the questions that follow.</strong></p>\n<p>Rearrange the following sentences to form a coherent paragraph:</p>\n<p><strong>A).</strong> When crops are destroyed or homes swept away, it’s the poorest households that face hunger, homelessness, and a future defined by loss.</p>\n<p><strong>B).</strong> Every flood, heatwave, and storm disproportionately affects those least equipped to handle the aftermath.</p>\n<p><strong>C).</strong> Rural and low-income communities, often lacking resources for recovery, are left increasingly vulnerable.</p>\n<p><strong>D).</strong> Extreme weather events were recorded on 255 of the first 274 days this year, underscoring a relentless increase that demands both immediate action and long-term strategic shifts.</p>\n<p><strong>E).</strong> The implications of these events go beyond the physical destruction they bring in their wake.</p><br><p><strong>Which of the following should form a consecutive pair after re-arrangement?</strong></p>", "options": ["<p>A-B</p>", "<p>B-D</p>", "<p>C-D</p>", "<p>D-E</p>", "<p>C-E</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D</strong></p>\n<p>The passage discusses the disproportionate impact of extreme weather events on rural and low-income communities. It highlights how these communities, lacking resources for recovery, are more vulnerable to the destruction caused by floods, heatwaves, and storms, and the long-term consequences they face in terms of hunger, homelessness, and loss. The passage underscores the urgent need for both immediate action and long-term strategic shifts to address this growing issue.</p>\n<p><strong>Sentence D</strong> begins with the alarming statistics about extreme weather events in the first part of the year, drawing attention to the growing urgency.</p>\n<p><strong>Sentence E</strong> expands on the implications, pointing out that these events cause more than just physical destruction.</p>\n<p><strong>Sentence B</strong> then builds on this by explaining that these extreme weather events disproportionately affect those least prepared to cope with them.</p>\n<p><strong>Sentence C</strong> specifies that rural and low-income communities, who lack the resources for recovery, are particularly vulnerable.</p>\n<p><strong>Sentence A</strong> concludes by emphasizing how these communities are most affected, facing hunger, homelessness, and loss.</p>\n<p>So, the correct sequence is: <strong>D – E – B – C – A.</strong></p>\n<p>The consecutive pair after rearrangement is<strong>: D-E.</strong></p>"}, {"question": "<p><strong>In the questions given below, sentences are jumbled and placed in options. Also, there is an odd one out in one of the sentences, which is mentioned in the options. Identify the correct sequence of the sentences and eliminate the odd one out to mark that as your option in the given sequence (eg. Correct sequence-Odd one out [ABCD-E]). </strong></p><br><p><strong>A).</strong> The Left Democratic Front (LDF) sought to portray</p>\n<p><strong>B).</strong> The Governor’s address in the Assembly, minced no words in flaying the Governor</p>\n<p><strong>C).</strong> The Presidential assent for the Kerala Lok Ayukta (Amendment) Bill</p>\n<p><strong>D).</strong> As an oblique critique of Governor Arif Mohammed Khan’s “obstinate refusal”</p>\n<p><strong>E).</strong> To sign laws passed by the Assembly.</p>", "options": ["<p>ABCD-E</p>", "<p>ACED-B</p>", "<p>CDEB-A</p>", "<p>BCED-A</p>", "<p>ACDE-B</p>"], "correctIndex": 4, "solution": "<p><strong>Answer</strong><strong>: E</strong></p>\n<p>ACDE-B</p>\n<p>While going through the Sentence, only arrangement (e) makes a contextually meaningful sentence. The sentence thus formed is: “The Left Democratic Front (LDF) sought to portray the Presidential assent for the Kerala Lok Ayukta (Amendment) Bill as an oblique critique of Governor Arif Mohammed Khan’s “obstinate refusal” to sign laws passed by the Assembly”.</p>\n<p>The odd one out is B. The Governor’s address in the Assembly, minced no words in flaying the Governor. This statement is self-contradictory, as it suggests that the Governor's address flayed the Governor, which is illogical. The other statements (A, C, D, and E) maintain a coherent theme related to the Left Democratic Front's portrayal, the Lok Ayukta Bill, and the Governor's actions.</p>"}, {"question": "<p><strong>In the questions given below, sentences are jumbled and placed in options. Also, there is an odd one out in one of the sentences, which is mentioned in the options. Identify the correct sequence of the sentences and eliminate the odd one out to mark that as your option in the given sequence (eg. Correct sequence-Odd one out [ABCD-E]). </strong></p><br><p><strong>A).</strong> Leader of Opposition in the Assembly and BJP leader R Ashoka claimed that</p>\n<p><strong>B).</strong> Accusing the Congress government in Karnataka of failure to comply with</p>\n<p><strong>C).</strong> The law-and-order norms as well as upholding of constitutional values,</p>\n<p><strong>D).</strong> To recommend dismissal of the government to the Centre</p>\n<p><strong>E).</strong> The Opposition BJP petitioned Governor Thaawar Chand Gehlot.</p>", "options": ["<p>ABCD-E</p>", "<p>ABDC-E</p>", "<p>BCED-A</p>", "<p>BCDE-A</p>", "<p>ECAB-D</p>"], "correctIndex": 2, "solution": "<p><strong>Answer</strong><strong>: C</strong></p>\n<p>BCED-A</p>\n<p>While going through the Sentence, only arrangement (c) makes a contextually meaningful sentence. The sentence thus formed is: “Accusing the Congress government in Karnataka of failure to comply with the law-and-order norms as well as upholding of constitutional values, the Opposition BJP petitioned Governor Thaawar Chand Gehlot to recommend dismissal of the government to the Centre.”</p>\n<p>The odd one out is A. Leader of Opposition in the Assembly and BJP leader R Ashoka claimed that. This statement introduces a claim by the Leader of the Opposition, while the other statements (B, C, D, and E) focus on accusations, the failure of the Congress government, the petition to the Governor, and the alleged non-compliance with law-and-order norms and constitutional values.</p>"}, {"question": "<p><strong>In the questions given below, sentences are jumbled and placed in options. Also, there is an odd one out in one of the sentences, which is mentioned in the options. Identify the correct sequence of the sentences and eliminate the odd one out to mark that as your option in the given sequence (eg. Correct sequence-Odd one out [ABCD-E]). </strong></p><br><p><strong>A).</strong> According to Mizoram’s Home Department, 32,221 people</p>\n<p><strong>B).</strong> Providing assistance to the state government to provide relief to refugees</p>\n<p><strong>C).</strong> Displaced by the civil war in Myanmar</p>\n<p><strong>D).</strong> And 1,167 people fleeing alleged ethnic persecution</p>\n<p><strong>E).</strong> In Bangladesh have taken refuge in the State since 2021.</p>", "options": ["<p>ABCD-E</p>", "<p>ACDE-B</p>", "<p>BCAE-D</p>", "<p>ACEB-D</p>", "<p>BCDE-A</p>"], "correctIndex": 1, "solution": "<p><strong>Answer</strong><strong>: B</strong></p>\n<p>ACDE-B</p>\n<p>While going through the Sentence, only arrangement (b) makes a contextually meaningful sentence. The sentence thus formed is: “According to Mizoram’s Home Department, 32,221 people displaced by the civil war in Myanmar and 1,167 people fleeing alleged ethnic persecution in Bangladesh have taken refuge in the State since 2021.”</p>\n<p>The odd one out is B. Providing assistance to the state government to provide relief to refugees.</p>\n<p>This statement introduces a different perspective, discussing assistance to the state government, while the other statements (A, C, D, and E) focus on the number of people displaced by the civil war in Myanmar, those fleeing ethnic persecution, and the number of refugees who have taken refuge in Mizoram since 2021.</p>"}, {"question": "<p><strong>In the questions given below, sentences are jumbled and placed in options. Also, there is an odd one out in one of the sentences, which is mentioned in the options. Identify the correct sequence of the sentences and eliminate the odd one out to mark that as your option in the given sequence (eg. Correct sequence-Odd one out [ABCD-E]). </strong></p><br><p><strong>A).</strong> The Union government to abrogate the suspension of operations (SoO)</p>\n<p><strong>B).</strong> Pact with Kuki-Zo insurgent groups, in effect since 2008,</p>\n<p><strong>C).</strong> As the Manipur Assembly passed a resolution to urge</p>\n<p><strong>D).</strong> Suspense prevailed over the extension of the agreement</p>\n<p><strong>E).</strong> To find a solution to the Kuki political course in 1987.</p>", "options": ["<p>ABCD-E</p>", "<p>ABEC-D</p>", "<p>CABE-D</p>", "<p>EABD-C</p>", "<p>CABD-E</p>"], "correctIndex": 4, "solution": "<p><strong>Answer</strong><strong>: E</strong></p>\n<p>CABD-E</p>\n<p>While going through the Sentence, only arrangement (e) makes a contextually meaningful sentence. The sentence thus formed is: “As the Manipur Assembly passed a resolution to urge the Union government to abrogate the suspension of operations (SoO) pact with Kuki-Zo insurgent groups, in effect since 2008, suspense prevailed over the extension of the agreement.”</p>\n<p>The odd one out is E. To find a solution to the Kuki political course in 1987.</p>\n<p>This statement introduces a different topic related to the Kuki political course in 1987, while the other statements (A, B, C, and D) are more focused on the current situation regarding the abrogation of the suspension of operations (SoO) pact, its extension, and the resolution passed by the Manipur Assembly.</p>"}, {"question": "<p><strong>In the questions given below, sentences are jumbled and placed in options. Also, there is an odd one out in one of the sentences, which is mentioned in the options. Identify the correct sequence of the sentences and eliminate the odd one out to mark that as your option in the given sequence (eg. Correct sequence-Odd one out [ABCD-E]). </strong></p><br><p><strong>A).</strong> In a move to address one of the core anomalies of the Services</p>\n<p><strong>B).</strong> With their civil counterparts in the government, the Centre has decided</p>\n<p><strong>C).</strong> To grant non-functional upgrade (NFU) benefit over which</p>\n<p><strong>D).</strong> A legal battle has been going on for some time</p>\n<p><strong>E).</strong> In the steeply-pyramidal structure of the armed forces.</p>", "options": ["<p>ABCD-E</p>", "<p>ABCE-D</p>", "<p>EABC-D</p>", "<p>EACD-B</p>", "<p>CDBA-E</p>"], "correctIndex": 0, "solution": "<p><strong>Answer</strong><strong>: A</strong></p>\n<p>ABCD-E</p>\n<p>While going through the Sentence, only arrangement (a) makes a contextually meaningful sentence. The sentence thus formed is: “In a move to address one of the core anomalies of the Services with their civil counterparts in the government, the Centre has decided to grant non-functional upgrade (NFU) benefit over which a legal battle has been going on for some time.”</p>\n<p>The odd one out is E. In the steeply-pyramidal structure of the armed forces.</p>\n<p>This statement introduces a different aspect, discussing the structure of the armed forces, while the other statements (A, B, C, and D) are more focused on addressing anomalies in the Services, granting non-functional upgrade benefits, and mentioning a legal battle related to these issues.</p>"}, {"question": "<p><strong>In the questions given below, sentences are jumbled and placed in options. Also, there is an odd one out in one of the sentences, which is mentioned in the options. Identify the correct sequence of the sentences and eliminate the odd one out to mark that as your option in the given sequence (eg. Correct sequence-Odd one out [ABCD-E]). </strong></p><br><p><strong>A).</strong> The Left Democratic Front (LDF) sought to portray</p>\n<p><strong>B).</strong> The Governor’s address in the Assembly, minced no words in flaying the Governor</p>\n<p><strong>C).</strong> The Presidential assent for the Kerala Lok Ayukta (Amendment) Bill</p>\n<p><strong>D).</strong> As an oblique critique of Governor Arif Mohammed Khan’s “obstinate refusal”</p>\n<p><strong>E).</strong> To sign laws passed by the Assembly.</p>", "options": ["<p>ABCD-E</p>", "<p>ACED-B</p>", "<p>CDEB-A</p>", "<p>BCED-A</p>", "<p>ACDE-B</p>"], "correctIndex": 4, "solution": "<p><strong>Answer</strong><strong>: E</strong></p>\n<p>ACDE-B</p>\n<p>While going through the Sentence, only arrangement (e) makes a contextually meaningful sentence. The sentence thus formed is: “The Left Democratic Front (LDF) sought to portray the Presidential assent for the Kerala Lok Ayukta (Amendment) Bill as an oblique critique of Governor Arif Mohammed Khan’s “obstinate refusal” to sign laws passed by the Assembly”.</p>\n<p>The odd one out is B. The Governor’s address in the Assembly, minced no words in flaying the Governor. This statement is self-contradictory, as it suggests that the Governor's address flayed the Governor, which is illogical. The other statements (A, C, D, and E) maintain a coherent theme related to the Left Democratic Front's portrayal, the Lok Ayukta Bill, and the Governor's actions.</p>"}, {"question": "<p><strong>In the questions given below, sentences are jumbled and placed in options. Also, there is an odd one out in one of the sentences, which is mentioned in the options. Identify the correct sequence of the sentences and eliminate the odd one out to mark that as your option in the given sequence (eg. Correct sequence-Odd one out [ABCD-E]). </strong></p><br><p><strong>A).</strong> Leader of Opposition in the Assembly and BJP leader R Ashoka claimed that</p>\n<p><strong>B).</strong> Accusing the Congress government in Karnataka of failure to comply with</p>\n<p><strong>C).</strong> The law-and-order norms as well as upholding of constitutional values,</p>\n<p><strong>D).</strong> To recommend dismissal of the government to the Centre</p>\n<p><strong>E).</strong> The Opposition BJP petitioned Governor Thaawar Chand Gehlot.</p>", "options": ["<p>ABCD-E</p>", "<p>ABDC-E</p>", "<p>BCED-A</p>", "<p>BCDE-A</p>", "<p>ECAB-D</p>"], "correctIndex": 2, "solution": "<p><strong>Answer</strong><strong>: C</strong></p>\n<p>BCED-A</p>\n<p>While going through the Sentence, only arrangement (c) makes a contextually meaningful sentence. The sentence thus formed is: “Accusing the Congress government in Karnataka of failure to comply with the law-and-order norms as well as upholding of constitutional values, the Opposition BJP petitioned Governor Thaawar Chand Gehlot to recommend dismissal of the government to the Centre.”</p>\n<p>The odd one out is A. Leader of Opposition in the Assembly and BJP leader R Ashoka claimed that. This statement introduces a claim by the Leader of the Opposition, while the other statements (B, C, D, and E) focus on accusations, the failure of the Congress government, the petition to the Governor, and the alleged non-compliance with law-and-order norms and constitutional values.</p>"}, {"question": "<p><strong>In the questions given below, sentences are jumbled and placed in options. Also, there is an odd one out in one of the sentences, which is mentioned in the options. Identify the correct sequence of the sentences and eliminate the odd one out to mark that as your option in the given sequence (eg. Correct sequence-Odd one out [ABCD-E]). </strong></p><br><p><strong>A).</strong> According to Mizoram’s Home Department, 32,221 people</p>\n<p><strong>B).</strong> Providing assistance to the state government to provide relief to refugees</p>\n<p><strong>C).</strong> Displaced by the civil war in Myanmar</p>\n<p><strong>D).</strong> And 1,167 people fleeing alleged ethnic persecution</p>\n<p><strong>E).</strong> In Bangladesh have taken refuge in the State since 2021.</p>", "options": ["<p>ABCD-E</p>", "<p>ACDE-B</p>", "<p>BCAE-D</p>", "<p>ACEB-D</p>", "<p>BCDE-A</p>"], "correctIndex": 1, "solution": "<p><strong>Answer</strong><strong>: B</strong></p>\n<p>ACDE-B</p>\n<p>While going through the Sentence, only arrangement (b) makes a contextually meaningful sentence. The sentence thus formed is: “According to Mizoram’s Home Department, 32,221 people displaced by the civil war in Myanmar and 1,167 people fleeing alleged ethnic persecution in Bangladesh have taken refuge in the State since 2021.”</p>\n<p>The odd one out is B. Providing assistance to the state government to provide relief to refugees.</p>\n<p>This statement introduces a different perspective, discussing assistance to the state government, while the other statements (A, C, D, and E) focus on the number of people displaced by the civil war in Myanmar, those fleeing ethnic persecution, and the number of refugees who have taken refuge in Mizoram since 2021.</p>"}, {"question": "<p><strong>In the questions given below, sentences are jumbled and placed in options. Also, there is an odd one out in one of the sentences, which is mentioned in the options. Identify the correct sequence of the sentences and eliminate the odd one out to mark that as your option in the given sequence (eg. Correct sequence-Odd one out [ABCD-E]). </strong></p><br><p><strong>A).</strong> The Union government to abrogate the suspension of operations (SoO)</p>\n<p><strong>B).</strong> Pact with Kuki-Zo insurgent groups, in effect since 2008,</p>\n<p><strong>C).</strong> As the Manipur Assembly passed a resolution to urge</p>\n<p><strong>D).</strong> Suspense prevailed over the extension of the agreement</p>\n<p><strong>E).</strong> To find a solution to the Kuki political course in 1987.</p>", "options": ["<p>ABCD-E</p>", "<p>ABEC-D</p>", "<p>CABE-D</p>", "<p>EABD-C</p>", "<p>CABD-E</p>"], "correctIndex": 4, "solution": "<p><strong>Answer</strong><strong>: E</strong></p>\n<p>CABD-E</p>\n<p>While going through the Sentence, only arrangement (e) makes a contextually meaningful sentence. The sentence thus formed is: “As the Manipur Assembly passed a resolution to urge the Union government to abrogate the suspension of operations (SoO) pact with Kuki-Zo insurgent groups, in effect since 2008, suspense prevailed over the extension of the agreement.”</p>\n<p>The odd one out is E. To find a solution to the Kuki political course in 1987.</p>\n<p>This statement introduces a different topic related to the Kuki political course in 1987, while the other statements (A, B, C, and D) are more focused on the current situation regarding the abrogation of the suspension of operations (SoO) pact, its extension, and the resolution passed by the Manipur Assembly.</p>"}, {"question": "<p><strong>In the questions given below, sentences are jumbled and placed in options. Also, there is an odd one out in one of the sentences, which is mentioned in the options. Identify the correct sequence of the sentences and eliminate the odd one out to mark that as your option in the given sequence (eg. Correct sequence-Odd one out [ABCD-E]). </strong></p><br><p><strong>A).</strong> In a move to address one of the core anomalies of the Services</p>\n<p><strong>B).</strong> With their civil counterparts in the government, the Centre has decided</p>\n<p><strong>C).</strong> To grant non-functional upgrade (NFU) benefit over which</p>\n<p><strong>D).</strong> A legal battle has been going on for some time</p>\n<p><strong>E).</strong> In the steeply-pyramidal structure of the armed forces.</p>", "options": ["<p>ABCD-E</p>", "<p>ABCE-D</p>", "<p>EABC-D</p>", "<p>EACD-B</p>", "<p>CDBA-E</p>"], "correctIndex": 0, "solution": "<p><strong>Answer</strong><strong>: A</strong></p>\n<p>ABCD-E</p>\n<p>While going through the Sentence, only arrangement (a) makes a contextually meaningful sentence. The sentence thus formed is: “In a move to address one of the core anomalies of the Services with their civil counterparts in the government, the Centre has decided to grant non-functional upgrade (NFU) benefit over which a legal battle has been going on for some time.”</p>\n<p>The odd one out is E. In the steeply-pyramidal structure of the armed forces.</p>\n<p>This statement introduces a different aspect, discussing the structure of the armed forces, while the other statements (A, B, C, and D) are more focused on addressing anomalies in the Services, granting non-functional upgrade benefits, and mentioning a legal battle related to these issues.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions given below the passage.</strong></p>\n<p>Prime Minister Narendra Modi’s call for a reimagining of urban planning and development to make cities and towns healthy and liveable after COVID-19 reflects the reality of decrepit infrastructure aiding the virus’s spread. <strong><em>At the Bloomberg New Economy Forum(A)/, he emphasised on resetting the mindset, processes and(B)/ practices for safe urban living, and acknowledges(C)/ that governments actually do the little for the working millions(D)/.</em></strong> In the first hundred days of the pandemic, the top 10 cities affected worldwide accounted for 15% of the total cases, and data for populous Indian cities later showed large spikes that radiated into smaller towns. Rapid transmission in Mumbai, Delhi, Bengaluru and Chennai was the inevitable outcome of densification and an inability to practise distancing norms. In globally recognised Dharavi, which has one of the world’s highest slum densities, epidemiologists attribute a seemingly low viral impact to screening and herd immunity. The pandemic’s full social impact, especially among the poorer quintiles, has not been adequately measured here or elsewhere, and as the Prime Minister said, it is only clear that the cities “are not as they were before”. If governments are serious about the reset moment — he likened it to a post-World War reconstruction plan — they must resist returning to business-as-usual.</p>\n<p>Good, affordable housing is the <strong>cornerstone</strong> of a sustainable and healthy city, but it also represents India’s weakest link. Unlike speculative housing investments, well-designed rental housing that is key to protecting migrant labour and other less ____________ sections remains poorly funded. Mumbai is estimated to have added only 5% of rental housing in new residential construction (1961-2000), and that too led by private funding. The post-COVID-19 era, therefore, presents an opportunity to make schemes such as the Centre’s Affordable Rental Housing Complexes deliver at scale, focusing on new good houses built by the state — on the lines of the post-war reconstruction in Europe, Japan and South Korea. The Ministry of Housing, which has thus far focused on a limited set of expensive showpiece smart cities, could work on this imperative with the States, digitally aggregating and transparently publishing data on demand and supply for each city. It is also an open secret that laws on air pollution, municipal solid waste management and water quality are hardly enforced, and tokenism marks the approach to urban mobility. Past scourges such as cholera, the plague and the global flu pandemic a century ago led to change — as sewerage, waste handling, social housing and health care that reduced disease. Governments are now challenged by the pandemic to show the political will to reinvent cities.</p><br><p><strong>Which of the following can be the title of the passage?</strong></p>", "options": ["<p>Signs of easing: On India&rsquo;s COVID-19 fight</p>", "<p>Threat or treat: on RCEP trade deal</p>", "<p>India and Biden: On post-Trump ties</p>", "<p>Reinventing cities: On urban planning and disease spread</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>If we read the first part of the passage carefully, we will be able to understand that only (d) can convey the main theme of the passage, <strong>“Prime Minister Narendra Modi’s call for a reimagining of urban planning and development to make cities and towns healthy and liveable after COVID-19 reflects the reality of decrepit infrastructure aiding the virus’s spread.”</strong></p>\n<p>Hence (d) is correct.</p>\n<p>Other options are out of the context of the passage.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions given below the passage.</strong></p>\n<p>Prime Minister Narendra Modi’s call for a reimagining of urban planning and development to make cities and towns healthy and liveable after COVID-19 reflects the reality of decrepit infrastructure aiding the virus’s spread. <strong><em>At the Bloomberg New Economy Forum(A)/, he emphasised on resetting the mindset, processes and(B)/ practices for safe urban living, and acknowledges(C)/ that governments actually do the little for the working millions(D)/.</em></strong> In the first hundred days of the pandemic, the top 10 cities affected worldwide accounted for 15% of the total cases, and data for populous Indian cities later showed large spikes that radiated into smaller towns. Rapid transmission in Mumbai, Delhi, Bengaluru and Chennai was the inevitable outcome of densification and an inability to practise distancing norms. In globally recognised Dharavi, which has one of the world’s highest slum densities, epidemiologists attribute a seemingly low viral impact to screening and herd immunity. The pandemic’s full social impact, especially among the poorer quintiles, has not been adequately measured here or elsewhere, and as the Prime Minister said, it is only clear that the cities “are not as they were before”. If governments are serious about the reset moment — he likened it to a post-World War reconstruction plan — they must resist returning to business-as-usual.</p>\n<p>Good, affordable housing is the <strong>cornerstone</strong> of a sustainable and healthy city, but it also represents India’s weakest link. Unlike speculative housing investments, well-designed rental housing that is key to protecting migrant labour and other less ____________ sections remains poorly funded. Mumbai is estimated to have added only 5% of rental housing in new residential construction (1961-2000), and that too led by private funding. The post-COVID-19 era, therefore, presents an opportunity to make schemes such as the Centre’s Affordable Rental Housing Complexes deliver at scale, focusing on new good houses built by the state — on the lines of the post-war reconstruction in Europe, Japan and South Korea. The Ministry of Housing, which has thus far focused on a limited set of expensive showpiece smart cities, could work on this imperative with the States, digitally aggregating and transparently publishing data on demand and supply for each city. It is also an open secret that laws on air pollution, municipal solid waste management and water quality are hardly enforced, and tokenism marks the approach to urban mobility. Past scourges such as cholera, the plague and the global flu pandemic a century ago led to change — as sewerage, waste handling, social housing and health care that reduced disease. Governments are now challenged by the pandemic to show the political will to reinvent cities.</p><br><p><strong>Which of the following can be said after reading the passage?</strong></p>", "options": ["<p>India doesn&rsquo;t need a new urban planning to prevent the pandemic</p>", "<p>A new urban development paradigm should focus on cutting disease spread</p>", "<p>India needs a new rural planning to prevent the pandemic</p>", "<p>All of these</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>After reading the passage we can clearly understand that only (b) can be inferred from the passage.</p>\n<p>The last line of the passage will help us in this case “Governments are now challenged by the pandemic to show the political will to reinvent cities.”</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions given below the passage.</strong></p>\n<p>Prime Minister Narendra Modi’s call for a reimagining of urban planning and development to make cities and towns healthy and liveable after COVID-19 reflects the reality of decrepit infrastructure aiding the virus’s spread. <strong><em>At the Bloomberg New Economy Forum(A)/, he emphasised on resetting the mindset, processes and(B)/ practices for safe urban living, and acknowledges(C)/ that governments actually do the little for the working millions(D)/.</em></strong> In the first hundred days of the pandemic, the top 10 cities affected worldwide accounted for 15% of the total cases, and data for populous Indian cities later showed large spikes that radiated into smaller towns. Rapid transmission in Mumbai, Delhi, Bengaluru and Chennai was the inevitable outcome of densification and an inability to practise distancing norms. In globally recognised Dharavi, which has one of the world’s highest slum densities, epidemiologists attribute a seemingly low viral impact to screening and herd immunity. The pandemic’s full social impact, especially among the poorer quintiles, has not been adequately measured here or elsewhere, and as the Prime Minister said, it is only clear that the cities “are not as they were before”. If governments are serious about the reset moment — he likened it to a post-World War reconstruction plan — they must resist returning to business-as-usual.</p>\n<p>Good, affordable housing is the <strong>cornerstone</strong> of a sustainable and healthy city, but it also represents India’s weakest link. Unlike speculative housing investments, well-designed rental housing that is key to protecting migrant labour and other less ____________ sections remains poorly funded. Mumbai is estimated to have added only 5% of rental housing in new residential construction (1961-2000), and that too led by private funding. The post-COVID-19 era, therefore, presents an opportunity to make schemes such as the Centre’s Affordable Rental Housing Complexes deliver at scale, focusing on new good houses built by the state — on the lines of the post-war reconstruction in Europe, Japan and South Korea. The Ministry of Housing, which has thus far focused on a limited set of expensive showpiece smart cities, could work on this imperative with the States, digitally aggregating and transparently publishing data on demand and supply for each city. It is also an open secret that laws on air pollution, municipal solid waste management and water quality are hardly enforced, and tokenism marks the approach to urban mobility. Past scourges such as cholera, the plague and the global flu pandemic a century ago led to change — as sewerage, waste handling, social housing and health care that reduced disease. Governments are now challenged by the pandemic to show the political will to reinvent cities.</p><br><p><strong>A sentence in the passage has been marked in bold. Find which part/s of the sentence has/have any grammatical error.</strong></p>", "options": ["<p>A, B</p>", "<p>B, C</p>", "<p>B, C, D</p>", "<p>C, D</p>", "<p>C</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>In part B, “on” should not be used after “emphasised” because no preposition is used after the verb “emphasise”.</p>\n<p>In part C, “acknowledges” should be replaced with “acknowledged” because the sentence is in past tense.</p>\n<p>In part D, “the little” should be replaced with “little” as here we have a sense of “almost no” i.e. negative sense, Little = Negative, The Little= Positive (“some” in a specific manner)</p>\n<p>Hence, option (c) is the answer.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions given below the passage.</strong></p>\n<p>Prime Minister Narendra Modi’s call for a reimagining of urban planning and development to make cities and towns healthy and liveable after COVID-19 reflects the reality of decrepit infrastructure aiding the virus’s spread. <strong><em>At the Bloomberg New Economy Forum(A)/, he emphasised on resetting the mindset, processes and(B)/ practices for safe urban living, and acknowledges(C)/ that governments actually do the little for the working millions(D)/.</em></strong> In the first hundred days of the pandemic, the top 10 cities affected worldwide accounted for 15% of the total cases, and data for populous Indian cities later showed large spikes that radiated into smaller towns. Rapid transmission in Mumbai, Delhi, Bengaluru and Chennai was the inevitable outcome of densification and an inability to practise distancing norms. In globally recognised Dharavi, which has one of the world’s highest slum densities, epidemiologists attribute a seemingly low viral impact to screening and herd immunity. The pandemic’s full social impact, especially among the poorer quintiles, has not been adequately measured here or elsewhere, and as the Prime Minister said, it is only clear that the cities “are not as they were before”. If governments are serious about the reset moment — he likened it to a post-World War reconstruction plan — they must resist returning to business-as-usual.</p>\n<p>Good, affordable housing is the <strong>cornerstone</strong> of a sustainable and healthy city, but it also represents India’s weakest link. Unlike speculative housing investments, well-designed rental housing that is key to protecting migrant labour and other less ____________ sections remains poorly funded. Mumbai is estimated to have added only 5% of rental housing in new residential construction (1961-2000), and that too led by private funding. The post-COVID-19 era, therefore, presents an opportunity to make schemes such as the Centre’s Affordable Rental Housing Complexes deliver at scale, focusing on new good houses built by the state — on the lines of the post-war reconstruction in Europe, Japan and South Korea. The Ministry of Housing, which has thus far focused on a limited set of expensive showpiece smart cities, could work on this imperative with the States, digitally aggregating and transparently publishing data on demand and supply for each city. It is also an open secret that laws on air pollution, municipal solid waste management and water quality are hardly enforced, and tokenism marks the approach to urban mobility. Past scourges such as cholera, the plague and the global flu pandemic a century ago led to change — as sewerage, waste handling, social housing and health care that reduced disease. Governments are now challenged by the pandemic to show the political will to reinvent cities.</p><br><p><strong>Which of the following diseases is/are referred to as “Past scourges” in the passage?</strong></p>", "options": ["<p>the global flu pandemic</p>", "<p>the plague</p>", "<p>cholera</p>", "<p>All of these</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>It is mentioned in the last part of the passage “management and water quality are hardly enforced, and tokenism marks the approach to urban mobility. <strong>Past scourges such as cholera, the plague and the global flu pandemic a century ago led to change </strong>— as sewerage, waste handling, social housing and health care that reduced disease.”</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions given below the passage.</strong></p>\n<p>Prime Minister Narendra Modi’s call for a reimagining of urban planning and development to make cities and towns healthy and liveable after COVID-19 reflects the reality of decrepit infrastructure aiding the virus’s spread. <strong><em>At the Bloomberg New Economy Forum(A)/, he emphasised on resetting the mindset, processes and(B)/ practices for safe urban living, and acknowledges(C)/ that governments actually do the little for the working millions(D)/.</em></strong> In the first hundred days of the pandemic, the top 10 cities affected worldwide accounted for 15% of the total cases, and data for populous Indian cities later showed large spikes that radiated into smaller towns. Rapid transmission in Mumbai, Delhi, Bengaluru and Chennai was the inevitable outcome of densification and an inability to practise distancing norms. In globally recognised Dharavi, which has one of the world’s highest slum densities, epidemiologists attribute a seemingly low viral impact to screening and herd immunity. The pandemic’s full social impact, especially among the poorer quintiles, has not been adequately measured here or elsewhere, and as the Prime Minister said, it is only clear that the cities “are not as they were before”. If governments are serious about the reset moment — he likened it to a post-World War reconstruction plan — they must resist returning to business-as-usual.</p>\n<p>Good, affordable housing is the <strong>cornerstone</strong> of a sustainable and healthy city, but it also represents India’s weakest link. Unlike speculative housing investments, well-designed rental housing that is key to protecting migrant labour and other less ____________ sections remains poorly funded. Mumbai is estimated to have added only 5% of rental housing in new residential construction (1961-2000), and that too led by private funding. The post-COVID-19 era, therefore, presents an opportunity to make schemes such as the Centre’s Affordable Rental Housing Complexes deliver at scale, focusing on new good houses built by the state — on the lines of the post-war reconstruction in Europe, Japan and South Korea. The Ministry of Housing, which has thus far focused on a limited set of expensive showpiece smart cities, could work on this imperative with the States, digitally aggregating and transparently publishing data on demand and supply for each city. It is also an open secret that laws on air pollution, municipal solid waste management and water quality are hardly enforced, and tokenism marks the approach to urban mobility. Past scourges such as cholera, the plague and the global flu pandemic a century ago led to change — as sewerage, waste handling, social housing and health care that reduced disease. Governments are now challenged by the pandemic to show the political will to reinvent cities.</p><br><p><strong>Which of the following is the meaning of the word “Cornerstone” as used in the passage?</strong></p>", "options": ["<p>a trivial thing</p>", "<p>a harmful consequence</p>", "<p>an important quality or feature on which a particular thing depends or is based.</p>", "<p>an important decision</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Cornerstone- an important quality or feature on which a particular thing depends or is based.</p>\n<p>Hence (c) is correct.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions given below the passage.</strong></p>\n<p>Prime Minister Narendra Modi’s call for a reimagining of urban planning and development to make cities and towns healthy and liveable after COVID-19 reflects the reality of decrepit infrastructure aiding the virus’s spread. <strong><em>At the Bloomberg New Economy Forum(A)/, he emphasised on resetting the mindset, processes and(B)/ practices for safe urban living, and acknowledges(C)/ that governments actually do the little for the working millions(D)/.</em></strong> In the first hundred days of the pandemic, the top 10 cities affected worldwide accounted for 15% of the total cases, and data for populous Indian cities later showed large spikes that radiated into smaller towns. Rapid transmission in Mumbai, Delhi, Bengaluru and Chennai was the inevitable outcome of densification and an inability to practise distancing norms. In globally recognised Dharavi, which has one of the world’s highest slum densities, epidemiologists attribute a seemingly low viral impact to screening and herd immunity. The pandemic’s full social impact, especially among the poorer quintiles, has not been adequately measured here or elsewhere, and as the Prime Minister said, it is only clear that the cities “are not as they were before”. If governments are serious about the reset moment — he likened it to a post-World War reconstruction plan — they must resist returning to business-as-usual.</p>\n<p>Good, affordable housing is the <strong>cornerstone</strong> of a sustainable and healthy city, but it also represents India’s weakest link. Unlike speculative housing investments, well-designed rental housing that is key to protecting migrant labour and other less ____________ sections remains poorly funded. Mumbai is estimated to have added only 5% of rental housing in new residential construction (1961-2000), and that too led by private funding. The post-COVID-19 era, therefore, presents an opportunity to make schemes such as the Centre’s Affordable Rental Housing Complexes deliver at scale, focusing on new good houses built by the state — on the lines of the post-war reconstruction in Europe, Japan and South Korea. The Ministry of Housing, which has thus far focused on a limited set of expensive showpiece smart cities, could work on this imperative with the States, digitally aggregating and transparently publishing data on demand and supply for each city. It is also an open secret that laws on air pollution, municipal solid waste management and water quality are hardly enforced, and tokenism marks the approach to urban mobility. Past scourges such as cholera, the plague and the global flu pandemic a century ago led to change — as sewerage, waste handling, social housing and health care that reduced disease. Governments are now challenged by the pandemic to show the political will to reinvent cities.</p><br><p><strong>What is the tone of the passage?</strong></p>", "options": ["<p>Laudatory</p>", "<p>Euphemistic</p>", "<p>Critical</p>", "<p>Apologetic</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Here in the passage,  the author is continuously finding fault in the governance. Hence, the tone is Critical.</p>\n<p>Critical tone- It describes a fault-finding attitude of the author; in a negative sense.</p>\n<p>Laudatory tone- praising attitude</p>\n<p>Euphemistic tone- showing disagreement through indirect statements.</p>\n<p>Apologetic tone- showing apology.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions given below the passage.</strong></p>\n<p>Prime Minister Narendra Modi’s call for a reimagining of urban planning and development to make cities and towns healthy and liveable after COVID-19 reflects the reality of decrepit infrastructure aiding the virus’s spread. <strong><em>At the Bloomberg New Economy Forum(A)/, he emphasised on resetting the mindset, processes and(B)/ practices for safe urban living, and acknowledges(C)/ that governments actually do the little for the working millions(D)/.</em></strong> In the first hundred days of the pandemic, the top 10 cities affected worldwide accounted for 15% of the total cases, and data for populous Indian cities later showed large spikes that radiated into smaller towns. Rapid transmission in Mumbai, Delhi, Bengaluru and Chennai was the inevitable outcome of densification and an inability to practise distancing norms. In globally recognised Dharavi, which has one of the world’s highest slum densities, epidemiologists attribute a seemingly low viral impact to screening and herd immunity. The pandemic’s full social impact, especially among the poorer quintiles, has not been adequately measured here or elsewhere, and as the Prime Minister said, it is only clear that the cities “are not as they were before”. If governments are serious about the reset moment — he likened it to a post-World War reconstruction plan — they must resist returning to business-as-usual.</p>\n<p>Good, affordable housing is the <strong>cornerstone</strong> of a sustainable and healthy city, but it also represents India’s weakest link. Unlike speculative housing investments, well-designed rental housing that is key to protecting migrant labour and other less ____________ sections remains poorly funded. Mumbai is estimated to have added only 5% of rental housing in new residential construction (1961-2000), and that too led by private funding. The post-COVID-19 era, therefore, presents an opportunity to make schemes such as the Centre’s Affordable Rental Housing Complexes deliver at scale, focusing on new good houses built by the state — on the lines of the post-war reconstruction in Europe, Japan and South Korea. The Ministry of Housing, which has thus far focused on a limited set of expensive showpiece smart cities, could work on this imperative with the States, digitally aggregating and transparently publishing data on demand and supply for each city. It is also an open secret that laws on air pollution, municipal solid waste management and water quality are hardly enforced, and tokenism marks the approach to urban mobility. Past scourges such as cholera, the plague and the global flu pandemic a century ago led to change — as sewerage, waste handling, social housing and health care that reduced disease. Governments are now challenged by the pandemic to show the political will to reinvent cities.</p><br><p><strong>Fill the blank with suitable pair of words (synonymous to each other).</strong></p>", "options": ["<p>affluent, prosperous</p>", "<p>fragile, substandard</p>", "<p>deficient, necessitous</p>", "<p>impoverished, poverty-stricken</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Here the sentence is talking about poor people,  hence less affluent and less prosperous are appropriate to fill the blank.</p>\n<p>Affluent/ Prosperous- wealthy</p>\n<p>Fragile- weak</p>\n<p>Impoverished/ poverty- stricken/deficient/substandard/necessitous- poor, needy.</p>"}, {"question": "<p><strong>Pick out the most effective word from the given words to fill in the blanks to make the sentence meaningfully complete in the context to the sentence.</strong></p><br><p><strong>Despite the ___________ conditions on the mountain, the expedition team managed to reach the summit, demonstrating remarkable resilience and determination.</strong></p>", "options": ["<p>Favorable</p>", "<p>Harsh</p>", "<p>Mild</p>", "<p>Pleasant</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The sentence implies that the conditions were challenging, yet the team succeeded in reaching the summit. Therefore, the appropriate word to fill in the blank is \"harsh,\" meaning severe or difficult.</p>"}, {"question": "<p><strong>Pick out the most effective word from the given words to fill in the blanks to make the sentence meaningfully complete in the context to the sentence.</strong></p><br><p><strong>The CEO's ___________ vision, which included a detailed five-year plan for expansion and innovation, inspired confidence among investors and employees alike.</strong></p>", "options": ["<p>Narrow</p>", "<p>Shortsighted</p>", "<p>Expansive</p>", "<p>Limited</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The sentence suggests that the CEO had a broad and ambitious vision that was well-received. Therefore, the suitable word to fill in the blank is \"expansive,\" meaning covering a wide area in terms of scope or detail.</p>"}, {"question": "<p><strong>Pick out the most effective word from the given words to fill in the blanks to make the sentence meaningfully complete in the context to the sentence.</strong></p><br><p><strong>Although the initial reaction to the new policy was ___________, subsequent evaluations revealed its significant positive impact on overall productivity and employee satisfaction.</strong></p>", "options": ["<p>Skeptical</p>", "<p>Unanimous</p>", "<p>Enthusiastic</p>", "<p>Overwhelming</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The sentence indicates that initial doubts were later disproven by positive outcomes. Therefore, the appropriate word to fill in the blank is \"skeptical,\" meaning having reservations or doubts.</p>"}, {"question": "<p><strong>Pick out the most effective word from the given words to fill in the blanks to make the sentence meaningfully complete in the context to the sentence.</strong></p><br><p><strong>The author's latest novel, which masterfully intertwines complex characters and an intricate plot, has been widely praised for its ___________ storytelling.</strong></p>", "options": ["<p>Disjointed</p>", "<p>Mediocre</p>", "<p>Cohesive</p>", "<p>Erratic</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The sentence suggests that the novel's storytelling is well-connected and smoothly integrated. Therefore, the suitable word to fill in the blank is \"cohesive,\" meaning forming a united whole.</p>"}, {"question": "<p><strong>Pick out the most effective word from the given words to fill in the blanks to make the sentence meaningfully complete in the context to the sentence.</strong></p><br><p><strong>The professor's lecture on quantum mechanics, while ___________, was delivered in such a way that even those with limited prior knowledge could grasp the fundamental concepts.</strong></p>", "options": ["<p>Simplistic</p>", "<p>Confusing</p>", "<p>Tedious</p>", "<p>Complex</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The sentence implies that the subject matter was inherently difficult, yet the professor made it understandable. Therefore, the appropriate word to fill in the blank is \"complex,\" meaning consisting of many different and connected parts.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-34)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-34)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

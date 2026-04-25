@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-8)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>In an Olympic year, the quadrennial extravaganza dwarfs every other competition. This is especially true in a sport like badminton where the Olympic gold is the holy grail. Yet, events that led up to the marquee sporting festival do carry importance, and the ongoing Thomas &amp; Uber Cup in Chengdu, China, is one such tournament. The de facto ‘World Cup’ of badminton, the biennial championship became an <strong>indelible</strong> part of the national consciousness when the Indian men’s outfit won its maiden Thomas Cup crown in 2022. While a <strong>repeat</strong> is very much in the realm of possibility, the strong Indian side (H.S. Prannoy, Lakshya Sen, Satwiksairaj Lakireddy and Chirag Shetty among others) will look at it as a great opportunity to test their competitive mettle ahead of the Paris Olympics. Two years ago, the triumph had acted as a springboard for Satwiksairaj and Chirag, who went on to clinch the coveted Asian Games doubles gold in 2023 and help secure a historic team silver before becoming the first Indians to be ranked No.1 in doubles. Prannoy, India’s No.1 singles player and an Asian Games bronze medalist, will be looking for similar inspiration after a not-so-good year while Lakshya will be keen to sharpen his skills ahead of his first-ever Olympics. The women’s Uber Cup roster does not include the Olympics-bound trio of singles star P.V. Sindhu and doubles practitioners Ashwini Ponnappa and Tanisha Crasto. The three have prioritized a solid training block — a luxury in a chocka-block tournament calendar — while an inexperienced side gets a taste of elite-level badminton. The focus will be on 17-year-old Anmol Kharb, who played a stellar role in India winning the Badminton Asia Team Championship in February, and Isharani Baruah, 20. There is also an expectation for Ashmita Chaliha, 24, long marked out for success, to make good on her promise. The tourney comes at a time when India is looking to restock its women’s singles cupboard. As Saina Nehwal inches closer to retirement, the cabinet, barring two-time Olympic medalist Sindhu, has appeared bare in recent times. But going by the results in Chengdu, there is optimism that the next generation of stars could emerge from this lot. They have beaten Canada and Singapore back-to-back — by convincing 4-1 scorelines — to qualify for the quarter finals, and further progress will confirm the green shoots. Even as all eyes are on the Thomas Cup defense and Olympics preparation, the women in the Uber Cup can well make it a week to remember.</p><br><p><strong>What is the significance of the Thomas &amp; Uber Cup tournament for the Indian badminton team?</strong></p>", "options": ["<p>It serves as preparation for the World Championships</p>", "<p>It is an opportunity to defend their Olympic gold</p>", "<p>It helps them secure a historic team silver</p>", "<p>It allows them to restock the women's singles cupboard</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The Thomas &amp; Uber Cup tournament serves as an <strong>opportunity for the Indian badminton team</strong> to test their competitive mettle ahead of the Olympics, similar to how their previous victory acted as a springboard for success.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>In an Olympic year, the quadrennial extravaganza dwarfs every other competition. This is especially true in a sport like badminton where the Olympic gold is the holy grail. Yet, events that led up to the marquee sporting festival do carry importance, and the ongoing Thomas &amp; Uber Cup in Chengdu, China, is one such tournament. The de facto ‘World Cup’ of badminton, the biennial championship became an <strong>indelible</strong> part of the national consciousness when the Indian men’s outfit won its maiden Thomas Cup crown in 2022. While a <strong>repeat</strong> is very much in the realm of possibility, the strong Indian side (H.S. Prannoy, Lakshya Sen, Satwiksairaj Lakireddy and Chirag Shetty among others) will look at it as a great opportunity to test their competitive mettle ahead of the Paris Olympics. Two years ago, the triumph had acted as a springboard for Satwiksairaj and Chirag, who went on to clinch the coveted Asian Games doubles gold in 2023 and help secure a historic team silver before becoming the first Indians to be ranked No.1 in doubles. Prannoy, India’s No.1 singles player and an Asian Games bronze medalist, will be looking for similar inspiration after a not-so-good year while Lakshya will be keen to sharpen his skills ahead of his first-ever Olympics. The women’s Uber Cup roster does not include the Olympics-bound trio of singles star P.V. Sindhu and doubles practitioners Ashwini Ponnappa and Tanisha Crasto. The three have prioritized a solid training block — a luxury in a chocka-block tournament calendar — while an inexperienced side gets a taste of elite-level badminton. The focus will be on 17-year-old Anmol Kharb, who played a stellar role in India winning the Badminton Asia Team Championship in February, and Isharani Baruah, 20. There is also an expectation for Ashmita Chaliha, 24, long marked out for success, to make good on her promise. The tourney comes at a time when India is looking to restock its women’s singles cupboard. As Saina Nehwal inches closer to retirement, the cabinet, barring two-time Olympic medalist Sindhu, has appeared bare in recent times. But going by the results in Chengdu, there is optimism that the next generation of stars could emerge from this lot. They have beaten Canada and Singapore back-to-back — by convincing 4-1 scorelines — to qualify for the quarter finals, and further progress will confirm the green shoots. Even as all eyes are on the Thomas Cup defense and Olympics preparation, the women in the Uber Cup can well make it a week to remember.</p><br><p><strong>Why are P.V. Sindhu, Ashwini Ponnappa, and Tanisha Crasto not part of the women's Uber Cup roster?</strong></p>", "options": ["<p>They are injured and unable to play</p>", "<p>They have retired from professional badminton</p>", "<p>They are prioritizing a solid training block</p>", "<p>They are participating in other tournaments</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>P.V. Sindhu, Ashwini Ponnappa, and Tanisha Crasto are not part of the women's Uber Cup roster because they have <strong>prioritized a solid training block</strong> over participating in the tournament.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>In an Olympic year, the quadrennial extravaganza dwarfs every other competition. This is especially true in a sport like badminton where the Olympic gold is the holy grail. Yet, events that led up to the marquee sporting festival do carry importance, and the ongoing Thomas &amp; Uber Cup in Chengdu, China, is one such tournament. The de facto ‘World Cup’ of badminton, the biennial championship became an <strong>indelible</strong> part of the national consciousness when the Indian men’s outfit won its maiden Thomas Cup crown in 2022. While a <strong>repeat</strong> is very much in the realm of possibility, the strong Indian side (H.S. Prannoy, Lakshya Sen, Satwiksairaj Lakireddy and Chirag Shetty among others) will look at it as a great opportunity to test their competitive mettle ahead of the Paris Olympics. Two years ago, the triumph had acted as a springboard for Satwiksairaj and Chirag, who went on to clinch the coveted Asian Games doubles gold in 2023 and help secure a historic team silver before becoming the first Indians to be ranked No.1 in doubles. Prannoy, India’s No.1 singles player and an Asian Games bronze medalist, will be looking for similar inspiration after a not-so-good year while Lakshya will be keen to sharpen his skills ahead of his first-ever Olympics. The women’s Uber Cup roster does not include the Olympics-bound trio of singles star P.V. Sindhu and doubles practitioners Ashwini Ponnappa and Tanisha Crasto. The three have prioritized a solid training block — a luxury in a chocka-block tournament calendar — while an inexperienced side gets a taste of elite-level badminton. The focus will be on 17-year-old Anmol Kharb, who played a stellar role in India winning the Badminton Asia Team Championship in February, and Isharani Baruah, 20. There is also an expectation for Ashmita Chaliha, 24, long marked out for success, to make good on her promise. The tourney comes at a time when India is looking to restock its women’s singles cupboard. As Saina Nehwal inches closer to retirement, the cabinet, barring two-time Olympic medalist Sindhu, has appeared bare in recent times. But going by the results in Chengdu, there is optimism that the next generation of stars could emerge from this lot. They have beaten Canada and Singapore back-to-back — by convincing 4-1 scorelines — to qualify for the quarter finals, and further progress will confirm the green shoots. Even as all eyes are on the Thomas Cup defense and Olympics preparation, the women in the Uber Cup can well make it a week to remember.</p><br><p><strong>What can be inferred about the expectations from the younger players mentioned in the passage?</strong></p>", "options": ["<p>They are not expected to perform well in the tournament</p>", "<p>They are expected to replace the retiring Saina Nehwal</p>", "<p>There is optimism that they could emerge as the next generation of stars</p>", "<p>They are unlikely to contribute significantly to the team's success</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The passage mentions optimism surrounding the next generation of stars, indicating that there are expectations for the younger players to <strong>emerge as prominent figures</strong> in Indian badminton.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>In an Olympic year, the quadrennial extravaganza dwarfs every other competition. This is especially true in a sport like badminton where the Olympic gold is the holy grail. Yet, events that led up to the marquee sporting festival do carry importance, and the ongoing Thomas &amp; Uber Cup in Chengdu, China, is one such tournament. The de facto ‘World Cup’ of badminton, the biennial championship became an <strong>indelible</strong> part of the national consciousness when the Indian men’s outfit won its maiden Thomas Cup crown in 2022. While a <strong>repeat</strong> is very much in the realm of possibility, the strong Indian side (H.S. Prannoy, Lakshya Sen, Satwiksairaj Lakireddy and Chirag Shetty among others) will look at it as a great opportunity to test their competitive mettle ahead of the Paris Olympics. Two years ago, the triumph had acted as a springboard for Satwiksairaj and Chirag, who went on to clinch the coveted Asian Games doubles gold in 2023 and help secure a historic team silver before becoming the first Indians to be ranked No.1 in doubles. Prannoy, India’s No.1 singles player and an Asian Games bronze medalist, will be looking for similar inspiration after a not-so-good year while Lakshya will be keen to sharpen his skills ahead of his first-ever Olympics. The women’s Uber Cup roster does not include the Olympics-bound trio of singles star P.V. Sindhu and doubles practitioners Ashwini Ponnappa and Tanisha Crasto. The three have prioritized a solid training block — a luxury in a chocka-block tournament calendar — while an inexperienced side gets a taste of elite-level badminton. The focus will be on 17-year-old Anmol Kharb, who played a stellar role in India winning the Badminton Asia Team Championship in February, and Isharani Baruah, 20. There is also an expectation for Ashmita Chaliha, 24, long marked out for success, to make good on her promise. The tourney comes at a time when India is looking to restock its women’s singles cupboard. As Saina Nehwal inches closer to retirement, the cabinet, barring two-time Olympic medalist Sindhu, has appeared bare in recent times. But going by the results in Chengdu, there is optimism that the next generation of stars could emerge from this lot. They have beaten Canada and Singapore back-to-back — by convincing 4-1 scorelines — to qualify for the quarter finals, and further progress will confirm the green shoots. Even as all eyes are on the Thomas Cup defense and Olympics preparation, the women in the Uber Cup can well make it a week to remember.</p><br><p><strong>What does the passage suggest about the women's singles players in the Indian badminton team?</strong></p>", "options": ["<p>They have consistently performed well in recent tournaments</p>", "<p>They are facing challenges due to the retirement of Saina Nehwal</p>", "<p>They have dominated the Uber Cup tournament</p>", "<p>They are expected to prioritize international tournaments over training</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage mentions that apart from two-time Olympic medalist Sindhu, the women's singles players in the Indian badminton team have faced challenges, indicating that they are grappling with the <strong>absence of prominent players</strong> like Saina Nehwal.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>In an Olympic year, the quadrennial extravaganza dwarfs every other competition. This is especially true in a sport like badminton where the Olympic gold is the holy grail. Yet, events that led up to the marquee sporting festival do carry importance, and the ongoing Thomas &amp; Uber Cup in Chengdu, China, is one such tournament. The de facto ‘World Cup’ of badminton, the biennial championship became an <strong>indelible</strong> part of the national consciousness when the Indian men’s outfit won its maiden Thomas Cup crown in 2022. While a <strong>repeat</strong> is very much in the realm of possibility, the strong Indian side (H.S. Prannoy, Lakshya Sen, Satwiksairaj Lakireddy and Chirag Shetty among others) will look at it as a great opportunity to test their competitive mettle ahead of the Paris Olympics. Two years ago, the triumph had acted as a springboard for Satwiksairaj and Chirag, who went on to clinch the coveted Asian Games doubles gold in 2023 and help secure a historic team silver before becoming the first Indians to be ranked No.1 in doubles. Prannoy, India’s No.1 singles player and an Asian Games bronze medalist, will be looking for similar inspiration after a not-so-good year while Lakshya will be keen to sharpen his skills ahead of his first-ever Olympics. The women’s Uber Cup roster does not include the Olympics-bound trio of singles star P.V. Sindhu and doubles practitioners Ashwini Ponnappa and Tanisha Crasto. The three have prioritized a solid training block — a luxury in a chocka-block tournament calendar — while an inexperienced side gets a taste of elite-level badminton. The focus will be on 17-year-old Anmol Kharb, who played a stellar role in India winning the Badminton Asia Team Championship in February, and Isharani Baruah, 20. There is also an expectation for Ashmita Chaliha, 24, long marked out for success, to make good on her promise. The tourney comes at a time when India is looking to restock its women’s singles cupboard. As Saina Nehwal inches closer to retirement, the cabinet, barring two-time Olympic medalist Sindhu, has appeared bare in recent times. But going by the results in Chengdu, there is optimism that the next generation of stars could emerge from this lot. They have beaten Canada and Singapore back-to-back — by convincing 4-1 scorelines — to qualify for the quarter finals, and further progress will confirm the green shoots. Even as all eyes are on the Thomas Cup defense and Olympics preparation, the women in the Uber Cup can well make it a week to remember.</p><br><p><strong>Which word is a synonym for \"indelible\" as used in the passage?</strong></p>", "options": ["<p>Transient</p>", "<p>Fading</p>", "<p>Unforgettable</p>", "<p>Impermanent</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>In the passage, \"<strong>indelible</strong>\" means something that cannot be forgotten or erased. A synonym for this is \"<strong>unforgettable</strong>,\" which means memorable or lasting in the memory.</p>"}, {"question": "<p><strong>In the question below, three columns are given. Column 1 and 3 contain different independent sentences (3 in each column) and column 2 contains 3 connectors which may or may not join the given sentences in the other two columns. This connector can be placed anywhere in the sentence. Mark the option which provides the correct sequences of joined sentences as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/171213862132.jpg\" title=\"1.JPG\"/></p>", "options": ["<p>A2E, B3F, and C1D</p>", "<p>A3E, B2F, and C1D</p>", "<p>A1E, B3F, and C2D</p>", "<p>A3E, B1F, and C2D</p>", "<p>A2E, B1F, and C3D</p>"], "correctIndex": 0, "solution": "<p><strong>Answer</strong><strong>: A</strong></p>\n<p>A2E, B3F, and C1D</p>\n<p>\"He cooked dinner although they had enough food in the pantry.\"</p>\n<p>\"The storm passed after the sky cleared up.\"</p>\n<p>\"She turned off the lights as the power went out.\"</p>\n<p>This option creates logical sentences with appropriate connectors.</p>\n<p>\"He cooked dinner although they had enough food in the pantry.\": This sentence logically connects the action of cooking dinner (A) with the fact that they had enough food in the pantry (E). The connector \"although\" appropriately contrasts the action of cooking dinner with the fact that there was already enough food available.</p>\n<p>\"The storm passed after the sky cleared up.\": This sentence logically connects the event of the storm passing (B) with the condition of the sky clearing up (F). The connector \"after\" appropriately indicates the sequence of events, where the storm passing happens subsequent to the sky clearing up.</p>\n<p>\"She turned off the lights as the power went out.\": This sentence logically connects the action of turning off the lights (C) with the event of the power going out (D). The connector \"as\" indicates a simultaneous or closely linked action, implying that she turned off the lights at the same time or just after the power went out.</p>\n<p>In summary, option a) provides a coherent sequence of joined sentences where the connectors appropriately link the actions/events in each column.</p>"}, {"question": "<p><strong>In the question below, three columns are given. Column 1 and 3 contain different independent sentences (3 in each column) and column 2 contains 3 connectors which may or may not join the given sentences in the other two columns. This connector can be placed anywhere in the sentence. Mark the option which provides the correct sequences of joined sentences as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/171213997893.jpg\" title=\"2.JPG\"/></p>", "options": ["<p>A1E, B2F, C3D</p>", "<p>A2E, B1F, C3D</p>", "<p>A3F, B2D, C1E</p>", "<p>A2E, B1D, C3F</p>", "<p>A3E, B1F, C2D</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D</strong></p>\n<p>A2E, B1D, C3F</p>\n<p>\"The sun rose after we had reached the summit.\"</p>\n<p>\"She left the party early since she wasn't feeling well.\"</p>\n<p>\"The temperature dropped rapidly because the wind picked up.\"</p>\n<p>This option creates logical sentences with appropriate connectors.</p>\n<p>A2E: \"The sun rose after we had reached the summit.\" This connector \"after\" appropriately connects the action of the sun rising with the action of reaching the summit, indicating a temporal sequence.</p>\n<p>B1D:  \"She left the party early since she wasn't feeling well.\" The connector \"since\" indicates a reason. She left the party early because she wasn't feeling well.</p>\n<p>C3F: \"The temperature dropped rapidly because the wind picked up.\" The connector \"because\" indicates a cause-and-effect relationship. The temperature dropped rapidly as a result of the wind picking up.</p>\n<p>In summary, option d) provides a coherent sequence of joined sentences where the connectors appropriately link the actions/events in each column.</p>"}, {"question": "<p><strong>In the question below, three columns are given. Column 1 and 3 contain different independent sentences (3 in each column) and column 2 contains 3 connectors which may or may not join the given sentences in the other two columns. This connector can be placed anywhere in the sentence. Mark the option which provides the correct sequences of joined sentences as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/171214809895.jpg\" title=\"159.JPG\"/></p>", "options": ["<p>A2F, B3D, C1E</p>", "<p>A1F, B2D, C3E</p>", "<p>A2F, B1D, C3E</p>", "<p>A3F, B1D, C2E</p>", "<p>A3F, B2D, C1E</p>"], "correctIndex": 4, "solution": "<p><strong>Answer</strong><strong>: E</strong></p>\n<p>A3F, B2D, C1E</p>\n<p>\"The cat jumped onto the table as the dog barked loudly.\"</p>\n<p>\"He reached the office on time although the traffic was terrible.\"</p>\n<p>\"The students were silent until they were waiting for the exam to begin.\"</p>\n<p>This option creates logical sentences with appropriate connectors.</p>\n<p>A3F: \"The cat jumped onto the table as the dog barked loudly.\" The connector \"as\" indicates a simultaneous action. The cat's action of jumping onto the table happens simultaneously with the dog barking loudly.</p>\n<p>B2D: \"He reached the office on time although the traffic was terrible.\" The word \"although\" suggests a contrast - despite the terrible traffic, he reached the office on time.</p>\n<p>C1E: \"The students were silent until they were waiting for the exam to begin.\" The connector \"until\" indicates a temporal condition. The students were silent up to the point when they were waiting for the exam to begin.</p>\n<p>In summary, option e) provides a coherent sequence of joined sentences where the connectors appropriately link the actions/events in each column.</p>"}, {"question": "<p><strong>The sentence below is provided with two highlighted words. These words may or may not be grammatically or contextually correct in the context of the sentence. Choose the best alternative from the options provided to replace the highlighted words. If no replacement is required, mark \"No replacement is required\" as your answer.</strong></p><br><p>His <strong>inimical </strong>attitude towards responsibilities ultimately led to an <strong>indolent </strong>failure in maintaining long-term commitments and relationships.</p>", "options": ["<p>fickle, abject</p>", "<p>pernicious, ineffable</p>", "<p>capricious, admirable</p>", "<p>aloof, ecstatic</p>", "<p>No replacement is required</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>To answer this question, let's first look at the given sentence this way:</strong></p>\n<p>His ________ attitude towards responsibilities ultimately led to an ________ failure in maintaining long-term commitments and relationships.</p>\n<p>This sentence describes a person's negative attitude towards responsibilities, which resulted in a failure to maintain long-term commitments and relationships.</p>\n<p><strong>Highlighted words: </strong></p>\n<p><strong>Inimical:</strong> tending to obstruct or harm; unfriendly or hostile.</p>\n<p>While \"inimical\" implies a harmful or obstructive attitude, the sentence may suggest a more unstable or inconsistent attitude rather than directly hostile.</p>\n<p><strong>Indolent:</strong> wanting to avoid activity or exertion; lazy.</p>\n<p>The sentence indicates failure, but \"indolent\" may not fully capture the degree of failure implied in this context.</p>\n<p><strong>Now, let's evaluate the options:</strong></p>\n<p><strong>Option a: </strong>fickle, abject</p>\n<p>\"Fickle\" means changing frequently, especially regarding loyalties or interests, which fits well with the idea of a changeable or inconsistent attitude towards responsibilities.</p>\n<p>\"Abject\" means extremely bad or severe, which effectively describes a significant or humiliating failure.</p>\n<p><strong>Option b: </strong>pernicious, ineffable</p>\n<p>\"Pernicious\" means having a harmful effect, which could work, but \"ineffable\" (too great to be expressed in words) does not match the context of failure.</p>\n<p><strong>Option c:</strong> capricious, admirable</p>\n<p>\"Capricious\" means impulsive and unpredictable, which doesn’t fit well with the tone of the sentence.</p>\n<p>\"Admirable\" means deserving respect and approval, which does not fit the description of failure.</p>\n<p><strong>Option d:</strong> aloof, ecstatic</p>\n<p>\"Aloof\" means emotionally distant, which doesn’t strongly align with the attitude described.</p>\n<p>\"Ecstatic\" means extremely happy, which contrasts with the idea of failure.</p>\n<p><u>So, the best option is \"option a: fickle, abject\" because \"fickle\" reflects the inconsistent attitude, and \"abject\" describes the depth of the failure</u>.</p>\n<p><strong>The correct sentence would be:</strong> \"His <strong>fickle </strong>attitude towards responsibilities ultimately led to an <strong>abject </strong>failure in maintaining long-term commitments and relationships.\"</p>\n<p><strong>Therefore, the correct answer is \"fickle, abject.\"</strong></p>"}, {"question": "<p><strong>The sentence below is provided with two highlighted words. These words may or may not be grammatically or contextually correct in the context of the sentence. Choose the best alternative from the options provided to replace the highlighted words. If no replacement is required, mark \"No replacement is required\" as your answer.</strong></p><br><p>His <strong>morose</strong> mood lifted slightly when he found <strong>solace </strong>in the company of old friends, who comforted him during his tough times.</p>", "options": ["<p>exuberant, discontent</p>", "<p>jubilant, turmoil</p>", "<p>apathetic, dismay</p>", "<p>melancholic, refuge</p>", "<p>No replacement is required</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p><strong>To answer this question, let's first look at the given sentence this way:</strong></p>\n<p>His ________ mood lifted slightly when he found ________ in the company of old friends, who comforted him during his tough times.</p>\n<p>This sentence describes how his gloomy mood improved when he found comfort and support in the presence of friends.</p>\n<p><strong>Highlighted words:</strong></p>\n<p><strong>Morose:</strong> having a sullen and gloomy disposition.</p>\n<p>In the sentence, it indicates that he was in a sad or depressed state of mind.</p>\n<p><strong>Solace:</strong> comfort or consolation in a time of distress.</p>\n<p>Here, it suggests that he found relief and support from his friends during difficult times.</p>\n<p><u>So, the highlighted words \"morose\" and \"solace\" accurately fit the context of the sentence</u>.</p>\n<p><strong>Therefore, the correct answer is \"No replacement is required.\"</strong></p>"}, {"question": "<p><strong>The sentence below is provided with two highlighted words. These words may or may not be grammatically or contextually correct in the context of the sentence. Choose the best alternative from the options provided to replace the highlighted words. If no replacement is required, mark \"No replacement is required\" as your answer.</strong></p><br><p>Rapid rural-to-urban <strong>culmination </strong>threatens urban infrastructure, <strong>alleviating </strong>urbanisation issues and necessitating urgent reforms.</p>", "options": ["<p>deliverance, aggravating</p>", "<p>migration, exacerbating</p>", "<p>semblance, heightening</p>", "<p>expectation, compounding</p>", "<p>No replacement is required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>To answer this question, let's first look at the given sentence this way:</strong></p>\n<p>Rapid rural-to-urban ________ threatens urban infrastructure, ________ urbanisation issues and necessitating urgent reforms.</p>\n<p>This sentence describes the movement of people from rural to urban areas and the resulting strain on urban infrastructure. However, the word \"culmination\" (which refers to the highest point or climax) doesn’t fit the idea of movement or migration, and \"alleviating\" (which means reducing or easing a problem) contradicts the idea of issues being worsened.</p>\n<p><strong>Highlighted words: </strong></p>\n<p><strong>Culmination:</strong> the highest or climactic point of something.</p>\n<p><strong>Alleviating:</strong> making something less severe, reducing or easing a problem.</p>\n<p>The context implies a movement (likely \"migration\") from rural to urban areas, which strains or worsens urbanisation issues, not alleviates them.</p>\n<p><strong>Now, let's evaluate the options:</strong></p>\n<p><strong>Option a:</strong> deliverance, aggravating</p>\n<p>\"Deliverance\" means rescue or liberation, which does not fit the idea of a rural-to-urban movement.</p>\n<p>\"Aggravating\" means making something worse, which fits well with the idea of worsening urbanisation issues.</p>\n<p><strong>Option b:</strong> migration, exacerbating</p>\n<p>\"Migration\" refers to the movement of people from one place to another, fitting the context of rural-to-urban movement.</p>\n<p>\"Exacerbating\" means making a problem worse, which aligns perfectly with worsening urbanisation issues.</p>\n<p><strong>Option c:</strong> semblance, heightening</p>\n<p>\"Semblance\" means outward appearance, which does not fit the context of the rural-to-urban movement.</p>\n<p>\"Heightening\" means increasing, which might fit in this context.</p>\n<p><strong>Option d:</strong> expectation, compounding</p>\n<p>\"Expectation\" refers to anticipation or belief, which does not fit the idea of actual rural-to-urban transition.</p>\n<p>\"Compounding\" means adding to or intensifying a problem, which fits the context.</p>\n<p><u>So, the best option is \"option b: migration, exacerbating\" because \"migration\" correctly reflects the movement from rural to urban areas, and \"exacerbating\" accurately describes the worsening of urbanisation issues</u>.</p>\n<p><strong>The correct sentence would be:</strong> \"Rapid rural-to-urban <strong>migration </strong>threatens urban infrastructure, <strong>exacerbating </strong>urbanisation issues and necessitating urgent reforms.\"</p>\n<p><strong>Therefore, the correct answer is \"migration, exacerbating.\"</strong></p>"}, {"question": "<p><strong>The sentence below is provided with two highlighted words. These words may or may not be grammatically or contextually correct in the context of the sentence. Choose the best alternative from the options provided to replace the highlighted words. If no replacement is required, mark \"No replacement is required\" as your answer.</strong></p><br><p>The sharp rise in credit card spending <strong>abdicates </strong>a troubling drop in savings, increasing the risk of financial <strong>deficit </strong>among consumers.</p>", "options": ["<p>complicates, surplus</p>", "<p>prevents, amity</p>", "<p>emphasizes, collapse</p>", "<p>underscores, default</p>", "<p>No replacement is required</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>To answer this question, let's first look at the given sentence this way:</strong></p>\n<p>The sharp rise in credit card spending ________ a troubling drop in savings, increasing the risk of financial ________ among consumers.</p>\n<p>This sentence suggests that an increase in credit card spending indicates or highlights a concerning decrease in savings, which in turn raises the risk of financial problems for consumers.</p>\n<p><strong>Highlighted words:</strong></p>\n<p><strong>Abdicates:</strong> formally give up a position or responsibility, typically in the context of a throne or leadership role.</p>\n<p>This doesn’t fit the context of the sentence, as the sharp rise in credit card spending is not \"giving up\" anything, but rather \"emphasizing\" or \"highlighting\" the troubling trend.</p>\n<p><strong>Deficit:</strong> the amount by which something, especially money, is too small.</p>\n<p>While \"deficit\" could technically fit the context of financial risk, there might be a better word to describe the specific financial problem consumers are facing (such as \"default\").</p>\n<p><strong>Now, let's evaluate the options:</strong></p>\n<p><strong>Option a:</strong> complicates, surplus</p>\n<p>\"Complicates\" could imply that the rise in credit card spending makes the drop in savings more difficult, which might work. However, \"surplus\" (an excess amount) contradicts the idea of a financial shortfall or risk, so this option doesn't fit.</p>\n<p><strong>Option b:</strong> prevents, amity</p>\n<p>\"Prevents\" suggests stopping something, which doesn’t align with the idea of the rise in credit card spending. \"Amity\" refers to friendship or peaceful relations, which doesn't fit the financial context.</p>\n<p><strong>Option c:</strong> emphasizes, collapse</p>\n<p>\"Emphasizes\" means to stress or highlight, which fits the idea of calling attention to a troubling drop. \"Collapse\" refers to a complete failure, which could work in the financial context but is slightly more dramatic than \"deficit.\"</p>\n<p><strong>Option d:</strong> underscores, default</p>\n<p>\"Underscores\" means to highlight or emphasize, which fits perfectly with the idea of drawing attention to a troubling trend. \"Default\" refers to the failure to repay a loan, which accurately reflects a severe financial risk. This is the best fit.</p>\n<p><u>So, the best option is \"option d: underscores, default\" because \"underscores\" accurately conveys the idea of emphasizing the drop in savings, and \"default\" fits the context of financial risk</u>.</p>\n<p><strong>The correct sentence would be:</strong> \"The sharp rise in credit card spending <strong>underscores </strong>a troubling drop in savings, increasing the risk of financial <strong>default </strong>among consumers.\"</p>\n<p><strong>Therefore, the correct answer is \"underscores, default.\"</strong></p>"}, {"question": "<p><strong>The sentence below is provided with two highlighted words. These words may or may not be grammatically or contextually correct in the context of the sentence. Choose the best alternative from the options provided to replace the highlighted words. If no replacement is required, mark \"No replacement is required\" as your answer.</strong></p><br><p>Microplastics are formed by the <strong>exploration </strong>and fragmentation of large plastic pieces that are improperly <strong>abandoned </strong>of.</p>", "options": ["<p>transformation, emitted</p>", "<p>revolution, obfuscated</p>", "<p>degradation, disposed</p>", "<p>production, discarded</p>", "<p>No replacement is required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>To answer this question, let's first look at the given sentence this way:</strong></p>\n<p>Microplastics are formed by the ________ and fragmentation of large plastic pieces that are improperly ________ of.</p>\n<p>This sentence discusses the formation of microplastics through a process and the improper management of large plastic pieces.</p>\n<p><strong>Highlighted words:</strong></p>\n<p><strong>Exploration:</strong> the action of traveling through or investigating an unfamiliar area.</p>\n<p>The context implies a process that leads to the breaking down of plastic, not investigation or exploration. Thus, \"exploration\" is not appropriate here.</p>\n<p><strong>Abandoned:</strong> having been deserted or left behind.</p>\n<p>While the plastic pieces are not properly handled, the word \"abandoned\" does not fit the context of improper disposal. The context requires a word related to disposal, not abandonment.</p>\n<p><strong>Now, let's evaluate the options:</strong></p>\n<p><strong>Option a:</strong> transformation, emitted</p>\n<p>\"Transformation\" means a thorough or dramatic change, which doesn't quite match the gradual breakdown of plastic pieces.</p>\n<p>\"Emitted\" means released, which does not fit the context of disposal.</p>\n<p><strong>Option b: </strong>revolution, obfuscated</p>\n<p>\"Revolution\" refers to a significant change or turn, not relevant to the breakdown of plastics.</p>\n<p>\"Obfuscated\" means unclear or hidden, which doesn't fit the idea of disposal.</p>\n<p><strong>Option c:</strong> degradation, disposed</p>\n<p>\"Degradation\" refers to the breakdown or deterioration, which aligns perfectly with the process of plastic breaking down into microplastics.</p>\n<p>\"Disposed\" fits well with the concept of improper handling or discarding of plastics.</p>\n<p><strong>Option d:</strong> production, discarded</p>\n<p>\"Production\" refers to the creation of something, which doesn't fit in the context of plastics breaking down.</p>\n<p>\"Discarded\" fits the idea of improper disposal.</p>\n<p><u>So, the best option is \"option c: degradation, disposed\" because \"degradation\" accurately reflects the breakdown process, and \"disposed\" correctly relates to improper waste management</u>.</p>\n<p><strong>The correct sentence would be:</strong> \"Microplastics are formed by the <strong>degradation </strong>and fragmentation of large plastic pieces that are improperly <strong>disposed </strong>of.\"</p>\n<p><strong>Therefore, the correct answer is \"degradation, disposed.\"</strong></p>"}, {"question": "<p><strong>In each of the questions below two phrases have been highlighted in bold. You are required to replace it with correct phrases in order to make the sentence grammatically and contextually correct.</strong></p><br><p>The burden of student debt <strong>measured heavily in her mind</strong> as she contemplated the implications it would have on her financial future, <strong>getting her considerable stress</strong> and anxiety.</p>", "options": ["<p>calculated heavily in her mind; inducing her considerable stress</p>", "<p>computed heavily on her mind; impelling her considerable stress</p>", "<p>weighed heavily on her mind; causing her considerable stress</p>", "<p>evaluated heavily in her mind; affecting her considerable stress</p>", "<p>considered<strong> </strong>heavily on her mind; effecting her considerable stress</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Option (c) is the most fitting choice as it accurately and coherently conveys the intended meaning of the sentence. The other options use less appropriate language or convey different meanings.</p>\n<p><strong>a). </strong>calculated heavily in her mind; inducing her considerable stress: \"Calculated heavily in her mind\" is not the most natural or idiomatic expression to convey the idea of something weighing heavily on someone's mind. \"Inducing her considerable stress\" is a suitable phrase to describe the result of the burden of student debt.</p>\n<p><strong>b). </strong>computed heavily on her mind; impelling her considerable stress: \"Computed heavily on her mind\" is not commonly used to express mental burden. \"Impelling her considerable stress\" is appropriate, but \"computed\" is not the best verb choice in this context.</p>\n<p><strong>c). </strong>weighed heavily on her mind; causing her considerable stress (Correct): This option is correct. \"Weighed heavily on her mind\" is a common expression to indicate mental burden or preoccupation. \"Causing her considerable stress\" effectively conveys the impact of the burden on her mental state.</p>\n<p><strong>d).</strong> evaluated heavily in her mind; affecting her considerable stress: \"Evaluated heavily in her mind\" is less common and less appropriate than \"weighed heavily on her mind.\" \"Affecting her considerable stress\" is suitable, but \"evaluated\" doesn't fit well in this context.</p>\n<p><strong>e).</strong> considered heavily on her mind; effecting her considerable stress: \"Considered heavily on her mind\" is not the most appropriate phrase to convey mental burden. \"Effecting her considerable stress\" is suitable, but \"considered\" doesn't align well with the context.</p>\n<p>In summary, option (c) is the most appropriate as it accurately and effectively conveys the idea that the burden of student debt weighed heavily on her mind, causing her considerable stress. The other options use less appropriate language or convey different meanings.</p>"}, {"question": "<p><strong>In each of the questions below two phrases have been highlighted in bold. You are required to replace it with correct phrases in order to make the sentence grammatically and contextually correct.</strong></p><br><p>After hesitating for a moment at the entrance, she summoned her courage and <strong>determined to walk into</strong> the dimly lit room, unsure of what she might encounter but <strong>decided to face</strong> whatever awaited her on the other side.</p>", "options": ["<p>concluded to walk into; committed to face</p>", "<p>decided to walk into; determined to face</p>", "<p>agreed to walk into; agreed to face</p>", "<p>decreed to walk into; intended to face</p>", "<p>assured to walk into; decided to face</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>Option (b) is the most fitting choice as it accurately and coherently conveys the intended meaning of the sentence. The other options either use less appropriate language or convey a slightly different meaning.</p>\n<p><strong>a).</strong> concluded to walk into; committed to face: \"Concluded to walk into\" is not the most natural expression in this context. \"Committed to face\" is appropriate, but \"concluded\" doesn't align well with the context of making a decision.</p>\n<p><strong>b).</strong> decided to walk into; determined to face (Correct): This option is correct. \"Decided to walk into\" accurately portrays the act of making a choice to enter the dimly lit room. \"Determined to face\" effectively conveys the resolve or firmness of will to confront whatever awaits her on the other side.</p>\n<p><strong>c).</strong> agreed to walk into; agreed to face: \"Agreed to walk into\" suggests a mutual decision, which doesn't fit the context where she's making an individual choice. \"Agreed to face\" also implies a mutual agreement, which doesn't align well with the context of her personal determination.</p>\n<p><strong>d).</strong> decreed to walk into; intended to face: \"Decreed to walk into\" suggests a formal or authoritative order, which doesn't fit the context where she's making a personal decision. \"Intended to face\" is appropriate, but \"decreed\" doesn't align well with the context.</p>\n<p><strong>e).</strong> assured to walk into; decided to face: \"Assured to walk into\" is not the most appropriate phrase to convey the act of making a decision. \"Decided to face\" is suitable, but \"assured\" doesn't align well with the context of making a determined choice.</p>\n<p>In summary, option (b) is the most appropriate as it accurately and effectively conveys the idea that she decided to walk into the dimly lit room and was determined to face whatever awaited her on the other side. The other options use less appropriate language or convey a slightly different meaning.</p>"}, {"question": "<p><strong>In each of the questions below two phrases have been highlighted in bold. You are required to replace it with correct phrases in order to make the sentence grammatically and contextually correct.</strong></p><br><p>After years of conforming to societal expectations, Sofia finally summoned the courage to <strong>break off from the constraints</strong> of her conventional life, <strong>boarding on a journey</strong> of self-discovery and personal fulfilment.</p>", "options": ["<p>break off from the constraints; mounting on a journey</p>", "<p>break in from the constraints; departing on a journey</p>", "<p>break for from the constraints; beginning on a journey</p>", "<p>break away from the constraints; embarking on a journey</p>", "<p>no improvement required</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>Option (d) is the most fitting choice as it accurately and coherently conveys the intended meaning of the sentence. The other options either use less appropriate language or convey a slightly different meaning.</p>\n<p><strong>a).</strong> break off from the constraints; mounting on a journey: \"Break off from the constraints\" is appropriate, indicating a separation from societal expectations. However, \"mounting on a journey\" is not the most suitable phrase. \"Mounting\" typically refers to climbing or ascending, which doesn't fit the context of beginning a journey.</p>\n<p><strong>b).</strong> break in from the constraints; departing on a journey: \"Break in from the constraints\" is not the correct phrase. \"Departing on a journey\" is suitable, indicating the beginning of a journey. However, \"break in\" typically means to enter forcibly, which doesn't convey the intended meaning of breaking free from societal expectations.</p>\n<p><strong>c). </strong>break for from the constraints; beginning on a journey: \"Break for from the constraints\" is not grammatically correct. \"Beginning on a journey\" is suitable, but \"break for\" doesn't convey the intended meaning of breaking free from societal expectations.</p>\n<p><strong>d). </strong>break away from the constraints; embarking on a journey (Correct): This option is correct. \"Break away from the constraints\" accurately conveys the idea of breaking free from societal expectations. \"Embarking on a journey\" is suitable, indicating the beginning of a journey.</p>\n<p>In summary, option (d) is the most appropriate as it accurately and effectively conveys the idea of Sofia breaking free from societal constraints and beginning a journey of self-discovery and personal fulfilment. The other options use less appropriate language or convey a slightly different meaning.</p>"}, {"question": "<p><strong>In each of the questions below two phrases have been highlighted in bold. You are required to replace it with correct phrases in order to make the sentence grammatically and contextually correct.</strong></p><br><p>Despite her best efforts to complete all her tasks before the end of the day, <strong>she noticed that</strong> some work would have to be <strong>carried on to tomorrow</strong> due to unexpected delays and additional assignments.</p>", "options": ["<p>she observed that; carried through to tomorrow</p>", "<p>she realized that; carried over to tomorrow</p>", "<p>she inspected that; carried out to tomorrow</p>", "<p>she marked that; carried on to tomorrow</p>", "<p>she accrued that; carried off to tomorrow</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>Option (b) is the most fitting choice as it accurately and coherently conveys the intended meaning of the sentence. The other options either use less appropriate language or convey a slightly different meaning.</p>\n<p><strong>a).</strong> she observed that; carried through to tomorrow: \"She observed that\" is a valid expression to indicate noticing or perceiving something. However, \"carried through to tomorrow\" is less common and less fitting than \"carried over to tomorrow\" to convey the idea of postponing work to the next day.</p>\n<p><strong>b). </strong>she realized that; carried over to tomorrow (Correct): This option is correct. \"She realized that\" accurately conveys the idea that she became aware or understood that some work would need to be postponed. \"Carried over to tomorrow\" effectively describes the action of postponing the unfinished work to the following day.</p>\n<p><strong>c).</strong> she inspected that; carried out to tomorrow: \"She inspected that\" suggests a more active examination rather than a realization or awareness. \"Carried out to tomorrow\" is not idiomatic and doesn't accurately convey the idea of postponing work.</p>\n<p><strong>d). </strong>she marked that; carried on to tomorrow: \"She marked that\" is not the most appropriate phrase to convey the idea of realizing or becoming aware of something. \"Carried on to tomorrow\" implies continuation rather than postponement.</p>\n<p><strong>e). </strong>she accrued that; carried off to tomorrow: \"She accrued that\" is not the correct phrase to convey the idea of realizing or becoming aware of something. \"Carried off to tomorrow\" doesn't accurately convey the idea of postponing work; \"carried over to tomorrow\" would be more appropriate.</p>\n<p>In summary, option (b) is the most suitable as it accurately and effectively conveys the idea that she realized that some work would need to be postponed to the next day due to unexpected delays and additional assignments. The other options use less appropriate language or convey a slightly different meaning.</p>"}, {"question": "<p><strong>In each of the questions below two phrases have been highlighted in bold. You are required to replace it with correct phrases in order to make the sentence grammatically and contextually correct.</strong></p><br><p>Due to the unexpected flight delay, the passengers were informed that their departure would be <strong>held over until the following morning</strong>, prompting them <strong>to make alternate habitation</strong> arrangements for the night.</p>", "options": ["<p>held over until the following morning; to make alternative accommodation</p>", "<p>held against till the next morning; to make possible acclimation</p>", "<p>held up still the following morning; to make reserve accommodation</p>", "<p>held off until the following morning; to make another assimilation</p>", "<p>held onto till the next morning; to make different adjustment</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Option (a) is the most fitting choice as it accurately and coherently conveys the intended meaning of the sentence. The other options either use less appropriate language or convey a slightly different meaning.</p>\n<p><strong>a). </strong>held over until the following morning; to make alternative accommodation: This option is correct. \"Held over until the following morning\" accurately describes delaying the departure, and \"to make alternative accommodation\" effectively conveys the action prompted by the delay, indicating that the passengers needed to arrange for different lodging for the night.</p>\n<p><strong>b).</strong> held against till the next morning; to make possible acclimation: \"Held against till the next morning\" is not a common expression in this context and doesn't accurately convey the idea of delaying the departure. \"To make possible acclimation\" doesn't align well with the context of needing alternative accommodation due to a flight delay.</p>\n<p><strong>c).</strong> held up still the following morning; to make reserve accommodation: \"Held up still the following morning\" is not a natural or idiomatic expression to describe delaying the departure. \"To make reserve accommodation\" suggests making additional or backup arrangements, but it doesn't accurately convey the need for alternative accommodation due to a flight delay.</p>\n<p><strong>d). </strong>held off until the following morning; to make another assimilation: \"Held off until the following morning\" accurately conveys delaying the departure. However, \"to make another assimilation\" is not appropriate in this context. \"Assimilation\" typically refers to the process of integrating or adapting, which doesn't fit the context of needing alternative accommodation.</p>\n<p><strong>e). </strong>held onto till the next morning; to make different adjustment: \"Held onto till the next morning\" is not the correct phrase to convey delaying the departure. \"To make different adjustment\" doesn't accurately convey the need for alternative accommodation due to a flight delay.</p>\n<p>In summary, option (a) is the most appropriate as it accurately and effectively conveys the idea that the passengers' departure was held over until the following morning, prompting them to make alternative accommodation arrangements for the night. The other options use less appropriate language or convey a slightly different meaning.</p>"}, {"question": "<p><strong>Given below are five jumbled-up segments of a sentence. Your task is to identify the correct sequence of the segments that form a coherent sentence. One of the segments, however, does not belong to the sentence and is the odd one out. Arrange the remaining four segments to form a meaningful sentence and identify the segment that does not fit. Then, select the option that represents the correct order of the segments followed by the odd one out segment.</strong></p><br><p><strong>A). </strong>across various industries, as the importance of developing<br/><strong>B).</strong> despite significant advancements in technology,<br/><strong>C).</strong> effective communication remains a persistent challenge<br/><strong>D).</strong> strong communication skills is often underestimated<br/><strong>E).</strong> has not addressed interpersonal communication issues</p>", "options": ["<p>C - B - A - E; D</p>", "<p>E - D - C - A; B</p>", "<p>D - B - A - E; C</p>", "<p>B - C - A - D; E</p>", "<p>A - C - B - D; E</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>Starting with \"Despite significant advancements in technology\" (B) introduces the context. This is followed by \"effective communication remains a persistent challenge\" (C), explaining the issue. Next, \"across various industries, as the importance of developing\" (A) specifies the scope. Finally, \"strong communication skills is often underestimated\" (D) provides the outcome, forming a coherent sentence.</p>\n<p>Segment E (\"has not addressed interpersonal communication issues\") is unrelated to the main idea and is the odd one out.</p>\n<p><strong>The coherent sentence is:</strong> \"Despite significant advancements in technology, effective communication remains a persistent challenge across various industries, as the importance of developing strong communication skills is often underestimated.\"</p>\n<p><strong>Therefore, the correct answer is \"B - C - A - D; E.\"</strong></p>"}, {"question": "<p><strong>Given below are five jumbled-up segments of a sentence. Your task is to identify the correct sequence of the segments that form a coherent sentence. One of the segments, however, does not belong to the sentence and is the odd one out. Arrange the remaining four segments to form a meaningful sentence and identify the segment that does not fit. Then, select the option that represents the correct order of the segments followed by the odd one out segment.</strong></p><br><p><strong>A). </strong>greater opportunities arise from leveraging cultural intelligence,<br/><strong>B).</strong> however, the role of shared values is often overlooked<br/><strong>C).</strong> and teams benefit from a variety of viewpoints and skill sets<br/><strong>D).</strong> as cultural diversity grows within organizations,<br/><strong>E).</strong> understanding diverse perspectives is essential for collaboration,</p>", "options": ["<p>D - A - E - C; B</p>", "<p>B - A - D - E; C</p>", "<p>E - C - B - A; D</p>", "<p>D - C - E - A; B</p>", "<p>A - B - E - C; D</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Beginning with \"As cultural diversity grows within organizations\" (D) sets the stage for the sentence. Then, \"greater opportunities arise from leveraging cultural intelligence\" (A) connects to the main idea. \"Understanding diverse perspectives is essential for collaboration\" (E) and \"teams benefit from a variety of viewpoints and skill sets\" (C) complete the thought.</p>\n<p>Segment B (\"however, the role of shared values is often overlooked\") is unrelated to the sentence and is the odd one out.</p>\n<p><strong>The coherent sentence is:</strong> \"As cultural diversity grows within organizations, greater opportunities arise from leveraging cultural intelligence, understanding diverse perspectives is essential for collaboration, and teams benefit from a variety of viewpoints and skill sets.\"</p>\n<p><strong>Therefore, the correct answer is \"D - A - E - C; B.\"</strong></p>"}, {"question": "<p><strong>Given below are five jumbled-up segments of a sentence. Your task is to identify the correct sequence of the segments that form a coherent sentence. One of the segments, however, does not belong to the sentence and is the odd one out. Arrange the remaining four segments to form a meaningful sentence and identify the segment that does not fit. Then, select the option that represents the correct order of the segments followed by the odd one out segment.</strong></p><br><p><strong>A). </strong>fossil fuel dependence is expected to rise in the coming years<br/><strong>B).</strong> addressing climate concerns for future generations<br/><strong>C).</strong> researchers are focusing on sustainable energy solutions,<br/><strong>D).</strong> with an emphasis on solar and wind power innovations,<br/><strong>E).</strong> which offer cleaner alternatives to conventional energy sources,</p>", "options": ["<p>C - E - D - B; A</p>", "<p>B - D - C - E; A</p>", "<p>A - B - C - D; E</p>", "<p>E - D - B - A; C</p>", "<p>C - D - E - B; A</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>\"Researchers are focusing on sustainable energy solutions\" (C) sets the sentence's main subject. Following this, \"with an emphasis on solar and wind power innovations\" (D) describes the solutions. \"Which offer cleaner alternatives to conventional energy sources\" (E) elaborates on the type of energy, and \"addressing climate concerns for future generations\" (B) concludes the sentence's purpose.</p>\n<p>Segment A (\"fossil fuel dependence is expected to rise in the coming years\") does not align with the positive focus on clean energy and is the odd one out.</p>\n<p><strong>The coherent sentence is:</strong> \"Researchers are focusing on sustainable energy solutions, with an emphasis on solar and wind power innovations, which offer cleaner alternatives to conventional energy sources, addressing climate concerns for future generations.\"</p>\n<p><strong>Therefore, the correct answer is \"C - D - E - B; A.\"</strong></p>"}, {"question": "<p><strong>Given below are five jumbled-up segments of a sentence. Your task is to identify the correct sequence of the segments that form a coherent sentence. One of the segments, however, does not belong to the sentence and is the odd one out. Arrange the remaining four segments to form a meaningful sentence and identify the segment that does not fit. Then, select the option that represents the correct order of the segments followed by the odd one out segment.</strong></p><br><p><strong>A). </strong>as it was outdated and frequently malfunctioning throughout the study<br/><strong>B).</strong> leading to a rise in productivity and efficiency of the team<br/><strong>C). </strong>due to the numerous limitations of the equipment used,<br/><strong>D).</strong> the researcher was ultimately unable to find any conclusive results<br/><strong>E).</strong> despite having extensive knowledge and experience in the field,</p>", "options": ["<p>C - A - D - B; E</p>", "<p>B - E - C - A; D</p>", "<p>E - D - C - A; B</p>", "<p>D - C - E - B; A</p>", "<p>A - D - E - C; B</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Starting with \"Despite having extensive knowledge and experience in the field\" (E) provides background on the researcher. \"The researcher was ultimately unable to find any conclusive results\" (D) follows, leading to \"due to the numerous limitations of the equipment used\" (C), which explains the cause. \"As it was outdated and frequently malfunctioning throughout the study\" (A) describes the equipment issue in more detail.</p>\n<p>Segment B (\"leading to a rise in productivity and efficiency of the team\") does not fit and is the odd one out.</p>\n<p><strong>The coherent sentence is:</strong> \"Despite having extensive knowledge and experience in the field, the researcher was ultimately unable to find any conclusive results due to the numerous limitations of the equipment used, as it was outdated and frequently malfunctioning throughout the study.\"</p>\n<p><strong>Therefore, the correct answer is \"E - D - C - A; B.\"</strong></p>"}, {"question": "<p><strong>Given below are five jumbled-up segments of a sentence. Your task is to identify the correct sequence of the segments that form a coherent sentence. One of the segments, however, does not belong to the sentence and is the odd one out. Arrange the remaining four segments to form a meaningful sentence and identify the segment that does not fit. Then, select the option that represents the correct order of the segments followed by the odd one out segment.</strong></p><br><p><strong>A). </strong>effective financial planning requires informed decision-making,<br/><strong>B).</strong> with uncertain or volatile market conditions can help prevent<br/><strong>C). </strong>as recognizing the early signs of economic downturns when faced<br/><strong>D).</strong> individuals from making impulsive or risky financial choices<br/><strong>E).</strong> emphasizing temporary consumer satisfaction over savings</p>", "options": ["<p>B - C - A - D; E</p>", "<p>E - A - B - D; C</p>", "<p>D - B - C - E; A</p>", "<p>C - E - A - B; D</p>", "<p>A - C - B - D; E</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>\"Effective financial planning requires informed decision-making\" (A) introduces the topic. \"As recognizing the early signs of economic downturns when faced\" (C) explains an essential part of planning. \"With uncertain or volatile market conditions can help prevent\" (B) adds detail, and \"individuals from making impulsive or risky financial choices\" (D) completes the sentence.</p>\n<p>Segment E (\"emphasizing temporary consumer satisfaction over savings\") is unrelated to the main idea and is the odd one out.</p>\n<p><strong>The coherent sentence is:</strong> \"Effective financial planning requires informed decision-making, as recognizing the early signs of economic downturns when faced with uncertain or volatile market conditions can help prevent individuals from making impulsive or risky financial choices.\"</p>\n<p><strong>Therefore, the correct answer is \"A - C - B - D; E.\"</strong></p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-8)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-8)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-78)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>Rearrange the following seven sentences (A), (B), (C), (D), (E), (F) and (G) in the proper sequence to form a meaningful paragraph; then answer the questions given below them.</strong></p>\n<p><strong>A).</strong> Urging immediate action (A)/ years, with scientists and activists (B)/ change has intensified over the (C)/ the debate surrounding climate (D)/to mitigate its effects. (E)</p>\n<p><strong>B).</strong> Governments around the world are faced with the challenge of balancing economic growth and environmental sustainability.</p>\n<p><strong>C).</strong> Despite overwhelming evidence (A) / a significant portion of the (B)/ supporting climate change, there remains (C)/population that is skeptical (D)/about its causes and consequences. (E) </p>\n<p><strong>D).</strong> This skepticism complicates efforts to implement effective policies and measures aimed at reducing greenhouse gas emissions.</p>\n<p><strong>E).</strong> In response, many countries have begun to adopt renewable energy sources and invest in green technologies as part of their commitment to reducing carbon footprints.</p>\n<p><strong>F).</strong> Education and awareness campaigns play a crucial role in informing the public about climate change and its potential impact on future generations.</p>\n<p><strong>G).</strong> Ultimately, a collective effort from individuals, communities, and governments is essential to address the global crisis effectively.</p><br><p><strong>Sentence A is divided into five parts. Rearrange the parts into a meaningful sentence and mark the option accordingly.</strong></p>", "options": ["<p>ACDBE</p>", "<p>DCABE</p>", "<p>DCBAE</p>", "<p>ACBDE</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>The corrected sentence is:</strong></p>\n<p>The debate surrounding climate change has intensified over the years, with scientists and activists urging immediate action to mitigate its effects.</p>"}, {"question": "<p><strong>Rearrange the following seven sentences (A), (B), (C), (D), (E), (F) and (G) in the proper sequence to form a meaningful paragraph; then answer the questions given below them.</strong></p>\n<p><strong>A).</strong> Urging immediate action (A)/ years, with scientists and activists (B)/ change has intensified over the (C)/ the debate surrounding climate (D)/to mitigate its effects. (E)</p>\n<p><strong>B).</strong> Governments around the world are faced with the challenge of balancing economic growth and environmental sustainability.</p>\n<p><strong>C).</strong> Despite overwhelming evidence (A) / a significant portion of the (B)/ supporting climate change, there remains (C)/population that is skeptical (D)/about its causes and consequences. (E) </p>\n<p><strong>D).</strong> This skepticism complicates efforts to implement effective policies and measures aimed at reducing greenhouse gas emissions.</p>\n<p><strong>E).</strong> In response, many countries have begun to adopt renewable energy sources and invest in green technologies as part of their commitment to reducing carbon footprints.</p>\n<p><strong>F).</strong> Education and awareness campaigns play a crucial role in informing the public about climate change and its potential impact on future generations.</p>\n<p><strong>G).</strong> Ultimately, a collective effort from individuals, communities, and governments is essential to address the global crisis effectively.</p><br><p><strong>Sentence C is divided into five parts. Rearrange the parts into a meaningful sentence and mark the option accordingly.</strong></p>", "options": ["<p>ACDBE</p>", "<p>DCABE</p>", "<p>BAECD</p>", "<p>ACBDE</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>The corrected sentence is:</strong></p>\n<p>Despite overwhelming evidence supporting climate change, there remains a significant portion of the population that is skeptical about its causes and consequences.</p>"}, {"question": "<p><strong>Rearrange the following seven sentences (A), (B), (C), (D), (E), (F) and (G) in the proper sequence to form a meaningful paragraph; then answer the questions given below them.</strong></p>\n<p><strong>A).</strong> Urging immediate action (A)/ years, with scientists and activists (B)/ change has intensified over the (C)/ the debate surrounding climate (D)/to mitigate its effects. (E)</p>\n<p><strong>B).</strong> Governments around the world are faced with the challenge of balancing economic growth and environmental sustainability.</p>\n<p><strong>C).</strong> Despite overwhelming evidence (A) / a significant portion of the (B)/ supporting climate change, there remains (C)/population that is skeptical (D)/about its causes and consequences. (E) </p>\n<p><strong>D).</strong> This skepticism complicates efforts to implement effective policies and measures aimed at reducing greenhouse gas emissions.</p>\n<p><strong>E).</strong> In response, many countries have begun to adopt renewable energy sources and invest in green technologies as part of their commitment to reducing carbon footprints.</p>\n<p><strong>F).</strong> Education and awareness campaigns play a crucial role in informing the public about climate change and its potential impact on future generations.</p>\n<p><strong>G).</strong> Ultimately, a collective effort from individuals, communities, and governments is essential to address the global crisis effectively.</p><br><p>Which of the following would be the <strong>Third </strong>sentence?</p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The final arrangement is<strong> ABCDFEG.</strong></p>\n<p><strong>Sentence A</strong> is the best opening as it introduces the topic of climate change and establishes that the debate around it has intensified, prompting calls for immediate action. This sets the context for the following sentences. <strong>Sentence B</strong> logically follows A by highlighting the challenge governments face in balancing economic growth with environmental sustainability. This is a natural progression from discussing the urgency of action to the complexities involved in implementing it. <strong>Sentence C</strong> introduces the skepticism surrounding climate change, pointing out that despite the evidence, there are still people who doubt its causes and effects. This adds depth to the discussion by acknowledging opposing views. <strong>Sentence D</strong> builds on C by explaining how this skepticism complicates the efforts to implement effective climate policies. It connects well to the previous sentence by addressing the consequences of disbelief in climate science. <strong>Sentence F</strong> follows by discussing the importance of education and awareness campaigns. This sentence emphasizes the need to inform the public, which is essential for overcoming skepticism and encouraging action. <strong>Sentence E</strong> introduces a positive response to the challenges mentioned earlier, stating that countries are adopting renewable energy and investing in green technologies. It shows a proactive step that aligns with the need for action. <strong>Sentence G</strong> concludes the paragraph by stressing the importance of collective effort from various stakeholders—individuals, communities, and governments—to effectively address the global climate crisis. This sentence wraps up the discussion by summarizing the necessary actions.</p>"}, {"question": "<p><strong>Rearrange the following seven sentences (A), (B), (C), (D), (E), (F) and (G) in the proper sequence to form a meaningful paragraph; then answer the questions given below them.</strong></p>\n<p><strong>A).</strong> Urging immediate action (A)/ years, with scientists and activists (B)/ change has intensified over the (C)/ the debate surrounding climate (D)/to mitigate its effects. (E)</p>\n<p><strong>B).</strong> Governments around the world are faced with the challenge of balancing economic growth and environmental sustainability.</p>\n<p><strong>C).</strong> Despite overwhelming evidence (A) / a significant portion of the (B)/ supporting climate change, there remains (C)/population that is skeptical (D)/about its causes and consequences. (E) </p>\n<p><strong>D).</strong> This skepticism complicates efforts to implement effective policies and measures aimed at reducing greenhouse gas emissions.</p>\n<p><strong>E).</strong> In response, many countries have begun to adopt renewable energy sources and invest in green technologies as part of their commitment to reducing carbon footprints.</p>\n<p><strong>F).</strong> Education and awareness campaigns play a crucial role in informing the public about climate change and its potential impact on future generations.</p>\n<p><strong>G).</strong> Ultimately, a collective effort from individuals, communities, and governments is essential to address the global crisis effectively.</p><br><p>Which of the following would be the <strong>Fifth </strong>sentence?</p>", "options": ["<p>A</p>", "<p>B</p>", "<p>F</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The final arrangement is<strong> ABCDFEG.</strong></p>\n<p><strong>Sentence A</strong> is the best opening as it introduces the topic of climate change and establishes that the debate around it has intensified, prompting calls for immediate action. This sets the context for the following sentences. <strong>Sentence B</strong> logically follows A by highlighting the challenge governments face in balancing economic growth with environmental sustainability. This is a natural progression from discussing the urgency of action to the complexities involved in implementing it. <strong>Sentence C</strong> introduces the skepticism surrounding climate change, pointing out that despite the evidence, there are still people who doubt its causes and effects. This adds depth to the discussion by acknowledging opposing views. <strong>Sentence D</strong> builds on C by explaining how this skepticism complicates the efforts to implement effective climate policies. It connects well to the previous sentence by addressing the consequences of disbelief in climate science. <strong>Sentence F</strong> follows by discussing the importance of education and awareness campaigns. This sentence emphasizes the need to inform the public, which is essential for overcoming skepticism and encouraging action. <strong>Sentence E</strong> introduces a positive response to the challenges mentioned earlier, stating that countries are adopting renewable energy and investing in green technologies. It shows a proactive step that aligns with the need for action. <strong>Sentence G</strong> concludes the paragraph by stressing the importance of collective effort from various stakeholders—individuals, communities, and governments—to effectively address the global climate crisis. This sentence wraps up the discussion by summarizing the necessary actions.</p>"}, {"question": "<p><strong>Rearrange the following seven sentences (A), (B), (C), (D), (E), (F) and (G) in the proper sequence to form a meaningful paragraph; then answer the questions given below them.</strong></p>\n<p><strong>A).</strong> Urging immediate action (A)/ years, with scientists and activists (B)/ change has intensified over the (C)/ the debate surrounding climate (D)/to mitigate its effects. (E)</p>\n<p><strong>B).</strong> Governments around the world are faced with the challenge of balancing economic growth and environmental sustainability.</p>\n<p><strong>C).</strong> Despite overwhelming evidence (A) / a significant portion of the (B)/ supporting climate change, there remains (C)/population that is skeptical (D)/about its causes and consequences. (E) </p>\n<p><strong>D).</strong> This skepticism complicates efforts to implement effective policies and measures aimed at reducing greenhouse gas emissions.</p>\n<p><strong>E).</strong> In response, many countries have begun to adopt renewable energy sources and invest in green technologies as part of their commitment to reducing carbon footprints.</p>\n<p><strong>F).</strong> Education and awareness campaigns play a crucial role in informing the public about climate change and its potential impact on future generations.</p>\n<p><strong>G).</strong> Ultimately, a collective effort from individuals, communities, and governments is essential to address the global crisis effectively.</p><br><p>Which of the following options is the pair of the <strong>antepenultimate</strong> and <strong>penultimate</strong> statement respectively after the correct rearrangement?</p>", "options": ["<p>DE</p>", "<p>FE</p>", "<p>AD</p>", "<p>BC</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The final arrangement is<strong> ABCDFEG.</strong></p>\n<p><strong>Sentence A</strong> is the best opening as it introduces the topic of climate change and establishes that the debate around it has intensified, prompting calls for immediate action. This sets the context for the following sentences. <strong>Sentence B</strong> logically follows A by highlighting the challenge governments face in balancing economic growth with environmental sustainability. This is a natural progression from discussing the urgency of action to the complexities involved in implementing it. <strong>Sentence C</strong> introduces the skepticism surrounding climate change, pointing out that despite the evidence, there are still people who doubt its causes and effects. This adds depth to the discussion by acknowledging opposing views. <strong>Sentence D</strong> builds on C by explaining how this skepticism complicates the efforts to implement effective climate policies. It connects well to the previous sentence by addressing the consequences of disbelief in climate science. <strong>Sentence F</strong> follows by discussing the importance of education and awareness campaigns. This sentence emphasizes the need to inform the public, which is essential for overcoming skepticism and encouraging action. <strong>Sentence E</strong> introduces a positive response to the challenges mentioned earlier, stating that countries are adopting renewable energy and investing in green technologies. It shows a proactive step that aligns with the need for action. <strong>Sentence G</strong> concludes the paragraph by stressing the importance of collective effort from various stakeholders—individuals, communities, and governments—to effectively address the global climate crisis. This sentence wraps up the discussion by summarizing the necessary actions.</p>"}, {"question": "<p><strong>In each of the following questions three sentences are given with a word highlighted in it and followed by five options. You are required to find out in which of the following sentences the word is inappropriately used from the given options.</strong></p><br><p><strong>I).</strong> The inflammatory speech was seen as an <strong>instigation</strong> for the protests that followed.</p>\n<p><strong>II).</strong> The peaceful village was suddenly engulfed in <strong>strife</strong> when a dispute arose over land ownership.</p>\n<p><strong>III).</strong> His <strong>precept</strong> for a healthy lifestyle was evident as he indulged in fast food daily and avoided exercise at all costs.</p>", "options": ["<p>Only I</p>", "<p>Only II</p>", "<p>Only III</p>", "<p>Both I and III</p>", "<p>Both II and III</p>"], "correctIndex": 2, "solution": "<p><strong>Answer</strong><strong>: C</strong></p>\n<p><strong>I).</strong> In this sentence, \"instigation\" is correctly used to describe the action of provoking or inciting the protests through the inflammatory speech.</p>\n<p><strong>II).</strong> In this sentence, \"strife\" is correctly used to describe conflict or discord within the village due to the land ownership dispute.</p>\n<p><strong>III).</strong> In this sentence, \"precept\" is used incorrectly. \"Precept\" typically refers to a guiding principle or rule for behavior, often associated with moral or ethical teachings. However, the sentence suggests that the individual's behavior contradicts the supposed precept for a healthy lifestyle. A more suitable term might be \"habit\" or \"practice”.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>In each of the following questions three sentences are given with a word highlighted in it and followed by five options. You are required to find out in which of the following sentences the word is inappropriately used from the given options.</strong></p><br><p><strong>I).</strong> The <strong>intricacy</strong> of the artist's brushstrokes revealed the meticulous attention to detail in the painting.</p>\n<p><strong>II).</strong> In the classroom, the teacher's <strong>erudite</strong> demeanor often left students feeling confused and intimidated, as if they were unable to understand the material.</p>\n<p><strong>III).</strong> The teacher sought to <strong>imbue</strong> her students with a love for learning by making her lessons engaging and interactive.</p>", "options": ["<p>Only I</p>", "<p>Only II</p>", "<p>Only III</p>", "<p>Both I and II</p>", "<p>Both I and III</p>"], "correctIndex": 1, "solution": "<p><strong>Answer</strong><strong>: B</strong></p>\n<p><strong>I).</strong> In this sentence, \"intricacy\" is used correctly to describe the complex and detailed nature of the artist's brushstrokes.</p>\n<p><strong>II).</strong> In this sentence, \"erudite\" is used incorrectly. \"Erudite\" typically describes someone who has or shows great knowledge or learning, often in a scholarly or intellectual context. However, the sentence suggests that the teacher's demeanor made it difficult for students to understand the material, which contradicts the usual meaning of \"erudite.\" A more appropriate term might be \"intimidating\" or \"unapproachable.\"</p>\n<p><strong>III).</strong> In this sentence \"imbue\" is correctly used to convey the idea of instilling or inspiring her students with a love for learning through her teaching methods.</p>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>In each of the following questions three sentences are given with a word highlighted in it and followed by five options. You are required to find out in which of the following sentences the word is inappropriately used from the given options.</strong></p><br><p><strong>I).</strong> The company's profits <strong>dwindled</strong> as they experienced rapid growth and expansion into new markets.</p>\n<p><strong>II).</strong> The aroma of freshly baked bread <strong>permeated</strong> the entire house, making everyone hungry.</p>\n<p><strong>III).</strong> Despite the <strong>daunting</strong> challenges ahead, she approached the project with determination and perseverance.</p>", "options": ["<p>Only I</p>", "<p>Only II</p>", "<p>Only III</p>", "<p>Both I and II</p>", "<p>Both II and III</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>I).</strong> In this sentence, \"dwindled\" is used incorrectly. \"Dwindle\" typically means to gradually diminish or decrease in size, amount, or strength. However, the context suggests that the company's profits decreased as a result of growth and expansion, which is contradictory. A more appropriate term might be \"fluctuated\" or \"stabilized.\"</p>\n<p><strong>II).</strong> In this sentence, \"permeated\" is correctly used to describe how the aroma of the bread spread throughout the entire house, filling it with the smell.</p>\n<p><strong>III).</strong> In this sentence, \"daunting\" is appropriately used to describe the challenges as intimidating or difficult.</p>\n<p>Therefore, option A is the correct answer.</p>"}, {"question": "<p><strong>In each of the following questions three sentences are given with a word highlighted in it and followed by five options. You are required to find out in which of the following sentences the word is inappropriately used from the given options.</strong></p><br><p><strong>I).</strong> The debate over the new policy became increasingly <strong>contentious</strong> as both sides presented strong arguments and refused to compromise.</p>\n<p><strong>II).</strong> The <strong>elusive</strong> answer to the math problem was quickly found by the student, who effortlessly solved it within seconds.</p>\n<p><strong>III).</strong> After years of decline, there was a sudden <strong>resurgence</strong> of interest in vinyl records among younger music enthusiasts.</p>", "options": ["<p>Only I</p>", "<p>Only II</p>", "<p>Only III</p>", "<p>Both I and II</p>", "<p>Both I and III</p>"], "correctIndex": 1, "solution": "<p><strong>Answer</strong><strong>: B</strong></p>\n<p><strong>I).</strong> In this sentence, \"contentious\" is correctly used to describe the heated and argumentative nature of the debate surrounding the new policy.</p>\n<p><strong>II).</strong> In this sentence, \"elusive\" is used incorrectly. \"Elusive\" typically means difficult to find or grasp, suggesting that the answer is hard to attain. However, the sentence implies that the answer was quickly and effortlessly found, which contradicts the usual meaning of \"elusive.\" A more suitable term might be \"simple\" or \"readily available.\"</p>\n<p><strong>III).</strong> In this sentence, \"resurgence\" is correctly used to describe the renewed and increased interest in vinyl records after a period of decline.</p>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>In each of the following questions three sentences are given with a word highlighted in it and followed by five options. You are required to find out in which of the following sentences the word is inappropriately used from the given options.</strong></p><br><p><strong>I).</strong> Despite the serene atmosphere, she felt a sense of <strong>frantic</strong> as she calmly sipped her tea and watched the sunset.</p>\n<p><strong>II).</strong> The company's financial statements were met with <strong>dubious</strong> praise from investors, who applauded the accuracy of the reported figures.</p>\n<p><strong>III).</strong> Solving the <strong>conundrum</strong> of balancing economic growth with environmental preservation remains a significant challenge for policymakers.</p>", "options": ["<p>Only I</p>", "<p>Only II</p>", "<p>Only III</p>", "<p>Both I and II</p>", "<p>Both I and III</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D</strong></p>\n<p><strong>I).</strong> In this sentence, \"frantic\" is used incorrectly. \"Frantic\" typically means frenzied or panicked, suggesting a sense of urgency or chaos. However, the sentence describes a calm and serene atmosphere, which contradicts the usual meaning of \"frantic.\" A more appropriate term might be \"contentment\" or \"peacefulness.\"</p>\n<p><strong>II).</strong> In this sentence, \"dubious\" is used incorrectly. \"Dubious\" typically means doubtful or questionable, but the sentence suggests praise, which is the opposite of what \"dubious\" implies. A more suitable term might be \"wholehearted\" or \"unreserved.\"</p>\n<p><strong>III).</strong> In this sentence, \"conundrum\" is correctly used to describe a complex and puzzling problem or dilemma.</p>\n<p>Therefore, option D is the correct answer.</p>"}, {"question": "<p><strong>In the sentence given below two blanks are there followed by six words to fill the blank to complete the sentence meaningfully correct. You have to choose the correct pair of words to complete the sentence.</strong></p><br><p><strong>The novel aims to explore the complex interplay between science and __________, delving into the ethical __________ that arise when scientific advancements outpace societal understanding.</strong></p>\n<p><strong>1).</strong> morality</p>\n<p><strong>2).</strong> skepticism</p>\n<p><strong>3).</strong> superstition</p>\n<p><strong>4).</strong> innovation</p>\n<p><strong>5).</strong> dilemmas</p>\n<p><strong>6).</strong> rigidity</p>", "options": ["<p>1 and 5</p>", "<p>2 and 4</p>", "<p>3 and 6</p>", "<p>1 and 4</p>", "<p>3 and 5</p>"], "correctIndex": 0, "solution": "<p><strong>Answer:</strong><strong> A</strong></p>\n<p>1 and 5</p>\n<p><strong>Morality:</strong> \"Morality\" accurately represents the ethical aspect and values associated with human behavior. In the context of the novel exploring the interplay between science and morality, it aligns with the ethical considerations of scientific advancements.</p>\n<p><strong>Dilemmas:</strong> \"Dilemmas\" refers to situations involving difficult choices. It captures the essence of the ethical challenges and conflicts that arise when scientific advancements outpace societal understanding. This term complements the exploration of complex interactions between science and morality.</p>\n<p><strong>Skepticism and Innovation:</strong> While both \"skepticism\" and \"innovation\" may be relevant in discussions about science, \"morality\" and \"dilemmas\" more specifically address the ethical dimension that the sentence emphasizes. \"Skepticism\" might imply doubt or questioning without necessarily delving into the ethical implications, and \"innovation\" focuses more on the positive aspects of advancement rather than the potential ethical challenges.</p>\n<p><strong>Superstition and Rigidity:</strong> These terms do not fit well with the context of exploring the interplay between science and ethics. \"Superstition\" is unrelated to the scientific context, and \"rigidity\" does not capture the ethical dimension of the challenges arising from scientific advancements.</p>\n<p>In summary, \"morality\" and \"dilemmas\" were chosen for their precision and relevance to the exploration of the ethical aspects of the interplay between science and society. The other options, while valid in different contexts, may not align as closely with the specific nuances of the intended meaning in this sentence.</p>\n<p><strong>So, the revised sentence reads: </strong>“The novel aims to explore the complex interplay between science and <strong>morality</strong> delving into the ethical <strong>dilemmas</strong> that arise when scientific advancements outpace societal understanding.”</p>"}, {"question": "<p><strong>In the sentence given below two blanks are there followed by six words to fill the blank to complete the sentence meaningfully correct. You have to choose the correct pair of words to complete the sentence.</strong></p><br><p><strong>The bank's efforts to enhance cybersecurity include investing in advanced technology and conducting regular training programs to equip employees with the skills needed to detect and prevent security __________, thereby ensuring the __________ of customer information.</strong></p>\n<p><strong>1).</strong> breaches</p>\n<p><strong>2).</strong> vulnerabilities</p>\n<p><strong>3).</strong> infringements</p>\n<p><strong>4).</strong> fortifications</p>\n<p><strong>5).</strong> confidentiality</p>\n<p><strong>6).</strong> safeguards</p>", "options": ["<p>1 and 4</p>", "<p>2 and 5</p>", "<p>3 and 6</p>", "<p>1 and 6</p>", "<p>2 and 4</p>"], "correctIndex": 3, "solution": "<p><strong>Answer:</strong><strong> D</strong></p>\n<p>1 and 6</p>\n<p><strong>Breaches:</strong> \"Breaches\" accurately represents the security incidents that the bank aims to detect and prevent through its efforts to enhance cybersecurity.</p>\n<p><strong>Safeguards:</strong> \"Safeguards\" aligns with the goal of ensuring the protection and security of customer information. It emphasizes the measures taken to prevent security breaches and unauthorized access.</p>\n<p><strong>Vulnerabilities and Confidentiality:</strong> While \"vulnerabilities\" may be associated with cybersecurity, it doesn't specifically address security incidents. \"Confidentiality\" is related to protecting information but doesn't capture the specific idea of preventing security breaches.</p>\n<p><strong>Infringements and Fortifications:</strong> \"Infringements\" is not as specific as \"breaches\" in the context of security incidents. \"Fortifications\" refers to strengthening defenses but doesn't specifically address the detection and prevention of security breaches.</p>\n<p>In summary, \"breaches\" and \"safeguards\" were chosen for their precision and relevance to the bank's efforts to enhance cybersecurity and ensure the security of customer information. The other options, while valid in different contexts, may not align as closely with the specific nuances of the intended meaning in this sentence.</p>"}, {"question": "<p><strong>In the sentence given below two blanks are there followed by six words to fill the blank to complete the sentence meaningfully correct. You have to choose the correct pair of words to complete the sentence.</strong></p><br><p><strong>The investment advisor recommended a diverse portfolio to the clients, emphasizing the importance of spreading investments across different asset classes to minimize risk and enhance potential __________, especially during periods of market __________.</strong></p>\n<p><strong>1).</strong> returns</p>\n<p><strong>2).</strong> volatility</p>\n<p><strong>3).</strong> stagnation</p>\n<p><strong>4).</strong> losses</p>\n<p><strong>5).</strong> appreciation</p>\n<p><strong>6).</strong> corrections</p>", "options": ["<p>1 and 2</p>", "<p>3 and 4</p>", "<p>5 and 6</p>", "<p>1 and 6</p>", "<p>2 and 5</p>"], "correctIndex": 0, "solution": "<p><strong>Answer:</strong><strong> A</strong></p>\n<p>1 and 2</p>\n<p><strong>Returns:</strong> \"Returns\" accurately represents the potential profits or gains that investors aim for when making investments. It aligns with the recommendation of a diverse portfolio to enhance the overall returns.</p>\n<p><strong>Volatility:</strong> \"Volatility\" is relevant to the recommendation of spreading investments to minimize risk. It refers to the degree of variation of a trading price series over time, indicating the potential for price fluctuations. Diversifying across different asset classes can help mitigate the impact of market volatility.</p>\n<p><strong>Stagnation and Losses:</strong> \"Stagnation\" does not fit the context of emphasizing the potential for returns and minimizing risk. \"Losses\" is relevant to risk but does not capture the positive aspect of potential gains.</p>\n<p><strong>Appreciation:</strong> While \"appreciation\" is a valid term in finance, it does not directly align with the advisor's recommendation of spreading investments to minimize risk and enhance potential returns. \"Appreciation\" typically implies an increase in value over time but doesn't capture the broader concept of overall financial returns.</p>\n<p><strong>Corrections</strong>: \"Corrections\" refers to a decline in the market value of an asset after a period of growth. While it is a valid term, it doesn't fit well in the context of the sentence. The advisor is emphasizing the importance of a diverse portfolio to minimize risk, which includes protecting against market corrections.</p>\n<p>In summary, \"returns\" and \"volatility\" were chosen for their precision and relevance to the investment advisor's recommendation of a diverse portfolio to minimize risk and enhance potential gains. The other options, while valid in different contexts, may not align as closely with the specific nuances of the intended meaning in this sentence.</p>"}, {"question": "<p><strong>In the sentence given below two blanks are there followed by six words to fill the blank to complete the sentence meaningfully correct. You have to choose the correct pair of words to complete the sentence.</strong></p><br><p><strong>The fitness app incorporated AI algorithms to personalize workout plans, aiming to enhance the __________ of users and promote a sense of __________ in their fitness journey.</strong></p>\n<p><strong>1).</strong> effectiveness</p>\n<p><strong>2).</strong> accessibility</p>\n<p><strong>3).</strong> motivation</p>\n<p><strong>4).</strong> transparency</p>\n<p><strong>5).</strong> efficiency</p>\n<p><strong>6).</strong> accountability</p>", "options": ["<p>1 and 2</p>", "<p>3 and 4</p>", "<p>5 and 6</p>", "<p>1 and 6</p>", "<p>2 and 5</p>"], "correctIndex": 2, "solution": "<p><strong>Answer:</strong><strong> C</strong></p>\n<p>5 and 6</p>\n<p><strong>Efficiency:</strong> \"Efficiency\" is relevant in the context of incorporating AI algorithms to personalize workout plans. The goal is to make the fitness app more efficient in providing tailored workout plans that suit individual users, optimizing their fitness routines.</p>\n<p><strong>Accountability:</strong> \"Accountability\" complements the idea of personalizing workout plans. It implies that users are held accountable for following their personalized plans, fostering a sense of responsibility in their fitness journey.</p>\n<p>Options 1, 2, 3, and 4 are incorrect in this context:</p>\n<p><strong>Effectiveness (1):</strong> While effectiveness is important, the focus in the context is on making the fitness app more efficient and personalized.</p>\n<p><strong>Accessibility (2):</strong> Accessibility typically relates to ease of use or availability, and it is not the primary focus in the context of personalizing workout plans.</p>\n<p><strong>Motivation (3):</strong> Although motivation is essential in a fitness context, it is not directly related to the efficiency and <strong>accountability of providing personalized workout plans.</strong></p>\n<p><strong>Transparency (4):</strong> Transparency is not directly related to personalizing workout plans. In this context, the emphasis is on efficiency and accountability.</p>"}, {"question": "<p><strong>In the sentence given below two blanks are there followed by six words to fill the blank to complete the sentence meaningfully correct. You have to choose the correct pair of words to complete the sentence.</strong></p><br><p><strong>The scientist's groundbreaking research not only _____ our understanding of the universe but also _____ new possibilities for future exploration.</strong></p>\n<p><strong>1).</strong> enhanced</p>\n<p><strong>2).</strong> challenged</p>\n<p><strong>3).</strong> opened</p>\n<p><strong>4).</strong> restricted</p>\n<p><strong>5).</strong> diminished</p>\n<p><strong>6).</strong> propelled</p>", "options": ["<p>1 and 6</p>", "<p>2 and 4</p>", "<p>3 and 5</p>", "<p>1 and 4</p>", "<p>3 and 6</p>"], "correctIndex": 0, "solution": "<p><strong>Answer:</strong><strong> A</strong></p>\n<p>1 and 6</p>\n<p><strong>Enhanced:</strong> This term accurately represents the positive impact of the scientist's research on our understanding of the universe, suggesting an improvement or enrichment.</p>\n<p><strong>Propelled:</strong> \"Propelled\" complements the idea of the research not only enhancing understanding but also driving forward or creating momentum for future exploration.</p>\n<p><strong>Challenged:</strong> While a valid term for pushing the boundaries of understanding, \"enhanced\" was chosen for its positive connotation that fits well with the context.</p>\n<p><strong>Restricted:</strong> This term is contrary to the idea of the research expanding our understanding and opening up new possibilities.</p>\n<p><strong>Opened:</strong> While \"opened\" might seem to convey the idea of revealing or uncovering new possibilities, it doesn't capture the depth of impact suggested by the context. The term doesn't fully express the profound nature of the scientist's research and its transformative effect on understanding and future exploration. \"Opened\" is more associated with doors, possibilities, or opportunities, and in this context, it may not be as strong and accurate as \"enhanced\" and \"propelled.\"</p>\n<p><strong>Diminished:</strong> This term is opposite in meaning to the intended effect of the groundbreaking research, which is to enhance and expand our understanding.</p>\n<p>In summary, \"enhanced\" and \"propelled\" were chosen for their positive connotations and their alignment with the context of the sentence. The other options, while valid in certain contexts, do not convey the intended meaning as effectively. Therefore, the revised sentence reads: \"The scientist's groundbreaking research not only enhanced our understanding of the universe but also propelled new possibilities for future exploration.\"</p>"}, {"question": "<p><strong>In each of the questions given below, a sentence/ paragraph is given with few words highlighted. These words may not be placed correctly. Also, one of these words may be inappropriate in context of the sentence/ paragraph. Identify the most appropriate rearrangement of the words and the suitable replacement for the incorrect word.</strong></p><br><p>The Departments of Space (DoS) is <strong>managing (A) </strong>with the entry of private sector players in the national space programme as well as <strong>dodging (B) </strong>the development of the maiden human spaceflight mission and new launch vehicles. The Ministries of Earth Sciences (MoES) is involved in missions to <strong>explore (C) </strong>the seabed for mineral resources — an enterprise just beginning to <strong>feature (D) </strong>in multilateral fora — as well as climate adaptation and mitigation.</p>", "options": ["<p>ABCD; A-retreating</p>", "<p>BACD; B-grappling</p>", "<p>ABDC; A-delving</p>", "<p>BADC; B- striving</p>", "<p>No rearrangement required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer</strong><strong>: B</strong></p>\n<p>In this context, \"grappling\" means struggling to deal with or trying to manage a challenging situation. It suggests that the Departments of Space (DoS) is facing difficulties or challenges in handling the entry of private sector players into the national space programme, as well as managing the development of new projects such as the maiden human spaceflight mission and new launch vehicles.</p>\n<p>\"Grappling\" implies actively struggling with or trying to manage challenging situations. It suggests an effort to confront and address difficulties.</p>\n<p>\"Dodging,\" means avoiding or evading something. Using \"dodging\" would imply that the Departments of Space (DoS) is trying to avoid dealing with the entry of private sector players and the development of new projects, which is not the intended meaning.</p>\n<p>Therefore, \"dodging\" would not accurately convey the idea of the DoS actively working to manage and address the challenges it faces.</p>\n<p><strong>The Correct sentence will be: “</strong>The Departments of Space (DoS) is <strong>grappling</strong> with the entry of private sector players in the national space programme as well as <strong>managing</strong> the development of the maiden human spaceflight mission and new launch vehicles. The Ministries of Earth Sciences (MoES) is involved in missions to <strong>explore</strong> the seabed for mineral resources — an enterprise just beginning to <strong>feature</strong> in multilateral fora — as well as climate adaptation and mitigation<strong>.”</strong></p>"}, {"question": "<p><strong>In each of the questions given below, a sentence/ paragraph is given with few words highlighted. These words may not be placed correctly. Also, one of these words may be inappropriate in context of the sentence/ paragraph. Identify the most appropriate rearrangement of the words and the suitable replacement for the incorrect word.</strong></p><br><p>Media orthodoxy has it that the <strong>fixation (A) </strong>of the Bharatiya Janata Party (BJP) with Lord Ram is still bringing it huge electoral and political dividends, which has <strong>convinced (B) </strong>the BJP leadership that this indeed is an inviolable truth. Any amount of empirical <strong>affidavit (C) </strong>to the contrary is <strong>dismissed (D) </strong>as hypothetical at best, and/or false at worst.</p>", "options": ["<p>ABCD; C-evidence</p>", "<p>CBAD; C-obsession</p>", "<p>ADCB; D-persuaded</p>", "<p>CDAB; B-expelled</p>", "<p>No rearrangement required</p>"], "correctIndex": 0, "solution": "<p><strong>Answer</strong><strong>: A</strong></p>\n<p>In this context, \"evidence\" refers to information, data, or facts that are used to support or refute a claim or belief. The sentence suggests that there might be factual information or data that contradicts the idea that the Bharatiya Janata Party's (BJP) focus on Lord Ram continues to bring it significant electoral and political benefits.</p>\n<p>An \"affidavit\" is a written statement confirmed by oath or affirmation, used as evidence in legal proceedings. It is a specific legal document, and using it in place of \"evidence\" would change the meaning of the sentence and imply a formal legal context that is not intended here.</p>\n<p>Therefore, \"affidavit\" would not accurately convey the intended meaning in this context.</p>\n<p><strong>The Correct sentence will be: “</strong>Media orthodoxy has it that the <strong>fixation</strong> of the Bharatiya Janata Party (BJP) with Lord Ram is still bringing it huge electoral and political dividends, which has <strong>convinced</strong> the BJP leadership that this indeed is an inviolable truth. Any amount of empirical <strong>evidence</strong> to the contrary is <strong>dismissed</strong> as hypothetical at best, and/or false at worst.<strong>”</strong></p>"}, {"question": "<p><strong>In each of the questions given below, a sentence/ paragraph is given with few words highlighted. These words may not be placed correctly. Also, one of these words may be inappropriate in context of the sentence/ paragraph. Identify the most appropriate rearrangement of the words and the suitable replacement for the incorrect word.</strong></p><br><p>The 2024 general election result shows that the Indian voter has <strong>expressed (A) </strong>a <strong>repugnance (B) </strong>for the politics of <strong>hatred (C)</strong>, of divide and rule, and the politics of the Prime Minister himself, whose electoral rhetoric this time was <strong>indecorous (D)</strong>.</p>", "options": ["<p>ABCD; B-affinity</p>", "<p>ADCB; D-ardency</p>", "<p>CBAD; D-felicitous</p>", "<p>CDAB; B-expedient</p>", "<p>No rearrangement required</p>"], "correctIndex": 4, "solution": "<p><strong>Answer</strong><strong>: E</strong></p>\n<p>The sentence is correct, hence no rearrangement required.</p>\n<p>In this context, \"repugnance\" means a strong feeling of disgust or aversion. The sentence suggests that the result of the 2024 general election indicates that Indian voters have shown a strong dislike or aversion towards the politics of hatred, divisive tactics, and the politics associated with the Prime Minister, whose campaign rhetoric was considered indecorous or inappropriate.</p>"}, {"question": "<p><strong>In each of the questions given below, a sentence/ paragraph is given with few words highlighted. These words may not be placed correctly. Also, one of these words may be inappropriate in context of the sentence/ paragraph. Identify the most appropriate rearrangement of the words and the suitable replacement for the incorrect word.</strong></p><br><p>Most people in the south are <strong>servitude (A) </strong>Indian nationalists who <strong>subsidise (B) </strong>full well the need to correct regional imbalances, and for richer States to <strong>recognise (C) </strong>poorer ones. But we must ensure that this balancing act does not become financial <strong>staunch (D) </strong>of our southern States.</p>", "options": ["<p>ABCD; A-tenacious</p>", "<p>DBCA; B-support</p>", "<p>DCBA; A-persecution</p>", "<p>ACBD; B- assimilate</p>", "<p>No rearrangement required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer</strong><strong>: C</strong></p>\n<p>In this context, \"persecution\" means the unjust treatment or punishment of a group of people. The sentence suggests that while it is important to address regional imbalances and have richer states subsidize poorer ones, this effort should not result in the unfair or harsh treatment of southern states. The term \"persecution\" emphasizes that the balancing act should not become a means of subjecting the southern states to undue financial burden or unfair economic practices.</p>\n<p>\"Servitude\" refers to a condition in which an individual or group is forced to work for another or is in a state of slavery or bondage. It implies a lack of freedom and autonomy.</p>\n<p>\"Persecution,\" as used in the sentence, refers to unjust or harsh treatment. The sentence is emphasizing that the effort to correct regional imbalances should not result in the unfair or harsh treatment of southern states.</p>\n<p>Using \"servitude\" would not accurately convey the intended meaning of unjust treatment. It would imply a condition of enforced labor or bondage, which is not the same as unfair financial treatment. Therefore, \"servitude\" is not an appropriate replacement for \"persecution\" in this context.</p>\n<p><strong>The Correct sentence will be: “</strong>Most people in the south are <strong>staunch</strong> Indian nationalists who <strong>recognise</strong> full well the need to correct regional imbalances, and for richer States to <strong>subsidise</strong> poorer ones. But we must ensure that this balancing act does not become financial <strong>persecution</strong> of our southern States.<strong>”</strong></p>"}, {"question": "<p><strong>In each of the questions given below, a sentence/ paragraph is given with few words highlighted. These words may not be placed correctly. Also, one of these words may be inappropriate in context of the sentence/ paragraph. Identify the most appropriate rearrangement of the words and the suitable replacement for the incorrect word.</strong></p><br><p>If Modi had emerged as a figure of unity rather than of hate and exaggerated <strong>ego (A),</strong>he may have been able to avoid the <strong>travail (B) </strong>of being ticked off publicly by Bhagwat. The BJP’s <strong>defeat (C) </strong>in Ayodhya and the Ramjanmabhoomi heartland and Modi's own weak performance in Kashi, the sacred seat of Hinduism, suggest that there has been an internal <strong>ignominy (D) </strong>within the Sangh Parivar.</p>", "options": ["<p>ABCD; A-conceit</p>", "<p>CBAD; A-subdue</p>", "<p>CDAB; B-anguish</p>", "<p>ADCB; B-disquiet</p>", "<p>No rearrangement required</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D</strong></p>\n<p>In this context, \"disquiet\" means a feeling of anxiety, unease, or concern. The sentence suggests that the BJP's defeat in Ayodhya and the Ramjanmabhoomi heartland, along with Modi's weak performance in Kashi, indicates that there is a sense of internal concern or unease within the Sangh Parivar. This disquiet implies that members or factions within the Sangh Parivar are worried or unsettled about the current political situation and leadership.</p>\n<p>\"Travail\" refers to painful or laborious effort, often associated with hard work or toil, and sometimes with suffering or hardship.</p>\n<p>\"Disquiet\" in the sentence refers to a sense of anxiety, unease, or concern within the Sangh Parivar. It suggests that there is internal worry or unrest.</p>\n<p>Replacing \"disquiet\" with \"travail\" would change the meaning of the sentence. Instead of indicating a feeling of internal unease or concern, it would imply that the Sangh Parivar is going through a period of hard work or suffering, which is not the intended meaning.</p>\n<p>Therefore, \"travail\" is not an appropriate replacement for \"disquiet\" in this context.</p>\n<p>In this context, \"ignominy\" means public shame or disgrace. The sentence suggests that if Modi had been a unifying figure instead of one associated with hate and exaggerated ego, he might have avoided the public embarrassment or disgrace of being reprimanded by Bhagwat. The term \"ignominy\" emphasizes the deep sense of shame or dishonour that comes from being criticized or rebuked in a public manner.</p>\n<p><strong>The Correct sentence will be: “</strong>If Modi had emerged as a figure of unity rather than of hate and exaggerated <strong>ego</strong> he may have been able to avoid the <strong>ignominy</strong> of being ticked off publicly by Bhagwat. The BJP’s <strong>defeat</strong> in Ayodhya and the Ramjanmabhoomi heartland and Modi's own weak performance in Kashi, the sacred seat of Hinduism, suggest that there has been an internal <strong>disquiet</strong> within the Sangh Parivar.<strong>”</strong></p>"}, {"question": "<p><strong>Read the following passage carefully. Some words and phrases have been highlighted and blanks have been put in lines to help you locate the place from where the question has been given. </strong></p>\n<p>The Geneva summit between U.S. President Joe Biden and his Russian counterpart Vladimir Putin, on Wednesday, has set a pragmatic tone for engagement between the two competing powers. Mr. Biden had, in the past, called Mr. Putin “a killer”. Relations have hit the lowest point in recent years since the end of the Cold War. The U.S. has accused Russia of interfering in its elections and launching cyber-attacks and criticised its <strong>stifling</strong> of internal dissent, while Moscow has slammed America’s “interventionist” foreign policy. Despite these differences, the leaders held talks on all critical issues, bringing diplomacy to the centre stage. After the summit, they have struck cautious optimism that is rooted in self-interest. Mr. Biden sought a more predictable, rational engagement, while Mr. Putin said relations were primarily pragmatic. They have decided to return their Ambassadors to the Embassies and announced “a strategic stability dialogue” to discuss terms of arms control measures. While there was no major breakthrough, which was not expected any way, they could at least demonstrate willingness to strengthen engagement and reduce tensions.</p>\n<p>There are structural issues in the U.S.-Russia ties. When Russia <strong>adopted</strong> (A) its post-Soviet strategic retreat and <strong>ended</strong> (B) a more <strong>primacy</strong> (C) foreign policy under Mr. Putin, partly in response to NATO expansion into Eastern Europe, the West saw it as a threat to its <strong>assertive</strong> (D). The 2008 Georgia war practically ended the romance between democratic Russia and the West. The annexation of Crimea in 2014 renewed tensions. Russia was thrown out of the G8, and western sanctions followed. But such steps did not deter Mr. Putin.</p>\n<p>Ties hit rock bottom after allegations that Russian intelligence units had carried out cyber attacks and run an online campaign to get Donald Trump elected President in the 2016 U.S. election. Mr. Biden and Mr. Putin cannot resolve these geopolitical and bilateral issues in one summit. But they can certainly take measures to prevent relations from worsening. For the U.S., the cyber attacks are a red line. <strong>Russia, which had amassed troops in the Ukraine border earlier this year, sees NATO’s expansion into its border region as a threat</strong>. Both countries should be ready to address their critical concerns and agree to a cold peace, which would help in addressing other geopolitical problems such as Syria. The U.S. should be less pessimistic about Russia’s foreign policy goals. Whether the Americans like it or not, Russia, despite its weakened economic status, remains a great power. Mr. Putin should also realise that if his goal is to restore Russia’s lost glory in global politics, he should be ready to cooperate with the West. Permanent hostility with other powers cannot be of much help to Russia.</p><br><p><strong>Which of the following words is a synonym to the word STIFLING according to the passage?</strong></p>", "options": ["<p>Suffocate</p>", "<p>Exposed</p>", "<p>Facile</p>", "<p>Temperate</p>", "<p>None of the above</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Stifling – to stop something happening, developing, continuing Suffocate - to impede or stop the development of Here suffocate is the synonym of stifling Hence option A is the correct answer. Facile –easily accomplished or attained</p>"}, {"question": "<p><strong>Read the following passage carefully. Some words and phrases have been highlighted and blanks have been put in lines to help you locate the place from where the question has been given. </strong></p>\n<p>The Geneva summit between U.S. President Joe Biden and his Russian counterpart Vladimir Putin, on Wednesday, has set a pragmatic tone for engagement between the two competing powers. Mr. Biden had, in the past, called Mr. Putin “a killer”. Relations have hit the lowest point in recent years since the end of the Cold War. The U.S. has accused Russia of interfering in its elections and launching cyber-attacks and criticised its <strong>stifling</strong> of internal dissent, while Moscow has slammed America’s “interventionist” foreign policy. Despite these differences, the leaders held talks on all critical issues, bringing diplomacy to the centre stage. After the summit, they have struck cautious optimism that is rooted in self-interest. Mr. Biden sought a more predictable, rational engagement, while Mr. Putin said relations were primarily pragmatic. They have decided to return their Ambassadors to the Embassies and announced “a strategic stability dialogue” to discuss terms of arms control measures. While there was no major breakthrough, which was not expected any way, they could at least demonstrate willingness to strengthen engagement and reduce tensions.</p>\n<p>There are structural issues in the U.S.-Russia ties. When Russia <strong>adopted</strong> (A) its post-Soviet strategic retreat and <strong>ended</strong> (B) a more <strong>primacy</strong> (C) foreign policy under Mr. Putin, partly in response to NATO expansion into Eastern Europe, the West saw it as a threat to its <strong>assertive</strong> (D). The 2008 Georgia war practically ended the romance between democratic Russia and the West. The annexation of Crimea in 2014 renewed tensions. Russia was thrown out of the G8, and western sanctions followed. But such steps did not deter Mr. Putin.</p>\n<p>Ties hit rock bottom after allegations that Russian intelligence units had carried out cyber attacks and run an online campaign to get Donald Trump elected President in the 2016 U.S. election. Mr. Biden and Mr. Putin cannot resolve these geopolitical and bilateral issues in one summit. But they can certainly take measures to prevent relations from worsening. For the U.S., the cyber attacks are a red line. <strong>Russia, which had amassed troops in the Ukraine border earlier this year, sees NATO’s expansion into its border region as a threat</strong>. Both countries should be ready to address their critical concerns and agree to a cold peace, which would help in addressing other geopolitical problems such as Syria. The U.S. should be less pessimistic about Russia’s foreign policy goals. Whether the Americans like it or not, Russia, despite its weakened economic status, remains a great power. Mr. Putin should also realise that if his goal is to restore Russia’s lost glory in global politics, he should be ready to cooperate with the West. Permanent hostility with other powers cannot be of much help to Russia.</p><br><p>In a sentence four words are highlighted. You have to arrange the four words to make a sentence contextually and grammatically correct When Russia <strong>adopted (A)</strong> its post-Soviet strategic retreat and <strong>ended (B)</strong> a more <strong>primacy (C)</strong> foreign policy under Mr. Putin, partly in response to NATO expansion into Eastern Europe, the West saw it as a threat to its <strong>assertive</strong>. <strong>(D)</strong></p>", "options": ["<p>A-C</p>", "<p>C-D</p>", "<p>A-B, C-D</p>", "<p>A-C, B-D</p>", "<p>None of the above</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: </strong><strong>C</strong></p>\n<p>The correct arrangement of the sentence is A-B, CD When Russia ended (A) its post-Soviet strategic retreat and adopted (B) a more assertive (C) foreign policy under Mr. Putin, partly in response to NATO expansion into Eastern Europe, the West saw it as a threat to its primacy (D)</p>"}, {"question": "<p><strong>Read the following passage carefully. Some words and phrases have been highlighted and blanks have been put in lines to help you locate the place from where the question has been given. </strong></p>\n<p>The Geneva summit between U.S. President Joe Biden and his Russian counterpart Vladimir Putin, on Wednesday, has set a pragmatic tone for engagement between the two competing powers. Mr. Biden had, in the past, called Mr. Putin “a killer”. Relations have hit the lowest point in recent years since the end of the Cold War. The U.S. has accused Russia of interfering in its elections and launching cyber-attacks and criticised its <strong>stifling</strong> of internal dissent, while Moscow has slammed America’s “interventionist” foreign policy. Despite these differences, the leaders held talks on all critical issues, bringing diplomacy to the centre stage. After the summit, they have struck cautious optimism that is rooted in self-interest. Mr. Biden sought a more predictable, rational engagement, while Mr. Putin said relations were primarily pragmatic. They have decided to return their Ambassadors to the Embassies and announced “a strategic stability dialogue” to discuss terms of arms control measures. While there was no major breakthrough, which was not expected any way, they could at least demonstrate willingness to strengthen engagement and reduce tensions.</p>\n<p>There are structural issues in the U.S.-Russia ties. When Russia <strong>adopted</strong> (A) its post-Soviet strategic retreat and <strong>ended</strong> (B) a more <strong>primacy</strong> (C) foreign policy under Mr. Putin, partly in response to NATO expansion into Eastern Europe, the West saw it as a threat to its <strong>assertive</strong> (D). The 2008 Georgia war practically ended the romance between democratic Russia and the West. The annexation of Crimea in 2014 renewed tensions. Russia was thrown out of the G8, and western sanctions followed. But such steps did not deter Mr. Putin.</p>\n<p>Ties hit rock bottom after allegations that Russian intelligence units had carried out cyber attacks and run an online campaign to get Donald Trump elected President in the 2016 U.S. election. Mr. Biden and Mr. Putin cannot resolve these geopolitical and bilateral issues in one summit. But they can certainly take measures to prevent relations from worsening. For the U.S., the cyber attacks are a red line. <strong>Russia, which had amassed troops in the Ukraine border earlier this year, sees NATO’s expansion into its border region as a threat</strong>. Both countries should be ready to address their critical concerns and agree to a cold peace, which would help in addressing other geopolitical problems such as Syria. The U.S. should be less pessimistic about Russia’s foreign policy goals. Whether the Americans like it or not, Russia, despite its weakened economic status, remains a great power. Mr. Putin should also realise that if his goal is to restore Russia’s lost glory in global politics, he should be ready to cooperate with the West. Permanent hostility with other powers cannot be of much help to Russia.</p><br><p><strong>The sentence given below is divided into four parts. Out of four, one part may or may not have an error in it. Find out the erroneous part</strong></p>", "options": ["<p>Russia, which had amassed troops</p>", "<p>in the Ukraine border earlier this year</p>", "<p>sees NATO&rsquo;s expansion into its</p>", "<p>border region as a threat</p>", "<p>No Error</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: </strong><strong>B</strong></p>\n<p>In part B ‘in’ is wrongly used and the correct usage is ‘on’ Hence option B is answer</p>"}, {"question": "<p><strong>Read the following passage carefully. Some words and phrases have been highlighted and blanks have been put in lines to help you locate the place from where the question has been given. </strong></p>\n<p>The Geneva summit between U.S. President Joe Biden and his Russian counterpart Vladimir Putin, on Wednesday, has set a pragmatic tone for engagement between the two competing powers. Mr. Biden had, in the past, called Mr. Putin “a killer”. Relations have hit the lowest point in recent years since the end of the Cold War. The U.S. has accused Russia of interfering in its elections and launching cyber-attacks and criticised its <strong>stifling</strong> of internal dissent, while Moscow has slammed America’s “interventionist” foreign policy. Despite these differences, the leaders held talks on all critical issues, bringing diplomacy to the centre stage. After the summit, they have struck cautious optimism that is rooted in self-interest. Mr. Biden sought a more predictable, rational engagement, while Mr. Putin said relations were primarily pragmatic. They have decided to return their Ambassadors to the Embassies and announced “a strategic stability dialogue” to discuss terms of arms control measures. While there was no major breakthrough, which was not expected any way, they could at least demonstrate willingness to strengthen engagement and reduce tensions.</p>\n<p>There are structural issues in the U.S.-Russia ties. When Russia <strong>adopted</strong> (A) its post-Soviet strategic retreat and <strong>ended</strong> (B) a more <strong>primacy</strong> (C) foreign policy under Mr. Putin, partly in response to NATO expansion into Eastern Europe, the West saw it as a threat to its <strong>assertive</strong> (D). The 2008 Georgia war practically ended the romance between democratic Russia and the West. The annexation of Crimea in 2014 renewed tensions. Russia was thrown out of the G8, and western sanctions followed. But such steps did not deter Mr. Putin.</p>\n<p>Ties hit rock bottom after allegations that Russian intelligence units had carried out cyber attacks and run an online campaign to get Donald Trump elected President in the 2016 U.S. election. Mr. Biden and Mr. Putin cannot resolve these geopolitical and bilateral issues in one summit. But they can certainly take measures to prevent relations from worsening. For the U.S., the cyber attacks are a red line. <strong>Russia, which had amassed troops in the Ukraine border earlier this year, sees NATO’s expansion into its border region as a threat</strong>. Both countries should be ready to address their critical concerns and agree to a cold peace, which would help in addressing other geopolitical problems such as Syria. The U.S. should be less pessimistic about Russia’s foreign policy goals. Whether the Americans like it or not, Russia, despite its weakened economic status, remains a great power. Mr. Putin should also realise that if his goal is to restore Russia’s lost glory in global politics, he should be ready to cooperate with the West. Permanent hostility with other powers cannot be of much help to Russia.</p><br><p><strong>Which of the following is true according to the given context?</strong></p>\n<p><strong>I).</strong> the 2008 Georgia war practically ended the romance between democratic Russia and the East</p>\n<p><strong>II).</strong> The French summit was held between the U.S and its Russian counterpart in a practical way between two competing powers</p>\n<p><strong>III).</strong> The U.S. should be less optimistic about Russia’s foreign policy goals</p>", "options": ["<p>Only I</p>", "<p>Only II</p>", "<p>Only III</p>", "<p>Both I &amp; II</p>", "<p>None of the above</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>From the whole paragraph we can know that Options I, II and III are given wrongly Hence option E is answer.</p>"}, {"question": "<p><strong>Read the following passage carefully. Some words and phrases have been highlighted and blanks have been put in lines to help you locate the place from where the question has been given. </strong></p>\n<p>The Geneva summit between U.S. President Joe Biden and his Russian counterpart Vladimir Putin, on Wednesday, has set a pragmatic tone for engagement between the two competing powers. Mr. Biden had, in the past, called Mr. Putin “a killer”. Relations have hit the lowest point in recent years since the end of the Cold War. The U.S. has accused Russia of interfering in its elections and launching cyber-attacks and criticised its <strong>stifling</strong> of internal dissent, while Moscow has slammed America’s “interventionist” foreign policy. Despite these differences, the leaders held talks on all critical issues, bringing diplomacy to the centre stage. After the summit, they have struck cautious optimism that is rooted in self-interest. Mr. Biden sought a more predictable, rational engagement, while Mr. Putin said relations were primarily pragmatic. They have decided to return their Ambassadors to the Embassies and announced “a strategic stability dialogue” to discuss terms of arms control measures. While there was no major breakthrough, which was not expected any way, they could at least demonstrate willingness to strengthen engagement and reduce tensions.</p>\n<p>There are structural issues in the U.S.-Russia ties. When Russia <strong>adopted</strong> (A) its post-Soviet strategic retreat and <strong>ended</strong> (B) a more <strong>primacy</strong> (C) foreign policy under Mr. Putin, partly in response to NATO expansion into Eastern Europe, the West saw it as a threat to its <strong>assertive</strong> (D). The 2008 Georgia war practically ended the romance between democratic Russia and the West. The annexation of Crimea in 2014 renewed tensions. Russia was thrown out of the G8, and western sanctions followed. But such steps did not deter Mr. Putin.</p>\n<p>Ties hit rock bottom after allegations that Russian intelligence units had carried out cyber attacks and run an online campaign to get Donald Trump elected President in the 2016 U.S. election. Mr. Biden and Mr. Putin cannot resolve these geopolitical and bilateral issues in one summit. But they can certainly take measures to prevent relations from worsening. For the U.S., the cyber attacks are a red line. <strong>Russia, which had amassed troops in the Ukraine border earlier this year, sees NATO’s expansion into its border region as a threat</strong>. Both countries should be ready to address their critical concerns and agree to a cold peace, which would help in addressing other geopolitical problems such as Syria. The U.S. should be less pessimistic about Russia’s foreign policy goals. Whether the Americans like it or not, Russia, despite its weakened economic status, remains a great power. Mr. Putin should also realise that if his goal is to restore Russia’s lost glory in global politics, he should be ready to cooperate with the West. Permanent hostility with other powers cannot be of much help to Russia.</p><br><p><strong>What should be done to restore Russia’s lost glory in global politics as per the context?</strong></p>", "options": ["<p>Putin should be ready to cooperate with the west</p>", "<p>Putin should be ready to cooperate with the east</p>", "<p>He can take measures to prevent relations from worsening</p>", "<p>He should not continue any breakthrough between two countries</p>", "<p>None of the above</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>From the second paragraph we understand that; Putin should also realise that if his goal is to restore Russia’s lost glory in global politics, he should be ready to cooperate with the West Hence option A is answer</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-78)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-78)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

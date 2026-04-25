@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-53)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>Below, a passage is given with five multiple tasks labelled (A-E). Below the passage, five options are given for each task. Choose the correct answer that fits appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>The rapid advancement of technology <strong>(A) ________________</strong> impact on various aspects of society. One of the most significant changes is the way people communicate. With the advent of social media and instant messaging platforms, individuals can now interact with each other in real-time, regardless of their geographical location. This has led to a <strong>(B) ___________</strong> in the speed and efficiency of information exchange.</p>\n<p>However, the digital age has also brought about certain challenges. One major issue is the spread of misinformation, which can <strong>(C) _________ </strong>public opinion and lead to widespread confusion. To combat this, it is crucial to <strong>(D) promote </strong>critical thinking skills and media literacy among the population. <strong>(E)</strong> Additionally, the rise of digital communication has affected personal interactions, with some experts arguing that it has led to a decline in face-to-face social skills.</p><br><p><strong>Which phrase(s) come(s) in the blank labelled A?</strong></p>\n<p><strong>1).</strong> has had a profound</p>\n<p><strong>2).</strong> have a profound</p>\n<p><strong>3).</strong> had had a profound</p>", "options": ["<p>Only 1</p>", "<p>Only 2</p>", "<p>Only 2 &amp; 3</p>", "<p>Only 1 &amp; 2</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The subject of the sentence is \"The rapid advancement of technology,\" which is singular. Therefore, the verb must be in the singular form. \"Has had a profound\" is correct because \"has had\" is the present perfect tense, which indicates an action that started in the past and continues to have relevance in the present.</p>\n<p>The other options are incorrect because:</p>\n<p>\"Have a profound\" uses the plural form \"have,\" which does not agree with the singular subject.</p>\n<p>\"Had had a profound\" is the past perfect tense, which is not appropriate in this context because we are discussing the current impact of technology.</p>"}, {"question": "<p><strong>Below, a passage is given with five multiple tasks labelled (A-E). Below the passage, five options are given for each task. Choose the correct answer that fits appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>The rapid advancement of technology <strong>(A) ________________</strong> impact on various aspects of society. One of the most significant changes is the way people communicate. With the advent of social media and instant messaging platforms, individuals can now interact with each other in real-time, regardless of their geographical location. This has led to a <strong>(B) ___________</strong> in the speed and efficiency of information exchange.</p>\n<p>However, the digital age has also brought about certain challenges. One major issue is the spread of misinformation, which can <strong>(C) _________ </strong>public opinion and lead to widespread confusion. To combat this, it is crucial to <strong>(D) promote </strong>critical thinking skills and media literacy among the population. <strong>(E)</strong> Additionally, the rise of digital communication has affected personal interactions, with some experts arguing that it has led to a decline in face-to-face social skills.</p><br><p><strong>Which word comes in the blank labelled B?</strong></p>", "options": ["<p>decrease</p>", "<p>complexity</p>", "<p>revolution</p>", "<p>deterioration</p>", "<p>surge</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>The rapid advancement of technology has led to a \"<strong>surge</strong>\" in the speed and efficiency of information exchange, indicating a significant increase.</p>"}, {"question": "<p><strong>Below, a passage is given with five multiple tasks labelled (A-E). Below the passage, five options are given for each task. Choose the correct answer that fits appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>The rapid advancement of technology <strong>(A) ________________</strong> impact on various aspects of society. One of the most significant changes is the way people communicate. With the advent of social media and instant messaging platforms, individuals can now interact with each other in real-time, regardless of their geographical location. This has led to a <strong>(B) ___________</strong> in the speed and efficiency of information exchange.</p>\n<p>However, the digital age has also brought about certain challenges. One major issue is the spread of misinformation, which can <strong>(C) _________ </strong>public opinion and lead to widespread confusion. To combat this, it is crucial to <strong>(D) promote </strong>critical thinking skills and media literacy among the population. <strong>(E)</strong> Additionally, the rise of digital communication has affected personal interactions, with some experts arguing that it has led to a decline in face-to-face social skills.</p><br><p><strong>Which word comes in the blank labelled C?</strong></p>", "options": ["<p>inform</p>", "<p>clarify</p>", "<p>distort</p>", "<p>consolidate</p>", "<p>endorse</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The spread of misinformation can \"<strong>distort</strong>\" public opinion, meaning it can mislead or misrepresent the truth, leading to widespread confusion.</p>"}, {"question": "<p><strong>Below, a passage is given with five multiple tasks labelled (A-E). Below the passage, five options are given for each task. Choose the correct answer that fits appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>The rapid advancement of technology <strong>(A) ________________</strong> impact on various aspects of society. One of the most significant changes is the way people communicate. With the advent of social media and instant messaging platforms, individuals can now interact with each other in real-time, regardless of their geographical location. This has led to a <strong>(B) ___________</strong> in the speed and efficiency of information exchange.</p>\n<p>However, the digital age has also brought about certain challenges. One major issue is the spread of misinformation, which can <strong>(C) _________ </strong>public opinion and lead to widespread confusion. To combat this, it is crucial to <strong>(D) promote </strong>critical thinking skills and media literacy among the population. <strong>(E)</strong> Additionally, the rise of digital communication has affected personal interactions, with some experts arguing that it has led to a decline in face-to-face social skills.</p><br><p><strong>Which of the following words can replace the word highlighted in bold in Sentence D?</strong></p>", "options": ["<p>discourage</p>", "<p>undermine</p>", "<p>encourage</p>", "<p>overlook</p>", "<p>suppress</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>To combat misinformation, it is crucial to \"<strong>encourage</strong>\" critical thinking skills and media literacy, meaning to promote and develop these skills among the population.</p>"}, {"question": "<p><strong>Below, a passage is given with five multiple tasks labelled (A-E). Below the passage, five options are given for each task. Choose the correct answer that fits appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>The rapid advancement of technology <strong>(A) ________________</strong> impact on various aspects of society. One of the most significant changes is the way people communicate. With the advent of social media and instant messaging platforms, individuals can now interact with each other in real-time, regardless of their geographical location. This has led to a <strong>(B) ___________</strong> in the speed and efficiency of information exchange.</p>\n<p>However, the digital age has also brought about certain challenges. One major issue is the spread of misinformation, which can <strong>(C) _________ </strong>public opinion and lead to widespread confusion. To combat this, it is crucial to <strong>(D) promote </strong>critical thinking skills and media literacy among the population. <strong>(E)</strong> Additionally, the rise of digital communication has affected personal interactions, with some experts arguing that it has led a decline in face-to-face social skills.</p><br><p><strong>Which of the following part(s) in (E) contains a grammatical error?</strong></p>", "options": ["<p>Additionally, the rise of digital communication</p>", "<p>has affected personal interactions, with</p>", "<p>some experts arguing that it has led a</p>", "<p>decline in face-to-face social skills.</p>", "<p>No error</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The phrase \"led a\" should be corrected to \"led to a\" because the verb \"led\" requires the preposition \"to\" when followed by a noun phrase.</p>\n<p><strong>The corrected sentence is:</strong></p>\n<p>Additionally, the rise of digital communication has affected personal interactions, with some experts arguing that it has led to a decline in face-to-face social skills.</p>"}, {"question": "<p><strong>In the given question, sentences are given in jumbled form. Rearrange them in proper order and answer the questions that follow.</strong></p>\n<p>Rearrange the following sentences to form a coherent paragraph:</p>\n<p><strong>A).</strong> India’s growing trade affinity with China is a living example of that: China has become India's largest trading partner in 2023-24.</p>\n<p><strong>B).</strong> In the realm of global economics, the dynamics of trade relationships often override geopolitics.</p>\n<p><strong>C).</strong> This development brings little joy to the nation aspiring to become an alternative to China and striving to bolster its manufacturing sector, with the Prime Minister's 'Make in India' call.</p>\n<p><strong>D).</strong> Their trade relationship has long been characterised by a mix of competition and cooperation.</p>\n<p><strong>E).</strong> Despite the Indian Government's rhetoric urging caution in dealings with China, economic imperatives seem to be reshaping the contours of bilateral trade.</p><br><p><strong>Which of the following is the penultimate sentence after rearrangement?</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 4, "solution": "<p><strong>Answer</strong><strong>: E</strong></p>\n<p>The paragraph discusses India's trade relationship with China, highlighting its complexity and the overriding influence of economic factors over geopolitics.</p>\n<p>The passage begins with <strong>sentence B</strong>, which introduces the idea that economic dynamics often outweigh geopolitical considerations in trade relationships. <strong>Sentence A</strong> follows, providing a specific example of India's trade relationship with China. <strong>Sentence C</strong> adds depth by discussing the implications of this relationship for India's aspirations and policies. <strong>Sentence E</strong> highlights the influence of economic imperatives despite the Indian Government's cautious approach. Finally, <strong>sentence D</strong> concludes by describing the competitive and cooperative aspects of the India-China trade relationship.</p>\n<p>So, the correct sequence is: <strong>B – A – C – E – D.</strong></p>\n<p>The penultimate sentence in a paragraph is the one that appears just before the last sentence and serves as a bridge or transition to the final point. In this sequence, Sentence E, \" Despite the Indian Government's rhetoric urging caution in dealings with China, economic imperatives seem to be reshaping the contours of bilateral trade.\" is the penultimate sentence.</p>"}, {"question": "<p><strong>In the given question, sentences are given in jumbled form. Rearrange them in proper order and answer the questions that follow.</strong></p>\n<p>Rearrange the following sentences to form a coherent paragraph:</p>\n<p><strong>A).</strong> India’s growing trade affinity with China is a living example of that: China has become India's largest trading partner in 2023-24.</p>\n<p><strong>B).</strong> In the realm of global economics, the dynamics of trade relationships often override geopolitics.</p>\n<p><strong>C).</strong> This development brings little joy to the nation aspiring to become an alternative to China and striving to bolster its manufacturing sector, with the Prime Minister's 'Make in India' call.</p>\n<p><strong>D).</strong> Their trade relationship has long been characterised by a mix of competition and cooperation.</p>\n<p><strong>E).</strong> Despite the Indian Government's rhetoric urging caution in dealings with China, economic imperatives seem to be reshaping the contours of bilateral trade.</p><br><p><strong>Which of the following is the second sentence after rearrangement?</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 0, "solution": "<p><strong>Answer</strong><strong>: A</strong></p>\n<p>The paragraph discusses India's trade relationship with China, highlighting its complexity and the overriding influence of economic factors over geopolitics.</p>\n<p>The passage begins with <strong>sentence B</strong>, which introduces the idea that economic dynamics often outweigh geopolitical considerations in trade relationships. <strong>Sentence A</strong> follows, providing a specific example of India's trade relationship with China. <strong>Sentence C</strong> adds depth by discussing the implications of this relationship for India's aspirations and policies. <strong>Sentence E</strong> highlights the influence of economic imperatives despite the Indian Government's cautious approach. Finally, <strong>sentence D</strong> concludes by describing the competitive and cooperative aspects of the India-China trade relationship.</p>\n<p>So, the correct sequence is: <strong>B – A – C – E – D.</strong></p>\n<p>Sentence A, \" India’s growing trade affinity with China is a living example of that: China has become India's largest trading partner in 2023-24. \" is the second sentence.</p>"}, {"question": "<p><strong>In the given question, sentences are given in jumbled form. Rearrange them in proper order and answer the questions that follow.</strong></p>\n<p>Rearrange the following sentences to form a coherent paragraph:</p>\n<p><strong>A).</strong> India’s growing trade affinity with China is a living example of that: China has become India's largest trading partner in 2023-24.</p>\n<p><strong>B).</strong> In the realm of global economics, the dynamics of trade relationships often override geopolitics.</p>\n<p><strong>C).</strong> This development brings little joy to the nation aspiring to become an alternative to China and striving to bolster its manufacturing sector, with the Prime Minister's 'Make in India' call.</p>\n<p><strong>D).</strong> Their trade relationship has long been characterised by a mix of competition and cooperation.</p>\n<p><strong>E).</strong> Despite the Indian Government's rhetoric urging caution in dealings with China, economic imperatives seem to be reshaping the contours of bilateral trade.</p><br><p><strong>Which of the following is the hind most statement after rearrangement?</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D</strong></p>\n<p>The paragraph discusses India's trade relationship with China, highlighting its complexity and the overriding influence of economic factors over geopolitics.</p>\n<p>The passage begins with <strong>sentence B</strong>, which introduces the idea that economic dynamics often outweigh geopolitical considerations in trade relationships. <strong>Sentence A</strong> follows, providing a specific example of India's trade relationship with China. <strong>Sentence C</strong> adds depth by discussing the implications of this relationship for India's aspirations and policies. <strong>Sentence E</strong> highlights the influence of economic imperatives despite the Indian Government's cautious approach. Finally, <strong>sentence D</strong> concludes by describing the competitive and cooperative aspects of the India-China trade relationship.</p>\n<p>So, the correct sequence is: <strong>B – A – C – E – D.</strong></p>\n<p>The hindmost statement, also known as the last sentence, is the final statement that concludes the paragraph. The hindmost or last sentence is Sentence D: \" Their trade relationship has long been characterised by a mix of competition and cooperation.\"</p>"}, {"question": "<p><strong>In the given question, sentences are given in jumbled form. Rearrange them in proper order and answer the questions that follow.</strong></p>\n<p>Rearrange the following sentences to form a coherent paragraph:</p>\n<p><strong>A).</strong> India’s growing trade affinity with China is a living example of that: China has become India's largest trading partner in 2023-24.</p>\n<p><strong>B).</strong> In the realm of global economics, the dynamics of trade relationships often override geopolitics.</p>\n<p><strong>C).</strong> This development brings little joy to the nation aspiring to become an alternative to China and striving to bolster its manufacturing sector, with the Prime Minister's 'Make in India' call.</p>\n<p><strong>D).</strong> Their trade relationship has long been characterised by a mix of competition and cooperation.</p>\n<p><strong>E).</strong> Despite the Indian Government's rhetoric urging caution in dealings with China, economic imperatives seem to be reshaping the contours of bilateral trade.</p><br><p><strong>Which of the following is the introductory statement after rearrangement?</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 1, "solution": "<p><strong>Answer</strong><strong>: B</strong></p>\n<p>The paragraph discusses India's trade relationship with China, highlighting its complexity and the overriding influence of economic factors over geopolitics.</p>\n<p>The passage begins with <strong>sentence B</strong>, which introduces the idea that economic dynamics often outweigh geopolitical considerations in trade relationships. <strong>Sentence A</strong> follows, providing a specific example of India's trade relationship with China. <strong>Sentence C</strong> adds depth by discussing the implications of this relationship for India's aspirations and policies. <strong>Sentence E</strong> highlights the influence of economic imperatives despite the Indian Government's cautious approach. Finally, <strong>sentence D</strong> concludes by describing the competitive and cooperative aspects of the India-China trade relationship.</p>\n<p>So, the correct sequence is: <strong>B – A – C – E – D.</strong></p>\n<p>The introductory statement after rearrangement is sentence B: “In the realm of global economics, the dynamics of trade relationships often override geopolitics.”</p>"}, {"question": "<p><strong>In the given question, sentences are given in jumbled form. Rearrange them in proper order and answer the questions that follow.</strong></p>\n<p>Rearrange the following sentences to form a coherent paragraph:</p>\n<p><strong>A).</strong> India’s growing trade affinity with China is a living example of that: China has become India's largest trading partner in 2023-24.</p>\n<p><strong>B).</strong> In the realm of global economics, the dynamics of trade relationships often override geopolitics.</p>\n<p><strong>C).</strong> This development brings little joy to the nation aspiring to become an alternative to China and striving to bolster its manufacturing sector, with the Prime Minister's 'Make in India' call.</p>\n<p><strong>D).</strong> Their trade relationship has long been characterised by a mix of competition and cooperation.</p>\n<p><strong>E).</strong> Despite the Indian Government's rhetoric urging caution in dealings with China, economic imperatives seem to be reshaping the contours of bilateral trade.</p><br><p><strong>Which of the following should form a consecutive pair after re-arrangement?</strong></p>", "options": ["<p>A-E</p>", "<p>B-C</p>", "<p>C-D</p>", "<p>C-E</p>", "<p>B-E</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D</strong></p>\n<p>The paragraph discusses India's trade relationship with China, highlighting its complexity and the overriding influence of economic factors over geopolitics.</p>\n<p>The passage begins with <strong>sentence B</strong>, which introduces the idea that economic dynamics often outweigh geopolitical considerations in trade relationships. <strong>Sentence A</strong> follows, providing a specific example of India's trade relationship with China. <strong>Sentence C</strong> adds depth by discussing the implications of this relationship for India's aspirations and policies. <strong>Sentence E</strong> highlights the influence of economic imperatives despite the Indian Government's cautious approach. Finally, <strong>sentence D</strong> concludes by describing the competitive and cooperative aspects of the India-China trade relationship.</p>\n<p>So, the correct sequence is: <strong>B – A – C – E – D.</strong></p>\n<p>The consecutive pair after rearrangement is<strong>: C-E.</strong></p>"}, {"question": "<p><strong>In the given question, two parts of the sentences are printed in bold. Below the sentence alternatives to the bold parts are given at (A), (B), (C) (D), and (E) which may help improve the sentence. Choose the correct alternative.</strong></p><br><p>The delicate balance <strong>between</strong> <strong>maintaining national</strong> security and preserving civil liberties <strong>remains a contentious issue </strong>democratic societies.</p>", "options": ["<p>among maintaining national, remain a contentious issue in</p>", "<p>between maintaining national, remains a contentious issue on</p>", "<p>among maintaining national, remains a contentious issue on</p>", "<p>between maintaining national, remains a contentious issue in</p>", "<p>No improvement required</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The delicate balance <strong>between</strong> <strong>maintaining national</strong> security and preserving civil liberties <strong>remains a contentious issue in </strong>democratic societies.</p>"}, {"question": "<p><strong>In the given question, two parts of the sentences are printed in bold. Below the sentence alternatives to the bold parts are given at (A), (B), (C) (D), and (E) which may help improve the sentence. Choose the correct alternative.</strong></p><br><p>The proliferation of misinformation on social <strong>media has eroded public trust into</strong> traditional news outlets, leading to an increasing demand <strong>for</strong> <strong>media literacy</strong>.</p>", "options": ["<p>media has eroded public trust on, in media literacy</p>", "<p>media has eroded public trust in, in media literacy</p>", "<p>media has eroded public trust in, for media literacy</p>", "<p>media has been eroded public trust, for media literacy</p>", "<p>No improvement required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The proliferation of misinformation on social <strong>media has eroded public trust in</strong> traditional news outlets, leading to an increasing demand <strong>for media literacy</strong>.</p>"}, {"question": "<p><strong>In the given question, two parts of the sentences are printed in bold. Below the sentence alternatives to the bold parts are given at (A), (B), (C) (D), and (E) which may help improve the sentence. Choose the correct alternative.</strong></p><br><p>The gradual<strong> depletion</strong> <strong>of</strong> natural resources <strong>has prompted governments to adopt</strong> more stringent environmental policies, aiming to foster long-term sustainability.</p>", "options": ["<p>depletion for, has prompted governments to adopt</p>", "<p>depletion of, has prompted governments to adapt</p>", "<p>depletion of, have prompted governments to adept</p>", "<p>depletion of, has been prompted governments to adopt</p>", "<p>No improvement required</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>The gradual <strong>depletion of</strong> natural resources <strong>has prompted governments to adopt </strong>more stringent environmental policies, aiming to foster long-term sustainability.</p>"}, {"question": "<p><strong>In the given question, two parts of the sentences are printed in bold. Below the sentence alternatives to the bold parts are given at (A), (B), (C) (D), and (E) which may help improve the sentence. Choose the correct alternative.</strong></p><br><p>Scholars <strong>have often examined</strong> the role of cultural memory <strong>into</strong> <strong>shaping national</strong> identity, particularly through literature and historical narratives.</p>", "options": ["<p>have often examined, in shaping national</p>", "<p>have often been examining, in shaping national</p>", "<p>have been often examined, in shaping national</p>", "<p>have often examined, of shaping national</p>", "<p>No improvement required</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Scholars <strong>have often examined</strong> the role of cultural memory <strong>in</strong> <strong>shaping national</strong> identity, particularly through literature and historical narratives.</p>"}, {"question": "<p><strong>In the given question, two parts of the sentences are printed in bold. Below the sentence alternatives to the bold parts are given at (A), (B), (C) (D), and (E) which may help improve the sentence. Choose the correct alternative.</strong></p><br><p>The complexity of global supply chains <strong>has exposed vulnerabilities in </strong>trade networks, especially during periods<strong> of</strong> <strong>geopolitical instable.</strong></p>", "options": ["<p>expose vulnerabilities in, of geopolitical instability</p>", "<p>has exposed vulnerabilities in, of geopolitical instability</p>", "<p>has exposing vulnerabilities in, of geopolitical instability</p>", "<p>has exposed vulnerabilities on, geopolitical instability</p>", "<p>No improvement required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The complexity of global supply chains <strong>has exposed vulnerabilities in</strong> trade networks, especially during periods <strong>of geopolitical instability</strong>.</p>"}, {"question": "<p><strong>In each of the questions given below an incomplete sentence which must be filled/completed with one of the sentences given below.  Choose the correct option and complete the given sentences.</strong></p><br><p><strong>The artist's latest exhibition ______ a lot of attention from art critics and enthusiasts alike.</strong></p>", "options": ["<p>were drawing</p>", "<p>is draw</p>", "<p>have drawn</p>", "<p>has drawn</p>", "<p>was drawn</p>"], "correctIndex": 3, "solution": "<p><strong>Answer:</strong><strong> D</strong></p>\n<p>The sentence describes the current attention that the artist's latest exhibition is receiving from art critics and enthusiasts. Here's why option d) \"has drawn\" is the correct choice:</p>\n<p>a). \"were drawing\": This option uses the past continuous tense \"were drawing,\" which suggests an ongoing action in the past and does not fit the present context. Additionally, \"were\" does not agree with the singular subject \"The artist's latest exhibition.\"</p>\n<p>b). \"is draw\": This option is grammatically incorrect because \"is\" should be followed by the present participle form \"drawing\" to make sense. The correct form would be \"is drawing,\" but even that doesn't fit the context as well as \"has drawn.\"</p>\n<p>c). \"have drawn\": This option uses the present perfect tense \"have drawn,\" which is incorrect because \"have\" is used for plural subjects. The singular subject \"The artist's latest exhibition\" requires \"has\" instead of \"have.\"</p>\n<p>d). \"has drawn\": This option correctly uses the present perfect tense, indicating that the action (drawing a lot of attention) started in the past and continues to have relevance in the present. The singular subject \"The artist's latest exhibition\" correctly matches with \"has.\"</p>\n<p>e). \"was drawn\": This option uses the past tense \"was drawn,\" which incorrectly implies that the attention was only in the past and does not continue to the present. It doesn't convey the ongoing nature of the attention.</p>\n<p>Therefore, option d) \"has drawn\" is the correct choice as it accurately and grammatically conveys that the artist's latest exhibition has received a lot of attention from art critics and enthusiasts alike.</p>"}, {"question": "<p><strong>In each of the questions given below an incomplete sentence which must be filled/completed with one of the sentences given below.  Choose the correct option and complete the given sentences.</strong></p><br><p><strong>The meeting scheduled for next week ________ to discuss the recent changes in the company's policy.</strong></p>", "options": ["<p>is meant</p>", "<p>are meant</p>", "<p>is mean</p>", "<p>were meant</p>", "<p>has meant</p>"], "correctIndex": 0, "solution": "<p><strong>Answer:</strong><strong> A</strong></p>\n<p>The sentence discusses the purpose of a future meeting. Here's why option a) \"is meant\" is the correct choice:</p>\n<p>a). \"is meant\": This option correctly uses the present tense \"is\" with the past participle \"meant\" to indicate the purpose of the meeting. It conveys that the meeting's intention is to discuss the recent changes in the company's policy.</p>\n<p>b). \"are meant\": This option is grammatically incorrect because it uses the plural form \"are,\" but the subject \"The meeting\" is singular. The verb should match the singular subject.</p>\n<p>c). \"is mean\": This option is grammatically incorrect because \"mean\" is not the correct form of the verb. The correct past participle form is \"meant.\"</p>\n<p>d). \"were meant\": This option is grammatically incorrect because it uses the past tense \"were,\" which does not fit the context of a meeting scheduled for next week (a future event). Additionally, \"were\" does not agree with the singular subject \"The meeting.\"</p>\n<p>e). \"has meant\": This option is grammatically incorrect because \"has meant\" implies a past action that has continuing relevance, which does not fit the context of a meeting scheduled for the future.</p>\n<p>Therefore, option a) \"is meant\" is the correct choice as it accurately and grammatically conveys that the meeting scheduled for next week is intended to discuss the recent changes in the company's policy.</p>"}, {"question": "<p><strong>In each of the questions given below an incomplete sentence which must be filled/completed with one of the sentences given below.  Choose the correct option and complete the given sentences.</strong></p><br><p><strong>The new software update _______ many issues that users were experiencing.</strong></p>", "options": ["<p>have fixed</p>", "<p>has fixed</p>", "<p>were fixing</p>", "<p>fixing</p>", "<p>fix</p>"], "correctIndex": 1, "solution": "<p><strong>Answer:</strong><strong> B</strong></p>\n<p>The sentence discusses the effect of a new software update on the issues users were experiencing. Here's why option b) \"has fixed\" is the correct choice:</p>\n<p>a). \"have fixed\": This option is grammatically incorrect because \"have\" is used for plural subjects, but the subject \"The new software update\" is singular. The verb should match the singular subject.</p>\n<p>b). \"has fixed\": This option correctly uses the present perfect tense \"has fixed,\" which indicates that the action (fixing the issues) started in the past and has relevance to the present. The singular subject \"The new software update\" correctly matches with \"has.\"</p>\n<p>c). \"were fixing\": This option uses the past continuous tense \"were fixing,\" which suggests an ongoing action in the past. This does not fit the context of describing a completed action (the update fixing the issues).</p>\n<p>d). \"fixing\": This option is grammatically incomplete because it lacks a helping verb to form the correct tense. \"Fixing\" alone cannot serve as the main verb in this sentence.</p>\n<p>e). \"fix\": This option uses the base form \"fix,\" which is not appropriate without a helping verb. The sentence requires the past participle form to correctly convey the action.</p>\n<p>Therefore, option b) \"has fixed\" is the correct choice as it accurately and grammatically conveys that the new software update has resolved many issues that users were experiencing.</p>"}, {"question": "<p><strong>In each of the questions given below an incomplete sentence which must be filled/completed with one of the sentences given below.  Choose the correct option and complete the given sentences.</strong></p><br><p><strong>The results of the experiment ________ by the scientific community.</strong></p>", "options": ["<p>are questioning</p>", "<p>is questioned</p>", "<p>have questioned</p>", "<p>is questioning</p>", "<p>are questioned</p>"], "correctIndex": 4, "solution": "<p><strong>Answer:</strong><strong> E</strong></p>\n<p>The sentence discusses how the scientific community is reacting to the results of an experiment. Here's why option e) \"are questioned\" is the correct choice:</p>\n<p>a). \"are questioning\": This option is grammatically incorrect because \"are questioning\" suggests that the results themselves are performing the action of questioning, which does not make sense in this context. The correct construction should be passive to indicate that the scientific community is doing the questioning.</p>\n<p>b). \"is questioned\": This option is grammatically incorrect because it uses the singular verb \"is\" with the plural subject \"results.\" The subject and verb must agree in number.</p>\n<p>c). \"have questioned\": This option uses the present perfect tense \"have questioned,\" which suggests that the results have done the questioning. However, it is the scientific community that is questioning the results, not the other way around.</p>\n<p>d). \"is questioning\": This option is grammatically incorrect for the same reason as option a). Additionally, \"is\" does not agree with the plural subject \"results.\"</p>\n<p>e). \"are questioned\": This option correctly uses the present tense \"are\" with the past participle \"questioned\" to form the passive voice. This accurately conveys that the scientific community is questioning the results of the experiment. The subject \"results\" is plural, and \"are\" correctly agrees with it.</p>\n<p>Therefore, option e) \"are questioned\" is the correct choice as it accurately and grammatically conveys that the results of the experiment are being questioned by the scientific community.</p>"}, {"question": "<p><strong>In each of the questions given below an incomplete sentence which must be filled/completed with one of the sentences given below.  Choose the correct option and complete the given sentences.</strong></p><br><p><strong>The documentary film about endangered species _______ many awards at international film festivals.</strong></p>", "options": ["<p>was win</p>", "<p>have won</p>", "<p>won</p>", "<p>winning</p>", "<p>has win</p>"], "correctIndex": 2, "solution": "<p><strong>Answer:</strong><strong> C</strong></p>\n<p>The sentence discusses the achievements of a documentary film at international film festivals. Here's why option c) \"won\" is the correct choice:</p>\n<p>a). \"was win\": This option is grammatically incorrect because it uses the past form \"was\" with the base form \"win.\" The correct past participle of \"win\" is \"won,\" and the correct phrase would be \"was won,\" but that implies the awards were won by someone else, which is not the intended meaning.</p>\n<p>b). \"have won\": This option is grammatically incorrect because it uses \"have,\" which is for plural subjects. The subject \"The documentary film\" is singular and requires \"has won\" if present perfect tense was needed, but the context fits better with simple past tense.</p>\n<p>c). \"won\": This option correctly uses the simple past tense \"won,\" which indicates that the documentary film won the awards at some point in the past. This tense fits the context of the sentence perfectly.</p>\n<p>d). \"winning\": This option is grammatically incorrect because \"winning\" is a present participle or gerund and does not fit as the main verb in the past tense context provided by the sentence.</p>\n<p>e). \"has win\": This option is grammatically incorrect because it uses the present perfect auxiliary \"has\" with the base form \"win\" instead of the past participle \"won.\" The correct form would be \"has won.\"</p>\n<p>Therefore, option c) \"won\" is the correct choice as it accurately and grammatically conveys that the documentary film about endangered species won many awards at international film festivals.</p>"}, {"question": "<p><strong>The passage given below has some information based on which certain questions have been formulated. Certain words and phrases have also been highlighted in order for you to locate them while answering some of the questions. </strong></p>\n<p>The accidental firing of a missile by India into Pakistan could have led to serious, unintended escalation of tensions between the two nuclear-armed countries, but, fortunately, that did not happen. The Government of India has said the incident, happened in the course of routine maintenance, due to a technical malfunction. India has ordered a high-level Court of Inquiry. The Chargé d’affaires of the Indian High Commission in Islamabad was called twice by Pakistan to convey its concerns. Pakistan has <strong>_____________ </strong>that the incident “indicates many loopholes and technical lapses of a serious nature in Indian handling of strategic weapons”. Islamabad, which termed the inquiry as ordered by India as insufficient, has demanded a joint probe. It has also sought the involvement of the international community to promote “strategic stability in the region”. As it moved closer to India in recent years, the U.S. has suspended its fixation with the conflict between the two neighbours, but the fear of nuclear escalation in the region is very deep in Washington’s strategic thinking. India’s global image of being a responsible nuclear power has been built over decades of <strong><em>restrained</em></strong> words and thoughtful action. The security of its nuclear command and technical capabilities has never been in doubt. This incident frays that reputation and measures must be taken to restore the confidence of the international community in India.</p>\n<p>There has been no official word from India on which missile was involved, which Pakistan has said landed 124 km inside its territory. The description by Pakistan — that the missile was travelling at three times the speed of sound, at 40,000 feet, and is a surface-to-surface missile — has led to speculation that the accident involves the BrahMos supersonic cruise missile which is now in the inventory of India’s three Services. India became a member of the Missile Technology Control Regime in 2016, an acceptance by major powers of India’s status as a reliable defence partner that is capable of handling its strengths and contributing to global security. India is developing more missile systems, including a hypersonic variant. The handling and the launch of any such missiles are highly regulated with checks and balances to avoid accidents. This accident also has echoes of another incident in February 2019. A day after the Balakot air strike, as fighter jets of India and Pakistan were engaged in a dogfight near the LoC, an Mi-17V5 crashed in Budgam shortly after take-off from Srinagar killing its personnel onboard and a civilian on the ground. The Court of Inquiry confirmed that it was shot by an Israeli-origin Spyder surface-to-air missile system of the IAF. India must leave no scope for any doubts about its capacity to handle nuclear and other military assets. That objective can be achieved without a joint probe with Pakistan or any international involvement, but the objective must be achieved nevertheless.</p><br><p><strong>What is the opinion of the author about Pak’s demand for a joint probe into the matter?</strong></p>", "options": ["<p>The author feels that such lapses should not be taken seriously</p>", "<p>There are times when the Pak missiles also keep crossing our borders</p>", "<p>The author feels that India should take the issue seriously</p>", "<p>A joint probe in this matter is completely unreasonable</p>", "<p>Both except (a) and (b)</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>It has nowhere been mentioned that India shouldn’t pay attention to these issues so we can’t take (a) as the correct answer. Also, (b) looks like an assumption because this cannot be a reason that can be given for a security lapse.</p>\n<p>The contents of the passage help us understand that, the author feels Pakistan’s wish to have a joint probe carries no weight although, for India it is essential to reach the core of the issue. We can get this idea clearly especially from the last few lines of the passage.</p>\n<p>Therefore, the best answer option that can be marked is (e).</p>\n<p> </p>"}, {"question": "<p><strong>The passage given below has some information based on which certain questions have been formulated. Certain words and phrases have also been highlighted in order for you to locate them while answering some of the questions. </strong></p>\n<p>The accidental firing of a missile by India into Pakistan could have led to serious, unintended escalation of tensions between the two nuclear-armed countries, but, fortunately, that did not happen. The Government of India has said the incident, happened in the course of routine maintenance, due to a technical malfunction. India has ordered a high-level Court of Inquiry. The Chargé d’affaires of the Indian High Commission in Islamabad was called twice by Pakistan to convey its concerns. Pakistan has <strong>_____________ </strong>that the incident “indicates many loopholes and technical lapses of a serious nature in Indian handling of strategic weapons”. Islamabad, which termed the inquiry as ordered by India as insufficient, has demanded a joint probe. It has also sought the involvement of the international community to promote “strategic stability in the region”. As it moved closer to India in recent years, the U.S. has suspended its fixation with the conflict between the two neighbours, but the fear of nuclear escalation in the region is very deep in Washington’s strategic thinking. India’s global image of being a responsible nuclear power has been built over decades of <strong><em>restrained</em></strong> words and thoughtful action. The security of its nuclear command and technical capabilities has never been in doubt. This incident frays that reputation and measures must be taken to restore the confidence of the international community in India.</p>\n<p>There has been no official word from India on which missile was involved, which Pakistan has said landed 124 km inside its territory. The description by Pakistan — that the missile was travelling at three times the speed of sound, at 40,000 feet, and is a surface-to-surface missile — has led to speculation that the accident involves the BrahMos supersonic cruise missile which is now in the inventory of India’s three Services. India became a member of the Missile Technology Control Regime in 2016, an acceptance by major powers of India’s status as a reliable defence partner that is capable of handling its strengths and contributing to global security. India is developing more missile systems, including a hypersonic variant. The handling and the launch of any such missiles are highly regulated with checks and balances to avoid accidents. This accident also has echoes of another incident in February 2019. A day after the Balakot air strike, as fighter jets of India and Pakistan were engaged in a dogfight near the LoC, an Mi-17V5 crashed in Budgam shortly after take-off from Srinagar killing its personnel onboard and a civilian on the ground. The Court of Inquiry confirmed that it was shot by an Israeli-origin Spyder surface-to-air missile system of the IAF. India must leave no scope for any doubts about its capacity to handle nuclear and other military assets. That objective can be achieved without a joint probe with Pakistan or any international involvement, but the objective must be achieved nevertheless.</p><br><p><strong> </strong><strong>How has the US responded to the issue of the missile being accidently fired by India?</strong></p>\n<p><strong>(i). </strong>They have expressed dissatisfaction over India’s approach towards handling the issue</p>\n<p><strong>(ii).</strong> Pakistan has recently gotten close to the US and it thus expects that the US would intervene</p>\n<p><strong>(iii).</strong> In the past few years due to the proximity of India with the US, US has maintained distance from the issue</p>", "options": ["<p>Only (i)</p>", "<p>Only (iii)</p>", "<p>Only (ii)</p>", "<p>Both (i) and (iii)</p>", "<p>All (i), (ii) and (iii)</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>There are lines in the first paragraph that will help us understand the answer. Refer to the same given below:</p>\n<p><em>As it moved closer to India in recent years, the U.S. <strong>has suspended its fixation with the conflict</strong> between the two neighbours…</em></p>\n<p>The first option is wrong as, not the US but Pak wants the same to happen. The second is wrong as, not Pak but India and US have gotten closer. The third sentence however, is correct.</p>\n<p>Therefore, the best answer should be option (b).</p>"}, {"question": "<p><strong>The passage given below has some information based on which certain questions have been formulated. Certain words and phrases have also been highlighted in order for you to locate them while answering some of the questions. </strong></p>\n<p>The accidental firing of a missile by India into Pakistan could have led to serious, unintended escalation of tensions between the two nuclear-armed countries, but, fortunately, that did not happen. The Government of India has said the incident, happened in the course of routine maintenance, due to a technical malfunction. India has ordered a high-level Court of Inquiry. The Chargé d’affaires of the Indian High Commission in Islamabad was called twice by Pakistan to convey its concerns. Pakistan has <strong>_____________ </strong>that the incident “indicates many loopholes and technical lapses of a serious nature in Indian handling of strategic weapons”. Islamabad, which termed the inquiry as ordered by India as insufficient, has demanded a joint probe. It has also sought the involvement of the international community to promote “strategic stability in the region”. As it moved closer to India in recent years, the U.S. has suspended its fixation with the conflict between the two neighbours, but the fear of nuclear escalation in the region is very deep in Washington’s strategic thinking. India’s global image of being a responsible nuclear power has been built over decades of <strong><em>restrained</em></strong> words and thoughtful action. The security of its nuclear command and technical capabilities has never been in doubt. This incident frays that reputation and measures must be taken to restore the confidence of the international community in India.</p>\n<p>There has been no official word from India on which missile was involved, which Pakistan has said landed 124 km inside its territory. The description by Pakistan — that the missile was travelling at three times the speed of sound, at 40,000 feet, and is a surface-to-surface missile — has led to speculation that the accident involves the BrahMos supersonic cruise missile which is now in the inventory of India’s three Services. India became a member of the Missile Technology Control Regime in 2016, an acceptance by major powers of India’s status as a reliable defence partner that is capable of handling its strengths and contributing to global security. India is developing more missile systems, including a hypersonic variant. The handling and the launch of any such missiles are highly regulated with checks and balances to avoid accidents. This accident also has echoes of another incident in February 2019. A day after the Balakot air strike, as fighter jets of India and Pakistan were engaged in a dogfight near the LoC, an Mi-17V5 crashed in Budgam shortly after take-off from Srinagar killing its personnel onboard and a civilian on the ground. The Court of Inquiry confirmed that it was shot by an Israeli-origin Spyder surface-to-air missile system of the IAF. India must leave no scope for any doubts about its capacity to handle nuclear and other military assets. That objective can be achieved without a joint probe with Pakistan or any international involvement, but the objective must be achieved nevertheless.</p><br><p><strong> </strong><strong>A paragraph from the passage has been given below. Choose the option that can be inferred from the same.</strong></p>\n<p>India’s global image of being a responsible nuclear power has been built over decades of restrained words and thoughtful action. The security of its nuclear command and technical capabilities has never been in doubt. This incident frays that reputation and measures must be taken to restore the confidence of the international community in India.</p>", "options": ["<p>If India decides to take the matter easy, then it might lose its credibility on the nuclear front</p>", "<p>Such incidences create a gap that can be filled with doubts about the military capacity of India</p>", "<p>Being thoughtful in matters relating to Pakistan is out of question as it has caused us too much harm in the past</p>", "<p>The global leaders have never doubted the capacity of India over being a strategic alliance</p>", "<p>All of the above</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The given lines have very clearly explained how India would lose its long-earned image of being a capable and responsible nuclear ally if it mishandles or deals with the issue carelessly.</p>\n<p>So, the first sentence can be correctly deduced from the same.</p>\n<p>The second sentence makes it too general by using military capacity which is not under question.</p>\n<p>The third option is vague and absurd.</p>\n<p>The fourth option is also an assumption as it is nowhere mentioned in the way given and the opposite is only true.</p>\n<p>Therefore, the best answer is option (a).</p>"}, {"question": "<p><strong>The passage given below has some information based on which certain questions have been formulated. Certain words and phrases have also been highlighted in order for you to locate them while answering some of the questions. </strong></p>\n<p>The accidental firing of a missile by India into Pakistan could have led to serious, unintended escalation of tensions between the two nuclear-armed countries, but, fortunately, that did not happen. The Government of India has said the incident, happened in the course of routine maintenance, due to a technical malfunction. India has ordered a high-level Court of Inquiry. The Chargé d’affaires of the Indian High Commission in Islamabad was called twice by Pakistan to convey its concerns. Pakistan has <strong>_____________ </strong>that the incident “indicates many loopholes and technical lapses of a serious nature in Indian handling of strategic weapons”. Islamabad, which termed the inquiry as ordered by India as insufficient, has demanded a joint probe. It has also sought the involvement of the international community to promote “strategic stability in the region”. As it moved closer to India in recent years, the U.S. has suspended its fixation with the conflict between the two neighbours, but the fear of nuclear escalation in the region is very deep in Washington’s strategic thinking. India’s global image of being a responsible nuclear power has been built over decades of <strong><em>restrained</em></strong> words and thoughtful action. The security of its nuclear command and technical capabilities has never been in doubt. This incident frays that reputation and measures must be taken to restore the confidence of the international community in India.</p>\n<p>There has been no official word from India on which missile was involved, which Pakistan has said landed 124 km inside its territory. The description by Pakistan — that the missile was travelling at three times the speed of sound, at 40,000 feet, and is a surface-to-surface missile — has led to speculation that the accident involves the BrahMos supersonic cruise missile which is now in the inventory of India’s three Services. India became a member of the Missile Technology Control Regime in 2016, an acceptance by major powers of India’s status as a reliable defence partner that is capable of handling its strengths and contributing to global security. India is developing more missile systems, including a hypersonic variant. The handling and the launch of any such missiles are highly regulated with checks and balances to avoid accidents. This accident also has echoes of another incident in February 2019. A day after the Balakot air strike, as fighter jets of India and Pakistan were engaged in a dogfight near the LoC, an Mi-17V5 crashed in Budgam shortly after take-off from Srinagar killing its personnel onboard and a civilian on the ground. The Court of Inquiry confirmed that it was shot by an Israeli-origin Spyder surface-to-air missile system of the IAF. India must leave no scope for any doubts about its capacity to handle nuclear and other military assets. That objective can be achieved without a joint probe with Pakistan or any international involvement, but the objective must be achieved nevertheless.</p><br><p><strong>Which of the given parts of the sentence taken from the passage is error-free?</strong></p>", "options": ["<p>India becomes a member of the Missile Technology</p>", "<p>Control Regime in 2016, an acceptance by major</p>", "<p>powers of India&rsquo;s status to a reliable defence partner</p>", "<p>that is capable of handling it&rsquo;s strengths and</p>", "<p>contribution to global security.</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>In the given parts, only the second statement is error-free and all the others need an improvement.</p>\n<p>In (a), ‘became’ should be used instead of ‘becomes’ as the event that is being mentioned has already happened in the past ie; in 2016.</p>\n<p>In (c), ‘to’ should be replaced by ‘as’ which would then mean ‘like a reliable partner’</p>\n<p>In (d), ‘it’s’ should be replaced by ‘its’ as (it’s is an acronym for it is) and we simply need a possessive here ie; its.</p>\n<p>In (e) ‘contribution’ should be changed to ‘contributing’ because we must maintain parallel construction and two verbs ‘handling’ and ‘contributing’ should both be parallel ie; in the gerund form.</p>"}, {"question": "<p><strong>The passage given below has some information based on which certain questions have been formulated. Certain words and phrases have also been highlighted in order for you to locate them while answering some of the questions. </strong></p>\n<p>The accidental firing of a missile by India into Pakistan could have led to serious, unintended escalation of tensions between the two nuclear-armed countries, but, fortunately, that did not happen. The Government of India has said the incident, happened in the course of routine maintenance, due to a technical malfunction. India has ordered a high-level Court of Inquiry. The Chargé d’affaires of the Indian High Commission in Islamabad was called twice by Pakistan to convey its concerns. Pakistan has <strong>_____________ </strong>that the incident “indicates many loopholes and technical lapses of a serious nature in Indian handling of strategic weapons”. Islamabad, which termed the inquiry as ordered by India as insufficient, has demanded a joint probe. It has also sought the involvement of the international community to promote “strategic stability in the region”. As it moved closer to India in recent years, the U.S. has suspended its fixation with the conflict between the two neighbours, but the fear of nuclear escalation in the region is very deep in Washington’s strategic thinking. India’s global image of being a responsible nuclear power has been built over decades of <strong><em>restrained</em></strong> words and thoughtful action. The security of its nuclear command and technical capabilities has never been in doubt. This incident frays that reputation and measures must be taken to restore the confidence of the international community in India.</p>\n<p>There has been no official word from India on which missile was involved, which Pakistan has said landed 124 km inside its territory. The description by Pakistan — that the missile was travelling at three times the speed of sound, at 40,000 feet, and is a surface-to-surface missile — has led to speculation that the accident involves the BrahMos supersonic cruise missile which is now in the inventory of India’s three Services. India became a member of the Missile Technology Control Regime in 2016, an acceptance by major powers of India’s status as a reliable defence partner that is capable of handling its strengths and contributing to global security. India is developing more missile systems, including a hypersonic variant. The handling and the launch of any such missiles are highly regulated with checks and balances to avoid accidents. This accident also has echoes of another incident in February 2019. A day after the Balakot air strike, as fighter jets of India and Pakistan were engaged in a dogfight near the LoC, an Mi-17V5 crashed in Budgam shortly after take-off from Srinagar killing its personnel onboard and a civilian on the ground. The Court of Inquiry confirmed that it was shot by an Israeli-origin Spyder surface-to-air missile system of the IAF. India must leave no scope for any doubts about its capacity to handle nuclear and other military assets. That objective can be achieved without a joint probe with Pakistan or any international involvement, but the objective must be achieved nevertheless.</p><br><p><strong>Choose the correct antonym to the word <em>‘restrained’</em> as used in the passage.</strong></p>", "options": ["<p>Reticent</p>", "<p>Immaculate</p>", "<p>Pithy</p>", "<p>Glib</p>", "<p>Capricious</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The word <strong>‘reticent’</strong> is an adjective that is used to define people who speak very less or use lesser words than needed. This can work as a synonym but not as an antonym. <strong>Pithy</strong> is also the same, someone who speaks less but is effective. So, (a) and (b) can be ruled out.</p>\n<p><strong>Glib</strong> means fluent but insincere and shallow. This is close as the word <strong>‘restrained’</strong> has been used in the passage which means being thoughtful in one’s actions and words. These two are good opposites.</p>\n<p><strong>Immaculate</strong> is perfectly clean, neat, or tidy. This is unrelated and can be eliminated. <strong>Capricious</strong> is given to sudden and unaccountable changes of mood or behaviour, unstable. This is also misfit as per the context.</p>\n<p>So, the best would be to mark (d) as the answer.</p>"}, {"question": "<p><strong>The passage given below has some information based on which certain questions have been formulated. Certain words and phrases have also been highlighted in order for you to locate them while answering some of the questions. </strong></p>\n<p>The accidental firing of a missile by India into Pakistan could have led to serious, unintended escalation of tensions between the two nuclear-armed countries, but, fortunately, that did not happen. The Government of India has said the incident, happened in the course of routine maintenance, due to a technical malfunction. India has ordered a high-level Court of Inquiry. The Chargé d’affaires of the Indian High Commission in Islamabad was called twice by Pakistan to convey its concerns. Pakistan has <strong>_____________ </strong>that the incident “indicates many loopholes and technical lapses of a serious nature in Indian handling of strategic weapons”. Islamabad, which termed the inquiry as ordered by India as insufficient, has demanded a joint probe. It has also sought the involvement of the international community to promote “strategic stability in the region”. As it moved closer to India in recent years, the U.S. has suspended its fixation with the conflict between the two neighbours, but the fear of nuclear escalation in the region is very deep in Washington’s strategic thinking. India’s global image of being a responsible nuclear power has been built over decades of <strong><em>restrained</em></strong> words and thoughtful action. The security of its nuclear command and technical capabilities has never been in doubt. This incident frays that reputation and measures must be taken to restore the confidence of the international community in India.</p>\n<p>There has been no official word from India on which missile was involved, which Pakistan has said landed 124 km inside its territory. The description by Pakistan — that the missile was travelling at three times the speed of sound, at 40,000 feet, and is a surface-to-surface missile — has led to speculation that the accident involves the BrahMos supersonic cruise missile which is now in the inventory of India’s three Services. India became a member of the Missile Technology Control Regime in 2016, an acceptance by major powers of India’s status as a reliable defence partner that is capable of handling its strengths and contributing to global security. India is developing more missile systems, including a hypersonic variant. The handling and the launch of any such missiles are highly regulated with checks and balances to avoid accidents. This accident also has echoes of another incident in February 2019. A day after the Balakot air strike, as fighter jets of India and Pakistan were engaged in a dogfight near the LoC, an Mi-17V5 crashed in Budgam shortly after take-off from Srinagar killing its personnel onboard and a civilian on the ground. The Court of Inquiry confirmed that it was shot by an Israeli-origin Spyder surface-to-air missile system of the IAF. India must leave no scope for any doubts about its capacity to handle nuclear and other military assets. That objective can be achieved without a joint probe with Pakistan or any international involvement, but the objective must be achieved nevertheless.</p><br><p><strong>Which of the following can be a suitable title for the passage?</strong></p>", "options": ["<p>India&rsquo;s security lapses</p>", "<p>Indo-Pak relations at stake</p>", "<p>Unguided Missile</p>", "<p>The US intervention in Indo-Pak arena</p>", "<p>Other than the given options</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>A title should justify the content of the passage as it gives an idea about what a reader can expect to read and find in the passage. If we look at the first option, it would not just talk about a missile but also about other issues that our borders keep facing. So, for being too general, option (a) can be eliminated.</p>\n<p>(b) is not a fair as nothing much about the Indo-Pak relations is being discussed by the author. (c) is close to the context because it is the missile that is in the limelight and everything else being discussed revolves around the same. (d) is irrelevant and (e) is not needed as we already have a good title in (c).</p>"}, {"question": "<p><strong>The passage given below has some information based on which certain questions have been formulated. Certain words and phrases have also been highlighted in order for you to locate them while answering some of the questions. </strong></p>\n<p>The accidental firing of a missile by India into Pakistan could have led to serious, unintended escalation of tensions between the two nuclear-armed countries, but, fortunately, that did not happen. The Government of India has said the incident, happened in the course of routine maintenance, due to a technical malfunction. India has ordered a high-level Court of Inquiry. The Chargé d’affaires of the Indian High Commission in Islamabad was called twice by Pakistan to convey its concerns. Pakistan has <strong>_____________ </strong>that the incident “indicates many loopholes and technical lapses of a serious nature in Indian handling of strategic weapons”. Islamabad, which termed the inquiry as ordered by India as insufficient, has demanded a joint probe. It has also sought the involvement of the international community to promote “strategic stability in the region”. As it moved closer to India in recent years, the U.S. has suspended its fixation with the conflict between the two neighbours, but the fear of nuclear escalation in the region is very deep in Washington’s strategic thinking. India’s global image of being a responsible nuclear power has been built over decades of <strong><em>restrained</em></strong> words and thoughtful action. The security of its nuclear command and technical capabilities has never been in doubt. This incident frays that reputation and measures must be taken to restore the confidence of the international community in India.</p>\n<p>There has been no official word from India on which missile was involved, which Pakistan has said landed 124 km inside its territory. The description by Pakistan — that the missile was travelling at three times the speed of sound, at 40,000 feet, and is a surface-to-surface missile — has led to speculation that the accident involves the BrahMos supersonic cruise missile which is now in the inventory of India’s three Services. India became a member of the Missile Technology Control Regime in 2016, an acceptance by major powers of India’s status as a reliable defence partner that is capable of handling its strengths and contributing to global security. India is developing more missile systems, including a hypersonic variant. The handling and the launch of any such missiles are highly regulated with checks and balances to avoid accidents. This accident also has echoes of another incident in February 2019. A day after the Balakot air strike, as fighter jets of India and Pakistan were engaged in a dogfight near the LoC, an Mi-17V5 crashed in Budgam shortly after take-off from Srinagar killing its personnel onboard and a civilian on the ground. The Court of Inquiry confirmed that it was shot by an Israeli-origin Spyder surface-to-air missile system of the IAF. India must leave no scope for any doubts about its capacity to handle nuclear and other military assets. That objective can be achieved without a joint probe with Pakistan or any international involvement, but the objective must be achieved nevertheless.</p><br><p><strong>Which of the following words would correctly fill the blank given in one of the sentences of the first paragraph?</strong></p>", "options": ["<p>Sensed</p>", "<p>Alleged</p>", "<p>Posted</p>", "<p>Managing</p>", "<p>Summon</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The hint is the helping verb ‘has’ after which the third form of the verb should be used as a rule. Options (d) and (e) get eliminated as per this logic. Now, from the line above, we can understand that Pakistan is blaming India which can be defined through the word <strong>‘alleged’</strong> as it means to claim something without any proof. <strong>‘Posted’</strong> and <strong>‘Sensed’</strong> will not be fit in the context due to the meaning that the sentence is trying to reflect.</p>\n<p>Therefore, the best would be to go with option (b).</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-53)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-53)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

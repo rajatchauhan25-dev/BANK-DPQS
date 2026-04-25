@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-85)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>Read each sentence to find out whether there is any grammatical error in it. The error if any, will be in one part of the sentence. Mark the number of the part with error as your answer. If there is no error, mark (E).</strong></p><br><p>The increasing prevalence of automation <strong>(A)/</strong> in manufacturing industries is <strong>(B)/</strong> raising significance concerns about potential job <strong>(C)/</strong> losses and the future of the workforce. <strong>(D)/</strong> No error <strong>(E)</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>No error</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The phrase \"significance concerns\" is incorrect. It should be \"significant concerns\" because \"significant\" is the correct adjective to describe the noun \"concerns.\"</p>\n<p><strong>Corrected sentence:</strong></p>\n<p>The increasing prevalence of automation in manufacturing industries is raising significant concerns about potential job losses and the future of the workforce.</p>"}, {"question": "<p><strong>Read each sentence to find out whether there is any grammatical error in it. The error if any, will be in one part of the sentence. Mark the number of the part with error as your answer. If there is no error, mark (E).</strong></p><br><p>Recent research underscores the critical <strong>(A)/</strong> connection between proper nutrition <strong>(B)/</strong> and cognitive development, particularly of <strong>(C)/</strong> the formative years of childhood education. <strong>(D)/</strong> No error <strong>(E)</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>No error</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The phrase \"of the formative years\" is incorrect. It should be \"in the formative years\" because \"in\" is the correct preposition to indicate the time period during which cognitive development occurs.</p>\n<p><strong>Corrected sentence:</strong></p>\n<p>Recent research underscores the critical connection between proper nutrition and cognitive development, particularly in the formative years of childhood education.</p>"}, {"question": "<p><strong>Read each sentence to find out whether there is any grammatical error in it. The error if any, will be in one part of the sentence. Mark the number of the part with error as your answer. If there is no error, mark (E).</strong></p><br><p>Public sentiment is increasing shifting <strong>(A)/</strong> towards the adoption of renewable energy <strong>(B)/</strong> sources as a proactive measure for <strong>(C)/</strong> environmental conservation and sustainability. <strong>(D)/</strong> No error <strong>(E)</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>No error</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The phrase \"increasing shifting\" is incorrect. It should be \"increasingly shifting\" because \"increasingly\" is the correct adverb to modify the verb \"shifting.\"</p>\n<p><strong>Corrected sentence:</strong></p>\n<p>Public sentiment is increasingly shifting towards the adoption of renewable energy sources as a proactive measure for environmental conservation and sustainability.</p>"}, {"question": "<p><strong>Read each sentence to find out whether there is any grammatical error in it. The error if any, will be in one part of the sentence. Mark the number of the part with error as your answer. If there is no error, mark (E).</strong></p><br><p>The annual conference highlighted the <strong>(A)/</strong> importance of innovation as a crucial <strong>(B)/</strong> driver of economic growth and competitiveness <strong>(C)/</strong> in an ever-evolving market landscape. <strong>(D)/</strong> No error <strong>(E)</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>No error</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>There is no error in this sentence. All parts are grammatically correct.</p>\n<p>The annual conference highlighted the importance of innovation as a crucial driver of economic growth and competitiveness in an ever-evolving market landscape.</p>"}, {"question": "<p><strong>Read each sentence to find out whether there is any grammatical error in it. The error if any, will be in one part of the sentence. Mark the number of the part with error as your answer. If there is no error, mark (E).</strong></p><br><p>Cultural exchanges play a vital role in <strong>(A)/</strong> enhancing mutual understanding and <strong>(B)/</strong> appreciation among diverse communities, <strong>(C)/</strong> fostered global harmony and collaboration. <strong>(D)/</strong> No error <strong>(E)</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>No error</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The phrase \"fostered global harmony\" is incorrect because \"fostered\" is in the past tense. It should be \"fostering\" instead of \"fostered.\"</p>\n<p><strong>Corrected sentence:</strong></p>\n<p>Cultural exchanges play a vital role in enhancing mutual understanding and appreciation among diverse communities, fostering global harmony and collaboration.</p>"}, {"question": "<p><strong>In the following questions, a sentence is divided into three parts. You have to choose the correct connector to combine the sentence, so that a meaningful sentence can be formed.</strong></p><br><p><strong>I).</strong> The stock market experienced a sharp decline,</p>\n<p><strong>II).</strong> Many investors decided to diversify their portfolios,</p>\n<p><strong>III).</strong> They sought to mitigate risk.</p>\n<p><strong>A).</strong> Nevertheless, since</p>\n<p><strong>B).</strong> Despite, as</p>\n<p><strong>C).</strong> However, because</p>", "options": ["<p>Only A</p>", "<p>Only B</p>", "<p>Only C</p>", "<p>Both A and B</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: </strong><strong>C</strong></p>\n<p>The correct answer is C. However, because.</p>\n<p><strong>Combined Sentence: </strong>The stock market experienced a sharp decline, however, many investors decided to diversify their portfolios because they sought to mitigate risk.</p>\n<p>\"However,\" is used to indicate a contrast or contradiction. It introduces the idea that despite the decline in the stock market, there was a subsequent action taken by investors.</p>\n<p>\"Because\" is used to provide a reason or cause. It explains why investors decided to diversify their portfolios, attributing it to their aim to mitigate risk.</p>\n<p>This combination effectively conveys the contrast between the decline in the stock market and the investors' decision to diversify their portfolios, providing a clear reason for their actions.</p>"}, {"question": "<p><strong>In the following questions, a sentence is divided into three parts. You have to choose the correct connector to combine the sentence, so that a meaningful sentence can be formed.</strong></p><br><p><strong>I).</strong> The finance ministry introduced new regulations,</p>\n<p><strong>II).</strong> The market experienced a period of uncertainty,</p>\n<p><strong>III).</strong> Investors hesitated to make significant trades.</p>\n<p><strong>A).</strong> Therefore, as</p>\n<p><strong>B).</strong> Despite, because</p>\n<p><strong>C).</strong> However, since</p>", "options": ["<p>Only A</p>", "<p>Only B</p>", "<p>Only C</p>", "<p>Both A and B</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The correct answer is B. Despite, because.</p>\n<p><strong>Combined Sentence: </strong>The finance ministry introduced new regulations, despite the market experiencing a period of uncertainty because investors hesitated to make significant trades.</p>\n<p>\"Despite\" is used to indicate a contrast or contradiction. It introduces the idea that the introduction of new regulations occurred in spite of the market uncertainty.</p>\n<p>\"Because\" is used to provide a reason or cause. It explains why investors hesitated to make significant trades, attributing it to the period of uncertainty in the market.</p>\n<p>This combination effectively conveys the contrast between the introduction of new regulations and the market uncertainty, providing a clear reason for investors' hesitation.</p>"}, {"question": "<p><strong>In the following questions, a sentence is divided into three parts. You have to choose the correct connector to combine the sentence, so that a meaningful sentence can be formed.</strong></p><br><p><strong>I).</strong> The retail chain announced a new expansion plan;</p>\n<p><strong>II).</strong> It faced challenges in securing additional funding,</p>\n<p><strong>III).</strong> It approached multiple investors.</p>\n<p><strong>A).</strong> However, so</p>\n<p><strong>B).</strong> Despite, as</p>\n<p><strong>C).</strong> Nevertheless, because</p>", "options": ["<p>Only A</p>", "<p>Only B</p>", "<p>Only C</p>", "<p>Both A and B</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The correct answer is C. Nevertheless, because.</p>\n<p><strong>Combined Sentence:</strong> The retail chain announced a new expansion plan; nevertheless, it faced challenges in securing additional funding because it approached multiple investors.</p>\n<p>\"Nevertheless\" is used to indicate a contrast or contradiction. It suggests that despite the announcement of the expansion plan, there is an obstacle or difficulty.</p>\n<p>\"Because\" is used to provide a reason or cause. It explains why the retail chain faced challenges in securing additional funding, attributing it to the approach of multiple investors.</p>\n<p>This combination effectively conveys the contrast between the announcement of the expansion plan and the challenges faced in securing funding, providing a clear reason for the difficulty encountered.</p>"}, {"question": "<p><strong>In the following questions, a sentence is divided into three parts. You have to choose the correct connector to combine the sentence, so that a meaningful sentence can be formed.</strong></p><br><p><strong>I).</strong> The company launched a new environmental sustainability initiative,</p>\n<p><strong>II).</strong> It faced criticism from environmental groups,</p>\n<p><strong>III).</strong> They argued that the initiative didn't go far enough.</p>\n<p><strong>A).</strong> Nevertheless, because</p>\n<p><strong>B).</strong> Despite, since</p>\n<p><strong>C).</strong> However, as</p>", "options": ["<p>Only A</p>", "<p>Only B</p>", "<p>Only C</p>", "<p>Both A and B</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The correct answer is C. However, as.</p>\n<p><strong>Combined Sentence:</strong> The company launched a new environmental sustainability initiative; however, it faced criticism from environmental groups, as they argued that the initiative didn't go far enough.</p>\n<p>\"However,\" is used to introduce a contrast or contradiction. It indicates that despite the launch of the initiative, there is criticism from environmental groups.</p>\n<p>\"As\" is used to provide a reason or cause. It explains why the environmental groups criticized the initiative, attributing it to their belief that it didn't go far enough in addressing environmental concerns.</p>\n<p>This combination effectively conveys the contrast between the launch of the sustainability initiative and the criticism it received from environmental groups, providing a clear reason for their dissatisfaction.</p>"}, {"question": "<p><strong>Read the passage carefully and answer the following questions</strong></p>\n<p>The prime rate is the lowest interest rate that banks or other creditors charge to their borrowers. This is mostly granted to those with prime credit score (above 660) who creditors see as low risks borrowers. <strong>(</strong>if you qualify <strong>(A)</strong>/ still greatly affected by it <strong>(B)</strong>/ for this lowest interest rate <strong>(C)</strong>/ But regardless <strong>(D)</strong>/ or not, you will <strong>(E))</strong>. This is because the prime rate is the baseline of interest rates.</p>\n<p>The lower the prime rate today, the lower the interest rates of loans. Creditors decide the interest rates based on the prime rate. If you are not qualified to be charged the prime rate, you will be charged higher than it. Therefore, as the prime rate increases, interest rates will also increase. Note that creditors will decide on the interest rate you will be charged based on your credit score, income, and length of repayment. </p>\n<p>The prime rate is determined by the Federal Reserve, the central bank of the United States, and based on the Federal Fund Rate. The Federal Fund Rate is the interest rate that the financial institutions charge on each other when one borrows from another. The prime rate is determined as 3% higher than whatever the current federal fund rate is. For instance, if the federal fund is 1%, 3% will be added to determine the prime rate. Hence, 4% will be the prime rate. </p>\n<p>The prime rate determines loan interest rates. So, if you are planning to take out a loan for a non-emergency purpose, it’s a good practice to check the prime rate first. This will help you decide on whether to pursue the loan or wait a little longer as the interest rate may decrease soon. Aside from that, it also has a great effect on the economy. As the prime rate decreases, the economy <strong>flourishes</strong>. This is because low-interest rates allow business owners to get more funds to expand their business. This can also result in cheaper prices in the market because businesses do not struggle from paying high-interest rates.  </p>\n<p>If your agreement has a variable interest, then the future prime rate will affect the future interest rate of your current loan. This means that your interest rate will go up or down depending on the prime rate fluctuations.</p>\n<p>It is best to pay loans as soon as possible to avoid getting stocked in paying high-interest rates. Plus, struggling to pay loans on time can have significant negative effects on your credit score. Note that a poor credit score leads to high-interest rates. Your credit score is one of the main factors to get the lowest interest rates on loans. So, keep it in excellent condition as much as possible.</p><br><p><strong>What triggers the prime rate to fluctuate?</strong></p>\n<p><strong>a). </strong>The aftermath of the pandemic in the economy reflects in the fluctuation of the prime rate</p>\n<p><strong>b). </strong>Prime rate may change anytime depending on the economy. It may fluctuate once, twice or four times a year</p>\n<p><strong>c). </strong>The federal fund rate is the rate bank that determine the prime rate, the prime rate is often roughly 3 percent higher than the federal funds rate</p>", "options": ["<p>Only (a)</p>", "<p>Only (b)</p>", "<p>Only (c)</p>", "<p>Both (a) and (b)</p>", "<p>Both (b) and (c)</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Option (a) - this option is out of context. It is not mentioned in the passage. So, the option is eliminated</p>\n<p>Option (b) - this option doesn't serve answer to the question. It doesn't explain the reason behind the fluctuation of prime rate. So, the option is eliminated</p>\n<p>Option (c) - this is the correct option; it is mentioned in the passage (The prime rate is determined as 3% higher than whatever the current federal fund rate is. For instance, if the federal fund is 1%, 3% will be added to determine the prime rate. Hence, 4% will be the prime rate)</p>"}, {"question": "<p><strong>Read the passage carefully and answer the following questions</strong></p>\n<p>The prime rate is the lowest interest rate that banks or other creditors charge to their borrowers. This is mostly granted to those with prime credit score (above 660) who creditors see as low risks borrowers. <strong>(</strong>if you qualify <strong>(A)</strong>/ still greatly affected by it <strong>(B)</strong>/ for this lowest interest rate <strong>(C)</strong>/ But regardless <strong>(D)</strong>/ or not, you will <strong>(E))</strong>. This is because the prime rate is the baseline of interest rates.</p>\n<p>The lower the prime rate today, the lower the interest rates of loans. Creditors decide the interest rates based on the prime rate. If you are not qualified to be charged the prime rate, you will be charged higher than it. Therefore, as the prime rate increases, interest rates will also increase. Note that creditors will decide on the interest rate you will be charged based on your credit score, income, and length of repayment. </p>\n<p>The prime rate is determined by the Federal Reserve, the central bank of the United States, and based on the Federal Fund Rate. The Federal Fund Rate is the interest rate that the financial institutions charge on each other when one borrows from another. The prime rate is determined as 3% higher than whatever the current federal fund rate is. For instance, if the federal fund is 1%, 3% will be added to determine the prime rate. Hence, 4% will be the prime rate. </p>\n<p>The prime rate determines loan interest rates. So, if you are planning to take out a loan for a non-emergency purpose, it’s a good practice to check the prime rate first. This will help you decide on whether to pursue the loan or wait a little longer as the interest rate may decrease soon. Aside from that, it also has a great effect on the economy. As the prime rate decreases, the economy <strong>flourishes</strong>. This is because low-interest rates allow business owners to get more funds to expand their business. This can also result in cheaper prices in the market because businesses do not struggle from paying high-interest rates.  </p>\n<p>If your agreement has a variable interest, then the future prime rate will affect the future interest rate of your current loan. This means that your interest rate will go up or down depending on the prime rate fluctuations.</p>\n<p>It is best to pay loans as soon as possible to avoid getting stocked in paying high-interest rates. Plus, struggling to pay loans on time can have significant negative effects on your credit score. Note that a poor credit score leads to high-interest rates. Your credit score is one of the main factors to get the lowest interest rates on loans. So, keep it in excellent condition as much as possible.</p><br><p><strong>Which of the following options in context to prime rate is correct?</strong></p>\n<p><strong>a). </strong>The federal fund rate increases, the prime rate will also increase. When the prime rate increases, so are the loan interest rates</p>\n<p><strong>b). </strong>Prime rates can also produce a trickledown effect that impacts the interest rates changed on mortgage, credit cards and other financial instruments</p>\n<p><strong>c). </strong>The prime rate served as an index that are banks and credit unions used to set rate on consumer loan products</p>", "options": ["<p>Only (a)</p>", "<p>Only (b)</p>", "<p>Only (c)</p>", "<p>Both (a) and (b)</p>", "<p>Both (b) and (c)</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>Option (b) - this is an incorrect option. It is not mentioned in the passage. So, the option is eliminated</p>\n<p>Option (a) - it is mentioned in the passage. So, this is the correct option (The Federal Fund Rate is the interest rate that the financial institutions charge on each other when one borrows from another. The prime rate is determined as 3% higher than whatever the current federal fund rate is)</p>\n<p>Option (c) - it is mentioned in the passage. So, this is the correct option (The prime rate is the lowest interest rate that banks or other creditors charge to their borrowers)</p>"}, {"question": "<p><strong>Read the passage carefully and answer the following questions</strong></p>\n<p>The prime rate is the lowest interest rate that banks or other creditors charge to their borrowers. This is mostly granted to those with prime credit score (above 660) who creditors see as low risks borrowers. <strong>(</strong>if you qualify <strong>(A)</strong>/ still greatly affected by it <strong>(B)</strong>/ for this lowest interest rate <strong>(C)</strong>/ But regardless <strong>(D)</strong>/ or not, you will <strong>(E))</strong>. This is because the prime rate is the baseline of interest rates.</p>\n<p>The lower the prime rate today, the lower the interest rates of loans. Creditors decide the interest rates based on the prime rate. If you are not qualified to be charged the prime rate, you will be charged higher than it. Therefore, as the prime rate increases, interest rates will also increase. Note that creditors will decide on the interest rate you will be charged based on your credit score, income, and length of repayment. </p>\n<p>The prime rate is determined by the Federal Reserve, the central bank of the United States, and based on the Federal Fund Rate. The Federal Fund Rate is the interest rate that the financial institutions charge on each other when one borrows from another. The prime rate is determined as 3% higher than whatever the current federal fund rate is. For instance, if the federal fund is 1%, 3% will be added to determine the prime rate. Hence, 4% will be the prime rate. </p>\n<p>The prime rate determines loan interest rates. So, if you are planning to take out a loan for a non-emergency purpose, it’s a good practice to check the prime rate first. This will help you decide on whether to pursue the loan or wait a little longer as the interest rate may decrease soon. Aside from that, it also has a great effect on the economy. As the prime rate decreases, the economy <strong>flourishes</strong>. This is because low-interest rates allow business owners to get more funds to expand their business. This can also result in cheaper prices in the market because businesses do not struggle from paying high-interest rates.  </p>\n<p>If your agreement has a variable interest, then the future prime rate will affect the future interest rate of your current loan. This means that your interest rate will go up or down depending on the prime rate fluctuations.</p>\n<p>It is best to pay loans as soon as possible to avoid getting stocked in paying high-interest rates. Plus, struggling to pay loans on time can have significant negative effects on your credit score. Note that a poor credit score leads to high-interest rates. Your credit score is one of the main factors to get the lowest interest rates on loans. So, keep it in excellent condition as much as possible.</p><br><p><strong>How does prime rate affect anyone?</strong></p>\n<p><strong>a). </strong>The interest rate of most financial products like loan is dependable on Prime rate</p>\n<p><strong>b). </strong>Prime rate helps in keeping the inflation under control and it helps to curb the excess flow of money in the economy</p>\n<p><strong>c). </strong>Prime rate helps to maintain less liquidity in the economy and there is less upward pressure on inflation</p>", "options": ["<p>Only (a)</p>", "<p>Only (b)</p>", "<p>Only (c)</p>", "<p>Both (a) and (c)</p>", "<p>Both (b) and (c)</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Options (b) and (c) - both the options are incorrect. Both the options say that prime rate helps to control inflation, which is not mentioned in the passage. So, these options are eliminated</p>\n<p>Option (a) - it is mentioned in the passage. So, this is the correct option (The prime rate determines loan interest rates. So, if you are planning to take out a loan for a non-emergency purpose, it’s a good practice to check the prime rate first)</p>"}, {"question": "<p><strong>Read the passage carefully and answer the following questions</strong></p>\n<p>The prime rate is the lowest interest rate that banks or other creditors charge to their borrowers. This is mostly granted to those with prime credit score (above 660) who creditors see as low risks borrowers. <strong>(</strong>if you qualify <strong>(A)</strong>/ still greatly affected by it <strong>(B)</strong>/ for this lowest interest rate <strong>(C)</strong>/ But regardless <strong>(D)</strong>/ or not, you will <strong>(E))</strong>. This is because the prime rate is the baseline of interest rates.</p>\n<p>The lower the prime rate today, the lower the interest rates of loans. Creditors decide the interest rates based on the prime rate. If you are not qualified to be charged the prime rate, you will be charged higher than it. Therefore, as the prime rate increases, interest rates will also increase. Note that creditors will decide on the interest rate you will be charged based on your credit score, income, and length of repayment. </p>\n<p>The prime rate is determined by the Federal Reserve, the central bank of the United States, and based on the Federal Fund Rate. The Federal Fund Rate is the interest rate that the financial institutions charge on each other when one borrows from another. The prime rate is determined as 3% higher than whatever the current federal fund rate is. For instance, if the federal fund is 1%, 3% will be added to determine the prime rate. Hence, 4% will be the prime rate. </p>\n<p>The prime rate determines loan interest rates. So, if you are planning to take out a loan for a non-emergency purpose, it’s a good practice to check the prime rate first. This will help you decide on whether to pursue the loan or wait a little longer as the interest rate may decrease soon. Aside from that, it also has a great effect on the economy. As the prime rate decreases, the economy <strong>flourishes</strong>. This is because low-interest rates allow business owners to get more funds to expand their business. This can also result in cheaper prices in the market because businesses do not struggle from paying high-interest rates.  </p>\n<p>If your agreement has a variable interest, then the future prime rate will affect the future interest rate of your current loan. This means that your interest rate will go up or down depending on the prime rate fluctuations.</p>\n<p>It is best to pay loans as soon as possible to avoid getting stocked in paying high-interest rates. Plus, struggling to pay loans on time can have significant negative effects on your credit score. Note that a poor credit score leads to high-interest rates. Your credit score is one of the main factors to get the lowest interest rates on loans. So, keep it in excellent condition as much as possible.</p><br><p><strong>Can the future prime rate affect the current loan?</strong></p>\n<p><strong>a). </strong>Future interest rate it is not dependable to the future prime rate, neither it affect the current loan</p>\n<p><strong>b). </strong>If the loan agreement is based on variable interest rate, then it may have the effect on loan amount</p>\n<p><strong>c). </strong>Prime rate may have drastic affect on the interest rate in future</p>", "options": ["<p>Only (a)</p>", "<p>Only (b)</p>", "<p>Only (c)</p>", "<p>Both (a) and (b)</p>", "<p>Both (b) and (c)</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>Option (a) - it is opposite to the context of the passage. It is mentioned in the passage that future prime late will affect the future interest rate. So, the option is eliminated</p>\n<p>Option (c) - this is an incorrect option. Prime rate have drastic effect in future is not mentioned in the passage. So, the option is eliminated</p>\n<p>Option (b) - it is mentioned in the passage. So, this is the correct option (If your agreement has a variable interest, then the future prime rate will affect the future interest rate of your current loan)</p>"}, {"question": "<p><strong>Read the passage carefully and answer the following questions</strong></p>\n<p>The prime rate is the lowest interest rate that banks or other creditors charge to their borrowers. This is mostly granted to those with prime credit score (above 660) who creditors see as low risks borrowers. <strong>(</strong>if you qualify <strong>(A)</strong>/ still greatly affected by it <strong>(B)</strong>/ for this lowest interest rate <strong>(C)</strong>/ But regardless <strong>(D)</strong>/ or not, you will <strong>(E))</strong>. This is because the prime rate is the baseline of interest rates.</p>\n<p>The lower the prime rate today, the lower the interest rates of loans. Creditors decide the interest rates based on the prime rate. If you are not qualified to be charged the prime rate, you will be charged higher than it. Therefore, as the prime rate increases, interest rates will also increase. Note that creditors will decide on the interest rate you will be charged based on your credit score, income, and length of repayment. </p>\n<p>The prime rate is determined by the Federal Reserve, the central bank of the United States, and based on the Federal Fund Rate. The Federal Fund Rate is the interest rate that the financial institutions charge on each other when one borrows from another. The prime rate is determined as 3% higher than whatever the current federal fund rate is. For instance, if the federal fund is 1%, 3% will be added to determine the prime rate. Hence, 4% will be the prime rate. </p>\n<p>The prime rate determines loan interest rates. So, if you are planning to take out a loan for a non-emergency purpose, it’s a good practice to check the prime rate first. This will help you decide on whether to pursue the loan or wait a little longer as the interest rate may decrease soon. Aside from that, it also has a great effect on the economy. As the prime rate decreases, the economy <strong>flourishes</strong>. This is because low-interest rates allow business owners to get more funds to expand their business. This can also result in cheaper prices in the market because businesses do not struggle from paying high-interest rates.  </p>\n<p>If your agreement has a variable interest, then the future prime rate will affect the future interest rate of your current loan. This means that your interest rate will go up or down depending on the prime rate fluctuations.</p>\n<p>It is best to pay loans as soon as possible to avoid getting stocked in paying high-interest rates. Plus, struggling to pay loans on time can have significant negative effects on your credit score. Note that a poor credit score leads to high-interest rates. Your credit score is one of the main factors to get the lowest interest rates on loans. So, keep it in excellent condition as much as possible.</p><br><p><strong>Why credit score is important?</strong> </p>\n<p><strong>a). </strong>It is an important indicator for lenders to check borrower's ability to repay loan</p>\n<p><strong>b). </strong>If you have a bad credit score, you may face consequences, by paying high interest rates</p>\n<p><strong>c). </strong>It is important to monitor and improve credit score to get a loan easily</p>", "options": ["<p>Only (a)</p>", "<p>Only (b)</p>", "<p>Only (c)</p>", "<p>Both (a) and (b)</p>", "<p>Both (b) and (c)</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>Options (a) and (c) - both the options say that credit score is important to get the loan, which is not mentioned in the passage. So, both options are eliminated</p>\n<p>Option (b) - it is mentioned in the passage. So, this is the correct option (Note that a poor credit score leads to high-interest rates. Your credit score is one of the main factors to get the lowest interest rates on loans. So, keep it in excellent condition as much as possible)</p>"}, {"question": "<p><strong>In each sentence there are two blanks. Select appropriate words from the option that can fill both the blanks.</strong></p><br><p><strong>Equity, on the other hand, is a _________of capital that needs to be _________only when profits are made.</strong></p>", "options": ["<p>form, serviced</p>", "<p>norm, service</p>", "<p>formed, made</p>", "<p>forms, needed</p>", "<p>none of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Equity, on the other hand, is a form of capital that needs to be serviced only when profits are made.</p>\n<p>Other options do not fit the blanks grammatically and contextually.</p>"}, {"question": "<p><strong>In each sentence there are two blanks. Select appropriate words from the option that can fill both the blanks.</strong></p><br><p><strong>After all, how can banks _________interest to their depositors unless borrowers pay interest on their_________.</strong></p>", "options": ["<p>paying, loans</p>", "<p>pays, loans</p>", "<p>pay, loans</p>", "<p>finished, interests</p>", "<p>none of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>After all, how can banks pay interest to their depositors unless borrowers pay interest on their loans.</p>\n<p>Other options do not fit the blanks grammatically and contextually.</p>"}, {"question": "<p><strong>In each sentence there are two blanks. Select appropriate words from the option that can fill both the blanks.</strong></p><br><p><strong>Hopefully, the _________of economic activity will push up _________and collections from the Integrated GST.</strong></p>", "options": ["<p>restarts, destruction</p>", "<p>resumption, imports</p>", "<p>decline, imagination</p>", "<p>Both A and C</p>", "<p>none of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>Hopefully, the resumption of economic activity will push up imports and collections from the Integrated GST.</p>\n<p>Other options do not fit the blanks grammatically and contextually.</p>"}, {"question": "<p><strong>In each sentence there are two blanks. Select appropriate words from the option that can fill both the blanks.</strong></p><br><p><strong>To inject _________in the recovery, it is _________that the government catalyse large-scale investment, even if it does not spend much directly.</strong></p>", "options": ["<p>vigour, useless</p>", "<p>vigour, imperative</p>", "<p>care, impossible</p>", "<p>Both B and C</p>", "<p>none of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>To inject vigour in the recovery, it is imperative that the government catalyse large-scale investment, even if it does not spend much directly.</p>\n<p>Other options do not fit the blanks grammatically and contextually.</p>"}, {"question": "<p><strong>In each sentence there are two blanks. Select appropriate words from the option that can fill both the blanks.</strong></p><br><p><strong>The apex court should not _________ in to arbitrate on policy decisions that are _________on economic judgements of the government and RBI.</strong></p>", "options": ["<p>step, focus</p>", "<p>enter, focus</p>", "<p>indulge, imagined</p>", "<p>step, based</p>", "<p>none of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The apex court should not step in to arbitrate on policy decisions that are based on economic judgements of the government and RBI.</p>\n<p>Other options do not fit the blanks grammatically and contextually.</p>"}, {"question": "<p><strong>In each of the following questions, a sentence is given with three words marked as (A), (B), (C), and (D). These words may or may not be placed at their correct places. Four options with different arrangements of these words are given. Mark the option with the correct arrangement as your answer. If no arrangement is required then mark option (e) as your answer.</strong></p><br><p>India's G20 Presidency has been <strong>steering (A)</strong> by experts across the world as an exceptional and <strong>reckoned (B)</strong> opportunity with immense scope and potential for <strong>over-arching (C)</strong> international coordination towards economic stability and prosperity, which is in general an <strong>unprecedented</strong> <strong>(D)</strong> goal of the G20 organization since the last few years.</p>", "options": ["<p>ACBD</p>", "<p>BDAC</p>", "<p>DBAC</p>", "<p>CABD</p>", "<p>The given arrangement is right</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>Reckoned (verb) – believed to be true</p>\n<p>Over-arching (verb) – covering all angles and issues</p>\n<p>Unprecedented (adjective) – having no precedent; novel</p>\n<p>Steering (verb) – determining the direction of traveling</p>\n<p>Steering best suits the context of the sentence when it replaces the word in position C. Since in this case, the sentence becomes ‘…steering international coordination towards economic stability…’ which means to direct or guide international coordination towards economic stability. Thus, A comes third in the arrangement.</p>\n<p>D is incorrectly placed because the part of the sentence after D states that the goal has been in effect since the last few years. Thus, the goal is not novel since it has been the goal of the G20 organization since the last few years. But over-arching best suits this position because in the case, the sentence becomes ‘over-arching goal of the G20 organization’ which means a goal that is comprehensive and embraces all requisites. Thus, C comes last in the arrangement.</p>\n<p>Reckoned best suits the sentence when it placed first in the arrangement for in this case the sentence becomes ‘…reckoned by experts…’ which is contextually and grammatically right. This means that India’s G20 presidency has be believed to be true by the experts as an opportunity for achieving something positive. Thus, B comes first in the arrangement.</p>\n<p>D comes second in the arrangement and it leads to a grammatically right sentence. Thus, option b is right.</p>\n<p>The right sentence is:</p>\n<p>India's G20 Presidency has been reckoned by experts across the world as an exceptional and unprecedented opportunity with immense scope and potential for steering international coordination towards economic stability and prosperity, which is in general an over-arching goal of the G20 organization since the last few years.</p>"}, {"question": "<p><strong>In each of the following questions, a sentence is given with three words marked as (A), (B), (C), and (D). These words may or may not be placed at their correct places. Four options with different arrangements of these words are given. Mark the option with the correct arrangement as your answer. If no arrangement is required then mark option (e) as your answer.</strong></p><br><p>India is exploring building strategic natural gas storage facilities in the country on the lines of strategic crude oil reserves in a <strong>hedge (A)</strong> to have a large gas stockpile that can be utilized in emergencies and supply <strong>volatility (B)</strong>, and serve as a <strong>bid (C)</strong> against extreme price <strong>disruptions (D)</strong> in the international market.</p>", "options": ["<p>CDAB</p>", "<p>ADBC</p>", "<p>CBAD</p>", "<p>ABDC</p>", "<p>No correction required</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Hedge (noun) - Any technique designed to reduce or eliminate financial risk</p>\n<p>Volatility (noun) - The trait of being unpredictably irresolute; unpredictable</p>\n<p>The noun volatility best suits the context of the passage when placed last in the arrangement since in the case, the sentence becomes ‘… extreme price volatility…’ which means the prices have been extremely unpredictable. This makes the sentence grammatically and contextually right. Thus, B comes forth in the arrangement.</p>\n<p>Here, the word ‘hedge’ should come third in the arrangement because in this case, the sentence becomes ‘…serve as a hedge against extreme price volatility…’ which means to serve as a technique to reduce or eliminate extreme price volatility. This makes the sentence grammatically and contextually right. Thus, A comes third in the arrangement.</p>\n<p>The word ‘disruptions’ cannot be placed first because in this case it would be preceded by a singular article ‘a’. Thus, ‘disruptions’ comes second in the arrangement.</p>\n<p>C comes first in the arrangement. Thus, option a is right.  </p>\n<p>The right sentence is:</p>\n<p>India is exploring building strategic natural gas storage facilities in the country on the lines of strategic crude oil reserves in a bid to have a large gas stockpile that can be utilized in emergencies and supply disruptions, and serve as a hedge against extreme price volatility in the international market.</p>"}, {"question": "<p><strong>In each of the following questions, a sentence is given with three words marked as (A), (B), (C), and (D). These words may or may not be placed at their correct places. Four options with different arrangements of these words are given. Mark the option with the correct arrangement as your answer. If no arrangement is required then mark option (e) as your answer.</strong></p><br><p>Given the extraordinary challenges that all citizens of Bengaluru face today, and the <strong>uncertainties (A)</strong> with which the new government is trying to set things right, there arises <strong>opportunity (B)</strong> of whether there is an <strong>earnestness (C)</strong> to attach the term “cosmo” to another vision of an inclusive, <strong>sustainable (D)</strong> and socially just urbanism.</p>", "options": ["<p>BCAD</p>", "<p>ACBD</p>", "<p>CABD</p>", "<p>DABC</p>", "<p>No correction required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The part of the sentence after B includes the word ‘whether’ which indicates uncertainty or doubtfulness. Thus, A comes second in the arrangement.</p>\n<p>The word earnestness comes first in the arrangement because in this case, the sentence becomes ‘… the earnestness with which the new government is trying to set things right…’. Earnestness (noun) – the trait of being sincerely intended and with strong feeling. Thus, it makes sense to say that the government is trying earnestly or sincerely to set things right. Thus, C comes first in the arrangement.</p>\n<p>The word ‘opportunity’ comes third in the arrangement because it rightly fits the sentence here due to the presence of the article ‘an’. Thus, B comes third in the arrangement.</p>\n<p>D comes forth in the arrangement. Thus, option c is the right answer.</p>\n<p>The right sentence is:</p>\n<p>Given the extraordinary challenges that all citizens of Bengaluru face today, and the earnestness with which the new government is trying to set things right, there arises uncertainties of whether there is an opportunity to attach the term ‘cosmo’ to another vision of an inclusive, sustainable and socially just urbanism.</p>"}, {"question": "<p><strong>In each of the following questions, a sentence is given with three words marked as (A), (B), (C), and (D). These words may or may not be placed at their correct places. Four options with different arrangements of these words are given. Mark the option with the correct arrangement as your answer. If no arrangement is required then mark option (e) as your answer.</strong></p><br><p>After two cheetahs died of <strong>baffled (A)</strong> Septicaemia (bacterial blood poisoning) from <strong>setback (B)</strong> neck wounds caused by radio collars in Kuno last week, similar injuries have been spotted in at least another three animals and this <strong>festering (C)</strong> for the reintroduction project has <strong>suspected (D)</strong> many who are used to routinely collaring wild cats for monitoring and research both in India and Africa.</p>", "options": ["<p>DBAC</p>", "<p>ADBC</p>", "<p>BADC</p>", "<p>DCBA</p>", "<p>No correction required</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The word suspected comes first in the arrangement because this part of the sentence talks about a potential illness in cheetahs. When placed first, the sentence becomes ‘…died of suspected Septicaemia…’ which makes better sense since it means it is believed that the cheetahs have died and the death is suspected to be due to an illness. Thus, D comes first in the arrangement.</p>\n<p>Baffled (adjective) - Perplexed by many conflicting situations or statements. Thus, baffled comes last in the arrangement because it best fits the context of the passage when placed last. The sentence becomes ‘ … has baffled many who are used to routinely collaring …’ which means people who have been collaring animals for research purposes routinely are perplexed/baffled about the death of cheetahs due to this collaring. Thus, A comes last in the arrangement.</p>\n<p>Festering (verb) – to become infected. This word comes second in the arrangement since it is immediately followed by ‘neck wounds’ that could potentially be infected. Also, it makes sense to say that blood poisoning can be caused from infected neck wounds. Thus, C comes second in the arrangement.</p>\n<p>B comes third in the arrangement since the untimely and unpredicted death of cheetahs is really a setback (an unfortunate happening that hinders progress) for many reasons. Thus, the right answer is option d.</p>\n<p>The right sentence is:</p>\n<p>After two cheetahs died of suspected septicaemia (bacterial blood poisoning) from festering neck wounds caused by radio collars in Kuno last week, similar injuries have been spotted in at least another three animals and this setback for the reintroduction project has baffled many who are used to routinely collaring wild cats for monitoring and research both in India and Africa.</p>"}, {"question": "<p><strong>In each of the following questions, a sentence is given with three words marked as (A), (B), (C), and (D). These words may or may not be placed at their correct places. Four options with different arrangements of these words are given. Mark the option with the correct arrangement as your answer. If no arrangement is required then mark option (e) as your answer.</strong></p><br><p>Unmindful of the disastrous <strong>bulwark (A)</strong> of the Ukraine war on the global economic order led by the US dollar, the <strong>fall-out (B)</strong> of its regional allies to openly <strong>reluctance (C)</strong> China and the own recent experience of its top diplomat being lectured by Chinese supremo Xi Jinping, the US has decided to bet on India to build it as a military <strong>confront (D)</strong> against China in the Indian Ocean Region.</p>", "options": ["<p>ABCD</p>", "<p>BCDA</p>", "<p>CBAD</p>", "<p>DABC</p>", "<p>No correction required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>Bulwark (noun) - An embankment built around a space for defensive purposes. This best suits the context of the sentence when placed last since the latter part of the sentence talks about building something for military purposes which in turn means for defense purposes. Thus, A comes last in the arrangement.</p>\n<p>Confront (verb) - Oppose, as in hostility or a competition. This comes third in the arrangement because in this case, it is correctly preceded by an adverb (openly). Thus, D comes third in the arrangement.</p>\n<p>Reluctance (noun) - A certain degree of unwillingness. This best suits the context of the sentence when placed second because, in this case, the sentence becomes ‘… the reluctance of its allies to openly confront…’ means ‘the unwillingness of its allies to openly oppose’. This results in a contextually and grammatically right sentence as well. Thus, C comes second in the arrangement.</p>\n<p>Fall-out (noun) - Any adverse and unwanted secondary effect. The word should be placed first in the arrangement to denote the adverse effects of the Ukraine war. Thus, B comes first in the arrangement.</p>\n<p>Thus, option b is the right answer.</p>\n<p>The right sentence is:</p>\n<p>Unmindful of the disastrous fall-out of the Ukraine war on the global economic order led by the US dollar, the reluctance of its regional allies to openly confront China and the own recent experience of its top diplomat being lectured by Chinese supremo Xi Jinping, the US has decided to bet on India to build it as a military bulwark against China in the Indian Ocean Region.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-85)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-85)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

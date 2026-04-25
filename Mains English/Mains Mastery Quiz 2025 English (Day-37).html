@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-37)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>In each of the following questions, four words printed in bold type are given. One of these words printed in bold might either be wrongly spelt or inappropriate in the context of the sentence. Find out the word that is inappropriate or wrongly spelt, if any. If the words printed in bold are correctly spelt and appropriate in the context of the sentence then mark (E), i.e. ‘All are Correct’, as your answer.</strong></p><br><p>The manager's <strong>compelling</strong> argument, supported by extensive <strong>evidence</strong>, persuaded the team to adopt a new strategy, despite some lingering <strong>scepticism</strong> about its long-term <strong>feasability</strong>.</p>", "options": ["<p>compelling</p>", "<p>evidence</p>", "<p>scepticism</p>", "<p>feasability</p>", "<p>All are correct</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D</strong></p>\n<p>In this sentence, we need to analyze the four highlighted words: compelling, evidence, scepticism, and feasability.</p>\n<p>Compelling – This word is spelled correctly and is appropriate in context. \"Compelling\" means forcefully convincing, which fits well in describing the strength of the manager's argument.</p>\n<p>Evidence – This word is spelled correctly and is appropriate in context. \"Evidence\" refers to the available facts or information used to support an argument, which is suitable for the context of persuasion.</p>\n<p>Scepticism – This word is spelled correctly and is appropriate in context. \"Scepticism\" refers to doubt or disbelief, which is appropriate for describing lingering uncertainty about the new strategy.</p>\n<p>Feasability – This word is incorrectly spelled. The correct spelling is \"feasibility.\" \"Feasibility\" refers to the practicality or possibility of something being achieved, which fits the context of considering the long-term potential of the strategy.</p>\n<p>The only word that is incorrectly spelled in the sentence is d) feasability, which should be spelled \"feasibility.\" Therefore, the answer is d) feasability.</p>"}, {"question": "<p><strong>In each of the following questions, four words printed in bold type are given. One of these words printed in bold might either be wrongly spelt or inappropriate in the context of the sentence. Find out the word that is inappropriate or wrongly spelt, if any. If the words printed in bold are correctly spelt and appropriate in the context of the sentence then mark (E), i.e. ‘All are Correct’, as your answer.</strong></p><br><p>The scientist's <strong>astounding</strong> discoveries have significantly advanced the field of <strong>astrophysics</strong>, providing deeper <strong>comprehension</strong> of cosmic phenomena and their <strong>implifications</strong> for humanity.</p>", "options": ["<p>astounding</p>", "<p>astrophysics</p>", "<p>comprehension</p>", "<p>implifications</p>", "<p>All are correct</p>"], "correctIndex": 3, "solution": "<p><strong>Answer:</strong><strong> D</strong></p>\n<p>In this sentence, we need to analyze the four highlighted words: astounding, astrophysics, comprehension, and implifications.</p>\n<p>Astounding – This word is spelled correctly and is appropriate in context. \"Astounding\" means surprisingly impressive or remarkable, which accurately describes the impact of the scientist's discoveries.</p>\n<p>Astrophysics – This word is spelled correctly and contextually appropriate. \"Astrophysics\" refers to the branch of astronomy concerned with the physical nature of stars and other celestial bodies, fitting perfectly in the scientific context.</p>\n<p>Comprehension – This word is spelled correctly and is appropriate in context. \"Comprehension\" means understanding or grasping something, which is suitable as it relates to understanding cosmic phenomena.</p>\n<p>Implifications – This word is incorrectly spelled. The correct spelling is \"implications.\" \"Implications\" refers to possible consequences or effects of an action or decision, which is relevant when discussing the broader effects of the discoveries on humanity.</p>\n<p>The only word that is incorrectly spelled in the sentence is d) implifications, which should be spelled \"implications.\" Therefore, the answer is d) implifications.</p>"}, {"question": "<p><strong>In each of the following questions, four words printed in bold type are given. One of these words printed in bold might either be wrongly spelt or inappropriate in the context of the sentence. Find out the word that is inappropriate or wrongly spelt, if any. If the words printed in bold are correctly spelt and appropriate in the context of the sentence then mark (E), i.e. ‘All are Correct’, as your answer.</strong></p><br><p>The speaker's <strong>articulate</strong> delivery, combined with her profound <strong>erudition</strong>, left the audience in awe, despite a few critics pointing out minor <strong>ambiguities</strong> in the presented <strong>hypothesis</strong>.</p>", "options": ["<p>articulate</p>", "<p>erudition</p>", "<p>ambiguities</p>", "<p>hypothesis</p>", "<p>All are correct</p>"], "correctIndex": 4, "solution": "<p><strong>Answer:</strong><strong> E</strong></p>\n<p>In this sentence, we need to analyze the four highlighted words: articulate, erudition, ambiguities, and hypothesis.</p>\n<p>Articulate – This word is spelled correctly and is appropriate in context. \"Articulate\" means the ability to express oneself clearly and effectively, which is suitable for describing the speaker's delivery.</p>\n<p>Erudition – This word is spelled correctly and is appropriate in context. \"Erudition\" refers to profound scholarly knowledge, fitting well to describe the speaker's intellectual depth.</p>\n<p>Ambiguities – This word is spelled correctly and is appropriate in context. \"Ambiguities\" refers to statements or situations that can be interpreted in multiple ways, which fits the context of a critique of the presentation.</p>\n<p>Hypothesis – This word is spelled correctly and is appropriate in context. \"Hypothesis\" refers to a proposed explanation for a phenomenon, which aligns with the context of the presented ideas.</p>\n<p>All the words in the sentence are correctly spelled and contextually appropriate. Therefore, the answer is e) All are correct.</p>"}, {"question": "<p><strong>In each of the following questions, four words printed in bold type are given. One of these words printed in bold might either be wrongly spelt or inappropriate in the context of the sentence. Find out the word that is inappropriate or wrongly spelt, if any. If the words printed in bold are correctly spelt and appropriate in the context of the sentence then mark (E), i.e. ‘All are Correct’, as your answer.</strong></p><br><p>The researcher’s <strong>painstaking</strong> analysis uncovered several <strong>discrepancies</strong> in the data, prompting her to propose an entirely new <strong>paradigm</strong> for interpreting the results, which garnered immediate <strong>acclaimation</strong> from her peers.</p>", "options": ["<p>painstaking</p>", "<p>discrepancies</p>", "<p>paradigm</p>", "<p>acclaimation</p>", "<p>All are correct</p>"], "correctIndex": 3, "solution": "<p><strong>Answer:</strong><strong> D</strong></p>\n<p>In this sentence, we need to analyze the four highlighted words: painstaking, discrepancies, paradigm, and acclaimation.</p>\n<p>Painstaking – This word is spelled correctly and is appropriate in context. \"Painstaking\" means showing diligent care and effort, which is suitable for describing the researcher’s thorough analysis.</p>\n<p>Discrepancies – This word is spelled correctly and is appropriate in context. \"Discrepancies\" refers to inconsistencies or differences, which fits well in describing errors in the data.</p>\n<p>Paradigm – This word is spelled correctly and is appropriate in context. \"Paradigm\" refers to a model or pattern, which is suitable when discussing a framework for interpreting results.</p>\n<p>Acclaimation – This word is incorrectly spelled. The correct spelling is \"acclamation.\" \"Acclamation\" refers to enthusiastic approval or praise, which fits the context of the reaction from her peers.</p>\n<p>The only word that is incorrectly spelled in the sentence is d) acclaimation, which should be spelled \"acclamation.\" Therefore, the answer is d) acclaimation.</p>"}, {"question": "<p><strong>In each of the following questions, four words printed in bold type are given. One of these words printed in bold might either be wrongly spelt or inappropriate in the context of the sentence. Find out the word that is inappropriate or wrongly spelt, if any. If the words printed in bold are correctly spelt and appropriate in the context of the sentence then mark (E), i.e. ‘All are Correct’, as your answer.</strong></p><br><p>The artist's <strong>prodigious</strong> talent, coupled with his <strong>meticulous</strong> attention to detail, resulted in a masterpiece that evoked profound <strong>reverance</strong> from critics and <strong>captivated</strong> audiences worldwide.</p>", "options": ["<p>prodigious</p>", "<p>meticulous</p>", "<p>reverance</p>", "<p>captivated</p>", "<p>All are correct</p>"], "correctIndex": 2, "solution": "<p><strong>Answer:</strong><strong> C</strong></p>\n<p>In this sentence, we need to analyze the four highlighted words: prodigious, meticulous, reverance, and captivated.</p>\n<p>Prodigious – This word is spelled correctly and is appropriate in context. \"Prodigious\" means remarkably or impressively great in size, extent, or degree, which fits well to describe the artist's talent.</p>\n<p>Meticulous – This word is spelled correctly and is appropriate in context. \"Meticulous\" means showing great attention to detail, which aligns with the description of the artist's work.</p>\n<p>Reverance – This word is incorrectly spelled. The correct spelling is \"reverence.\" \"Reverence\" means deep respect or admiration, which is appropriate in the context of the critics' reaction to the masterpiece.</p>\n<p>Captivated – This word is spelled correctly and is appropriate in context. \"Captivated\" means to attract and hold the interest or attention of someone, which is suitable for describing the audience's reaction.</p>\n<p>The only word that is incorrectly spelled in the sentence is c) reverance, which should be spelled \"reverence.\" Therefore, the answer is c) reverance.</p>"}, {"question": "<p><strong>In each of the following sentences there are two blank spaces. Below each sentence five pairs of words are given. Find out which pair of words can be filled up in the blanks in the sentence in the same sequence to make the sentence grammatically and meaningfully correct.</strong></p><br><p><strong>It takes extraordinary ________ for a party leader to assert that she will fight the Lok Sabha elections solo when the cards are ________ against her.</strong></p>", "options": ["<p>courage, stacked</p>", "<p>temerity, stashed</p>", "<p>audacity, dealt</p>", "<p>resilience, shuffled</p>", "<p>determination, drawn</p>"], "correctIndex": 1, "solution": "<p><strong>Answer</strong><strong>: B</strong></p>\n<p>The correct answer is: b) temerity, stashed</p>\n<p>\"Temerity\" is the appropriate word for the first blank. It means excessive confidence or boldness, especially when challenging something. In the context of the sentence, it highlights the extraordinary level of confidence or boldness required for a party leader to assert that she will fight the Lok Sabha elections solo.</p>\n<p>\"Stashed\" is the suitable word for the second blank. It means stored or hidden away. In the context, it suggests that the odds or circumstances are heavily stacked or hidden against her.</p>\n<p>So, the sentence can be completed as follows:</p>\n<p>\"It takes extraordinary temerity for a party leader to assert that she will fight the Lok Sabha elections solo when the cards are stashed against her.\"</p>\n<p>This means that it requires an extraordinary level of confidence or boldness for a party leader to declare that she will contest the Lok Sabha elections independently, especially when the odds or circumstances are heavily against her.</p>\n<p><strong>a).</strong> courage, stacked: \"Courage\" in the first blank is a suitable term for bravery or boldness, but it doesn't convey the same sense of excessive confidence or boldness as \"temerity\" does.</p>\n<p>\"Stacked\" in the second blank means arranged in a pile or stacked against someone, which aligns with the idea that the odds are heavily against her.</p>\n<p><strong>c).</strong> audacity, dealt: \"Audacity\" in the first blank means boldness or daring, which is similar in meaning to \"temerity.\"</p>\n<p>\"Dealt\" in the second blank means distributed or assigned, which doesn't convey the same sense of the odds being against her as \"stashed\" does.</p>\n<p><strong>d)</strong>. resilience, shuffled: \"Resilience\" in the first blank means the ability to recover quickly from difficulties or toughness, which doesn't convey the same sense of excessive confidence or boldness as \"temerity\" does.</p>\n<p>\"Shuffled\" in the second blank means rearranged or mixed up, which doesn't convey the same sense of the odds being against her as \"stashed\" does.</p>\n<p><strong>e)</strong>. determination, drawn: \"Determination\" in the first blank means firmness of purpose or resolve, which is similar in meaning to \"temerity.\"</p>\n<p>\"Drawn\" in the second blank means selected or chosen, which doesn't convey the same sense of the odds being against her as \"stashed\" does.</p>\n<p>In summary, option (b) \"temerity, stashed\" is the best choice for maintaining both the meaning and structure of the sentence, accurately conveying the extraordinary level of confidence required for a party leader to contest elections independently when the odds are heavily against her.</p>"}, {"question": "<p><strong>In each of the following sentences there are two blank spaces. Below each sentence five pairs of words are given. Find out which pair of words can be filled up in the blanks in the sentence in the same sequence to make the sentence grammatically and meaningfully correct.</strong></p><br><p><strong>Nitish Kumar’s inconstancy—the latest demonstration being the _______ with which he dumped the INDIA alliance and _______ the BJP-led NDA again in a little over a year—was cruelly mocked on social media.</strong></p>", "options": ["<p>hesitation, deserted</p>", "<p>alacrity, embraced</p>", "<p>swiftness, jettisoned</p>", "<p>reluctance, joined</p>", "<p>agility, abandoned</p>"], "correctIndex": 1, "solution": "<p><strong>Answer</strong><strong>: B</strong></p>\n<p>The correct answer is: b) alacrity, embraced</p>\n<p>\"Alacrity\" is the appropriate word for the first blank. It means brisk and cheerful readiness. In the context of the sentence, it suggests that Nitish Kumar's action of dumping the INDIA alliance and joining the BJP-led NDA again was done with swift and eager readiness.</p>\n<p>\"Embraced\" is the suitable word for the second blank. It means accepted or welcomed enthusiastically. In the context, it highlights Nitish Kumar's action of joining the BJP-led NDA again.</p>\n<p>So, the sentence can be completed as follows:</p>\n<p>\"Nitish Kumar’s inconstancy—the latest demonstration being the alacrity with which he dumped the INDIA alliance and embraced the BJP-led NDA again in a little over a year—was cruelly mocked on social media.\"</p>\n<p>This means that Nitish Kumar's swift and enthusiastic decision to leave the INDIA alliance and rejoin the BJP-led NDA was met with ridicule on social media due to his perceived inconsistency.</p>\n<p><strong>a).</strong> hesitation, deserted: \"Hesitation\" in the first blank doesn't convey the same sense of swiftness as \"alacrity\" does. It means a delay or reluctance in taking action.</p>\n<p>\"Deserted\" in the second blank means abandoned, which is suitable for the context of leaving the INDIA alliance, but it doesn't convey the same sense of enthusiastic acceptance as \"embraced\" does.</p>\n<p><strong>c).</strong> swiftness, jettisoned: \"Swiftness\" in the first blank is a suitable term for speed, but \"alacrity\" more precisely conveys the idea of eager readiness.</p>\n<p>\"Jettisoned\" in the second blank means discarded or abandoned, which is suitable for the context of leaving the INDIA alliance, but it doesn't convey the same sense of enthusiastic acceptance as \"embraced\" does.</p>\n<p><strong>d).</strong> reluctance, joined: \"Reluctance\" in the first blank means unwillingness or hesitation, which doesn't convey the same sense of eager readiness as \"alacrity\" does.</p>\n<p>\"Joined\" in the second blank is suitable for the context of joining the BJP-led NDA again, but it doesn't convey the same sense of enthusiastic acceptance as \"embraced\" does.</p>\n<p><strong>e).</strong> agility, abandoned: \"Agility\" in the first blank means the ability to move quickly and easily, which doesn't convey the same sense of eager readiness as \"alacrity\" does.</p>\n<p>\"Abandoned\" in the second blank means left behind or discarded, which is suitable for the context of leaving the INDIA alliance, but it doesn't convey the same sense of enthusiastic acceptance as \"embraced\" does.</p>\n<p>In summary, option (b) \"alacrity, embraced\" is the best choice for maintaining both the meaning and structure of the sentence, accurately conveying Nitish Kumar's swift and enthusiastic decision to rejoin the BJP-led NDA after leaving the INDIA alliance.</p>"}, {"question": "<p><strong>In each of the following sentences there are two blank spaces. Below each sentence five pairs of words are given. Find out which pair of words can be filled up in the blanks in the sentence in the same sequence to make the sentence grammatically and meaningfully correct.</strong></p><br><p><strong>It is a truism in Indian politics that a party consigned to the opposition at the Centre and _______ with challenges must turn to the states it controls for ______ survival.</strong></p>", "options": ["<p>besieged, sheer</p>", "<p>fraught, political</p>", "<p>endowed, financial</p>", "<p>aligned, strategic</p>", "<p>riddled, overall</p>"], "correctIndex": 0, "solution": "<p><strong>Answer</strong><strong>: A</strong></p>\n<p>The correct answer is: a) besieged, sheer</p>\n<p>\"Besieged\" is the appropriate word for the first blank. It means surrounded by enemies or facing overwhelming challenges. In the context of the sentence, it highlights the situation where a party in opposition at the Centre is confronted with numerous challenges or difficulties.</p>\n<p>\"Sheer\" is the suitable word for the second blank. It means nothing other than or complete. In the context, it suggests that the party must rely solely on the states it controls for survival.</p>\n<p>So, the sentence can be completed as follows:</p>\n<p>\"It is a truism in Indian politics that a party consigned to the opposition at the Centre and besieged with challenges must turn to the states it controls for sheer survival.\"</p>\n<p>This means that in Indian politics, it's widely acknowledged that a party facing challenges while in opposition at the Centre must rely solely on the states it governs for its very survival.</p>\n<p><strong>b).</strong> fraught, political: \"Fraught\" in the first blank means filled with or characterized by. While it conveys a sense of difficulty or tension, it doesn't convey the same sense of being surrounded by challenges as \"besieged\" does.</p>\n<p>\"Political\" in the second blank is a reasonable choice, but it doesn't convey the same sense of complete reliance as \"sheer\" does.</p>\n<p><strong>c).</strong> endowed, financial: \"Endowed\" in the first blank means provided or supplied with, but it doesn't convey the sense of being surrounded by challenges as \"besieged\" does.</p>\n<p>\"Financial\" in the second blank doesn't convey the same sense of complete reliance as \"sheer\" does.</p>\n<p><strong>d).</strong> aligned, strategic: \"Aligned\" in the first blank means in agreement or coordination with, but it doesn't convey the sense of being surrounded by challenges as \"besieged\" does.</p>\n<p>\"Strategic\" in the second blank doesn't convey the same sense of complete reliance as \"sheer\" does.</p>\n<p><strong>e).</strong> riddled, overall: \"Riddled\" in the first blank means filled or permeated with something undesirable or problematic. While it conveys a sense of difficulty or challenge, it doesn't convey the same sense of being surrounded or overwhelmed as \"besieged\" does.</p>\n<p>\"Overall\" in the second blank means taking everything into account or considering everything. While it suggests a comprehensive approach to survival, it doesn't convey the same sense of complete reliance as \"sheer\" does.</p>\n<p>In summary, option (a) \"besieged, sheer\" is the best choice for maintaining both the meaning and structure of the sentence, accurately conveying the idea that a party in opposition at the Centre, facing numerous challenges, must rely solely on the states it controls for survival.</p>"}, {"question": "<p><strong>In each of the following sentences there are two blank spaces. Below each sentence five pairs of words are given. Find out which pair of words can be filled up in the blanks in the sentence in the same sequence to make the sentence grammatically and meaningfully correct.</strong></p><br><p><strong>The Voice of the Global South summit under India’s G20 presidency signified the growing space for the developing world to express itself, _________ by the need to ________ one global hegemon or another.</strong></p>", "options": ["<p>unhindered, accommodate</p>", "<p>unencumbered, placate</p>", "<p>unfettered, appease</p>", "<p>hampered, cater</p>", "<p>unrestrained, mollify</p>"], "correctIndex": 1, "solution": "<p><strong>Answer</strong><strong>: B</strong></p>\n<p>The correct answer is: b) unencumbered, placate</p>\n<p>\"Unencumbered\" is the appropriate word for the first blank. It means not burdened or restricted by something. In the context of the sentence, it suggests that the developing world has a growing space to express itself without being hindered or restricted.</p>\n<p>\"Placate\" is the suitable word for the second blank. It means to pacify or calm someone down, often by making concessions or compromises. In the context, it implies that there's no need for the developing world to appease or satisfy any particular global hegemon.</p>\n<p>So, the completed sentence would be: \"The Voice of the Global South summit under India’s G20 presidency signified the growing space for the developing world to express itself, unencumbered by the need to placate one global hegemon or another.\"</p>\n<p>This means that the summit represented a significant opportunity for the developing world to assert its voice without feeling the pressure to satisfy the interests of any dominant global power.</p>\n<p><strong>a).</strong> unhindered, accommodate: While \"unhindered\" fits well in the first blank, \"accommodate\" in the second blank doesn't quite capture the idea of needing to satisfy or appease a global hegemon.</p>\n<p><strong>c).</strong> unfettered, appease: \"Unfettered\" works well for the first blank, but \"appease\" in the second blank conveys a similar meaning to \"placate\" but is slightly less appropriate in this context.</p>\n<p><strong>d).</strong> hampered, cater: \"Hampered\" is opposite in meaning to what is intended in the first blank, and \"cater\" in the second blank doesn't convey the idea of needing to satisfy or appease a global hegemon.</p>\n<p><strong>e).</strong> unrestrained, mollify: \"Unrestrained\" fits well in the first blank, but \"mollify\" in the second blank, while similar to \"placate,\" is not as fitting in this context.</p>\n<p>In summary, option (b) \"unencumbered, placate\" provides the best fit for maintaining both the coherence and meaning of the sentence.</p>"}, {"question": "<p><strong>In each of the following sentences there are two blank spaces. Below each sentence five pairs of words are given. Find out which pair of words can be filled up in the blanks in the sentence in the same sequence to make the sentence grammatically and meaningfully correct.</strong></p><br><p><strong>Global confidence in India has been _______ even by credit rating agencies, despite their ________ to upgrade its sovereign rating.</strong></p>", "options": ["<p>bolstered, haste</p>", "<p>underscored, eagerness</p>", "<p>reiterated, reluctance</p>", "<p>questioned, hesitance</p>", "<p>reinforced, inclination</p>"], "correctIndex": 2, "solution": "<p><strong>Answer</strong><strong>: C</strong></p>\n<p>The correct answer is: c) reiterated, reluctance</p>\n<p>\"Reiterated\" is the appropriate word for the first blank. It means to state or do something again, especially to emphasize it. In the context of the sentence, it suggests that global confidence in India has been affirmed or emphasized, even by credit rating agencies.</p>\n<p>\"Reluctance\" is the suitable word for the second blank. It means unwillingness or hesitation to do something. In the context, it implies that despite credit rating agencies being hesitant or unwilling to upgrade India's sovereign rating, global confidence in India has still been reinforced.</p>\n<p>So, the completed sentence would be: \"Global confidence in India has been reiterated even by credit rating agencies, despite their reluctance to upgrade its sovereign rating.\"</p>\n<p>This means that even though credit rating agencies have been hesitant to improve India's sovereign rating, confidence in India's economy has still been affirmed or emphasized on a global scale.</p>\n<p><strong>a).</strong> bolstered, haste: \"Bolstered\" means strengthened or supported, which doesn't convey the same sense as \"reiterated\" in emphasizing the existing confidence.</p>\n<p>\"Haste\" refers to excessive speed or urgency, which doesn't align with the context of reluctance on the part of credit rating agencies.</p>\n<p><strong>b).</strong> underscored, eagerness: \"Underscored\" means emphasized or highlighted, which is similar in meaning to \"reiterated.\"</p>\n<p>\"Eagerness\" refers to enthusiasm or willingness, which doesn't convey the same sense as \"reluctance\" on the part of credit rating agencies.</p>\n<p><strong>d).</strong> questioned, hesitance: \"Questioned\" means doubted or challenged, which doesn't convey the same sense as \"reiterated\" in emphasizing existing confidence.</p>\n<p>\"Hesitance\" is similar in meaning to \"reluctance\" but is less commonly used.</p>\n<p><strong>e).</strong> reinforced, inclination: \"Reinforced\" means strengthened or supported, which is similar in meaning to \"reiterated.\"</p>\n<p>\"Inclination\" refers to a tendency or preference, which doesn't convey the same sense as \"reluctance\" on the part of credit rating agencies.</p>\n<p>In summary, option (c) \"reiterated, reluctance\" provides the best fit for maintaining both the coherence and meaning of the sentence.</p>"}, {"question": "<p><strong>Read the following sentence carefully, which is divided into five parts (A, B, C, D, and E). Two parts of the sentence contain grammatical errors. Identify the parts that are erroneous and mark them as your answer.</strong></p><br><p>We need to stand together pooling our collective efforts <strong>(A)</strong> to ensure the safety and well-being of our children, <strong>(B)</strong> paving the way for a future when every child flourishes <strong>(C)</strong> at an environment defined by safety, empowerment, <strong>(D)</strong> limitless possibilities, and boundless growth opportunities. <strong>(E)</strong></p>", "options": ["<p>A and E</p>", "<p>B and C</p>", "<p>A and D</p>", "<p>C and D</p>", "<p>D and B</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>Both parts C and D of the sentence are erroneous.</strong></p>\n<p><strong>Part C:</strong> \"paving the way for a future when every child flourishes\"</p>\n<p>Using \"when\" in the phrase \"a future when every child flourishes\" suggests a specific point in time when children will flourish. However, the intention is to describe an environment or condition in which every child flourishes, making \"where\" more appropriate to denote a place or circumstance rather than a time.</p>\n<p><strong>Part D:</strong> \"at an environment defined by safety, empowerment\"</p>\n<p>This part is erroneous because \"at\" is incorrect as a preposition to describe the environment in which a child flourishes. Instead, \"in\" should be used to convey that flourishing occurs within a particular environment.</p>\n<p><strong>Hence, the correct answer is \"C and D.\"</strong></p>\n<p><strong>The correct sentence would be:</strong> \"We need to stand together pooling our collective efforts to ensure the safety and well-being of our children, paving the way for a future where every child flourishes in an environment defined by safety, empowerment, limitless possibilities, and boundless growth opportunities.\"</p>"}, {"question": "<p><strong>Read the following sentence carefully, which is divided into five parts (A, B, C, D, and E). Two parts of the sentence contain grammatical errors. Identify the parts that are erroneous and mark them as your answer.</strong></p><br><p>Unlike Western countries, where thrift shopping <strong>(A)</strong> is quiet common and there are large stores dedicated to it, <strong>(B)</strong> the concept is relatively new in India, <strong>(C)</strong> but it's gradually gaining momentum into urban millennials and Gen Z, <strong>(D)</strong> especially in metropolitan areas like Mumbai and Delhi. <strong>(E)</strong></p>", "options": ["<p>A and B</p>", "<p>B and C</p>", "<p>C and D</p>", "<p>D and B</p>", "<p>E and A</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>Both parts B and D of the sentence are erroneous.</strong></p>\n<p><strong>Part B:</strong> \"is quiet common and there are large stores dedicated to it\"</p>\n<p>The use of \"quiet\" in part B is incorrect because it means silent or without much noise, which doesn't fit the context. \"Quite\" should be used instead to indicate a significant extent or degree, emphasizing the prevalence of thrift shopping in Western countries.</p>\n<p><strong>Part D:</strong> \"but it's gradually gaining momentum into urban millennials and Gen Z\"</p>\n<p>Part D of the sentence is erroneous because \"into\" suggests a movement or transition from one state to another, which is not the intended meaning here. Instead, the correct preposition should be \"among\" to correctly convey that thrift shopping is gaining popularity among urban millennials and Gen Z.</p>\n<p><strong>Hence, the correct answer is \"D and B.\"</strong></p>\n<p><strong>The correct sentence would be:</strong> \"Unlike Western countries, where thrift shopping is quite common and there are large stores dedicated to it, the concept is relatively new in India, but it's gradually gaining momentum among urban millennials and Gen Z, especially in metropolitan areas like Mumbai and Delhi.\"</p>"}, {"question": "<p><strong>Read the following sentence carefully, which is divided into five parts (A, B, C, D, and E). Two parts of the sentence contain grammatical errors. Identify the parts that are erroneous and mark them as your answer.</strong></p><br><p>In an era of increasing socioeconomically inequality, <strong>(A)</strong> intensifying precarity in work, diminishing social security, <strong>(B)</strong> and rural distress, technology can play a vital role, <strong>(C)</strong> but it cannot be the state's favoured child; <strong>(D)</strong> the priority must always remain the workers and there livelihood security. <strong>(E)</strong></p>", "options": ["<p>A and E</p>", "<p>B and C</p>", "<p>A and B</p>", "<p>C and E</p>", "<p>D and B</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>Both parts A and E of the sentence are erroneous.</strong></p>\n<p><strong>Part A:</strong> \"In an era of increasing socioeconomically inequality\"</p>\n<p>Using \"socioeconomically\" as an adverb in the phrase \"increasing socioeconomically inequality\" is erroneous because \"inequality\" is a noun and it requires an adjective to describe it. So, \"socioeconomic\" accurately modifies \"inequality\" as an adjective.</p>\n<p><strong>Part E:</strong> \"the priority must always remain the workers and there livelihood security\"</p>\n<p>This part is erroneous because \"there\" is a locative adverb indicating a place, whereas \"their\" is a possessive pronoun showing ownership. Thus, the correct phrasing should be \"their livelihood security\" to denote the livelihood security of the workers.</p>\n<p><strong>Hence, the correct answer is \"A and E.\"</strong></p>\n<p><strong>The correct sentence would be:</strong> \"In an era of increasing socioeconomic inequality, intensifying precarity in work, diminishing social security, and rural distress, technology can play a vital role, but it cannot be the state's favoured child; the priority must always remain the workers and their livelihood security.\"</p>"}, {"question": "<p><strong>Read the following sentence carefully, which is divided into five parts (A, B, C, D, and E). Two parts of the sentence contain grammatical errors. Identify the parts that are erroneous and mark them as your answer.</strong></p><br><p>While the Indian solar industry must grow <strong>(A)</strong> and gain a reputation for being a high-quality exporter, <strong>(B)</strong> it should not be forgot that this is a road <strong>(C)</strong> with no easily shortcuts, requiring sustained effort, <strong>(D)</strong> innovation, and unwavering commitment to excellence. <strong>(E)</strong></p>", "options": ["<p>C and A</p>", "<p>D and B</p>", "<p>B and C</p>", "<p>E and B</p>", "<p>C and D</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p><strong>Both parts C and D of the sentence are erroneous.</strong></p>\n<p><strong>Part C:</strong> \"it should not be forgot that this is a road\"</p>\n<p>The use of \"forgot\" in \"it should not be forgot\" is incorrect because it's the second form of the verb \"forget,\" but in this context, the third form \"forgotten\" is needed here to form the passive construction.</p>\n<p><strong>Part D:</strong> \"with no easily shortcuts, requiring sustained effort\"</p>\n<p>This part is erroneous because \"easily\" is an adverb, not an adjective, and doesn't appropriately modify the noun \"shortcuts.\" \"Easy\" is the correct adjective to describe \"shortcuts.\"</p>\n<p><strong>Hence, the correct answer is \"C and D.\"</strong></p>\n<p><strong>The correct sentence would be:</strong> \"While the Indian solar industry must grow and gain a reputation for being a high-quality exporter, it should not be forgotten that this is a road with no easy shortcuts, requiring sustained effort, innovation, and unwavering commitment to excellence.\"</p>"}, {"question": "<p><strong>Read the following sentence carefully, which is divided into five parts (A, B, C, D, and E). Two parts of the sentence contain grammatical errors. Identify the parts that are erroneous and mark them as your answer.</strong></p><br><p>By 2029, AI has undoubtedly become significantly more efficient; <strong>(A)</strong> however, the world will also have grown more resilience <strong>(B)</strong> and prepared for its potentially deceptive impacts, <strong>(C)</strong> entering a realm of unknowable unknowns where uncertainties persist, <strong>(D) </strong>necessitating continuous vigilance and adaptation. <strong>(E)</strong></p>", "options": ["<p>C and D</p>", "<p>C and E</p>", "<p>B and C</p>", "<p>A and E</p>", "<p>A and B</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p><strong>Both parts A and B of the sentence are erroneous.</strong></p>\n<p><strong>Part A:</strong> \"By 2029, AI has undoubtedly become significantly more efficient\"</p>\n<p>This part is erroneous because \"has\" implies past tense, contradicting the future timeframe indicated by \"by 2029.\" Replacing \"has\" with \"will\" aligns with the future context, ensuring consistency and grammatical accuracy.</p>\n<p><strong>Part B:</strong> \"however, the world will also have grown more resilience\"</p>\n<p>\"Resilience\" is a noun, suggesting a state or quality. To match the structure of the sentence, we need an adjective, \"resilient,\" to describe the world as possessing the quality of being able to withstand or recover from challenges.</p>\n<p><strong>Hence, the correct answer is \"A and B.\"</strong></p>\n<p><strong>The correct sentence would be:</strong> \"By 2029, AI will undoubtedly become significantly more efficient; however, the world will also have grown more resilient and prepared for its potentially deceptive impacts, entering a realm of unknowable unknowns where uncertainties persist, necessitating continuous vigilance and adaptation.\"</p>"}, {"question": "<p><strong>In the following question, a </strong><strong>passage is</strong><strong> given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>A team of solar physicists at Pune-based National Centre for Radio Astrophysics – Tata Institute of Fundamental Research (NCRA-TIFR) has obtained detailed images of the Sun in the radio frequency, which hold potential to deepen the overall knowledge about our galaxy’s brightest star.</p>\n<p>Sun is the source of light and life on Earth and changes in its corona — the outermost peripheral region — can directly affect the space weather and influence activities on Earth. Sun, thus, has been an important source under study for ages together. The NCRA team used solar observations obtained from the MeerKAT radio telescope, located in South Africa’s Karoo desert, to process detailed solar images in this wavelength.</p>\n<p>Even though the Sun has remained one of the most studied celestial sources, there are numerous challenges involved while planning solar observations. Some of the reasons are, its <strong>brightness</strong>, which prevents direct viewing; its distance from Earth – estimated to be over 120 million km, and the star’s temperatures – about a lakh degree Celsius (near the corona) – all of which make it impossible for solar probes to get any closer to the sun for observations. Thus, solar physicists deploy indirect methods and make use of occasions such as solar eclipses to perform solar observations. In comparison to imaging the sun in optical wavelengths (visible to the naked eye), observing the sun in radio frequency is far more <strong>laborious</strong>, said Divya Oberoi, senior scientist at NCRA.</p>\n<p>“The sensitivity of the radio telescope needs to be given special care while observing bright sources like the Sun, which is a few thousand times brighter than any other astronomical source,” Oberoi, one of the co-authors of the recent paper published in the Astrophysical Journal, noted.</p>\n<p>Instead of the conventional method of pointing the telescope straight at source, here, the Sun, the NCRA team tweaked its observational strategy and instead pointed the telescope towards a region located at a small distance away from the Sun. Though the images they obtained were blurred, the team could see bright objects using MeerKAT. Due to this unconventional method of observing the Sun, the NCRA researchers developed special algorithms to process the final images.</p>\n<p>“The algorithms were used to estimate and correct the effects of both the instrument and the peripheral vision. Post correction, we obtained high-fidelity images allowing us to obtain finer and fainter details of the sun,” said paper’s lead author Devojyoti Kansabanik, former PhD student at NCRA. As if the existing challenges of observing the Sun were not enough, Surajit Mondal, another researcher, said the Sun appeared differently even under minor wavelength variations.</p>\n<p>“The emission from the Sun changes quickly with time. Moreover, the changes are significant within a nearby range of wavelengths and can often be blurred,” Mondol noted. The astronomers said that MeerKAT was the most powerful telescope at present to observe the sun. The above results were obtained by using data following a 15-minute observation done on two days in September, 2020.</p><br><p><strong>What is the primary focus of the research conducted by the solar physicists at NCRA-TIFR?</strong></p>", "options": ["<p>Studying distant galaxies</p>", "<p>Observing the Sun in radio frequency</p>", "<p>Investigating black holes</p>", "<p>Mapping the surface of Mars</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage discusses how a team of solar physicists at NCRA-TIFR obtained detailed images of the <strong>Sun in the radio frequency</strong>, which has the potential to deepen overall knowledge about our galaxy's brightest star.</p>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>In the following question, a </strong><strong>passage is</strong><strong> given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>A team of solar physicists at Pune-based National Centre for Radio Astrophysics – Tata Institute of Fundamental Research (NCRA-TIFR) has obtained detailed images of the Sun in the radio frequency, which hold potential to deepen the overall knowledge about our galaxy’s brightest star.</p>\n<p>Sun is the source of light and life on Earth and changes in its corona — the outermost peripheral region — can directly affect the space weather and influence activities on Earth. Sun, thus, has been an important source under study for ages together. The NCRA team used solar observations obtained from the MeerKAT radio telescope, located in South Africa’s Karoo desert, to process detailed solar images in this wavelength.</p>\n<p>Even though the Sun has remained one of the most studied celestial sources, there are numerous challenges involved while planning solar observations. Some of the reasons are, its <strong>brightness</strong>, which prevents direct viewing; its distance from Earth – estimated to be over 120 million km, and the star’s temperatures – about a lakh degree Celsius (near the corona) – all of which make it impossible for solar probes to get any closer to the sun for observations. Thus, solar physicists deploy indirect methods and make use of occasions such as solar eclipses to perform solar observations. In comparison to imaging the sun in optical wavelengths (visible to the naked eye), observing the sun in radio frequency is far more <strong>laborious</strong>, said Divya Oberoi, senior scientist at NCRA.</p>\n<p>“The sensitivity of the radio telescope needs to be given special care while observing bright sources like the Sun, which is a few thousand times brighter than any other astronomical source,” Oberoi, one of the co-authors of the recent paper published in the Astrophysical Journal, noted.</p>\n<p>Instead of the conventional method of pointing the telescope straight at source, here, the Sun, the NCRA team tweaked its observational strategy and instead pointed the telescope towards a region located at a small distance away from the Sun. Though the images they obtained were blurred, the team could see bright objects using MeerKAT. Due to this unconventional method of observing the Sun, the NCRA researchers developed special algorithms to process the final images.</p>\n<p>“The algorithms were used to estimate and correct the effects of both the instrument and the peripheral vision. Post correction, we obtained high-fidelity images allowing us to obtain finer and fainter details of the sun,” said paper’s lead author Devojyoti Kansabanik, former PhD student at NCRA. As if the existing challenges of observing the Sun were not enough, Surajit Mondal, another researcher, said the Sun appeared differently even under minor wavelength variations.</p>\n<p>“The emission from the Sun changes quickly with time. Moreover, the changes are significant within a nearby range of wavelengths and can often be blurred,” Mondol noted. The astronomers said that MeerKAT was the most powerful telescope at present to observe the sun. The above results were obtained by using data following a 15-minute observation done on two days in September, 2020.</p><br><p><strong>According to the passage, </strong><strong>why it is</strong><strong> challenging to observe the Sun directly?</strong></p>", "options": ["<p>Its distance from Earth</p>", "<p>Its brightness</p>", "<p>Its high temperatures</p>", "<p>All of the above</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The passage mentions several challenges involved in directly observing the Sun, including its <strong>brightness,</strong> <strong>distance</strong> from Earth, and <strong>high temperatures</strong>. These factors make it impossible for solar probes to get closer to the Sun for direct observations.</p>\n<p>Therefore, option D is the correct answer.</p>"}, {"question": "<p><strong>In the following question, a </strong><strong>passage is</strong><strong> given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>A team of solar physicists at Pune-based National Centre for Radio Astrophysics – Tata Institute of Fundamental Research (NCRA-TIFR) has obtained detailed images of the Sun in the radio frequency, which hold potential to deepen the overall knowledge about our galaxy’s brightest star.</p>\n<p>Sun is the source of light and life on Earth and changes in its corona — the outermost peripheral region — can directly affect the space weather and influence activities on Earth. Sun, thus, has been an important source under study for ages together. The NCRA team used solar observations obtained from the MeerKAT radio telescope, located in South Africa’s Karoo desert, to process detailed solar images in this wavelength.</p>\n<p>Even though the Sun has remained one of the most studied celestial sources, there are numerous challenges involved while planning solar observations. Some of the reasons are, its <strong>brightness</strong>, which prevents direct viewing; its distance from Earth – estimated to be over 120 million km, and the star’s temperatures – about a lakh degree Celsius (near the corona) – all of which make it impossible for solar probes to get any closer to the sun for observations. Thus, solar physicists deploy indirect methods and make use of occasions such as solar eclipses to perform solar observations. In comparison to imaging the sun in optical wavelengths (visible to the naked eye), observing the sun in radio frequency is far more <strong>laborious</strong>, said Divya Oberoi, senior scientist at NCRA.</p>\n<p>“The sensitivity of the radio telescope needs to be given special care while observing bright sources like the Sun, which is a few thousand times brighter than any other astronomical source,” Oberoi, one of the co-authors of the recent paper published in the Astrophysical Journal, noted.</p>\n<p>Instead of the conventional method of pointing the telescope straight at source, here, the Sun, the NCRA team tweaked its observational strategy and instead pointed the telescope towards a region located at a small distance away from the Sun. Though the images they obtained were blurred, the team could see bright objects using MeerKAT. Due to this unconventional method of observing the Sun, the NCRA researchers developed special algorithms to process the final images.</p>\n<p>“The algorithms were used to estimate and correct the effects of both the instrument and the peripheral vision. Post correction, we obtained high-fidelity images allowing us to obtain finer and fainter details of the sun,” said paper’s lead author Devojyoti Kansabanik, former PhD student at NCRA. As if the existing challenges of observing the Sun were not enough, Surajit Mondal, another researcher, said the Sun appeared differently even under minor wavelength variations.</p>\n<p>“The emission from the Sun changes quickly with time. Moreover, the changes are significant within a nearby range of wavelengths and can often be blurred,” Mondol noted. The astronomers said that MeerKAT was the most powerful telescope at present to observe the sun. The above results were obtained by using data following a 15-minute observation done on two days in September, 2020.</p><br><p><strong>What did the NCRA team do differently in their observational strategy?</strong></p>", "options": ["<p>They pointed the telescope directly at the Sun.</p>", "<p>They pointed the telescope towards a region located away from the Sun.</p>", "<p>They used a different telescope for observation.</p>", "<p>They observed the Sun only during solar eclipses.</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage mentions that instead of pointing the telescope directly at the Sun, the NCRA team <strong>tweaked their observational strategy</strong> and pointed the telescope towards a region located at a small distance away from the Sun.</p>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>In the following question, a </strong><strong>passage is</strong><strong> given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>A team of solar physicists at Pune-based National Centre for Radio Astrophysics – Tata Institute of Fundamental Research (NCRA-TIFR) has obtained detailed images of the Sun in the radio frequency, which hold potential to deepen the overall knowledge about our galaxy’s brightest star.</p>\n<p>Sun is the source of light and life on Earth and changes in its corona — the outermost peripheral region — can directly affect the space weather and influence activities on Earth. Sun, thus, has been an important source under study for ages together. The NCRA team used solar observations obtained from the MeerKAT radio telescope, located in South Africa’s Karoo desert, to process detailed solar images in this wavelength.</p>\n<p>Even though the Sun has remained one of the most studied celestial sources, there are numerous challenges involved while planning solar observations. Some of the reasons are, its <strong>brightness</strong>, which prevents direct viewing; its distance from Earth – estimated to be over 120 million km, and the star’s temperatures – about a lakh degree Celsius (near the corona) – all of which make it impossible for solar probes to get any closer to the sun for observations. Thus, solar physicists deploy indirect methods and make use of occasions such as solar eclipses to perform solar observations. In comparison to imaging the sun in optical wavelengths (visible to the naked eye), observing the sun in radio frequency is far more <strong>laborious</strong>, said Divya Oberoi, senior scientist at NCRA.</p>\n<p>“The sensitivity of the radio telescope needs to be given special care while observing bright sources like the Sun, which is a few thousand times brighter than any other astronomical source,” Oberoi, one of the co-authors of the recent paper published in the Astrophysical Journal, noted.</p>\n<p>Instead of the conventional method of pointing the telescope straight at source, here, the Sun, the NCRA team tweaked its observational strategy and instead pointed the telescope towards a region located at a small distance away from the Sun. Though the images they obtained were blurred, the team could see bright objects using MeerKAT. Due to this unconventional method of observing the Sun, the NCRA researchers developed special algorithms to process the final images.</p>\n<p>“The algorithms were used to estimate and correct the effects of both the instrument and the peripheral vision. Post correction, we obtained high-fidelity images allowing us to obtain finer and fainter details of the sun,” said paper’s lead author Devojyoti Kansabanik, former PhD student at NCRA. As if the existing challenges of observing the Sun were not enough, Surajit Mondal, another researcher, said the Sun appeared differently even under minor wavelength variations.</p>\n<p>“The emission from the Sun changes quickly with time. Moreover, the changes are significant within a nearby range of wavelengths and can often be blurred,” Mondol noted. The astronomers said that MeerKAT was the most powerful telescope at present to observe the sun. The above results were obtained by using data following a 15-minute observation done on two days in September, 2020.</p><br><p><strong>What was the outcome of the unconventional method used by the NCRA team in observing the Sun?</strong></p>", "options": ["<p>They obtained clear and sharp images of the Sun.</p>", "<p>They were unable to capture any images of the Sun.</p>", "<p>They obtained blurred images of the Sun.</p>", "<p>They observed distant galaxies instead of the Sun.</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The passage mentions that though the images obtained by the NCRA team <strong>were blurred</strong>, they could see bright objects using MeerKAT.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>In the following question, a </strong><strong>passage is</strong><strong> given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>A team of solar physicists at Pune-based National Centre for Radio Astrophysics – Tata Institute of Fundamental Research (NCRA-TIFR) has obtained detailed images of the Sun in the radio frequency, which hold potential to deepen the overall knowledge about our galaxy’s brightest star.</p>\n<p>Sun is the source of light and life on Earth and changes in its corona — the outermost peripheral region — can directly affect the space weather and influence activities on Earth. Sun, thus, has been an important source under study for ages together. The NCRA team used solar observations obtained from the MeerKAT radio telescope, located in South Africa’s Karoo desert, to process detailed solar images in this wavelength.</p>\n<p>Even though the Sun has remained one of the most studied celestial sources, there are numerous challenges involved while planning solar observations. Some of the reasons are, its <strong>brightness</strong>, which prevents direct viewing; its distance from Earth – estimated to be over 120 million km, and the star’s temperatures – about a lakh degree Celsius (near the corona) – all of which make it impossible for solar probes to get any closer to the sun for observations. Thus, solar physicists deploy indirect methods and make use of occasions such as solar eclipses to perform solar observations. In comparison to imaging the sun in optical wavelengths (visible to the naked eye), observing the sun in radio frequency is far more <strong>laborious</strong>, said Divya Oberoi, senior scientist at NCRA.</p>\n<p>“The sensitivity of the radio telescope needs to be given special care while observing bright sources like the Sun, which is a few thousand times brighter than any other astronomical source,” Oberoi, one of the co-authors of the recent paper published in the Astrophysical Journal, noted.</p>\n<p>Instead of the conventional method of pointing the telescope straight at source, here, the Sun, the NCRA team tweaked its observational strategy and instead pointed the telescope towards a region located at a small distance away from the Sun. Though the images they obtained were blurred, the team could see bright objects using MeerKAT. Due to this unconventional method of observing the Sun, the NCRA researchers developed special algorithms to process the final images.</p>\n<p>“The algorithms were used to estimate and correct the effects of both the instrument and the peripheral vision. Post correction, we obtained high-fidelity images allowing us to obtain finer and fainter details of the sun,” said paper’s lead author Devojyoti Kansabanik, former PhD student at NCRA. As if the existing challenges of observing the Sun were not enough, Surajit Mondal, another researcher, said the Sun appeared differently even under minor wavelength variations.</p>\n<p>“The emission from the Sun changes quickly with time. Moreover, the changes are significant within a nearby range of wavelengths and can often be blurred,” Mondol noted. The astronomers said that MeerKAT was the most powerful telescope at present to observe the sun. The above results were obtained by using data following a 15-minute observation done on two days in September, 2020.</p><br><p><strong>Based on the passage, what can be inferred about the challenges of observing the Sun in radio frequency compared to optical wavelengths?</strong></p>", "options": ["<p>Observing the Sun in radio frequency requires fewer sensitive telescopes than optical wavelengths.</p>", "<p>The Sun appears differently in radio frequency than in optical wavelengths.</p>", "<p>Observing the Sun in radio frequency is more complex and laborious than in optical wavelengths.</p>", "<p>The Sun emits more radiation in radio frequency than in optical wavelengths.</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The passage mentions that observing the Sun in radio frequency is far more laborious compared to imaging it in optical wavelengths. This inference is supported by the statement that the sensitivity of the radio telescope needs special care while observing bright sources like the Sun, indicating the <strong>complexity involved</strong> in radio frequency observations.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>In the following question, a </strong><strong>passage is</strong><strong> given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>A team of solar physicists at Pune-based National Centre for Radio Astrophysics – Tata Institute of Fundamental Research (NCRA-TIFR) has obtained detailed images of the Sun in the radio frequency, which hold potential to deepen the overall knowledge about our galaxy’s brightest star.</p>\n<p>Sun is the source of light and life on Earth and changes in its corona — the outermost peripheral region — can directly affect the space weather and influence activities on Earth. Sun, thus, has been an important source under study for ages together. The NCRA team used solar observations obtained from the MeerKAT radio telescope, located in South Africa’s Karoo desert, to process detailed solar images in this wavelength.</p>\n<p>Even though the Sun has remained one of the most studied celestial sources, there are numerous challenges involved while planning solar observations. Some of the reasons are, its <strong>brightness</strong>, which prevents direct viewing; its distance from Earth – estimated to be over 120 million km, and the star’s temperatures – about a lakh degree Celsius (near the corona) – all of which make it impossible for solar probes to get any closer to the sun for observations. Thus, solar physicists deploy indirect methods and make use of occasions such as solar eclipses to perform solar observations. In comparison to imaging the sun in optical wavelengths (visible to the naked eye), observing the sun in radio frequency is far more <strong>laborious</strong>, said Divya Oberoi, senior scientist at NCRA.</p>\n<p>“The sensitivity of the radio telescope needs to be given special care while observing bright sources like the Sun, which is a few thousand times brighter than any other astronomical source,” Oberoi, one of the co-authors of the recent paper published in the Astrophysical Journal, noted.</p>\n<p>Instead of the conventional method of pointing the telescope straight at source, here, the Sun, the NCRA team tweaked its observational strategy and instead pointed the telescope towards a region located at a small distance away from the Sun. Though the images they obtained were blurred, the team could see bright objects using MeerKAT. Due to this unconventional method of observing the Sun, the NCRA researchers developed special algorithms to process the final images.</p>\n<p>“The algorithms were used to estimate and correct the effects of both the instrument and the peripheral vision. Post correction, we obtained high-fidelity images allowing us to obtain finer and fainter details of the sun,” said paper’s lead author Devojyoti Kansabanik, former PhD student at NCRA. As if the existing challenges of observing the Sun were not enough, Surajit Mondal, another researcher, said the Sun appeared differently even under minor wavelength variations.</p>\n<p>“The emission from the Sun changes quickly with time. Moreover, the changes are significant within a nearby range of wavelengths and can often be blurred,” Mondol noted. The astronomers said that MeerKAT was the most powerful telescope at present to observe the sun. The above results were obtained by using data following a 15-minute observation done on two days in September, 2020.</p><br><p><strong>What does \"laborious\" mean in the context of the passage?</strong></p>", "options": ["<p>Difficult</p>", "<p>Easy</p>", "<p>Simple</p>", "<p>Routine</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>In the passage, the term \"<strong>laborious</strong>\" is used to describe the process of observing the Sun in radio frequency as more challenging compared to imaging it in optical wavelengths. Therefore, \"laborious\" means difficult in this context.</p>\n<p>Therefore, option A is the correct answer.</p>"}, {"question": "<p><strong>In the following question, a </strong><strong>passage is</strong><strong> given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>A team of solar physicists at Pune-based National Centre for Radio Astrophysics – Tata Institute of Fundamental Research (NCRA-TIFR) has obtained detailed images of the Sun in the radio frequency, which hold potential to deepen the overall knowledge about our galaxy’s brightest star.</p>\n<p>Sun is the source of light and life on Earth and changes in its corona — the outermost peripheral region — can directly affect the space weather and influence activities on Earth. Sun, thus, has been an important source under study for ages together. The NCRA team used solar observations obtained from the MeerKAT radio telescope, located in South Africa’s Karoo desert, to process detailed solar images in this wavelength.</p>\n<p>Even though the Sun has remained one of the most studied celestial sources, there are numerous challenges involved while planning solar observations. Some of the reasons are, its <strong>brightness</strong>, which prevents direct viewing; its distance from Earth – estimated to be over 120 million km, and the star’s temperatures – about a lakh degree Celsius (near the corona) – all of which make it impossible for solar probes to get any closer to the sun for observations. Thus, solar physicists deploy indirect methods and make use of occasions such as solar eclipses to perform solar observations. In comparison to imaging the sun in optical wavelengths (visible to the naked eye), observing the sun in radio frequency is far more <strong>laborious</strong>, said Divya Oberoi, senior scientist at NCRA.</p>\n<p>“The sensitivity of the radio telescope needs to be given special care while observing bright sources like the Sun, which is a few thousand times brighter than any other astronomical source,” Oberoi, one of the co-authors of the recent paper published in the Astrophysical Journal, noted.</p>\n<p>Instead of the conventional method of pointing the telescope straight at source, here, the Sun, the NCRA team tweaked its observational strategy and instead pointed the telescope towards a region located at a small distance away from the Sun. Though the images they obtained were blurred, the team could see bright objects using MeerKAT. Due to this unconventional method of observing the Sun, the NCRA researchers developed special algorithms to process the final images.</p>\n<p>“The algorithms were used to estimate and correct the effects of both the instrument and the peripheral vision. Post correction, we obtained high-fidelity images allowing us to obtain finer and fainter details of the sun,” said paper’s lead author Devojyoti Kansabanik, former PhD student at NCRA. As if the existing challenges of observing the Sun were not enough, Surajit Mondal, another researcher, said the Sun appeared differently even under minor wavelength variations.</p>\n<p>“The emission from the Sun changes quickly with time. Moreover, the changes are significant within a nearby range of wavelengths and can often be blurred,” Mondol noted. The astronomers said that MeerKAT was the most powerful telescope at present to observe the sun. The above results were obtained by using data following a 15-minute observation done on two days in September, 2020.</p><br><p><strong>Which of the following is </strong><strong>the synonym of</strong><strong> \"brightness\" as used in the passage?</strong></p>", "options": ["<p>Dullness</p>", "<p>Radiance</p>", "<p>Obscurity</p>", "<p>Dimness</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>In the passage, \"<strong>brightness</strong>\" refers to the intensity of light emitted by the Sun, which can hinder direct viewing and pose challenges for solar observations. \"<strong>Radiance</strong>\" is the synonym for brightness, as it also describes the quality of being bright or emitting light.</p>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>Rearrange the following six sentences (A), (B), (C), (D), (E) and (F) in the proper sequence to form a meaningful paragraph; then answer the questions given below them.</strong></p>\n<p><strong>A</strong><strong>).</strong> He then hid nearby to watch and see who would remove it.</p>\n<p><strong>B</strong><strong>).</strong> He saw a purse full of gold lying in the middle of the road. It was the king's reward to the person who did something <strong>_________</strong> the problem.</p>\n<p><strong>C</strong><strong>).</strong> The king was tired of his subjects only complaining but doing nothing to solve their problems.</p>\n<p><strong>D</strong><strong>).</strong> A youth on his way to market saw the stone, put down his produce and <strong>roll the stone to the side</strong> of the road.</p>\n<p><strong>E</strong><strong>).</strong> keeping the highways clear (A)/ blaming the king for not (B)/moving the stone instead of (C)/ but dodged their duty of (D)/ many people passed by (E)   </p>\n<p><strong>F</strong><strong>).</strong> One day he placed a heavy stone in the middle of the road.</p><br><p><strong>Which of the following words can be filled in sentence B?</strong></p>", "options": ["<p>into</p>", "<p>amazing</p>", "<p>about</p>", "<p>around</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>\"About\" is the appropriate preposition here, as it indicates the action taken in relation to the problem.</p>\n<p>\"Into\" does not fit the context of solving or addressing a problem.</p>\n<p>\"Amazing\" is an adjective and does not fit the context of the sentence.</p>\n<p>\"Around\" does not fit the context of solving a problem.</p>\n<p><strong>The corrected sentence is:</strong></p>\n<p>He saw a purse full of gold lying in the middle of the road. It was the king's reward to the person who did something <strong>about</strong> the problem.</p>"}, {"question": "<p><strong>Rearrange the following six sentences (A), (B), (C), (D), (E) and (F) in the proper sequence to form a meaningful paragraph; then answer the questions given below them.</strong></p>\n<p><strong>A</strong><strong>).</strong> He then hid nearby to watch and see who would remove it.</p>\n<p><strong>B</strong><strong>).</strong> He saw a purse full of gold lying in the middle of the road. It was the king's reward to the person who did something <strong>_________</strong> the problem.</p>\n<p><strong>C</strong><strong>).</strong> The king was tired of his subjects only complaining but doing nothing to solve their problems.</p>\n<p><strong>D</strong><strong>).</strong> A youth on his way to market saw the stone, put down his produce and <strong>roll the stone to the side</strong> of the road.</p>\n<p><strong>E</strong><strong>).</strong> keeping the highways clear (A)/ blaming the king for not (B)/moving the stone instead of (C)/ but dodged their duty of (D)/ many people passed by (E)   </p>\n<p><strong>F</strong><strong>).</strong> One day he placed a heavy stone in the middle of the road.</p><br><p><strong>For Sentence D, select a suitable replacement for the phrase in bold.</strong></p>", "options": ["<p>rolled the stone too the side</p>", "<p>rolled the stone to the side</p>", "<p>rolled the stone in the side</p>", "<p>rolled the stone for the side</p>", "<p>No improvement</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>The corrected sentence is:</strong></p>\n<p>A youth on his way to market saw the stone, put down his produce and <strong>rolled the stone to the side</strong> of the road.</p>"}, {"question": "<p><strong>Rearrange the following six sentences (A), (B), (C), (D), (E) and (F) in the proper sequence to form a meaningful paragraph; then answer the questions given below them.</strong></p>\n<p><strong>A</strong><strong>).</strong> He then hid nearby to watch and see who would remove it.</p>\n<p><strong>B</strong><strong>).</strong> He saw a purse full of gold lying in the middle of the road. It was the king's reward to the person who did something <strong>_________</strong> the problem.</p>\n<p><strong>C</strong><strong>).</strong> The king was tired of his subjects only complaining but doing nothing to solve their problems.</p>\n<p><strong>D</strong><strong>).</strong> A youth on his way to market saw the stone, put down his produce and <strong>roll the stone to the side</strong> of the road.</p>\n<p><strong>E</strong><strong>).</strong> keeping the highways clear (A)/ blaming the king for not (B)/moving the stone instead of (C)/ but dodged their duty of (D)/ many people passed by (E)   </p>\n<p><strong>F</strong><strong>).</strong> One day he placed a heavy stone in the middle of the road.</p><br><p><strong>Sentence E is divided into five parts. Rearrange the parts into a meaningful sentence and mark the option accordingly.</strong></p>", "options": ["<p>ebacd</p>", "<p>edcab</p>", "<p>baecd</p>", "<p>edcba</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>The corrected sentence is:</strong></p>\n<p>Many people passed by but dodged their duty of moving the stone instead of blaming the king for not keeping the highways clear.</p>"}, {"question": "<p><strong>Rearrange the following six sentences (A), (B), (C), (D), (E) and (F) in the proper sequence to form a meaningful paragraph; then answer the questions given below them.</strong></p>\n<p><strong>A</strong><strong>).</strong> He then hid nearby to watch and see who would remove it.</p>\n<p><strong>B</strong><strong>).</strong> He saw a purse full of gold lying in the middle of the road. It was the king's reward to the person who did something <strong>_________</strong> the problem.</p>\n<p><strong>C</strong><strong>).</strong> The king was tired of his subjects only complaining but doing nothing to solve their problems.</p>\n<p><strong>D</strong><strong>).</strong> A youth on his way to market saw the stone, put down his produce and <strong>roll the stone to the side</strong> of the road.</p>\n<p><strong>E</strong><strong>).</strong> keeping the highways clear (A)/ blaming the king for not (B)/moving the stone instead of (C)/ but dodged their duty of (D)/ many people passed by (E)   </p>\n<p><strong>F</strong><strong>).</strong> One day he placed a heavy stone in the middle of the road.</p><br><p>Which of the following options is the pair of the <strong>antepenultimate</strong> and <strong>penultimate</strong> statement respectively after the correct rearrangement?</p>", "options": ["<p>DE</p>", "<p>AD</p>", "<p>ED</p>", "<p>BC</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The final arrangement is <strong>CFAEDB</strong>.</p>\n<p><strong>Sentence C</strong> sets the stage by explaining why the king took action. He was frustrated with his subjects for only complaining and not actively working to solve the problems in their community. In <strong>Sentence F,</strong> to address his frustration and test the willingness of his subjects to solve a problem, the king places a heavy stone in the middle of the road. This action serves as a test to see who would step up and address the obstacle. After placing the stone, in <strong>Sentence A</strong>, the king hides nearby to observe the reactions of his subjects. He wants to see who among them will take the initiative to move the stone. The people who pass by the stone avoid taking responsibility for moving it. Instead, they blame the king for not maintaining the roads, which highlights their tendency to shirk responsibilities in <strong>Sentence E</strong>. Among the many who ignored the stone, a young man decides to take action. He sees the stone, sets down his produce, and moves the stone to the side of the road, demonstrating his willingness to act and solve the problem, which is in <strong>Sentence D</strong>. After moving the stone, in <strong>Sentence B,</strong> the youth finds a purse full of gold, which was actually a reward placed by the king for anyone who took the initiative to solve the problem. This reveals the king’s clever test and the reward for taking responsibility.</p>"}, {"question": "<p><strong>Rearrange the following six sentences (A), (B), (C), (D), (E) and (F) in the proper sequence to form a meaningful paragraph; then answer the questions given below them.</strong></p>\n<p><strong>A</strong><strong>).</strong> He then hid nearby to watch and see who would remove it.</p>\n<p><strong>B</strong><strong>).</strong> He saw a purse full of gold lying in the middle of the road. It was the king's reward to the person who did something <strong>_________</strong> the problem.</p>\n<p><strong>C</strong><strong>).</strong> The king was tired of his subjects only complaining but doing nothing to solve their problems.</p>\n<p><strong>D</strong><strong>).</strong> A youth on his way to market saw the stone, put down his produce and <strong>roll the stone to the side</strong> of the road.</p>\n<p><strong>E</strong><strong>).</strong> keeping the highways clear (A)/ blaming the king for not (B)/moving the stone instead of (C)/ but dodged their duty of (D)/ many people passed by (E)   </p>\n<p><strong>F</strong><strong>).</strong> One day he placed a heavy stone in the middle of the road.</p><br><p>Which of the following would be the <strong>Concluding </strong>sentence?</p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The final arrangement is <strong>CFAEDB</strong>.</p>\n<p><strong>Sentence C</strong> sets the stage by explaining why the king took action. He was frustrated with his subjects for only complaining and not actively working to solve the problems in their community. In <strong>Sentence F,</strong> to address his frustration and test the willingness of his subjects to solve a problem, the king places a heavy stone in the middle of the road. This action serves as a test to see who would step up and address the obstacle. After placing the stone, in <strong>Sentence A</strong>, the king hides nearby to observe the reactions of his subjects. He wants to see who among them will take the initiative to move the stone. The people who pass by the stone avoid taking responsibility for moving it. Instead, they blame the king for not maintaining the roads, which highlights their tendency to shirk responsibilities in <strong>Sentence E</strong>. Among the many who ignored the stone, a young man decides to take action. He sees the stone, sets down his produce, and moves the stone to the side of the road, demonstrating his willingness to act and solve the problem, which is in <strong>Sentence D</strong>. After moving the stone, in <strong>Sentence B,</strong> the youth finds a purse full of gold, which was actually a reward placed by the king for anyone who took the initiative to solve the problem. This reveals the king’s clever test and the reward for taking responsibility.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-37)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-37)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

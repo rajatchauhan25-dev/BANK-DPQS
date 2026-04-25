@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-49)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>In the following questions, each question is divided into five parts where one part is odd. Rearrange the remaining four parts into a meaningful sentence. Identify the correct sequence of the sentences and eliminate the odd one out and mark that as your option in the given sequence. </strong></p><br><p><strong>A).</strong> The chef prepared a delicious meal for the guests.</p>\n<p><strong>B).</strong> Each dish was a perfect blend of flavors and textures.</p>\n<p><strong>C).</strong> The plate was filled with vibrant flowers and lush greenery.</p>\n<p><strong>D).</strong> Everyone at the dinner table praised the culinary skills of the chef.</p>\n<p><strong>E).</strong> The meal ended with a decadent chocolate dessert.</p>", "options": ["<p>CADE, B</p>", "<p>DACB, E</p>", "<p>BDEC, A</p>", "<p>ABDE, C</p>", "<p>No interchange required</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The final arrangement is: <strong>ABDE.</strong></p>\n<p><strong>Odd one: C.</strong></p>\n<p>It describes the garden, which is unrelated to the meal and the chef's culinary skills.</p>\n<p>So, the correct rearrangement, excluding the odd one out, would be:</p>\n<p>The chef prepared a delicious meal for the guests. (<strong>A</strong>)</p>\n<p>Each dish was a perfect blend of flavors and textures. (<strong>B</strong>)</p>\n<p>Everyone at the dinner table praised the culinary skills of the chef. (<strong>D</strong>)</p>\n<p>The meal ended with a decadent chocolate dessert. (<strong>E</strong>)</p>"}, {"question": "<p><strong>In the following questions, each question is divided into five parts where one part is odd. Rearrange the remaining four parts into a meaningful sentence. Identify the correct sequence of the sentences and eliminate the odd one out and mark that as your option in the given sequence. </strong></p><br><p><strong>A).</strong> The new software update improved the system's performance.</p>\n<p><strong>B).</strong> Users reported fewer bugs and crashes after the update.</p>\n<p><strong>C).</strong> The interface remained user-friendly and intuitive.</p>\n<p><strong>D).</strong> The team celebrated their success with a small party.</p>\n<p><strong>E).</strong> The company decided to hire more developers.</p>", "options": ["<p>CADE, B</p>", "<p>ABCD, E</p>", "<p>BDEC, A</p>", "<p>EDBA, C</p>", "<p>No interchange required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The final arrangement is <strong>ABCD.</strong></p>\n<p><strong>Odd one: E.</strong></p>\n<p>It introduces a decision about hiring that is unrelated to the immediate impact of the software update.</p>\n<p>So, the correct rearrangement, excluding the odd one out, would be:</p>\n<p>The new software update improved the system's performance. (<strong>A</strong>)</p>\n<p>Users reported fewer bugs and crashes after the update. (<strong>B</strong>)</p>\n<p>The interface remained user-friendly and intuitive. (<strong>C</strong>)</p>\n<p>The team celebrated their success with a small party. (<strong>D</strong>)</p>"}, {"question": "<p><strong>In the following questions, each question is divided into five parts where one part is odd. Rearrange the remaining four parts into a meaningful sentence. Identify the correct sequence of the sentences and eliminate the odd one out and mark that as your option in the given sequence. </strong></p><br><p><strong>A).</strong> The artist spent years perfecting his technique.</p>\n<p><strong>B).</strong> His paintings were admired by art critics worldwide.</p>\n<p><strong>C).</strong> He often drew inspiration from nature.</p>\n<p><strong>D).</strong> The local community organized an annual art fair.</p>\n<p><strong>E).</strong> His latest exhibition attracted a large crowd.</p>", "options": ["<p>CADE, B</p>", "<p>DACB, E</p>", "<p>ACBE, D</p>", "<p>EDBA, C</p>", "<p>No interchange required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The final arrangement is <strong>ACBE.</strong></p>\n<p><strong>Odd one: D.</strong></p>\n<p>It talks about a community event unrelated to the artist's personal journey and achievements.</p>\n<p>So, the correct rearrangement, excluding the odd one out, would be:</p>\n<p>The artist spent years perfecting his technique. (<strong>A</strong>)</p>\n<p>He often drew inspiration from nature. (<strong>C</strong>)</p>\n<p>His paintings were admired by art critics worldwide. (<strong>B</strong>)</p>\n<p>His latest exhibition attracted a large crowd. (<strong>E</strong>)</p>"}, {"question": "<p><strong>In the following questions, each question is divided into five parts where one part is odd. Rearrange the remaining four parts into a meaningful sentence. Identify the correct sequence of the sentences and eliminate the odd one out and mark that as your option in the given sequence. </strong></p><br><p><strong>A).</strong> The mountain peak was covered in snow.</p>\n<p><strong>B).</strong> The climbers set up camp at the base.</p>\n<p><strong>C).</strong> They started their ascent early in the morning.</p>\n<p><strong>D).</strong> The city was bustling with tourists during the summer.</p>\n<p><strong>E).</strong> Despite the challenges, they reached the summit by noon.</p>", "options": ["<p>BCEA, D</p>", "<p>DACB, E</p>", "<p>BDEC, A</p>", "<p>EDBA, C</p>", "<p>No interchange required</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The final arrangement is <strong>BCEA.</strong></p>\n<p><strong>Odd one: D.</strong></p>\n<p>It introduces a city scene, which is unrelated to the mountain climbing context.</p>\n<p>So, the correct rearrangement, excluding the odd one out, would be:</p>\n<p>The climbers set up camp at the base. (<strong>B</strong>)</p>\n<p>They started their ascent early in the morning. (<strong>C</strong>)</p>\n<p>Despite the challenges, they reached the summit by noon. (<strong>E</strong>)</p>\n<p>The mountain peak was covered in snow. (<strong>A</strong>)</p>"}, {"question": "<p><strong>In the following questions, each question is divided into five parts where one part is odd. Rearrange the remaining four parts into a meaningful sentence. Identify the correct sequence of the sentences and eliminate the odd one out and mark that as your option in the given sequence. </strong></p><br><p><strong>A).</strong> The scientist conducted numerous experiments to test the hypothesis.</p>\n<p><strong>B).</strong> Her findings were published in a prestigious scientific journal.</p>\n<p><strong>C).</strong> She presented her research at an international conference.</p>\n<p><strong>D).</strong> She enjoyed hiking and exploring nature on weekends.</p>\n<p><strong>E).</strong> Her work received acclaim from the scientific community.</p>", "options": ["<p>CADE, B</p>", "<p>ABEC, D</p>", "<p>BDEC, A</p>", "<p>EDBA, C</p>", "<p>No interchange required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The final arrangement is <strong>ABEC.</strong></p>\n<p><strong>Odd one: D.</strong></p>\n<p>It talks about a personal hobby unrelated to her scientific research.</p>\n<p>So, the correct rearrangement, excluding the odd one out, would be:</p>\n<p>The scientist conducts experiments to test her hypothesis. (<strong>A</strong>)</p>\n<p>Her findings from these experiments are published in a prestigious journal. (<strong>B</strong>)</p>\n<p>Her work receives acclaim from the scientific community, likely after publication and dissemination. (<strong>E</strong>)</p>\n<p>She then presents her research at an international conference, showcasing her findings to a broader audience. (<strong>C</strong>)</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow.</strong></p>\n<p>The British left us with a legacy of high-level corruption. Robert Clive, credited with laying the foundations for British India, committed suicide at the age of 49 after facing corruption charges and being unable to defend himself. Corruption in India has significant effects on the economies of central, state, and local government agencies. A Transparency International report revealed that India’s corruption perceptions index score remained stable, ranking 93rd out of 180 nations in 2023. However, the report suggests that some systems aimed at containing corruption are becoming less effective, indicating that officials are not adhering to the law or their moral obligations to their job. Allegations of corruption against the UPA administration were one of the factors that propelled Prime Minister Narendra Modi to power in 2014. The country was ecstatic when Narendra Modi declared, “Na Khaunga, Na Khane Doonga” (neither will I indulge in corruption nor allow anybody else to participate in it) during the 2014 general election. This was unprecedented for a nation used to corruption at all levels. Unfortunately, it was just a fleeting vision. The promise made by Modi in 2014, before he became prime minister, to reclaim black money was not fulfilled. His harsh demonetization policy, intended to eliminate terrorists, curb black money, eradicate corruption, and eliminate counterfeit currencies, severely damaged the economy but had no effect. According to a report released by the Centre for Media Studies, the BJP spent nearly Rs 27,000 crores in the Lok Sabha polls, which accounts for about 45% of the total expenditure of Rs 60,000 crores spent in the 2019 Lok Sabha polls. Poll expenses for Lok Sabha elections held between 1998 and 2019 have soared from Rs 9,000 crore to nearly Rs 55,000 crore. The 2024 general election may cost more than Rs 1 lakh crore. Escalating election expenditures are the breeding ground for corruption; therefore, if we can’t curb corruption, we can’t control it. Between the previous and current Lok Sabha elections, some MPs have seen their incomes rise scandalously by 300, 400, or even 1,000%, while the Sensex has gained just 85%. On Independence Day in 2023, Modi pledged to fight corruption and demanded the elimination of three evils: nepotism, corruption, and appeasement. Considering his commitment, he could have enacted a law mandating all MP assets to be audited, held in trust, and audited again every five years to ensure that they aren’t enriching themselves at the expense of people. However, Modi’s anti-corruption campaign was selective and targeted at his political rivals. The corrupt political class neither faced consequences from the Modi government nor witnessed systemic changes; instead, corruption was institutionalised through electoral bonds. The CBI gave clean chits to Somasekhara Reddy and G Janardhana Reddy, former Karnataka BJP government ministers accused of a Rs 16,500-crore mining scam; Yeddyurappa, the former Karnataka CM accused of land and mining scams; and Shivraj Singh Chouhan, the CM of Madhya Pradesh implicated in the Vyapam scam. Opposition politicians accused of corruption have been offered a clear quid pro quo; switch sides, and these cases will disappear. The widely circulated list claimed that there were graft probes against Assam Chief Minister Himanta Biswa Sarma, Suvendu Adhikari, Bhavna Gawli, Yashwant Jadhav, Yamini Jadhav, Pratap Sarnaik, and Narayan Rane, which were stalled after they switched sides to join the BJP. Despite protests by the Election Commission and the Reserve Bank of India, the Modi government introduced electoral bonds in the name of transparency in election funding contributed by corporate bodies, which is a classic case of daylight robbery. An analysis by Project Electoral Bond shows that several companies bought electoral bonds after they were faced with action by central government agencies such as the ED, IT, CBI, and GST. The BJP received the maximum funds through the bonds at Rs 6,986.5 crore, followed by the TMC (Rs 1,397 crore) and Congress (Rs 1,334 crore). Despite being among the youngest major political parties in India, the BJP, under Modi’s leadership, has swiftly overtaken both Congress and the Chinese Communist Party of China to become the biggest and richest party in the world. Since the Supreme Court declared electoral bonds unconstitutional and ordered the EC to reveal the details, the Modi government, through the SBI, has tried to halt or delay the revelation of who donated how much ‘chanda’ to which political party. The frequent use of raids to suppress political opposition undermines political freedom and the rule of law and encourages corruption. The question arises: why did Modi, who made a commitment to fight corruption with a commanding majority in parliament and widespread support, not undertake the Herculean task of cleaning the Augean stable of corruption in Indian politics without bias?</p><br><p><strong>What was the primary objective of Modi's demonetization policy?</strong></p>", "options": ["<p>Boosting the economy</p>", "<p>Eliminating terrorists</p>", "<p>Curbing black money</p>", "<p>Promoting cash transactions</p>", "<p>Encouraging corruption</p>"], "correctIndex": 2, "solution": "<p><strong>Answer:</strong><strong> C</strong></p>\n<p>The correct answer is: c) Curbing black money. The passage states that demonetization was intended to eliminate black money, among other objectives.</p>\n<p>Modi's demonetization policy, as mentioned in the passage, had the primary objective of curbing black money. Black money refers to income illegally obtained or not declared for tax purposes. By invalidating high-denomination currency notes, the government aimed to force holders of black money to deposit their cash holdings into banks, making it traceable and subject to taxation.</p>\n<p><strong>a).</strong> Boosting the economy: While demonetization was expected to have some long-term positive effects on the economy, such as increasing digital transactions and formalizing the informal sector, its primary objective was not to boost the economy directly. The immediate impact of demonetization was more disruptive than beneficial to the economy.</p>\n<p><strong>b).</strong> Eliminating terrorists: While combating terrorism might have been one of the intended secondary benefits of demonetization by reducing the availability of unaccounted funds to terrorist organizations, it was not the primary objective of the policy.</p>\n<p><strong>d).</strong> Promoting cash transactions: Demonetization aimed to reduce cash transactions by invalidating high-denomination currency notes and promoting digital payments. Therefore, promoting cash transactions contradicts the intended purpose of demonetization.</p>\n<p><strong>e).</strong> Encouraging corruption: Encouraging corruption is contrary to the objectives of demonetization. The policy aimed to reduce corruption by targeting black money and making financial transactions more transparent.</p>\n<p>In summary, option (c) is the correct answer as it aligns with the primary objective of Modi's demonetization policy, as stated in the passage and widely understood during its implementation.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow.</strong></p>\n<p>The British left us with a legacy of high-level corruption. Robert Clive, credited with laying the foundations for British India, committed suicide at the age of 49 after facing corruption charges and being unable to defend himself. Corruption in India has significant effects on the economies of central, state, and local government agencies. A Transparency International report revealed that India’s corruption perceptions index score remained stable, ranking 93rd out of 180 nations in 2023. However, the report suggests that some systems aimed at containing corruption are becoming less effective, indicating that officials are not adhering to the law or their moral obligations to their job. Allegations of corruption against the UPA administration were one of the factors that propelled Prime Minister Narendra Modi to power in 2014. The country was ecstatic when Narendra Modi declared, “Na Khaunga, Na Khane Doonga” (neither will I indulge in corruption nor allow anybody else to participate in it) during the 2014 general election. This was unprecedented for a nation used to corruption at all levels. Unfortunately, it was just a fleeting vision. The promise made by Modi in 2014, before he became prime minister, to reclaim black money was not fulfilled. His harsh demonetization policy, intended to eliminate terrorists, curb black money, eradicate corruption, and eliminate counterfeit currencies, severely damaged the economy but had no effect. According to a report released by the Centre for Media Studies, the BJP spent nearly Rs 27,000 crores in the Lok Sabha polls, which accounts for about 45% of the total expenditure of Rs 60,000 crores spent in the 2019 Lok Sabha polls. Poll expenses for Lok Sabha elections held between 1998 and 2019 have soared from Rs 9,000 crore to nearly Rs 55,000 crore. The 2024 general election may cost more than Rs 1 lakh crore. Escalating election expenditures are the breeding ground for corruption; therefore, if we can’t curb corruption, we can’t control it. Between the previous and current Lok Sabha elections, some MPs have seen their incomes rise scandalously by 300, 400, or even 1,000%, while the Sensex has gained just 85%. On Independence Day in 2023, Modi pledged to fight corruption and demanded the elimination of three evils: nepotism, corruption, and appeasement. Considering his commitment, he could have enacted a law mandating all MP assets to be audited, held in trust, and audited again every five years to ensure that they aren’t enriching themselves at the expense of people. However, Modi’s anti-corruption campaign was selective and targeted at his political rivals. The corrupt political class neither faced consequences from the Modi government nor witnessed systemic changes; instead, corruption was institutionalised through electoral bonds. The CBI gave clean chits to Somasekhara Reddy and G Janardhana Reddy, former Karnataka BJP government ministers accused of a Rs 16,500-crore mining scam; Yeddyurappa, the former Karnataka CM accused of land and mining scams; and Shivraj Singh Chouhan, the CM of Madhya Pradesh implicated in the Vyapam scam. Opposition politicians accused of corruption have been offered a clear quid pro quo; switch sides, and these cases will disappear. The widely circulated list claimed that there were graft probes against Assam Chief Minister Himanta Biswa Sarma, Suvendu Adhikari, Bhavna Gawli, Yashwant Jadhav, Yamini Jadhav, Pratap Sarnaik, and Narayan Rane, which were stalled after they switched sides to join the BJP. Despite protests by the Election Commission and the Reserve Bank of India, the Modi government introduced electoral bonds in the name of transparency in election funding contributed by corporate bodies, which is a classic case of daylight robbery. An analysis by Project Electoral Bond shows that several companies bought electoral bonds after they were faced with action by central government agencies such as the ED, IT, CBI, and GST. The BJP received the maximum funds through the bonds at Rs 6,986.5 crore, followed by the TMC (Rs 1,397 crore) and Congress (Rs 1,334 crore). Despite being among the youngest major political parties in India, the BJP, under Modi’s leadership, has swiftly overtaken both Congress and the Chinese Communist Party of China to become the biggest and richest party in the world. Since the Supreme Court declared electoral bonds unconstitutional and ordered the EC to reveal the details, the Modi government, through the SBI, has tried to halt or delay the revelation of who donated how much ‘chanda’ to which political party. The frequent use of raids to suppress political opposition undermines political freedom and the rule of law and encourages corruption. The question arises: why did Modi, who made a commitment to fight corruption with a commanding majority in parliament and widespread support, not undertake the Herculean task of cleaning the Augean stable of corruption in Indian politics without bias?</p><br><p><strong>What action did the Supreme Court take regarding electoral bonds?</strong></p>", "options": ["<p>Declared them constitutional</p>", "<p>Ordered their immediate abolition</p>", "<p>Ordered the EC to reveal donation details</p>", "<p>Issued guidelines for their use</p>", "<p>None of the above</p>"], "correctIndex": 2, "solution": "<p><strong>Answer:</strong><strong> C</strong></p>\n<p>The correct answer is: c) Ordered the EC to reveal donation details. The passage mentions that the Supreme Court declared electoral bonds unconstitutional and ordered the Election Commission to reveal donation details.</p>\n<p>The Supreme Court took action regarding electoral bonds by ordering the Election Commission (EC) to reveal donation details. This means that the court directed the EC to disclose information about the donors and the amounts contributed through electoral bonds to political parties.</p>\n<p><strong>a).</strong> Declared them constitutional: The Supreme Court did not declare electoral bonds constitutional. In fact, the passage mentions that the Supreme Court declared electoral bonds unconstitutional, indicating that they found issues with the legality or constitutionality of the bonds.</p>\n<p><strong>b).</strong> Ordered their immediate abolition: While there have been calls from various quarters for the abolition of electoral bonds, the Supreme Court did not issue such an order as per the information provided in the passage. The focus of the Supreme Court's action was on revealing donation details rather than abolishing the bonds altogether.</p>\n<p><strong>d).</strong> Issued guidelines for their use: Although the Supreme Court may have issued guidelines or directives regarding the use of electoral bonds, the primary action mentioned in the passage is the order to reveal donation details. While guidelines may have been issued, they are not the primary focus of the Supreme Court's action as described in the passage.</p>\n<p>In summary, option (c) is the correct answer as it reflects the specific action taken by the Supreme Court regarding electoral bonds, as mentioned in the passage.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow.</strong></p>\n<p>The British left us with a legacy of high-level corruption. Robert Clive, credited with laying the foundations for British India, committed suicide at the age of 49 after facing corruption charges and being unable to defend himself. Corruption in India has significant effects on the economies of central, state, and local government agencies. A Transparency International report revealed that India’s corruption perceptions index score remained stable, ranking 93rd out of 180 nations in 2023. However, the report suggests that some systems aimed at containing corruption are becoming less effective, indicating that officials are not adhering to the law or their moral obligations to their job. Allegations of corruption against the UPA administration were one of the factors that propelled Prime Minister Narendra Modi to power in 2014. The country was ecstatic when Narendra Modi declared, “Na Khaunga, Na Khane Doonga” (neither will I indulge in corruption nor allow anybody else to participate in it) during the 2014 general election. This was unprecedented for a nation used to corruption at all levels. Unfortunately, it was just a fleeting vision. The promise made by Modi in 2014, before he became prime minister, to reclaim black money was not fulfilled. His harsh demonetization policy, intended to eliminate terrorists, curb black money, eradicate corruption, and eliminate counterfeit currencies, severely damaged the economy but had no effect. According to a report released by the Centre for Media Studies, the BJP spent nearly Rs 27,000 crores in the Lok Sabha polls, which accounts for about 45% of the total expenditure of Rs 60,000 crores spent in the 2019 Lok Sabha polls. Poll expenses for Lok Sabha elections held between 1998 and 2019 have soared from Rs 9,000 crore to nearly Rs 55,000 crore. The 2024 general election may cost more than Rs 1 lakh crore. Escalating election expenditures are the breeding ground for corruption; therefore, if we can’t curb corruption, we can’t control it. Between the previous and current Lok Sabha elections, some MPs have seen their incomes rise scandalously by 300, 400, or even 1,000%, while the Sensex has gained just 85%. On Independence Day in 2023, Modi pledged to fight corruption and demanded the elimination of three evils: nepotism, corruption, and appeasement. Considering his commitment, he could have enacted a law mandating all MP assets to be audited, held in trust, and audited again every five years to ensure that they aren’t enriching themselves at the expense of people. However, Modi’s anti-corruption campaign was selective and targeted at his political rivals. The corrupt political class neither faced consequences from the Modi government nor witnessed systemic changes; instead, corruption was institutionalised through electoral bonds. The CBI gave clean chits to Somasekhara Reddy and G Janardhana Reddy, former Karnataka BJP government ministers accused of a Rs 16,500-crore mining scam; Yeddyurappa, the former Karnataka CM accused of land and mining scams; and Shivraj Singh Chouhan, the CM of Madhya Pradesh implicated in the Vyapam scam. Opposition politicians accused of corruption have been offered a clear quid pro quo; switch sides, and these cases will disappear. The widely circulated list claimed that there were graft probes against Assam Chief Minister Himanta Biswa Sarma, Suvendu Adhikari, Bhavna Gawli, Yashwant Jadhav, Yamini Jadhav, Pratap Sarnaik, and Narayan Rane, which were stalled after they switched sides to join the BJP. Despite protests by the Election Commission and the Reserve Bank of India, the Modi government introduced electoral bonds in the name of transparency in election funding contributed by corporate bodies, which is a classic case of daylight robbery. An analysis by Project Electoral Bond shows that several companies bought electoral bonds after they were faced with action by central government agencies such as the ED, IT, CBI, and GST. The BJP received the maximum funds through the bonds at Rs 6,986.5 crore, followed by the TMC (Rs 1,397 crore) and Congress (Rs 1,334 crore). Despite being among the youngest major political parties in India, the BJP, under Modi’s leadership, has swiftly overtaken both Congress and the Chinese Communist Party of China to become the biggest and richest party in the world. Since the Supreme Court declared electoral bonds unconstitutional and ordered the EC to reveal the details, the Modi government, through the SBI, has tried to halt or delay the revelation of who donated how much ‘chanda’ to which political party. The frequent use of raids to suppress political opposition undermines political freedom and the rule of law and encourages corruption. The question arises: why did Modi, who made a commitment to fight corruption with a commanding majority in parliament and widespread support, not undertake the Herculean task of cleaning the Augean stable of corruption in Indian politics without bias?</p><br><p><strong>How did the BJP fund its election campaigns according to the passage?</strong></p>", "options": ["<p>Through public donations only</p>", "<p>Through government grants</p>", "<p>Through electoral bonds and public donations</p>", "<p>Through foreign funding</p>", "<p>Through corporate funding only</p>"], "correctIndex": 2, "solution": "<p><strong>Answer:</strong><strong> C</strong></p>\n<p>The correct answer is: c) Through electoral bonds and public donations. The passage mentions that the BJP received significant funds through electoral bonds, along with other sources.</p>\n<p>According to the passage, the BJP funded its election campaigns through a combination of electoral bonds and public donations. Electoral bonds are financial instruments that allow individuals and corporations to donate money to political parties anonymously. Public donations refer to contributions made by individuals or entities directly to the party's campaign fund.</p>\n<p><strong>a).</strong> Through public donations only: While public donations are mentioned as one of the sources of funding for the BJP's election campaigns, the passage also highlights the significant role played by electoral bonds. Therefore, this option is not entirely accurate as it excludes electoral bonds.</p>\n<p><strong>b).</strong> Through government grants: The passage does not mention government grants as a source of funding for the BJP's election campaigns. Political parties typically do not receive direct government grants for campaign financing.</p>\n<p><strong>d).</strong> Through foreign funding: Foreign funding for political parties in India is heavily regulated and restricted. The passage does not suggest that the BJP funded its campaigns through foreign sources.</p>\n<p><strong>e).</strong> Through corporate funding only: While corporate funding is mentioned as a significant source of electoral bonds, the passage does not specify that corporate funding was the sole source of funding for the BJP's election campaigns. It mentions both electoral bonds and public donations, indicating a more diverse funding base.</p>\n<p>In summary, option (c) is the correct answer as it accurately reflects the multiple sources of funding, including electoral bonds and public donations, as mentioned in the passage.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow.</strong></p>\n<p>The British left us with a legacy of high-level corruption. Robert Clive, credited with laying the foundations for British India, committed suicide at the age of 49 after facing corruption charges and being unable to defend himself. Corruption in India has significant effects on the economies of central, state, and local government agencies. A Transparency International report revealed that India’s corruption perceptions index score remained stable, ranking 93rd out of 180 nations in 2023. However, the report suggests that some systems aimed at containing corruption are becoming less effective, indicating that officials are not adhering to the law or their moral obligations to their job. Allegations of corruption against the UPA administration were one of the factors that propelled Prime Minister Narendra Modi to power in 2014. The country was ecstatic when Narendra Modi declared, “Na Khaunga, Na Khane Doonga” (neither will I indulge in corruption nor allow anybody else to participate in it) during the 2014 general election. This was unprecedented for a nation used to corruption at all levels. Unfortunately, it was just a fleeting vision. The promise made by Modi in 2014, before he became prime minister, to reclaim black money was not fulfilled. His harsh demonetization policy, intended to eliminate terrorists, curb black money, eradicate corruption, and eliminate counterfeit currencies, severely damaged the economy but had no effect. According to a report released by the Centre for Media Studies, the BJP spent nearly Rs 27,000 crores in the Lok Sabha polls, which accounts for about 45% of the total expenditure of Rs 60,000 crores spent in the 2019 Lok Sabha polls. Poll expenses for Lok Sabha elections held between 1998 and 2019 have soared from Rs 9,000 crore to nearly Rs 55,000 crore. The 2024 general election may cost more than Rs 1 lakh crore. Escalating election expenditures are the breeding ground for corruption; therefore, if we can’t curb corruption, we can’t control it. Between the previous and current Lok Sabha elections, some MPs have seen their incomes rise scandalously by 300, 400, or even 1,000%, while the Sensex has gained just 85%. On Independence Day in 2023, Modi pledged to fight corruption and demanded the elimination of three evils: nepotism, corruption, and appeasement. Considering his commitment, he could have enacted a law mandating all MP assets to be audited, held in trust, and audited again every five years to ensure that they aren’t enriching themselves at the expense of people. However, Modi’s anti-corruption campaign was selective and targeted at his political rivals. The corrupt political class neither faced consequences from the Modi government nor witnessed systemic changes; instead, corruption was institutionalised through electoral bonds. The CBI gave clean chits to Somasekhara Reddy and G Janardhana Reddy, former Karnataka BJP government ministers accused of a Rs 16,500-crore mining scam; Yeddyurappa, the former Karnataka CM accused of land and mining scams; and Shivraj Singh Chouhan, the CM of Madhya Pradesh implicated in the Vyapam scam. Opposition politicians accused of corruption have been offered a clear quid pro quo; switch sides, and these cases will disappear. The widely circulated list claimed that there were graft probes against Assam Chief Minister Himanta Biswa Sarma, Suvendu Adhikari, Bhavna Gawli, Yashwant Jadhav, Yamini Jadhav, Pratap Sarnaik, and Narayan Rane, which were stalled after they switched sides to join the BJP. Despite protests by the Election Commission and the Reserve Bank of India, the Modi government introduced electoral bonds in the name of transparency in election funding contributed by corporate bodies, which is a classic case of daylight robbery. An analysis by Project Electoral Bond shows that several companies bought electoral bonds after they were faced with action by central government agencies such as the ED, IT, CBI, and GST. The BJP received the maximum funds through the bonds at Rs 6,986.5 crore, followed by the TMC (Rs 1,397 crore) and Congress (Rs 1,334 crore). Despite being among the youngest major political parties in India, the BJP, under Modi’s leadership, has swiftly overtaken both Congress and the Chinese Communist Party of China to become the biggest and richest party in the world. Since the Supreme Court declared electoral bonds unconstitutional and ordered the EC to reveal the details, the Modi government, through the SBI, has tried to halt or delay the revelation of who donated how much ‘chanda’ to which political party. The frequent use of raids to suppress political opposition undermines political freedom and the rule of law and encourages corruption. The question arises: why did Modi, who made a commitment to fight corruption with a commanding majority in parliament and widespread support, not undertake the Herculean task of cleaning the Augean stable of corruption in Indian politics without bias?</p><br><p><strong>What was Narendra Modi's famous slogan during the 2014 general election campaign?</strong></p>", "options": ["<p>\"Na Khaunga, Na Khane Doonga\"</p>", "<p>\"Corruption is inevitable\"</p>", "<p>\"Power at any cost\"</p>", "<p>\"Money talks\"</p>", "<p>\"Corruption for progress\"</p>"], "correctIndex": 0, "solution": "<p><strong>Answer</strong><strong>: A</strong></p>\n<p>The correct answer is: a) \"Na Khaunga, Na Khane Doonga\". The passage directly quotes Modi's slogan as \"Na Khaunga, Na Khane Doonga\" which translates to \"Neither will I indulge in corruption nor allow anybody else to participate in it.\"</p>\n<p>Narendra Modi's famous slogan during the 2014 general election campaign was \"Na Khaunga, Na Khane Doonga.\" This slogan translates to \"Neither will I indulge in corruption nor allow anybody else to participate in it.\" It became a prominent part of his campaign rhetoric, emphasizing his commitment to combat corruption and promote clean governance.</p>\n<p><strong>b).</strong> \"Corruption is inevitable\": This option contradicts Modi's slogan, which explicitly states his stance against corruption. There is no indication in the passage or in public discourse that Modi endorsed the idea that corruption is inevitable.</p>\n<p><strong>c).</strong> \"Power at any cost\": While political parties may adopt such slogans, there is no evidence to suggest that this was Modi's slogan during the 2014 general election campaign. Moreover, it does not align with the theme of combating corruption emphasized in Modi's actual slogan.</p>\n<p><strong>d).</strong> \"Money talks\": This slogan conveys a different message related to the influence of money in politics and does not reflect Modi's commitment to fighting corruption as expressed in his actual slogan.</p>\n<p><strong>e).</strong> \"Corruption for progress\": This option is the opposite of Modi's actual slogan, which condemns corruption. Associating corruption with progress goes against Modi's stated stance on corruption.</p>\n<p>In summary, option (a) is the correct answer as it accurately reflects Narendra Modi's famous slogan during the 2014 general election campaign, as mentioned in the passage.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow.</strong></p>\n<p>The British left us with a legacy of high-level corruption. Robert Clive, credited with laying the foundations for British India, committed suicide at the age of 49 after facing corruption charges and being unable to defend himself. Corruption in India has significant effects on the economies of central, state, and local government agencies. A Transparency International report revealed that India’s corruption perceptions index score remained stable, ranking 93rd out of 180 nations in 2023. However, the report suggests that some systems aimed at containing corruption are becoming less effective, indicating that officials are not adhering to the law or their moral obligations to their job. Allegations of corruption against the UPA administration were one of the factors that propelled Prime Minister Narendra Modi to power in 2014. The country was ecstatic when Narendra Modi declared, “Na Khaunga, Na Khane Doonga” (neither will I indulge in corruption nor allow anybody else to participate in it) during the 2014 general election. This was unprecedented for a nation used to corruption at all levels. Unfortunately, it was just a fleeting vision. The promise made by Modi in 2014, before he became prime minister, to reclaim black money was not fulfilled. His harsh demonetization policy, intended to eliminate terrorists, curb black money, eradicate corruption, and eliminate counterfeit currencies, severely damaged the economy but had no effect. According to a report released by the Centre for Media Studies, the BJP spent nearly Rs 27,000 crores in the Lok Sabha polls, which accounts for about 45% of the total expenditure of Rs 60,000 crores spent in the 2019 Lok Sabha polls. Poll expenses for Lok Sabha elections held between 1998 and 2019 have soared from Rs 9,000 crore to nearly Rs 55,000 crore. The 2024 general election may cost more than Rs 1 lakh crore. Escalating election expenditures are the breeding ground for corruption; therefore, if we can’t curb corruption, we can’t control it. Between the previous and current Lok Sabha elections, some MPs have seen their incomes rise scandalously by 300, 400, or even 1,000%, while the Sensex has gained just 85%. On Independence Day in 2023, Modi pledged to fight corruption and demanded the elimination of three evils: nepotism, corruption, and appeasement. Considering his commitment, he could have enacted a law mandating all MP assets to be audited, held in trust, and audited again every five years to ensure that they aren’t enriching themselves at the expense of people. However, Modi’s anti-corruption campaign was selective and targeted at his political rivals. The corrupt political class neither faced consequences from the Modi government nor witnessed systemic changes; instead, corruption was institutionalised through electoral bonds. The CBI gave clean chits to Somasekhara Reddy and G Janardhana Reddy, former Karnataka BJP government ministers accused of a Rs 16,500-crore mining scam; Yeddyurappa, the former Karnataka CM accused of land and mining scams; and Shivraj Singh Chouhan, the CM of Madhya Pradesh implicated in the Vyapam scam. Opposition politicians accused of corruption have been offered a clear quid pro quo; switch sides, and these cases will disappear. The widely circulated list claimed that there were graft probes against Assam Chief Minister Himanta Biswa Sarma, Suvendu Adhikari, Bhavna Gawli, Yashwant Jadhav, Yamini Jadhav, Pratap Sarnaik, and Narayan Rane, which were stalled after they switched sides to join the BJP. Despite protests by the Election Commission and the Reserve Bank of India, the Modi government introduced electoral bonds in the name of transparency in election funding contributed by corporate bodies, which is a classic case of daylight robbery. An analysis by Project Electoral Bond shows that several companies bought electoral bonds after they were faced with action by central government agencies such as the ED, IT, CBI, and GST. The BJP received the maximum funds through the bonds at Rs 6,986.5 crore, followed by the TMC (Rs 1,397 crore) and Congress (Rs 1,334 crore). Despite being among the youngest major political parties in India, the BJP, under Modi’s leadership, has swiftly overtaken both Congress and the Chinese Communist Party of China to become the biggest and richest party in the world. Since the Supreme Court declared electoral bonds unconstitutional and ordered the EC to reveal the details, the Modi government, through the SBI, has tried to halt or delay the revelation of who donated how much ‘chanda’ to which political party. The frequent use of raids to suppress political opposition undermines political freedom and the rule of law and encourages corruption. The question arises: why did Modi, who made a commitment to fight corruption with a commanding majority in parliament and widespread support, not undertake the Herculean task of cleaning the Augean stable of corruption in Indian politics without bias?</p><br><p><strong>According to the Transparency International report, what was India's corruption perceptions index ranking in 2023?</strong></p>", "options": ["<p>30th</p>", "<p>93rd</p>", "<p>180th</p>", "<p>1st</p>", "<p>50th</p>"], "correctIndex": 1, "solution": "<p><strong>Answer:</strong><strong> B</strong></p>\n<p>The correct answer is: b) 93rd. The passage mentions that India ranked 93rd out of 180 nations in the corruption perceptions index in 2023.</p>\n<p>According to the passage, India's corruption perceptions index ranking in 2023 was 93rd out of 180 nations. This ranking indicates the perceived level of corruption within India compared to other countries.</p>\n<p><strong>a).</strong> <strong>30th:</strong> This option suggests a much higher ranking for India in the corruption perceptions index, which is inconsistent with the information provided in the passage. India's actual ranking in 2023, as stated in the passage, was 93rd.</p>\n<p><strong>c).</strong> <strong>180th:</strong> This option suggests that India was ranked at the bottom of the corruption perceptions index, which is not accurate according to the passage. While India faces challenges related to corruption, it was not ranked last among the 180 nations listed in the index.</p>\n<p><strong>d). 1st:</strong> This option implies that India was ranked first in the corruption perceptions index, which is not accurate. A ranking of first would indicate that India is perceived to have the lowest level of corruption, which is not consistent with the information provided in the passage.</p>\n<p><strong>e). 50th:</strong> This option suggests a different ranking for India in the corruption perceptions index, which is not accurate according to the passage. India's actual ranking in 2023, as stated in the passage, was 93rd out of 180 nations.</p>\n<p>In summary, option (b) is the correct answer as it accurately reflects India's corruption perceptions index ranking in 2023, as mentioned in the passage.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow.</strong></p>\n<p>The British left us with a legacy of high-level corruption. Robert Clive, credited with laying the foundations for British India, committed suicide at the age of 49 after facing corruption charges and being unable to defend himself. Corruption in India has significant effects on the economies of central, state, and local government agencies. A Transparency International report revealed that India’s corruption perceptions index score remained stable, ranking 93rd out of 180 nations in 2023. However, the report suggests that some systems aimed at containing corruption are becoming less effective, indicating that officials are not adhering to the law or their moral obligations to their job. Allegations of corruption against the UPA administration were one of the factors that propelled Prime Minister Narendra Modi to power in 2014. The country was ecstatic when Narendra Modi declared, “Na Khaunga, Na Khane Doonga” (neither will I indulge in corruption nor allow anybody else to participate in it) during the 2014 general election. This was unprecedented for a nation used to corruption at all levels. Unfortunately, it was just a fleeting vision. The promise made by Modi in 2014, before he became prime minister, to reclaim black money was not fulfilled. His harsh demonetization policy, intended to eliminate terrorists, curb black money, eradicate corruption, and eliminate counterfeit currencies, severely damaged the economy but had no effect. According to a report released by the Centre for Media Studies, the BJP spent nearly Rs 27,000 crores in the Lok Sabha polls, which accounts for about 45% of the total expenditure of Rs 60,000 crores spent in the 2019 Lok Sabha polls. Poll expenses for Lok Sabha elections held between 1998 and 2019 have soared from Rs 9,000 crore to nearly Rs 55,000 crore. The 2024 general election may cost more than Rs 1 lakh crore. Escalating election expenditures are the breeding ground for corruption; therefore, if we can’t curb corruption, we can’t control it. Between the previous and current Lok Sabha elections, some MPs have seen their incomes rise scandalously by 300, 400, or even 1,000%, while the Sensex has gained just 85%. On Independence Day in 2023, Modi pledged to fight corruption and demanded the elimination of three evils: nepotism, corruption, and appeasement. Considering his commitment, he could have enacted a law mandating all MP assets to be audited, held in trust, and audited again every five years to ensure that they aren’t enriching themselves at the expense of people. However, Modi’s anti-corruption campaign was selective and targeted at his political rivals. The corrupt political class neither faced consequences from the Modi government nor witnessed systemic changes; instead, corruption was institutionalised through electoral bonds. The CBI gave clean chits to Somasekhara Reddy and G Janardhana Reddy, former Karnataka BJP government ministers accused of a Rs 16,500-crore mining scam; Yeddyurappa, the former Karnataka CM accused of land and mining scams; and Shivraj Singh Chouhan, the CM of Madhya Pradesh implicated in the Vyapam scam. Opposition politicians accused of corruption have been offered a clear quid pro quo; switch sides, and these cases will disappear. The widely circulated list claimed that there were graft probes against Assam Chief Minister Himanta Biswa Sarma, Suvendu Adhikari, Bhavna Gawli, Yashwant Jadhav, Yamini Jadhav, Pratap Sarnaik, and Narayan Rane, which were stalled after they switched sides to join the BJP. Despite protests by the Election Commission and the Reserve Bank of India, the Modi government introduced electoral bonds in the name of transparency in election funding contributed by corporate bodies, which is a classic case of daylight robbery. An analysis by Project Electoral Bond shows that several companies bought electoral bonds after they were faced with action by central government agencies such as the ED, IT, CBI, and GST. The BJP received the maximum funds through the bonds at Rs 6,986.5 crore, followed by the TMC (Rs 1,397 crore) and Congress (Rs 1,334 crore). Despite being among the youngest major political parties in India, the BJP, under Modi’s leadership, has swiftly overtaken both Congress and the Chinese Communist Party of China to become the biggest and richest party in the world. Since the Supreme Court declared electoral bonds unconstitutional and ordered the EC to reveal the details, the Modi government, through the SBI, has tried to halt or delay the revelation of who donated how much ‘chanda’ to which political party. The frequent use of raids to suppress political opposition undermines political freedom and the rule of law and encourages corruption. The question arises: why did Modi, who made a commitment to fight corruption with a commanding majority in parliament and widespread support, not undertake the Herculean task of cleaning the Augean stable of corruption in Indian politics without bias?</p><br><p><strong>Which of the following is NOT a consequence of corruption as discussed in the passage?</strong></p>", "options": ["<p>Economic damage</p>", "<p>Political instability</p>", "<p>Social progress</p>", "<p>Breeding ground for further corruption</p>", "<p>Undermining of political freedom</p>"], "correctIndex": 2, "solution": "<p><strong>Answer:</strong><strong> C</strong></p>\n<p>In the passage, various consequences of corruption are discussed, including economic damage, political instability, breeding ground for further corruption, and undermining of political freedom. However, social progress is not explicitly mentioned as a consequence of corruption in the passage. Therefore, option (c) is the correct answer as it does not align with the consequences discussed in the passage.</p>\n<p><strong>a).</strong> Economic damage: The passage discusses the significant effects of corruption on the economy, including economic damage caused by corruption. It highlights how corruption can hinder economic growth, distort markets, and lead to inefficiencies, making this option a consequence of corruption as discussed in the passage.</p>\n<p><strong>b).</strong> Political instability: The passage mentions political instability as one of the consequences of corruption. It suggests that corruption undermines political stability by eroding public trust in institutions and fostering a climate of distrust and dissatisfaction among citizens, making this option a consequence of corruption as discussed in the passage.</p>\n<p><strong>d).</strong> Breeding ground for further corruption: The passage discusses how corruption can create a breeding ground for further corruption by perpetuating a culture of impunity and normalizing corrupt practices. It suggests that failure to curb corruption can lead to its proliferation, making this option a consequence of corruption as discussed in the passage.</p>\n<p><strong>e).</strong> Undermining of political freedom: The passage highlights how corruption undermines political freedom by enabling the suppression of political opposition through tactics such as raids and the manipulation of legal processes. It suggests that corruption erodes democratic principles and weakens the rule of law, making this option a consequence of corruption as discussed in the passage.</p>\n<p>In summary, options (a), (b), (d), and (e) are all consequences of corruption as discussed in the passage, while option (c) is not explicitly mentioned as a consequence of corruption in the passage.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow.</strong></p>\n<p>The British left us with a legacy of high-level corruption. Robert Clive, credited with laying the foundations for British India, committed suicide at the age of 49 after facing corruption charges and being unable to defend himself. Corruption in India has significant effects on the economies of central, state, and local government agencies. A Transparency International report revealed that India’s corruption perceptions index score remained stable, ranking 93rd out of 180 nations in 2023. However, the report suggests that some systems aimed at containing corruption are becoming less effective, indicating that officials are not adhering to the law or their moral obligations to their job. Allegations of corruption against the UPA administration were one of the factors that propelled Prime Minister Narendra Modi to power in 2014. The country was ecstatic when Narendra Modi declared, “Na Khaunga, Na Khane Doonga” (neither will I indulge in corruption nor allow anybody else to participate in it) during the 2014 general election. This was unprecedented for a nation used to corruption at all levels. Unfortunately, it was just a fleeting vision. The promise made by Modi in 2014, before he became prime minister, to reclaim black money was not fulfilled. His harsh demonetization policy, intended to eliminate terrorists, curb black money, eradicate corruption, and eliminate counterfeit currencies, severely damaged the economy but had no effect. According to a report released by the Centre for Media Studies, the BJP spent nearly Rs 27,000 crores in the Lok Sabha polls, which accounts for about 45% of the total expenditure of Rs 60,000 crores spent in the 2019 Lok Sabha polls. Poll expenses for Lok Sabha elections held between 1998 and 2019 have soared from Rs 9,000 crore to nearly Rs 55,000 crore. The 2024 general election may cost more than Rs 1 lakh crore. Escalating election expenditures are the breeding ground for corruption; therefore, if we can’t curb corruption, we can’t control it. Between the previous and current Lok Sabha elections, some MPs have seen their incomes rise scandalously by 300, 400, or even 1,000%, while the Sensex has gained just 85%. On Independence Day in 2023, Modi pledged to fight corruption and demanded the elimination of three evils: nepotism, corruption, and appeasement. Considering his commitment, he could have enacted a law mandating all MP assets to be audited, held in trust, and audited again every five years to ensure that they aren’t enriching themselves at the expense of people. However, Modi’s anti-corruption campaign was selective and targeted at his political rivals. The corrupt political class neither faced consequences from the Modi government nor witnessed systemic changes; instead, corruption was institutionalised through electoral bonds. The CBI gave clean chits to Somasekhara Reddy and G Janardhana Reddy, former Karnataka BJP government ministers accused of a Rs 16,500-crore mining scam; Yeddyurappa, the former Karnataka CM accused of land and mining scams; and Shivraj Singh Chouhan, the CM of Madhya Pradesh implicated in the Vyapam scam. Opposition politicians accused of corruption have been offered a clear quid pro quo; switch sides, and these cases will disappear. The widely circulated list claimed that there were graft probes against Assam Chief Minister Himanta Biswa Sarma, Suvendu Adhikari, Bhavna Gawli, Yashwant Jadhav, Yamini Jadhav, Pratap Sarnaik, and Narayan Rane, which were stalled after they switched sides to join the BJP. Despite protests by the Election Commission and the Reserve Bank of India, the Modi government introduced electoral bonds in the name of transparency in election funding contributed by corporate bodies, which is a classic case of daylight robbery. An analysis by Project Electoral Bond shows that several companies bought electoral bonds after they were faced with action by central government agencies such as the ED, IT, CBI, and GST. The BJP received the maximum funds through the bonds at Rs 6,986.5 crore, followed by the TMC (Rs 1,397 crore) and Congress (Rs 1,334 crore). Despite being among the youngest major political parties in India, the BJP, under Modi’s leadership, has swiftly overtaken both Congress and the Chinese Communist Party of China to become the biggest and richest party in the world. Since the Supreme Court declared electoral bonds unconstitutional and ordered the EC to reveal the details, the Modi government, through the SBI, has tried to halt or delay the revelation of who donated how much ‘chanda’ to which political party. The frequent use of raids to suppress political opposition undermines political freedom and the rule of law and encourages corruption. The question arises: why did Modi, who made a commitment to fight corruption with a commanding majority in parliament and widespread support, not undertake the Herculean task of cleaning the Augean stable of corruption in Indian politics without bias?</p><br><p><strong>What is the tone of the passage?</strong></p>", "options": ["<p>Objective</p>", "<p>Critical</p>", "<p>Optimistic</p>", "<p>Satirical</p>", "<p>Indifferent</p>"], "correctIndex": 1, "solution": "<p><strong>Answer:</strong><strong> B</strong></p>\n<p>The tone of the passage is critical. It portrays a critical view of corruption in India, particularly highlighting instances of corruption among political leaders and the failure of anti-corruption efforts. The passage presents a critical analysis of various policies and actions taken by political figures, such as Narendra Modi, and their impact on corruption in the country. The language used in the passage reflects a tone of criticism towards corruption and the shortcomings in addressing it effectively. Therefore, option (b) is the most suitable choice for describing the tone of the passage.</p>\n<p><strong>a). Objective:</strong> An objective tone would present information without bias or personal opinion. It would focus on presenting facts and providing an impartial analysis of the topic. However, the passage expresses a clear viewpoint and critical assessment of corruption in India, indicating that it is not written in an entirely objective tone.</p>\n<p><strong>c). Optimistic:</strong> An optimistic tone would convey hopefulness, positivity, or confidence about the subject matter. It would emphasize potential solutions or improvements and inspire a positive outlook. However, the passage discusses various instances of corruption, failures in anti-corruption efforts, and the negative consequences of certain policies, which does not align with an optimistic tone.</p>\n<p><strong>d). Satirical:</strong> A satirical tone would involve the use of irony, sarcasm, or humor to criticize or ridicule the subject matter. While the passage is critical of corruption and political actions, it does not employ satire or humor to convey its message. Instead, it presents a serious and straightforward critique of corruption in India.</p>\n<p><strong>e). Indifferent:</strong> An indifferent tone would show a lack of interest, concern, or emotion towards the subject matter. It would suggest a detached or apathetic attitude towards the issues discussed. However, the passage clearly expresses a strong viewpoint on corruption and its negative impact, indicating that it is not written in an indifferent tone.</p>\n<p>In summary, while the passage could be described as critical, it does not exhibit the characteristics of the other tone options.</p>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>In the table given below two columns are given to connect the sentence. The sentence given in column A may or may not be connected with column B contextually and grammatically. You have to identify possible combination to combine the sentence from column A to column B. If any possible connections are not found from the option, choose “None of these.”</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172734796270.png\" title=\"83.PNG\"/></p>", "options": ["<p>A2, B3 &amp; C1</p>", "<p>C1 &amp; B3</p>", "<p>A2 &amp; B3</p>", "<p>C3, A2 &amp; B1</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>A2: </strong>The scientist’s novel theory unveiled the esoteric nature of quantum particles, challenging old scientific views.</p>\n<p><strong>B1: </strong>Her succinct replies and deft rhetoric made her arguments both sharp and convincing in the heated discussion.</p>\n<p><strong>C3: </strong>The curator’s meticulous work on the ancient frescoes preserved their unique charm, adding to their historical value.</p>"}, {"question": "<p><strong>In the table given below two columns are given to connect the sentence. The sentence given in column A may or may not be connected with column B contextually and grammatically. You have to identify possible combination to combine the sentence from column A to column B. If any possible connections are not found from the option, choose “None of these.”</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172734808658.png\" title=\"84.PNG\"/></p>", "options": ["<p>A2 &amp; C1</p>", "<p>C1 &amp; B3</p>", "<p>A2 &amp; B3</p>", "<p>C3, A2 &amp; B1</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>A2: </strong>The city’s rich blend of cultures created a vibrant mosaic of diverse traditions and practices.</p>\n<p><strong>C1: </strong>The diplomat's astute negotiations diffused the escalating tensions, fostering a new era of cooperation.</p>"}, {"question": "<p><strong>In the table given below two columns are given to connect the sentence. The sentence given in column A may or may not be connected with column B contextually and grammatically. You have to identify possible combination to combine the sentence from column A to column B. If any possible connections are not found from the option, choose “None of these.”</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172734816949.png\" title=\"85.PNG\"/></p>", "options": ["<p>A2, B3 &amp; C1</p>", "<p>C3, A1 &amp; B2</p>", "<p>A1 &amp; B3</p>", "<p>C3, A2 &amp; B1</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>A1: </strong>Her penchant for abstruse theories often left her colleagues perplexed but fascinated.</p>\n<p><strong>B2: </strong>The artist’s avant-garde style challenged conventional aesthetics, pushing boundaries in modern art.</p>\n<p><strong>C3: </strong>The philosopher's treatise on existentialism offered profound insights into the nature of human experience.</p>"}, {"question": "<p><strong>In the table given below two columns are given to connect the sentence. The sentence given in column A may or may not be connected with column B contextually and grammatically. You have to identify possible combination to combine the sentence from column A to column B. If any possible connections are not found from the option, choose “None of these.”</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172734827678.png\" title=\"86.PNG\"/></p>", "options": ["<p>A3, B2 &amp; C1</p>", "<p>C1 &amp; B3</p>", "<p>A2, C1 &amp; B3</p>", "<p>C3, A2 &amp; B1</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>A2: </strong>The historian’s exhaustive research illuminated previously obscure aspects of ancient civilizations.</p>\n<p><strong>B3: </strong>His laconic wit and incisive observations made him a compelling presence in intellectual circles.</p>\n<p><strong>C1: </strong>The film’s intricate plot and layered symbolism required a discerning audience to fully appreciate its depth.</p>"}, {"question": "<p><strong>In the table given below two columns are given to connect the sentence. The sentence given in column A may or may not be connected with column B contextually and grammatically. You have to identify possible combination to combine the sentence from column A to column B. If any possible connections are not found from the option, choose “None of these.”</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172734836926.png\" title=\"87.PNG\"/></p>", "options": ["<p>A2, B3 &amp; C1</p>", "<p>C1 &amp; B3</p>", "<p>A2 &amp; B3</p>", "<p>C3, A2 &amp; B1</p>", "<p>None of these</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p><strong>A1: </strong>The architect’s innovative design seamlessly integrated functionality with aesthetic elegance.</p>\n<p><strong>B2: </strong>Her perspicacity in business matters allowed her to foresee market trends with remarkable accuracy.</p>\n<p><strong>C3: </strong>The manuscript’s arcane language posed a challenge to translators but revealed rich historical context.</p>"}, {"question": "<p><strong>Rearrange the following five sentences (A), (B), (C), (D) and (E) in the proper sequence to form a coherent paragraph and then answer the questions accordingly.</strong></p>\n<p><strong>A). </strong>The mob broke barricades and <strong>vandalised </strong>Congressional offices and property, injuring at least 140 law enforcement officers.</p>\n<p><strong>B). </strong>The obstruction charges relate to the actions of Mr. Trump<strong>/A</strong> on January 6, 2021, when he is alleged to have incited a violent<strong>/B</strong> mob to march on the Capitol buildings in Washington<strong>/C </strong>even when as the lawmakers were meeting there to certify the election results, as required by law<strong>/D.</strong></p>\n<p><strong>C). </strong>the most recent felony charges stem from allegations <strong>(P) </strong>by seeking to overturn the results of the 2020 <strong>(Q) </strong>that he sought to block the peaceful transfer of power <strong>(R) </strong>  presidential election, which current President Joe Biden won <strong>(S)</strong></p>\n<p><strong>D).</strong> The four charges at this juncture include conspiracy to defraud, witness tampering, conspiracy against the rights of citizens, and obstruction of an attempt to obstruct an official proceeding.</p>\n<p><strong>E). </strong>After facing prior charges relating to hush money paid to cover up an affair and the illegal <strong>detention (X) </strong>of top-secret documents, former U.S. President Donald Trump has been <strong>indicted (Y) </strong>for the third time.</p><br><p><strong>Which of the following is the correct sequence of rearrangement that forms a coherent passage?</strong></p>", "options": ["<p>debca</p>", "<p>cabed</p>", "<p>bdcea</p>", "<p>abdce</p>", "<p>ecdba</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>The correct sequence is <strong>ECDBA</strong>.</p>\n<p>Sentence E is the introductory sentence because a,b,c and d don’t seem to be the starter sentence but a continuation of one and another. After facing two prior charges The U.S President has been charged again. Sentence E is followed by C which explains the charge imposed on the president in detail. <strong>Felony charges - the act of committing a serious crime such as murder - a crime of this type. </strong> D is the third sentence listing all the charges. D is followed by B which explains the fourth charge “obstruction of an attempt to obstruct an official proceeding” in detail (continuation of sentence D). Last comes sentence A, which explains how the mob destroyed the offices (continuation of sentence B).</p>\n<p>Therefore, option E is the correct answer.</p>"}, {"question": "<p><strong>Rearrange the following five sentences (A), (B), (C), (D) and (E) in the proper sequence to form a coherent paragraph and then answer the questions accordingly.</strong></p>\n<p><strong>A). </strong>The mob broke barricades and <strong>vandalised </strong>Congressional offices and property, injuring at least 140 law enforcement officers.</p>\n<p><strong>B). </strong>The obstruction charges relate to the actions of Mr. Trump<strong>/A</strong> on January 6, 2021, when he is alleged to have incited a violent<strong>/B</strong> mob to march on the Capitol buildings in Washington<strong>/C </strong>even when as the lawmakers were meeting there to certify the election results, as required by law<strong>/D.</strong></p>\n<p><strong>C). </strong>the most recent felony charges stem from allegations <strong>(P) </strong>by seeking to overturn the results of the 2020 <strong>(Q) </strong>that he sought to block the peaceful transfer of power <strong>(R) </strong>  presidential election, which current President Joe Biden won <strong>(S)</strong></p>\n<p><strong>D).</strong> The four charges at this juncture include conspiracy to defraud, witness tampering, conspiracy against the rights of citizens, and obstruction of an attempt to obstruct an official proceeding.</p>\n<p><strong>E). </strong>After facing prior charges relating to hush money paid to cover up an affair and the illegal <strong>detention (X) </strong>of top-secret documents, former U.S. President Donald Trump has been <strong>indicted (Y) </strong>for the third time.</p><br><p><strong>SYNONYM of the word ‘Vandalised’ mentioned in sentence (A).</strong></p>", "options": ["<p>repair</p>", "<p>demolish</p>", "<p>mend</p>", "<p>fix</p>", "<p>improve</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The meaning of the word <strong>vandalise is “to destroy or damage property”.</strong></p>\n<p>A word with a same/similar meaning is ‘demolish’, hence the synonym of ‘vandalise’ from the given options is ‘demolish’</p>\n<p><strong>Repair, med, fix and improve are the antonyms of the word ‘vandalise’.</strong></p>\n<p>Therefore, option B is the correct answer</p>"}, {"question": "<p><strong>Rearrange the following five sentences (A), (B), (C), (D) and (E) in the proper sequence to form a coherent paragraph and then answer the questions accordingly.</strong></p>\n<p><strong>A). </strong>The mob broke barricades and <strong>vandalised </strong>Congressional offices and property, injuring at least 140 law enforcement officers.</p>\n<p><strong>B). </strong>The obstruction charges relate to the actions of Mr. Trump<strong>/A</strong> on January 6, 2021, when he is alleged to have incited a violent<strong>/B</strong> mob to march on the Capitol buildings in Washington<strong>/C </strong>even when as the lawmakers were meeting there to certify the election results, as required by law<strong>/D.</strong></p>\n<p><strong>C). </strong>the most recent felony charges stem from allegations <strong>(P) </strong>by seeking to overturn the results of the 2020 <strong>(Q) </strong>that he sought to block the peaceful transfer of power <strong>(R) </strong>  presidential election, which current President Joe Biden won <strong>(S)</strong></p>\n<p><strong>D).</strong> The four charges at this juncture include conspiracy to defraud, witness tampering, conspiracy against the rights of citizens, and obstruction of an attempt to obstruct an official proceeding.</p>\n<p><strong>E). </strong>After facing prior charges relating to hush money paid to cover up an affair and the illegal <strong>detention (X) </strong>of top-secret documents, former U.S. President Donald Trump has been <strong>indicted (Y) </strong>for the third time.</p><br><p><strong>Pick out the ERRONEOUS PART in sentence (B).</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>No error</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The error is in part D of the sentence.</p>\n<p><strong>‘Even when as the’ is incorrect, instead it must simply be ‘even as’</strong></p>\n<p>The former phrase is complicated and grammatically incorrect and must be replaced to make the respective sentence correct.</p>\n<p><strong>The correct sentence : </strong>The obstruction charges relate to the actions of Mr. Trump on January 6, 2021, when he is alleged to have incited a violent mob to march on the Capitol buildings in Washington<strong> even as</strong> lawmakers were meeting there to certify the election results, as required by law.</p>\n<p>Therefore, option D is the correct answer.</p>"}, {"question": "<p><strong>Rearrange the following five sentences (A), (B), (C), (D) and (E) in the proper sequence to form a coherent paragraph and then answer the questions accordingly.</strong></p>\n<p><strong>A). </strong>The mob broke barricades and <strong>vandalised </strong>Congressional offices and property, injuring at least 140 law enforcement officers.</p>\n<p><strong>B). </strong>The obstruction charges relate to the actions of Mr. Trump<strong>/A</strong> on January 6, 2021, when he is alleged to have incited a violent<strong>/B</strong> mob to march on the Capitol buildings in Washington<strong>/C </strong>even when as the lawmakers were meeting there to certify the election results, as required by law<strong>/D.</strong></p>\n<p><strong>C). </strong>the most recent felony charges stem from allegations <strong>(P) </strong>by seeking to overturn the results of the 2020 <strong>(Q) </strong>that he sought to block the peaceful transfer of power <strong>(R) </strong>  presidential election, which current President Joe Biden won <strong>(S)</strong></p>\n<p><strong>D).</strong> The four charges at this juncture include conspiracy to defraud, witness tampering, conspiracy against the rights of citizens, and obstruction of an attempt to obstruct an official proceeding.</p>\n<p><strong>E). </strong>After facing prior charges relating to hush money paid to cover up an affair and the illegal <strong>detention (X) </strong>of top-secret documents, former U.S. President Donald Trump has been <strong>indicted (Y) </strong>for the third time.</p><br><p><strong>Rearrange the parts P, Q, R and S in sentence (C) to make it meaningful.</strong></p>", "options": ["<p>SPRQ</p>", "<p>QRPS</p>", "<p>PRQS</p>", "<p>QPSR</p>", "<p>PQRS</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>PRQS is the correct sequence.</p>\n<p>P is the first statement to kick off the sentence as it gives the basic introduction to the sentence (recent charges), second is R which explains the root of the problem - where the president tried to block the transfer of power. Third is Q, he tried to block the transfer of power by seeking to overturn the 2020 election results. Last is S, which ends the sentence with information that Joe Biden won the 2020 election (continuation of Q).</p>\n<p><strong>The sentence formed:</strong> The most recent felony charges stem from allegations that he sought to block the peaceful transfer of power by seeking to overturn the results of the 2020 presidential election, which current President Joe Biden won.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>Rearrange the following five sentences (A), (B), (C), (D) and (E) in the proper sequence to form a coherent paragraph and then answer the questions accordingly.</strong></p>\n<p><strong>A). </strong>The mob broke barricades and <strong>vandalised </strong>Congressional offices and property, injuring at least 140 law enforcement officers.</p>\n<p><strong>B). </strong>The obstruction charges relate to the actions of Mr. Trump<strong>/A</strong> on January 6, 2021, when he is alleged to have incited a violent<strong>/B</strong> mob to march on the Capitol buildings in Washington<strong>/C </strong>even when as the lawmakers were meeting there to certify the election results, as required by law<strong>/D.</strong></p>\n<p><strong>C). </strong>the most recent felony charges stem from allegations <strong>(P) </strong>by seeking to overturn the results of the 2020 <strong>(Q) </strong>that he sought to block the peaceful transfer of power <strong>(R) </strong>  presidential election, which current President Joe Biden won <strong>(S)</strong></p>\n<p><strong>D).</strong> The four charges at this juncture include conspiracy to defraud, witness tampering, conspiracy against the rights of citizens, and obstruction of an attempt to obstruct an official proceeding.</p>\n<p><strong>E). </strong>After facing prior charges relating to hush money paid to cover up an affair and the illegal <strong>detention (X) </strong>of top-secret documents, former U.S. President Donald Trump has been <strong>indicted (Y) </strong>for the third time.</p><br><p><strong>Replace either X or Y (if necessary) to make the sentence (E) correct and meaningful.</strong></p>", "options": ["<p>X - retention</p>", "<p>Y - inducted</p>", "<p>X - communication</p>", "<p>Y - conducted</p>", "<p>No changes required</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The word X in the sentence needs replacement as the existing word is inappropriate to the context of the sentence.</p>\n<p>Retention is the correct word that replaces word X in the given sentence. Word Y is correct and appropriate - needs no improvement/replacement.</p>\n<p><strong>Detention -</strong> imprisonment</p>\n<p><strong>Indicted -</strong> to officially charge somebody with a crime</p>\n<p><strong>Retention -</strong> the act of retaining something</p>\n<p><strong>Inducted -</strong> to formally give somebody a position of authority</p>\n<p><strong>Conducted - </strong>to organize and do something</p>\n<p><strong>Illegal retention of top - </strong>secret documents (retained the documents)</p>\n<p>Therefore, option A is the correct answer.</p>"}, {"question": "<p><strong>Given below is a word followed by three sentences. You need to understand whether word is used correctly or not. You have to choose correct sentence in which word has been used correctly.</strong></p><br><p><strong>Articulate</strong></p>\n<p><strong>1).</strong> Her <strong>articulate</strong> presentation of the research findings was both compelling and easy to understand, earning her praise from the entire panel.</p>\n<p><strong>2).</strong> Despite his extensive knowledge on the subject, his inability to <strong>articulate</strong> his thoughts clearly led to confusion among his audience.</p>\n<p><strong>3).</strong> The professor’s <strong>articulate</strong> arguments were well-received, providing a lucid explanation of the complex theories under discussion.</p>", "options": ["<p>Only 1 and 2</p>", "<p>Only 2</p>", "<p>Only 3</p>", "<p>Only 1 and 3</p>", "<p>All 1, 2, and 3</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>Sentences 1, 2 and 3 use \"articulate\" in a positive context, describing clear and effective communication.</p>"}, {"question": "<p><strong>Given below is a word followed by three sentences. You need to understand whether word is used correctly or not. You have to choose correct sentence in which word has been used correctly.</strong></p><br><p><strong>Meticulous</strong></p>\n<p><strong>1).</strong> The <strong>meticulous</strong> scientist carefully documented every detail of the experiment to ensure the results could be replicated accurately.</p>\n<p><strong>2).</strong> His <strong>meticulous</strong> planning for the event left no room for error, demonstrating his thorough attention to detail.</p>\n<p><strong>3).</strong> The haphazard approach to organizing the data showed a lack of <strong>meticulousness</strong>, resulting in numerous inaccuracies.</p>", "options": ["<p>Only 1 and 2</p>", "<p>Only 2 and 3</p>", "<p>Only 3</p>", "<p>Only 1 and 3</p>", "<p>All 1, 2, and 3</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>Sentences 1,2 and 3 describe actions characterized by thoroughness and attention to detail, embodying meticulousness. </p>"}, {"question": "<p><strong>Given below is a word followed by three sentences. You need to understand whether word is used correctly or not. You have to choose correct sentence in which word has been used correctly.</strong></p><br><p><strong>Pragmatic</strong></p>\n<p><strong>1).</strong> Her <strong>pragmatic</strong> approach to solving the problem involved analyzing the practical implications of each potential solution and choosing the most feasible one.</p>\n<p><strong>2).</strong> The team’s <strong>pragmatic</strong> decision to implement the cost-effective measure, despite its initial unpopularity, ultimately led to substantial savings.</p>\n<p><strong>3).</strong> His idealistic views often clashed with the <strong>pragmatic</strong> needs of the project, leading to friction between the two approaches.</p>", "options": ["<p>All 1, 2, and 3</p>", "<p>Only 2 and 3</p>", "<p>Only 3</p>", "<p>Only 1 and 3</p>", "<p>Only 1 and 2</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Sentences 1, 2 and 3 describe approaches that focus on practicality and feasibility, embodying pragmatism. </p>"}, {"question": "<p><strong>Given below is a word followed by three sentences. You need to understand whether word is used correctly or not. You have to choose correct sentence in which word has been used correctly.</strong></p><br><p><strong>Persistent   </strong></p>\n<p><strong>1).</strong> The entrepreneur's persistent efforts to secure funding, despite numerous setbacks, eventually led to the successful launch of his startup.</p>\n<p><strong>2).</strong> His sporadic and inconsistent attempts at addressing the issue showed a lack of persistence and commitment.</p>\n<p><strong>3).</strong> Her persistent questioning during the investigation uncovered crucial evidence that had been overlooked by others.</p>", "options": ["<p>Only 1 and 2</p>", "<p>Only 2</p>", "<p>Only 3</p>", "<p>Only 1 and 3</p>", "<p>All 1, 2, and 3</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>Sentences 1 and 3 describe ongoing, determined efforts, embodying persistence. Sentence 2 describes attempts that are sporadic and lack commitment, indicating a lack of persistence.</p>"}, {"question": "<p><strong>Given below is a word followed by three sentences. You need to understand whether word is used correctly or not. You have to choose correct sentence in which word has been used correctly.</strong></p><br><p><strong>Adept</strong></p>\n<p><strong>1).</strong> The pianist, renowned for being adept at interpreting complex compositions, performed the intricate piece with remarkable skill and expression.</p>\n<p><strong>2).</strong> Her adept handling of the negotiations ensured that all parties were satisfied with the final agreement, demonstrating her proficiency in conflict resolution.</p>\n<p><strong>3).</strong> The new employee’s struggle to adapt to the demanding software highlighted his current lack of adeptness in using advanced tools.</p>", "options": ["<p>Only 1 and 2</p>", "<p>Only 2 and 3</p>", "<p>Only 3</p>", "<p>Only 1 and 3</p>", "<p>All 1, 2, and 3</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Sentences 1 and 2 describe high skill levels and proficiency, embodying adeptness. Sentence 3 describes difficulties in adapting to new tools, indicating a lack of adeptness.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-49)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-49)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

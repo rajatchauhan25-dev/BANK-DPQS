@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-72)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>Given below are a few questions with three words highlighted in each of them. You have to find the word(s) which is/are inappropriate as per the context of the sentence. If none of the options are correct, choose option E as your answer.</strong></p><br><p>The advent of globalization has profoundly (A) <strong>transformed </strong>economic landscapes, prompting nations to reevaluate their trade policies in light of (B) <strong>competitive</strong> pressures and (C) <strong>intredependence</strong>.</p>", "options": ["<p>only a</p>", "<p>only b</p>", "<p>only c</p>", "<p>both a and c</p>", "<p>None of the above</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The advent of globalization has profoundly <strong>transformed </strong>economic landscapes, prompting nations to reevaluate their trade policies in light of <strong>competitive</strong> pressures and <strong>interdependence</strong>.</p>"}, {"question": "<p><strong>Given below are a few questions with three words highlighted in each of them. You have to find the word(s) which is/are inappropriate as per the context of the sentence. If none of the options are correct, choose option E as your answer.</strong></p><br><p>An (A) <strong>exhaustive</strong> examination of literary texts reveals the pervasive themes of existential (B) <strong>adjst</strong> and alienation that characterize the works of (C) <strong>contemporary</strong> authors.</p>", "options": ["<p>only a</p>", "<p>only b</p>", "<p>only c</p>", "<p>both a and c</p>", "<p>None of the above</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>An <strong>exhaustive</strong> examination of literary texts reveals the pervasive themes of existential <strong>angst</strong> and alienation that characterize the works of <strong>contemporary</strong> authors.</p>"}, {"question": "<p><strong>Given below are a few questions with three words highlighted in each of them. You have to find the word(s) which is/are inappropriate as per the context of the sentence. If none of the options are correct, choose option E as your answer.</strong></p><br><p>The rise of (A) <strong>populism</strong> in various democracies has elicited widespread concern about the (B) <strong>erotion</strong> of civil discourse and the (C) <strong>potential</strong> undermining of democratic institutions.</p>", "options": ["<p>only a</p>", "<p>only b</p>", "<p>only c</p>", "<p>both b and c</p>", "<p>None of the above</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The rise of <strong>populism</strong> in various democracies has elicited widespread concern about the <strong>erosion</strong> of civil discourse and the <strong>potential</strong> undermining of democratic institutions.</p>"}, {"question": "<p><strong>Given below are a few questions with three words highlighted in each of them. You have to find the word(s) which is/are inappropriate as per the context of the sentence. If none of the options are correct, choose option E as your answer.</strong></p><br><p>Research indicates that the integration of (A) <strong>mindfulness</strong> practices into educational (B) <strong>curricula </strong>can significantly enhance students' (C) <strong>emotional</strong> well-being and academic performance.</p>", "options": ["<p>only a</p>", "<p>only b</p>", "<p>only c</p>", "<p>both a and c</p>", "<p>None of the above</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>Research indicates that the integration of <strong>mindfulness</strong> practices into educational <strong>curricula </strong>can significantly enhance students' <strong>emotional</strong> well-being and academic performance.</p>"}, {"question": "<p><strong>Given below are a few questions with three words highlighted in each of them. You have to find the word(s) which is/are inappropriate as per the context of the sentence. If none of the options are correct, choose option E as your answer.</strong></p><br><p>The cultural (A) <strong>reniassance</strong> of the 21st century is marked by a resurgence of interest in (B) <strong>articanal</strong> craftsmanship, reflecting a collective yearning for authenticity in a rapidly (C) <strong>digitizing </strong>world.</p>", "options": ["<p>only a</p>", "<p>only b</p>", "<p>only c</p>", "<p>both a and b</p>", "<p>None of the above</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The cultural <strong>renaissance</strong> of the 21st century is marked by a resurgence of interest in <strong>artisanal</strong> craftsmanship, reflecting a collective yearning for authenticity in a rapidly <strong>digitizing </strong>world.</p>"}, {"question": "<p><strong>In each of the questions given below an incomplete sentence which must be filled/completed with one of the sentences given below.  Choose the correct option and complete the given sentences.</strong></p><br><p><strong>Intense heatwave conditions in many parts of the country, coupled with growing affluence, _______________________.</strong></p>", "options": ["<p>Are leading to a decrease in electricity consumption</p>", "<p>Have caused a decrease in demand for cooling systems</p>", "<p>Are driving up AC sales</p>", "<p>Are encouraging people to rely more on natural cooling methods</p>", "<p>Have resulted in a surplus of air conditioning units in the market</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The correct answer, \"c) Are driving up AC sales,\" is supported by the logical connection between intense heatwave conditions and increased sales of air conditioning units. As temperatures rise, people are more likely to purchase AC units to cope with the heat.</p>\n<p><strong>Option a). </strong>is incorrect because intense heatwaves typically lead to an increase, not a decrease, in electricity consumption due to the higher demand for cooling.</p>\n<p><strong>Option b).</strong> is incorrect because growing affluence and intense heatwaves are more likely to increase, rather than decrease, the demand for cooling systems.</p>\n<p><strong>Option d).</strong> is incorrect because intense heatwaves and growing affluence would likely encourage people to rely more on air conditioning rather than natural cooling methods.</p>\n<p><strong>Option e).</strong> is incorrect because intense heatwaves and growing affluence would not result in a surplus of air conditioning units in the market; rather, they would likely increase demand for them.</p>\n<p>In summary, option c) is the correct and relevant answer as it aligns with the context of the sentence.</p>"}, {"question": "<p><strong>In each of the questions given below an incomplete sentence which must be filled/completed with one of the sentences given below.  Choose the correct option and complete the given sentences.</strong></p><br><p><strong>The company decided to implement new safety protocols to ________________.</strong></p>", "options": ["<p>reduce workplace accidents</p>", "<p>increase employee satisfaction</p>", "<p>improve customer service</p>", "<p>enhance product quality</p>", "<p>none of the above</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>a). reduce workplace accidents:</strong> This option suggests that the implementation of new safety protocols aims to decrease the occurrence of workplace accidents. Introducing safety measures and procedures can indeed help mitigate risks and create a safer work environment for employees, thereby reducing the likelihood of accidents.</p>\n<p><strong>b). increase employee satisfaction:</strong> This option implies that the implementation of new safety protocols is intended to boost employee satisfaction. While safety protocols can contribute to employees feeling valued and cared for by their employer, directly impacting satisfaction, it may not be the primary reason for implementing such protocols.</p>\n<p><strong>c). improve customer service:</strong> This option implies that the implementation of new safety protocols is intended to enhance customer service. While ensuring a safe working environment indirectly contributes to overall organizational effectiveness, it may not directly impact customer service, unless safety incidents directly affect product quality or service delivery.</p>\n<p><strong>d). enhance product quality: </strong>This option suggests that the implementation of new safety protocols aims to improve the quality of the company's products. While safety protocols may indirectly contribute to product quality by fostering a culture of excellence and attention to detail, the primary focus is typically on ensuring the safety and well-being of employees rather than directly impacting product quality.</p>\n<p>In summary, option (a) \"reduce workplace accidents\" appears to be the most directly relevant and comprehensive explanation. Implementing new safety protocols is typically done with the primary objective of safeguarding employees and minimizing the occurrence of workplace accidents, thereby promoting a safe and healthy work environment.</p>"}, {"question": "<p><strong>In each of the questions given below an incomplete sentence which must be filled/completed with one of the sentences given below.  Choose the correct option and complete the given sentences.</strong></p><br><p><strong>Non-voting is on the rise in India and even across Europe and advanced economies, possibly suggesting that often _______________________.</strong></p>", "options": ["<p>voters' voices go unheard and unheeded</p>", "<p>Election turnout rates are steadily increasing</p>", "<p>Political awareness among citizens is at an all-time high</p>", "<p>Governments are effectively addressing citizens' concerns</p>", "<p>Civic engagement is at its peak</p>"], "correctIndex": 0, "solution": "<p><strong>Answer:</strong><strong> A</strong></p>\n<p>The correct answer is \"a) voters' voices go unheard and unheeded,\" reflects the logical inference that the rise in non-voting could be a result of voters feeling disenchanted or disillusioned with the political process, perceiving that their voices are not being considered by political leaders.</p>\n<p><strong>Option b).</strong> is incorrect because the statement suggests the opposite; that election turnout rates are increasing, which would indicate higher political participation rather than non-voting.</p>\n<p><strong>Option c).</strong> is incorrect because if political awareness among citizens were at an all-time high, it would likely lead to increased, rather than decreased, voter turnout.</p>\n<p><strong>Option d).</strong> is incorrect because if governments were effectively addressing citizens' concerns, it would likely result in higher voter turnout, not an increase in non-voting.</p>\n<p><strong>Option e). </strong>is incorrect because if civic engagement were at its peak, it would likely lead to increased political participation, including higher voter turnout.</p>\n<p>Therefore, option A is the correct answer.</p>"}, {"question": "<p><strong>In each of the questions given below an incomplete sentence which must be filled/completed with one of the sentences given below.  Choose the correct option and complete the given sentences.</strong></p><br><p><strong>The teacher emphasized the importance of critical thinking skills in order to ______________.</strong></p>", "options": ["<p>enhance academic performance</p>", "<p>improve memory retention</p>", "<p>develop problem-solving abilities</p>", "<p>encourage teamwork</p>", "<p>none of the above</p>"], "correctIndex": 2, "solution": "<p><strong>Answer:</strong><strong> C</strong></p>\n<p><strong>a). enhance academic performance:</strong> This option suggests that the teacher emphasized critical thinking skills with the aim of improving students' academic performance. While critical thinking can certainly contribute to better academic outcomes by helping students analyze information, evaluate arguments, and make reasoned judgments, it may not be the sole reason emphasized by the teacher.</p>\n<p><strong>b). improve memory retention:</strong> This option implies that the teacher stressed critical thinking skills to enhance students' ability to remember information. While critical thinking can indirectly support memory retention by promoting deeper understanding and engagement with the material, memory retention might not be the primary focus of emphasizing critical thinking.</p>\n<p><strong>c).</strong> <strong>develop problem-solving abilities:</strong> This option implies that the teacher emphasized critical thinking skills to help students become better problem solvers. Critical thinking involves analyzing and evaluating information to make informed decisions, which aligns closely with problem-solving abilities.</p>\n<p><strong>d). encourage teamwork:</strong> This option suggests that the teacher emphasized critical thinking skills to promote teamwork among students. While critical thinking can indirectly support effective teamwork by facilitating communication, collaboration, and collective problem-solving, it may not be the primary reason emphasized by the teacher.</p>\n<p>In summary, option (c) \"develop problem-solving abilities\" seems to be the most appropriate explanation. Critical thinking skills are often emphasized in education to empower students to analyze complex situations, identify solutions, and make informed decisions, thereby enhancing their problem-solving abilities, which are valuable both academically and in real-life scenarios.</p>"}, {"question": "<p><strong>In each of the questions given below an incomplete sentence which must be filled/completed with one of the sentences given below.  Choose the correct option and complete the given sentences.</strong></p><br><p><strong>The company implemented a new employee wellness program to ________________.</strong></p>", "options": ["<p>Boost morale and productivity among employees</p>", "<p>Reduce healthcare costs for the company</p>", "<p>Decrease employee turnover rates</p>", "<p>Expand the company's market share</p>", "<p>Streamline administrative processes</p>"], "correctIndex": 0, "solution": "<p><strong>Answer:</strong><strong> A</strong></p>\n<p><strong>a). Boost morale and productivity among employees: </strong>This option suggests that the implementation of a new employee wellness program aims to enhance employee morale and productivity. Wellness programs often include initiatives such as fitness activities, stress management resources, and health education, which can contribute to improved employee well-being, job satisfaction, and performance.</p>\n<p><strong>b). Reduce healthcare costs for the company:</strong> While employee wellness programs can potentially lead to cost savings for companies by promoting healthier lifestyles and reducing the risk of chronic illnesses, their primary objective is typically to support employee health and well-being rather than directly focusing on reducing healthcare costs for the company.</p>\n<p><strong>c). Decrease employee turnover rates: </strong>While a well-designed employee wellness program can contribute to employee retention by creating a positive work environment and promoting employee satisfaction, its primary goal is not necessarily to directly decrease turnover rates, as turnover is influenced by various factors beyond wellness initiatives.</p>\n<p><strong>d). Expand the company's market share:</strong> Employee wellness programs are primarily internal initiatives aimed at improving the health, well-being, and productivity of existing employees. While a healthier and more engaged workforce may indirectly contribute to the company's overall success and competitiveness, the primary focus is not on expanding market share.</p>\n<p><strong>e). Streamline administrative processes:</strong> Employee wellness programs are typically focused on promoting employee health and well-being rather than streamlining administrative processes within the company. While wellness initiatives may involve administrative tasks such as program implementation and tracking participation, their primary objective is not to streamline broader administrative processes.</p>\n<p>In summary, option (a) \"Boost morale and productivity among employees\" is the correct explanation for why the company implemented the new employee wellness program. Such programs are often introduced to enhance employee well-being, job satisfaction, and performance, leading to improved morale and productivity within the workforce.</p>"}, {"question": "<p><strong>Five statements are given below, which are jumbled in any random order. These statements will form a coherent and meaningful paragraph, when arranged in the correct sequence. Arrange the each sentence in the right order and form a coherent paragraph along with answer the questions that follow.</strong></p>\n<p><strong>A).</strong> Uttarakhand's Kumaon Division Commissioner, Deepak Rawat, <strong><u>confirmed</u></strong> that the death toll in the bus accident has risen to 36.</p>\n<p><strong>B).</strong> A senior official said that 36 people were (P)/deep gorge in Uttarakhand's Almora district.(Q)/ killed and several others were injured (R)/on Monday when a bus fell into a (S)</p>\n<p><strong>C).</strong> Chief Minister Pushkar Singh Dhami announced a compensation of Rs 4 lakh for the next of those killed in the accident and a financial assistance of Rs one lakh for the injured, according to an official statement.</p>\n<p><strong>D).</strong> The bus was going from Pauri to Ramnagar when the accident took place at Marchula in Almora, added District Magistrate Alok Kumar Pandey, about 60 passengers were in the bus when it fell into the 200-metre deep gorge, Pandey said.</p>\n<p><strong>E).</strong> Search operations are ongoing at the site of the ______________________ bus accident, as emergency responders work tirelessly to locate and assist any remaining survivors.</p><br><p><strong>Rearrange the parts P, Q, R and S in Sentence (B) to make it meaningful.</strong></p>", "options": ["<p>RQSP</p>", "<p>PRSQ</p>", "<p>RPQS</p>", "<p>SPRQ</p>", "<p>RSPQ</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>P is the first statement to kick off the sentence as it gives the basic introduction to the statement of senior official, Second is R which explains about the count of people who were killed and many others were injured. Third is S which shows the day in which the incident happened. Last is Q, which ends the sentence with the information of location of the incident. (continuation of S).</p>\n<p><strong>The sentence formed:</strong> A senior official said that 36 people were killed and several others were injured on Monday when a bus fell into a deep gorge in Uttarakhand's Almora district.</p>"}, {"question": "<p><strong>Five statements are given below, which are jumbled in any random order. These statements will form a coherent and meaningful paragraph, when arranged in the correct sequence. Arrange the each sentence in the right order and form a coherent paragraph along with answer the questions that follow.</strong></p>\n<p><strong>A).</strong> Uttarakhand's Kumaon Division Commissioner, Deepak Rawat, <strong><u>confirmed</u></strong> that the death toll in the bus accident has risen to 36.</p>\n<p><strong>B).</strong> A senior official said that 36 people were (P)/deep gorge in Uttarakhand's Almora district.(Q)/ killed and several others were injured (R)/on Monday when a bus fell into a (S)</p>\n<p><strong>C).</strong> Chief Minister Pushkar Singh Dhami announced a compensation of Rs 4 lakh for the next of those killed in the accident and a financial assistance of Rs one lakh for the injured, according to an official statement.</p>\n<p><strong>D).</strong> The bus was going from Pauri to Ramnagar when the accident took place at Marchula in Almora, added District Magistrate Alok Kumar Pandey, about 60 passengers were in the bus when it fell into the 200-metre deep gorge, Pandey said.</p>\n<p><strong>E).</strong> Search operations are ongoing at the site of the ______________________ bus accident, as emergency responders work tirelessly to locate and assist any remaining survivors.</p><br><p><strong>Which of the following will be the correct sequence after arrangement?</strong></p>", "options": ["<p>DBECA</p>", "<p>EDCAB</p>", "<p>BDAEC</p>", "<p>ADECB</p>", "<p>CABED</p>"], "correctIndex": 2, "solution": "<p><strong>Answer:</strong><strong> C</strong></p>\n<p>B is the first statement to kick off the sentence as it gives the basic introduction of the statement of senior official which explains the bus accident's location and the death toll of the people who were killed and injured, Second is D which explains that the bus was going from Pauri to Ramnagar when the incident happened and about 60 passengers inside the bus were fell into the 200 m deep gorge. Third is A, which mentions the confirmation of the death toll's rise by the Uttarakhand's Kumaon Division Commisioner, Deepak Rawat. Fourth is E which specified the ongoing search operations at the site where the bus accident happened and the tireless work of emergency workers to assist remaining survivors. Last is C, which ends the sentence with information that CM Pushkar Singh announced a compensation of four lakh rupees for the kith and kins of people who were killed in the incident and one lakh rupees for the people who were injured.(continuation of E).Hence, the correct sequence after the arrangement is <strong>BDAEC</strong>.</p>"}, {"question": "<p><strong>Five statements are given below, which are jumbled in any random order. These statements will form a coherent and meaningful paragraph, when arranged in the correct sequence. Arrange the each sentence in the right order and form a coherent paragraph along with answer the questions that follow.</strong></p>\n<p><strong>A).</strong> Uttarakhand's Kumaon Division Commissioner, Deepak Rawat, <strong><u>confirmed</u></strong> that the death toll in the bus accident has risen to 36.</p>\n<p><strong>B).</strong> A senior official said that 36 people were (P)/deep gorge in Uttarakhand's Almora district.(Q)/ killed and several others were injured (R)/on Monday when a bus fell into a (S)</p>\n<p><strong>C).</strong> Chief Minister Pushkar Singh Dhami announced a compensation of Rs 4 lakh for the next of those killed in the accident and a financial assistance of Rs one lakh for the injured, according to an official statement.</p>\n<p><strong>D).</strong> The bus was going from Pauri to Ramnagar when the accident took place at Marchula in Almora, added District Magistrate Alok Kumar Pandey, about 60 passengers were in the bus when it fell into the 200-metre deep gorge, Pandey said.</p>\n<p><strong>E).</strong> Search operations are ongoing at the site of the ______________________ bus accident, as emergency responders work tirelessly to locate and assist any remaining survivors.</p><br><p>Which of the following expresses the <strong>best meaning</strong> of the highlighted word \"<strong>confirmed</strong>\" given in the sentence (A) ?</p>", "options": ["<p>opposing</p>", "<p>antagonistic</p>", "<p>revised</p>", "<p>accepted</p>", "<p>refusal</p>"], "correctIndex": 3, "solution": "<p><strong>Answer:</strong><strong> D</strong></p>\n<p>As the sentence talks about the acceptance of Uttarakhand's Kumaon Division Commissioner, Deepak Rawat about the death toll in the bus accident, hence, the word \"accepted\" mentioned in Option D makes the best suitable synonym word as per the context. Therefore, Option D would be the best choice.</p>\n<p>Confirmed (V) - to approve someone or something officially by formal agreement.</p>"}, {"question": "<p><strong>Five statements are given below, which are jumbled in any random order. These statements will form a coherent and meaningful paragraph, when arranged in the correct sequence. Arrange the each sentence in the right order and form a coherent paragraph along with answer the questions that follow.</strong></p>\n<p><strong>A).</strong> Uttarakhand's Kumaon Division Commissioner, Deepak Rawat, <strong><u>confirmed</u></strong> that the death toll in the bus accident has risen to 36.</p>\n<p><strong>B).</strong> A senior official said that 36 people were (P)/deep gorge in Uttarakhand's Almora district.(Q)/ killed and several others were injured (R)/on Monday when a bus fell into a (S)</p>\n<p><strong>C).</strong> Chief Minister Pushkar Singh Dhami announced a compensation of Rs 4 lakh for the next of those killed in the accident and a financial assistance of Rs one lakh for the injured, according to an official statement.</p>\n<p><strong>D).</strong> The bus was going from Pauri to Ramnagar when the accident took place at Marchula in Almora, added District Magistrate Alok Kumar Pandey, about 60 passengers were in the bus when it fell into the 200-metre deep gorge, Pandey said.</p>\n<p><strong>E).</strong> Search operations are ongoing at the site of the ______________________ bus accident, as emergency responders work tirelessly to locate and assist any remaining survivors.</p><br><p><strong>Which of the following expresses the best suitable word for the blank given in the sentence (E) ?</strong></p>", "options": ["<p>devastating</p>", "<p>general</p>", "<p>proximity</p>", "<p>castigate</p>", "<p>rearrange</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>As the sentence talks about the ongoing search operations in the site of damaged bus accident happened, the usage of the word \"devastating\" in Option A makes it contextually correct as per the context. Therefore, Option A would be the best choice.</p>\n<p>Devastating (Adj) - causing a lot of damage or destruction.</p>"}, {"question": "<p><strong>Five statements are given below, which are jumbled in any random order. These statements will form a coherent and meaningful paragraph, when arranged in the correct sequence. Arrange the each sentence in the right order and form a coherent paragraph along with answer the questions that follow.</strong></p>\n<p><strong>A).</strong> Uttarakhand's Kumaon Division Commissioner, Deepak Rawat, <strong><u>confirmed</u></strong> that the death toll in the bus accident has risen to 36.</p>\n<p><strong>B).</strong> A senior official said that 36 people were (P)/deep gorge in Uttarakhand's Almora district.(Q)/ killed and several others were injured (R)/on Monday when a bus fell into a (S)</p>\n<p><strong>C).</strong> Chief Minister Pushkar Singh Dhami announced a compensation of Rs 4 lakh for the next of those killed in the accident and a financial assistance of Rs one lakh for the injured, according to an official statement.</p>\n<p><strong>D).</strong> The bus was going from Pauri to Ramnagar when the accident took place at Marchula in Almora, added District Magistrate Alok Kumar Pandey, about 60 passengers were in the bus when it fell into the 200-metre deep gorge, Pandey said.</p>\n<p><strong>E).</strong> Search operations are ongoing at the site of the ______________________ bus accident, as emergency responders work tirelessly to locate and assist any remaining survivors.</p><br><p><strong>Which of the following options would be the penultimate sentence of the given sentences after rearrangement ?</strong></p>", "options": ["<p>A</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>", "<p>B</p>"], "correctIndex": 3, "solution": "<p><strong>Answer:</strong><strong> D</strong></p>\n<p>B is the first statement to kick off the sentence as it gives the basic introduction of the statement of senior official which explains the bus accident's location and the death toll of the people who were killed and injured, Second is D which explains that the bus was going from Pauri to Ramnagar when the incident happened and about 60 passengers inside the bus were fell into the 200 m deep gorge. Third is A, which mentions the confirmation of the death toll's rise by the Uttarakhand's Kumaon Division Commisioner, Deepak Rawat. Fourth is E which specified the ongoing search operations at the site where the bus accident happened and the tireless work of emergency workers to assist remaining survivors. Last is C, which ends the sentence with information that CM Pushkar Singh announced a compensation of four lakh rupees for the kith and kins of people who were killed in the incident and one lakh rupees for the people who were injured.(continuation of E)</p>"}, {"question": "<p><strong>Find the erroneous part (if any).</strong></p><br><p><strong>A).</strong> Despite being warned about the</p>\n<p><strong>B).</strong> consequences,Alex proceeded with</p>\n<p><strong>C).</strong> the risky investment,believing it will</p>\n<p><strong>D).</strong> yield high returns in the long run.</p>\n<p><strong>E).</strong> No error</p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The verb \"will yield\" should be replaced with \"<strong>would yield</strong>\" to maintain the correct sequence of tenses after the past participle \"believing.\" The corrected sentence is:</p>\n<p>“Despite being warned about the consequences, Alex proceeded with the risky investment, believing it would yield high returns in the long run.”</p>"}, {"question": "<p><strong>Find the erroneous part (if any).</strong></p><br><p><strong>A).</strong> After a long and exhausting day at work,</p>\n<p><strong>B).</strong> Sarah returned home to find her dog</p>\n<p><strong>C).</strong> waiting eagerly at the door,</p>\n<p><strong>D).</strong> wagging its tail and barking happily.</p>\n<p><strong>E).</strong> No error</p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>All parts of the sentence are grammatically correct. There are no errors present.</p>"}, {"question": "<p><strong>Find the erroneous part (if any).</strong></p><br><p><strong>A).</strong> The Programme was organized by</p>\n<p><strong>B).</strong> the health department in the</p>\n<p><strong>C).</strong> message that dengue can be</p>\n<p><strong>D).</strong> controlled with people’s participation.</p>\n<p><strong>E).</strong> No error</p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The error in part B is the preposition \"in.\" The correct preposition should be \"<strong>with</strong>.\" The corrected sentence is:</p>\n<p>“The Programme was organized by the health department with the message that dengue can becontrolled with people’s participation.”</p>"}, {"question": "<p><strong>Find the erroneous part (if any).</strong></p><br><p><strong>A).</strong> Scientific research has shown that</p>\n<p><strong>B).</strong> adopting certain habits can not only</p>\n<p><strong>C).</strong> maintain but boost also our</p>\n<p><strong>D).</strong> intelligence and brainpower.</p>\n<p><strong>E).</strong> No error</p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The phrase \"<strong>boost also</strong>\" is incorrectly ordered. The correct phrase should be \"not only maintain but also boost.\"The corrected sentence is:</p>\n<p>“Scientific research has shown that adopting certain habits can not only maintain but also boost ourintelligence and brainpower.”</p>"}, {"question": "<p><strong>Find the erroneous part (if any).</strong></p><br><p><strong>A).</strong> The Bruhat Bengaluru Mahanagara Palike</p>\n<p><strong>B).</strong> (BBMP) said that they have already swung</p>\n<p><strong>C).</strong> into action to prevent the</p>\n<p><strong>D).</strong> farther spread of the virus.</p>\n<p><strong>E).</strong> No error</p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The word \"farther\" is used incorrectly. \"Farther\" refers to physical distance, whereas \"<strong>further</strong>\" is used for metaphorical or figurative distance. The correct word in this context is \"further.\" The corrected sentence is:</p>\n<p>“The Bruhat Bengaluru Mahanagara Palike (BBMP) said that they have already swung into action to prevent the further spread of the virus.”</p>"}, {"question": "<p><strong>The following passage given below gives information on which questions have been given. Some words and phrases might be highlighted as questions based on them might have been formed. You must read the passage carefully and answer the questions that follow:</strong></p>\n<p>Over the centuries, the Russian and Austro-Hungarian Empires, Poland, and Lithuania have all wielded jurisdiction over Ukraine, which first asserted its modern independence in 1917, with the formation of the Ukrainian People’s Republic. Russia soon wrested back control of Ukraine, making it part of the newly established Soviet Union and retaining power in the region until World War II, when Germany invaded. The debate over how to remember this wartime history, as well as its implications for Ukrainian nationalism and independence, is key to understanding the current conflict.</p>\n<p>In Putin’s telling, the modern Ukrainian independence movement began not in 1917 but during World War II. Under the German occupation of Ukraine, between 1941 and 1944, some Ukrainian independence fighters aligned themselves with the Nazis, whom they viewed as saviours from Soviet oppression. Putin has drawn on this period in history to portray any Ukrainian push for sovereignty as a Nazi endeavor, says Markian Dobczansky, a historian at Harvard University’s Ukrainian Research Institute. “It’s really just a stunningly cynical attempt to fight an information war and influence people's opinions,” he adds.</p>\n<p>Dobczansky is among a group of scholars who have publicly challenged Putin’s version of the Nazi occupation of Ukraine and the years of Soviet rule it’s sandwiched between. Almost all of these experts begin their accounts with the fall of the Russian Empire, when tens of thousands of Ukrainians fought against the Bolshevik Red Army to establish the Ukrainian People’s Republic. Ukrainians continued to fight for independence until 1922, when they were defeated by the Soviets and became the Ukrainian Soviet Republic of the Union of Soviet Socialist Republics (U.S.S.R.). <strong><em>By leaving out Ukraine’s short-lived but hard-fought period of independence in the early 20th century, Putin overlooks the country’s sovereignty, says Dobczansky.</em></strong></p>\n<p>Also omitted from this version of events are the genocide and suppression that took place under Soviet rule—most famously the Great Famine. Holodomor, which fuses the Ukrainian words for starvation and inflicting death, claimed the lives of around 3.9 million people, or approximately 13 percent of the Ukrainian population, in the early 1930s. A human-made famine, it was the direct result of Soviet policies aimed at punishing Ukrainian farmers who fought Soviet mandates to collectivize. The Soviets also waged an intense “Russification” campaign, persecuting Ukraine’s cultural elite and elevating Russian language and culture above all others.</p>\n<p>When Germany invaded in 1941, some Ukrainians, especially those in western Ukraine, saw them as liberators, says Oxana Shevel, a political scientist at Tufts University. The Ukrainians didn’t particularly want to live under the Germans so much as escape the Soviets, adds Shevel, who is the president of the non-profit educational organization American Association for Ukrainian Studies. “The broader objective was to establish an independent state, but in the process, [Ukrainians] also engaged in participation in the Holocaust,” she says.</p>\n<p>The question for Shevel is how to treat this history. From the Soviet point of view that Putin still embraces, it’s simple, she says: The Holocaust aside, Ukrainian nationalists were “bad guys” because “they fought the Soviet state.” Putin and other critics often <strong>draw on</strong> Ukrainians’ wartime collaboration with the Nazis to baselessly characterize the modern country as a Nazi nation; in a February 24 speech, the Russian president deemed the “demilitarization and de-Nazification of Ukraine” key goals of the invasion.</p><br><p><strong>What made Ukraine consider Germany a ‘Liberator’?</strong></p>", "options": ["<p>Germany protected Ukraine from the Soviets during the Holocaust</p>", "<p>The fact that they anyhow wanted freedom from the Soviet even if that meant to live under the Germans</p>", "<p>Some Ukrainian independence fighters had aligned themselves with the Nazi leaders</p>", "<p>The real aim behind the German invasion of Ukraine was their emancipation from the Soviet</p>", "<p>All of the above</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>In order to understand the answer to this question, it is important that we go through the lines given below from the passage:</p>\n<p><em>When Germany invaded in 1941, some Ukrainians, especially those in western Ukraine, <strong>saw them as liberators</strong>, says Oxana Shevel, a political scientist at Tufts University. The Ukrainians didn’t particularly want to live under the Germans <strong>so much as escape the Soviets.</strong></em></p>\n<p>The above lines, especially in the highlighted portions help us understand that even when the Ukrainians were being invaded by the Germans, they considered them to be their liberators as they felt it was better to live under the German rule than to live under the Soviets.</p>\n<p>This meaning can be understood very clearly from option (b).</p>"}, {"question": "<p><strong>The following passage given below gives information on which questions have been given. Some words and phrases might be highlighted as questions based on them might have been formed. You must read the passage carefully and answer the questions that follow:</strong></p>\n<p>Over the centuries, the Russian and Austro-Hungarian Empires, Poland, and Lithuania have all wielded jurisdiction over Ukraine, which first asserted its modern independence in 1917, with the formation of the Ukrainian People’s Republic. Russia soon wrested back control of Ukraine, making it part of the newly established Soviet Union and retaining power in the region until World War II, when Germany invaded. The debate over how to remember this wartime history, as well as its implications for Ukrainian nationalism and independence, is key to understanding the current conflict.</p>\n<p>In Putin’s telling, the modern Ukrainian independence movement began not in 1917 but during World War II. Under the German occupation of Ukraine, between 1941 and 1944, some Ukrainian independence fighters aligned themselves with the Nazis, whom they viewed as saviours from Soviet oppression. Putin has drawn on this period in history to portray any Ukrainian push for sovereignty as a Nazi endeavor, says Markian Dobczansky, a historian at Harvard University’s Ukrainian Research Institute. “It’s really just a stunningly cynical attempt to fight an information war and influence people's opinions,” he adds.</p>\n<p>Dobczansky is among a group of scholars who have publicly challenged Putin’s version of the Nazi occupation of Ukraine and the years of Soviet rule it’s sandwiched between. Almost all of these experts begin their accounts with the fall of the Russian Empire, when tens of thousands of Ukrainians fought against the Bolshevik Red Army to establish the Ukrainian People’s Republic. Ukrainians continued to fight for independence until 1922, when they were defeated by the Soviets and became the Ukrainian Soviet Republic of the Union of Soviet Socialist Republics (U.S.S.R.). <strong><em>By leaving out Ukraine’s short-lived but hard-fought period of independence in the early 20th century, Putin overlooks the country’s sovereignty, says Dobczansky.</em></strong></p>\n<p>Also omitted from this version of events are the genocide and suppression that took place under Soviet rule—most famously the Great Famine. Holodomor, which fuses the Ukrainian words for starvation and inflicting death, claimed the lives of around 3.9 million people, or approximately 13 percent of the Ukrainian population, in the early 1930s. A human-made famine, it was the direct result of Soviet policies aimed at punishing Ukrainian farmers who fought Soviet mandates to collectivize. The Soviets also waged an intense “Russification” campaign, persecuting Ukraine’s cultural elite and elevating Russian language and culture above all others.</p>\n<p>When Germany invaded in 1941, some Ukrainians, especially those in western Ukraine, saw them as liberators, says Oxana Shevel, a political scientist at Tufts University. The Ukrainians didn’t particularly want to live under the Germans so much as escape the Soviets, adds Shevel, who is the president of the non-profit educational organization American Association for Ukrainian Studies. “The broader objective was to establish an independent state, but in the process, [Ukrainians] also engaged in participation in the Holocaust,” she says.</p>\n<p>The question for Shevel is how to treat this history. From the Soviet point of view that Putin still embraces, it’s simple, she says: The Holocaust aside, Ukrainian nationalists were “bad guys” because “they fought the Soviet state.” Putin and other critics often <strong>draw on</strong> Ukrainians’ wartime collaboration with the Nazis to baselessly characterize the modern country as a Nazi nation; in a February 24 speech, the Russian president deemed the “demilitarization and de-Nazification of Ukraine” key goals of the invasion.</p><br><p><strong>What can be understood from the last line of the passage?</strong></p>", "options": ["<p>As the Ukrainians became an indirect part of the Holocaust, Putin calls them Nazis and wants to demilitarise the entire country</p>", "<p>Putin&rsquo;s consideration of the modern Ukraine as a pro-Nazi country is logical as he is using events from the history to justify his present actions</p>", "<p>Putin has formulated two goals that he uses against Ukraine to justify his invasion of Ukraine as deemed and necessary</p>", "<p>During WWII, Ukrainian nationalists saw the Nazis as liberators from Soviet oppression. Now, Russia is using that chapter to paint Ukraine as a Nazi nation.</p>", "<p>The Russian President feels the world will believe whatever he has to say about the history of the two countries</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The Holocaust is being mentioned in the second last line and the question is specifically expecting us to make inferences from the last line. Also, Putin’s point of view is not constrained to the Ukrainians joining the Holocaust but rather the Ukrainians’ tilting towards the Nazis with a goal of independence from Russia. So, these two logics help us cancel the first option outrightly.</p>\n<p>The second option goes wrong where it says Putin’s consideration was logical because as per the last line, that has been termed as baseless.</p>\n<p>Option (c) doesn’t answer the reason for the required question.</p>\n<p>And, (d) is the most logical choice as we can very well understand that Putin is using examples and references from history to paint a picture about Ukraine that many are unaware of.</p>"}, {"question": "<p><strong>The following passage given below gives information on which questions have been given. Some words and phrases might be highlighted as questions based on them might have been formed. You must read the passage carefully and answer the questions that follow:</strong></p>\n<p>Over the centuries, the Russian and Austro-Hungarian Empires, Poland, and Lithuania have all wielded jurisdiction over Ukraine, which first asserted its modern independence in 1917, with the formation of the Ukrainian People’s Republic. Russia soon wrested back control of Ukraine, making it part of the newly established Soviet Union and retaining power in the region until World War II, when Germany invaded. The debate over how to remember this wartime history, as well as its implications for Ukrainian nationalism and independence, is key to understanding the current conflict.</p>\n<p>In Putin’s telling, the modern Ukrainian independence movement began not in 1917 but during World War II. Under the German occupation of Ukraine, between 1941 and 1944, some Ukrainian independence fighters aligned themselves with the Nazis, whom they viewed as saviours from Soviet oppression. Putin has drawn on this period in history to portray any Ukrainian push for sovereignty as a Nazi endeavor, says Markian Dobczansky, a historian at Harvard University’s Ukrainian Research Institute. “It’s really just a stunningly cynical attempt to fight an information war and influence people's opinions,” he adds.</p>\n<p>Dobczansky is among a group of scholars who have publicly challenged Putin’s version of the Nazi occupation of Ukraine and the years of Soviet rule it’s sandwiched between. Almost all of these experts begin their accounts with the fall of the Russian Empire, when tens of thousands of Ukrainians fought against the Bolshevik Red Army to establish the Ukrainian People’s Republic. Ukrainians continued to fight for independence until 1922, when they were defeated by the Soviets and became the Ukrainian Soviet Republic of the Union of Soviet Socialist Republics (U.S.S.R.). <strong><em>By leaving out Ukraine’s short-lived but hard-fought period of independence in the early 20th century, Putin overlooks the country’s sovereignty, says Dobczansky.</em></strong></p>\n<p>Also omitted from this version of events are the genocide and suppression that took place under Soviet rule—most famously the Great Famine. Holodomor, which fuses the Ukrainian words for starvation and inflicting death, claimed the lives of around 3.9 million people, or approximately 13 percent of the Ukrainian population, in the early 1930s. A human-made famine, it was the direct result of Soviet policies aimed at punishing Ukrainian farmers who fought Soviet mandates to collectivize. The Soviets also waged an intense “Russification” campaign, persecuting Ukraine’s cultural elite and elevating Russian language and culture above all others.</p>\n<p>When Germany invaded in 1941, some Ukrainians, especially those in western Ukraine, saw them as liberators, says Oxana Shevel, a political scientist at Tufts University. The Ukrainians didn’t particularly want to live under the Germans so much as escape the Soviets, adds Shevel, who is the president of the non-profit educational organization American Association for Ukrainian Studies. “The broader objective was to establish an independent state, but in the process, [Ukrainians] also engaged in participation in the Holocaust,” she says.</p>\n<p>The question for Shevel is how to treat this history. From the Soviet point of view that Putin still embraces, it’s simple, she says: The Holocaust aside, Ukrainian nationalists were “bad guys” because “they fought the Soviet state.” Putin and other critics often <strong>draw on</strong> Ukrainians’ wartime collaboration with the Nazis to baselessly characterize the modern country as a Nazi nation; in a February 24 speech, the Russian president deemed the “demilitarization and de-Nazification of Ukraine” key goals of the invasion.</p><br><p><strong>The word ‘Holodomor’ has been used as?</strong></p>", "options": ["<p>Extermination of the Ukrainians</p>", "<p>Killing by Starvation</p>", "<p>Unprecedented-Famine</p>", "<p>Mass murder of the Jews</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The answer can be found in the fourth paragraph. It talks about the way in which a human-famine or a human-made famine took away lives of millions of Ukrainians.</p>\n<p><strong>Holodomor</strong> is a term derived from the Ukrainian words for hunger (holod) and extermination (mor).</p>\n<p>The other options, especially (a) and (c) are both too general and can be eliminated as the main point that cannot be left out is ‘Hunger’ as the deaths due to Hunger are being referred to.</p>\n<p>Option (d) is an explanation to the word ‘Holocaust’ so this option can also be eliminated.</p>"}, {"question": "<p><strong>The following passage given below gives information on which questions have been given. Some words and phrases might be highlighted as questions based on them might have been formed. You must read the passage carefully and answer the questions that follow:</strong></p>\n<p>Over the centuries, the Russian and Austro-Hungarian Empires, Poland, and Lithuania have all wielded jurisdiction over Ukraine, which first asserted its modern independence in 1917, with the formation of the Ukrainian People’s Republic. Russia soon wrested back control of Ukraine, making it part of the newly established Soviet Union and retaining power in the region until World War II, when Germany invaded. The debate over how to remember this wartime history, as well as its implications for Ukrainian nationalism and independence, is key to understanding the current conflict.</p>\n<p>In Putin’s telling, the modern Ukrainian independence movement began not in 1917 but during World War II. Under the German occupation of Ukraine, between 1941 and 1944, some Ukrainian independence fighters aligned themselves with the Nazis, whom they viewed as saviours from Soviet oppression. Putin has drawn on this period in history to portray any Ukrainian push for sovereignty as a Nazi endeavor, says Markian Dobczansky, a historian at Harvard University’s Ukrainian Research Institute. “It’s really just a stunningly cynical attempt to fight an information war and influence people's opinions,” he adds.</p>\n<p>Dobczansky is among a group of scholars who have publicly challenged Putin’s version of the Nazi occupation of Ukraine and the years of Soviet rule it’s sandwiched between. Almost all of these experts begin their accounts with the fall of the Russian Empire, when tens of thousands of Ukrainians fought against the Bolshevik Red Army to establish the Ukrainian People’s Republic. Ukrainians continued to fight for independence until 1922, when they were defeated by the Soviets and became the Ukrainian Soviet Republic of the Union of Soviet Socialist Republics (U.S.S.R.). <strong><em>By leaving out Ukraine’s short-lived but hard-fought period of independence in the early 20th century, Putin overlooks the country’s sovereignty, says Dobczansky.</em></strong></p>\n<p>Also omitted from this version of events are the genocide and suppression that took place under Soviet rule—most famously the Great Famine. Holodomor, which fuses the Ukrainian words for starvation and inflicting death, claimed the lives of around 3.9 million people, or approximately 13 percent of the Ukrainian population, in the early 1930s. A human-made famine, it was the direct result of Soviet policies aimed at punishing Ukrainian farmers who fought Soviet mandates to collectivize. The Soviets also waged an intense “Russification” campaign, persecuting Ukraine’s cultural elite and elevating Russian language and culture above all others.</p>\n<p>When Germany invaded in 1941, some Ukrainians, especially those in western Ukraine, saw them as liberators, says Oxana Shevel, a political scientist at Tufts University. The Ukrainians didn’t particularly want to live under the Germans so much as escape the Soviets, adds Shevel, who is the president of the non-profit educational organization American Association for Ukrainian Studies. “The broader objective was to establish an independent state, but in the process, [Ukrainians] also engaged in participation in the Holocaust,” she says.</p>\n<p>The question for Shevel is how to treat this history. From the Soviet point of view that Putin still embraces, it’s simple, she says: The Holocaust aside, Ukrainian nationalists were “bad guys” because “they fought the Soviet state.” Putin and other critics often <strong>draw on</strong> Ukrainians’ wartime collaboration with the Nazis to baselessly characterize the modern country as a Nazi nation; in a February 24 speech, the Russian president deemed the “demilitarization and de-Nazification of Ukraine” key goals of the invasion.</p><br><p><strong>Which of the following if true, would weaken the picture of Ukraine being painted by Putin?</strong></p>", "options": ["<p>The previous Ukrainian narrative of its independence was one-sided</p>", "<p>Ukraine and Russia have been fighting the information war since ages</p>", "<p>The &ldquo;historical reality&rdquo; of modern-day Ukraine is more complex than its present versions</p>", "<p>Putin simply wants to hold on to a colony that was created way back in 1991</p>", "<p>All options seem to strengthen Putin&rsquo;s contention</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>From the passage we can clearly see that Putin has painted a picture of Ukraine and he is reverberating the same till the world on its side starts believing the same that Ukraine has deep rooted associations and alienations with the Nazis. This tells us that Ukraine has never gotten a chance to put history in a way it wants to. Only Putin’s version of history has been publicised.</p>\n<p>Now, option (a) seems correct when it says ‘one-sided’ but closely if we read, we can see that the option says that Ukraine has painted that narrative which is wrong.</p>\n<p>Option (b) is correct but it does little to weaken Russia’s contention.</p>\n<p>Option (d) is too vague and looks like an assumption as nothing of this sort has been discussed by the author.</p>\n<p>So, the best option would be the second one as it explains that modern-Ukraine’s history is more complex than it appears to be.</p>"}, {"question": "<p><strong>The following passage given below gives information on which questions have been given. Some words and phrases might be highlighted as questions based on them might have been formed. You must read the passage carefully and answer the questions that follow:</strong></p>\n<p>Over the centuries, the Russian and Austro-Hungarian Empires, Poland, and Lithuania have all wielded jurisdiction over Ukraine, which first asserted its modern independence in 1917, with the formation of the Ukrainian People’s Republic. Russia soon wrested back control of Ukraine, making it part of the newly established Soviet Union and retaining power in the region until World War II, when Germany invaded. The debate over how to remember this wartime history, as well as its implications for Ukrainian nationalism and independence, is key to understanding the current conflict.</p>\n<p>In Putin’s telling, the modern Ukrainian independence movement began not in 1917 but during World War II. Under the German occupation of Ukraine, between 1941 and 1944, some Ukrainian independence fighters aligned themselves with the Nazis, whom they viewed as saviours from Soviet oppression. Putin has drawn on this period in history to portray any Ukrainian push for sovereignty as a Nazi endeavor, says Markian Dobczansky, a historian at Harvard University’s Ukrainian Research Institute. “It’s really just a stunningly cynical attempt to fight an information war and influence people's opinions,” he adds.</p>\n<p>Dobczansky is among a group of scholars who have publicly challenged Putin’s version of the Nazi occupation of Ukraine and the years of Soviet rule it’s sandwiched between. Almost all of these experts begin their accounts with the fall of the Russian Empire, when tens of thousands of Ukrainians fought against the Bolshevik Red Army to establish the Ukrainian People’s Republic. Ukrainians continued to fight for independence until 1922, when they were defeated by the Soviets and became the Ukrainian Soviet Republic of the Union of Soviet Socialist Republics (U.S.S.R.). <strong><em>By leaving out Ukraine’s short-lived but hard-fought period of independence in the early 20th century, Putin overlooks the country’s sovereignty, says Dobczansky.</em></strong></p>\n<p>Also omitted from this version of events are the genocide and suppression that took place under Soviet rule—most famously the Great Famine. Holodomor, which fuses the Ukrainian words for starvation and inflicting death, claimed the lives of around 3.9 million people, or approximately 13 percent of the Ukrainian population, in the early 1930s. A human-made famine, it was the direct result of Soviet policies aimed at punishing Ukrainian farmers who fought Soviet mandates to collectivize. The Soviets also waged an intense “Russification” campaign, persecuting Ukraine’s cultural elite and elevating Russian language and culture above all others.</p>\n<p>When Germany invaded in 1941, some Ukrainians, especially those in western Ukraine, saw them as liberators, says Oxana Shevel, a political scientist at Tufts University. The Ukrainians didn’t particularly want to live under the Germans so much as escape the Soviets, adds Shevel, who is the president of the non-profit educational organization American Association for Ukrainian Studies. “The broader objective was to establish an independent state, but in the process, [Ukrainians] also engaged in participation in the Holocaust,” she says.</p>\n<p>The question for Shevel is how to treat this history. From the Soviet point of view that Putin still embraces, it’s simple, she says: The Holocaust aside, Ukrainian nationalists were “bad guys” because “they fought the Soviet state.” Putin and other critics often <strong>draw on</strong> Ukrainians’ wartime collaboration with the Nazis to baselessly characterize the modern country as a Nazi nation; in a February 24 speech, the Russian president deemed the “demilitarization and de-Nazification of Ukraine” key goals of the invasion.</p><br><p><strong>Which of the following can serve as the best title for the given passage?</strong></p>", "options": ["<p>The unknown pages of history</p>", "<p>The Russian Gimmicks to win the war</p>", "<p>The Genocide in Ukraine</p>", "<p>The history behind Russia&rsquo;s invasion of Ukraine</p>", "<p>Ukraine left at the mercy of the West</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>Option (a) can be vast. History is vast and the passage is specific. So, this can be eliminated.</p>\n<p>More than the Russian strategies, the reasons, the historical evidences have been given which can help the reader understand the history behind the present situation of Russia and Ukraine. So, option (b) can also be eliminated.</p>\n<p>The Genocide in Ukraine has been quoted in between the discussion as an example or a reference to throw some light on the atrocities imposed by the Soviet in the past so this is a part of the discussion and not the entire discussion in itself. This cancels option (c) as well.</p>\n<p>The best therefore, is to go with option (d).</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-72)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-72)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-51)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>This year's Nobel Prize in Physiology, or Medicine, awarded to Victor Ambros and Gary Ruvkun, is for their discovery of microRNA, small RNA regulators of gene expression in eukaryotes, and its role in gene regulation after transcription - the process of making an RNA copy (messenger RNA or mRNA) of a gene's DNA sequence - and before cellular machinery is activated for protein production. Before the discovery of microRNAs and their role in gene regulation, it was believed that gene regulation was limited to specialized proteins called transcription factors, which bind to specific regions in DNA and deter- mine which mRNAs are produced. In 1993, using 1 mm long mutant roundworms called C. elegans, the winners of this year's Nobel provided proof that gene regulation is not confined to transcription factors. Instead, regulation by microRNAS occurs at a later stage in the process of gene ex- pression, post-transcription. Despite these seminal findings, it was initially thought that this un- usual mechanism of gene regulation was peculiar to C. elegans and not relevant to more complex organisms, including humans. However, the discovery of another microRNA encoded in a gene present in all organisms indicated that microRNA's role in gene regulation extends beyond roundworms. By 2001, microRNAs were found to be abundant in invertebrates and vertebrates, with some highly conserved across species, suggesting that \"microRNA-mediated post-transcriptional regulation is a general regulatory function\". As per current knowledge, the human genome codes for over 1,000 microRNAs.</p>\n<p>Cancer, diabetes and autoimmune diseases are associated with dysregulated microRNA ex- pression. In the case of cancer, dysregulation may include amplification or deletion of microRNA genes, abnormal transcriptional control of microRNAs, and defects in the microRNA biogenesis machinery. Studies have shown that dysregulated microRNAs affect the biological capabilities that cancer cells acquire during tumour development, including sustaining proliferative signaling, resisting cell death, and activating processes that allow cancer cells to spread in the body. Preliminary studies have also indicated that certain microRNAs can serve as potential biomarkers for human cancer diagnosis, prognosis, and therapeutic targets. It is now known that beyond perturbing immune responses, disruption and dysfunction of microRNAs can initiate the production of autoantibodies and contribute to the pathogenesis of autoimmune diseases, including rheumatoid arthritis and multiple sclerosis. Several microRNA-associated diagnostic biomarkers have already been developed and used clinically, though they have yet to be commercialized. Likewise, candidate drugs targeting microRNAs are currently being tested in clinical trials.</p><br><p><strong>How did the discovery of microRNAs challenge the previously held belief about gene regulation?</strong></p>", "options": ["<p>It showed that gene regulation could occur before transcription</p>", "<p>It demonstrated that only transcription factors were necessary for gene regulation</p>", "<p>It proved that gene regulation does not involve DNA</p>", "<p>It revealed that microRNAs regulated gene expression after transcription</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The passage states that Ambros and Ruvkun's discovery showed that gene regulation also happens after transcription, through microRNAs, not just through transcription factors.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>This year's Nobel Prize in Physiology, or Medicine, awarded to Victor Ambros and Gary Ruvkun, is for their discovery of microRNA, small RNA regulators of gene expression in eukaryotes, and its role in gene regulation after transcription - the process of making an RNA copy (messenger RNA or mRNA) of a gene's DNA sequence - and before cellular machinery is activated for protein production. Before the discovery of microRNAs and their role in gene regulation, it was believed that gene regulation was limited to specialized proteins called transcription factors, which bind to specific regions in DNA and deter- mine which mRNAs are produced. In 1993, using 1 mm long mutant roundworms called C. elegans, the winners of this year's Nobel provided proof that gene regulation is not confined to transcription factors. Instead, regulation by microRNAS occurs at a later stage in the process of gene ex- pression, post-transcription. Despite these seminal findings, it was initially thought that this un- usual mechanism of gene regulation was peculiar to C. elegans and not relevant to more complex organisms, including humans. However, the discovery of another microRNA encoded in a gene present in all organisms indicated that microRNA's role in gene regulation extends beyond roundworms. By 2001, microRNAs were found to be abundant in invertebrates and vertebrates, with some highly conserved across species, suggesting that \"microRNA-mediated post-transcriptional regulation is a general regulatory function\". As per current knowledge, the human genome codes for over 1,000 microRNAs.</p>\n<p>Cancer, diabetes and autoimmune diseases are associated with dysregulated microRNA ex- pression. In the case of cancer, dysregulation may include amplification or deletion of microRNA genes, abnormal transcriptional control of microRNAs, and defects in the microRNA biogenesis machinery. Studies have shown that dysregulated microRNAs affect the biological capabilities that cancer cells acquire during tumour development, including sustaining proliferative signaling, resisting cell death, and activating processes that allow cancer cells to spread in the body. Preliminary studies have also indicated that certain microRNAs can serve as potential biomarkers for human cancer diagnosis, prognosis, and therapeutic targets. It is now known that beyond perturbing immune responses, disruption and dysfunction of microRNAs can initiate the production of autoantibodies and contribute to the pathogenesis of autoimmune diseases, including rheumatoid arthritis and multiple sclerosis. Several microRNA-associated diagnostic biomarkers have already been developed and used clinically, though they have yet to be commercialized. Likewise, candidate drugs targeting microRNAs are currently being tested in clinical trials.</p><br><p><strong>What led researchers to conclude that microRNA-mediated regulation is not specific to C. elegans?</strong></p>", "options": ["<p>The discovery of microRNAs in roundworms only</p>", "<p>The identification of another microRNA encoded in a gene present in all organisms</p>", "<p>The failure to find microRNAs in other species</p>", "<p>The understanding that microRNAs are not conserved across species</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage explains that after finding another microRNA in a gene common to all organisms, scientists realized that microRNA regulation extended beyond C. elegans.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>This year's Nobel Prize in Physiology, or Medicine, awarded to Victor Ambros and Gary Ruvkun, is for their discovery of microRNA, small RNA regulators of gene expression in eukaryotes, and its role in gene regulation after transcription - the process of making an RNA copy (messenger RNA or mRNA) of a gene's DNA sequence - and before cellular machinery is activated for protein production. Before the discovery of microRNAs and their role in gene regulation, it was believed that gene regulation was limited to specialized proteins called transcription factors, which bind to specific regions in DNA and deter- mine which mRNAs are produced. In 1993, using 1 mm long mutant roundworms called C. elegans, the winners of this year's Nobel provided proof that gene regulation is not confined to transcription factors. Instead, regulation by microRNAS occurs at a later stage in the process of gene ex- pression, post-transcription. Despite these seminal findings, it was initially thought that this un- usual mechanism of gene regulation was peculiar to C. elegans and not relevant to more complex organisms, including humans. However, the discovery of another microRNA encoded in a gene present in all organisms indicated that microRNA's role in gene regulation extends beyond roundworms. By 2001, microRNAs were found to be abundant in invertebrates and vertebrates, with some highly conserved across species, suggesting that \"microRNA-mediated post-transcriptional regulation is a general regulatory function\". As per current knowledge, the human genome codes for over 1,000 microRNAs.</p>\n<p>Cancer, diabetes and autoimmune diseases are associated with dysregulated microRNA ex- pression. In the case of cancer, dysregulation may include amplification or deletion of microRNA genes, abnormal transcriptional control of microRNAs, and defects in the microRNA biogenesis machinery. Studies have shown that dysregulated microRNAs affect the biological capabilities that cancer cells acquire during tumour development, including sustaining proliferative signaling, resisting cell death, and activating processes that allow cancer cells to spread in the body. Preliminary studies have also indicated that certain microRNAs can serve as potential biomarkers for human cancer diagnosis, prognosis, and therapeutic targets. It is now known that beyond perturbing immune responses, disruption and dysfunction of microRNAs can initiate the production of autoantibodies and contribute to the pathogenesis of autoimmune diseases, including rheumatoid arthritis and multiple sclerosis. Several microRNA-associated diagnostic biomarkers have already been developed and used clinically, though they have yet to be commercialized. Likewise, candidate drugs targeting microRNAs are currently being tested in clinical trials.</p><br><p><strong>Why is the discovery of microRNAs considered groundbreaking for the understanding of complex organisms, including humans?</strong></p>", "options": ["<p>They regulate vital cellular processes like cancer proliferation and autoimmune responses</p>", "<p>MicroRNAs were previously thought to exist only in simpler organisms</p>", "<p>They were shown to replace transcription factors entirely</p>", "<p>They were proven to have no role in human gene regulation</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The passage mentions that microRNAs play critical roles in regulating processes like cancer development and autoimmune diseases, marking them as essential regulators in complex organisms.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>This year's Nobel Prize in Physiology, or Medicine, awarded to Victor Ambros and Gary Ruvkun, is for their discovery of microRNA, small RNA regulators of gene expression in eukaryotes, and its role in gene regulation after transcription - the process of making an RNA copy (messenger RNA or mRNA) of a gene's DNA sequence - and before cellular machinery is activated for protein production. Before the discovery of microRNAs and their role in gene regulation, it was believed that gene regulation was limited to specialized proteins called transcription factors, which bind to specific regions in DNA and deter- mine which mRNAs are produced. In 1993, using 1 mm long mutant roundworms called C. elegans, the winners of this year's Nobel provided proof that gene regulation is not confined to transcription factors. Instead, regulation by microRNAS occurs at a later stage in the process of gene ex- pression, post-transcription. Despite these seminal findings, it was initially thought that this un- usual mechanism of gene regulation was peculiar to C. elegans and not relevant to more complex organisms, including humans. However, the discovery of another microRNA encoded in a gene present in all organisms indicated that microRNA's role in gene regulation extends beyond roundworms. By 2001, microRNAs were found to be abundant in invertebrates and vertebrates, with some highly conserved across species, suggesting that \"microRNA-mediated post-transcriptional regulation is a general regulatory function\". As per current knowledge, the human genome codes for over 1,000 microRNAs.</p>\n<p>Cancer, diabetes and autoimmune diseases are associated with dysregulated microRNA ex- pression. In the case of cancer, dysregulation may include amplification or deletion of microRNA genes, abnormal transcriptional control of microRNAs, and defects in the microRNA biogenesis machinery. Studies have shown that dysregulated microRNAs affect the biological capabilities that cancer cells acquire during tumour development, including sustaining proliferative signaling, resisting cell death, and activating processes that allow cancer cells to spread in the body. Preliminary studies have also indicated that certain microRNAs can serve as potential biomarkers for human cancer diagnosis, prognosis, and therapeutic targets. It is now known that beyond perturbing immune responses, disruption and dysfunction of microRNAs can initiate the production of autoantibodies and contribute to the pathogenesis of autoimmune diseases, including rheumatoid arthritis and multiple sclerosis. Several microRNA-associated diagnostic biomarkers have already been developed and used clinically, though they have yet to be commercialized. Likewise, candidate drugs targeting microRNAs are currently being tested in clinical trials.</p><br><p><strong>By 2001, what discovery about microRNAs led scientists to consider them as a general regulatory function?</strong></p>", "options": ["<p>MicroRNAs were found to exist only in plants</p>", "<p>Transcription factors were proven irrelevant in gene regulation</p>", "<p>MicroRNAs were found to be abundant in both invertebrates and vertebrates</p>", "<p>MicroRNAs were discovered only in mammals</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The passage explains that by 2001, microRNAs were discovered to be widespread across invertebrates and vertebrates, suggesting a general regulatory function.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>This year's Nobel Prize in Physiology, or Medicine, awarded to Victor Ambros and Gary Ruvkun, is for their discovery of microRNA, small RNA regulators of gene expression in eukaryotes, and its role in gene regulation after transcription - the process of making an RNA copy (messenger RNA or mRNA) of a gene's DNA sequence - and before cellular machinery is activated for protein production. Before the discovery of microRNAs and their role in gene regulation, it was believed that gene regulation was limited to specialized proteins called transcription factors, which bind to specific regions in DNA and deter- mine which mRNAs are produced. In 1993, using 1 mm long mutant roundworms called C. elegans, the winners of this year's Nobel provided proof that gene regulation is not confined to transcription factors. Instead, regulation by microRNAS occurs at a later stage in the process of gene ex- pression, post-transcription. Despite these seminal findings, it was initially thought that this un- usual mechanism of gene regulation was peculiar to C. elegans and not relevant to more complex organisms, including humans. However, the discovery of another microRNA encoded in a gene present in all organisms indicated that microRNA's role in gene regulation extends beyond roundworms. By 2001, microRNAs were found to be abundant in invertebrates and vertebrates, with some highly conserved across species, suggesting that \"microRNA-mediated post-transcriptional regulation is a general regulatory function\". As per current knowledge, the human genome codes for over 1,000 microRNAs.</p>\n<p>Cancer, diabetes and autoimmune diseases are associated with dysregulated microRNA ex- pression. In the case of cancer, dysregulation may include amplification or deletion of microRNA genes, abnormal transcriptional control of microRNAs, and defects in the microRNA biogenesis machinery. Studies have shown that dysregulated microRNAs affect the biological capabilities that cancer cells acquire during tumour development, including sustaining proliferative signaling, resisting cell death, and activating processes that allow cancer cells to spread in the body. Preliminary studies have also indicated that certain microRNAs can serve as potential biomarkers for human cancer diagnosis, prognosis, and therapeutic targets. It is now known that beyond perturbing immune responses, disruption and dysfunction of microRNAs can initiate the production of autoantibodies and contribute to the pathogenesis of autoimmune diseases, including rheumatoid arthritis and multiple sclerosis. Several microRNA-associated diagnostic biomarkers have already been developed and used clinically, though they have yet to be commercialized. Likewise, candidate drugs targeting microRNAs are currently being tested in clinical trials.</p><br><p><strong>How are microRNAs linked to autoimmune diseases?</strong></p>", "options": ["<p>MicroRNAs prevent the production of autoantibodies</p>", "<p>Dysregulated microRNAs contribute to the pathogenesis of autoimmune diseases</p>", "<p>MicroRNAs cure autoimmune diseases like rheumatoid arthritis and multiple sclerosis</p>", "<p>MicroRNAs are not involved in autoimmune diseases</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage highlights that dysregulation and dysfunction of microRNAs can initiate the production of autoantibodies, leading to autoimmune diseases like rheumatoid arthritis and multiple sclerosis.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>This year's Nobel Prize in Physiology, or Medicine, awarded to Victor Ambros and Gary Ruvkun, is for their discovery of microRNA, small RNA regulators of gene expression in eukaryotes, and its role in gene regulation after transcription - the process of making an RNA copy (messenger RNA or mRNA) of a gene's DNA sequence - and before cellular machinery is activated for protein production. Before the discovery of microRNAs and their role in gene regulation, it was believed that gene regulation was limited to specialized proteins called transcription factors, which bind to specific regions in DNA and deter- mine which mRNAs are produced. In 1993, using 1 mm long mutant roundworms called C. elegans, the winners of this year's Nobel provided proof that gene regulation is not confined to transcription factors. Instead, regulation by microRNAS occurs at a later stage in the process of gene ex- pression, post-transcription. Despite these seminal findings, it was initially thought that this un- usual mechanism of gene regulation was peculiar to C. elegans and not relevant to more complex organisms, including humans. However, the discovery of another microRNA encoded in a gene present in all organisms indicated that microRNA's role in gene regulation extends beyond roundworms. By 2001, microRNAs were found to be abundant in invertebrates and vertebrates, with some highly conserved across species, suggesting that \"microRNA-mediated post-transcriptional regulation is a general regulatory function\". As per current knowledge, the human genome codes for over 1,000 microRNAs.</p>\n<p>Cancer, diabetes and autoimmune diseases are associated with dysregulated microRNA ex- pression. In the case of cancer, dysregulation may include amplification or deletion of microRNA genes, abnormal transcriptional control of microRNAs, and defects in the microRNA biogenesis machinery. Studies have shown that dysregulated microRNAs affect the biological capabilities that cancer cells acquire during tumour development, including sustaining proliferative signaling, resisting cell death, and activating processes that allow cancer cells to spread in the body. Preliminary studies have also indicated that certain microRNAs can serve as potential biomarkers for human cancer diagnosis, prognosis, and therapeutic targets. It is now known that beyond perturbing immune responses, disruption and dysfunction of microRNAs can initiate the production of autoantibodies and contribute to the pathogenesis of autoimmune diseases, including rheumatoid arthritis and multiple sclerosis. Several microRNA-associated diagnostic biomarkers have already been developed and used clinically, though they have yet to be commercialized. Likewise, candidate drugs targeting microRNAs are currently being tested in clinical trials.</p><br><p><strong>What is the current status of microRNA-associated diagnostic biomarkers?</strong></p>", "options": ["<p>They have been fully commercialized</p>", "<p>They are still in clinical trials</p>", "<p>They have been developed and are used clinically but not yet commercialized</p>", "<p>They are only theoretical and not yet tested</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The passage states that microRNA-associated diagnostic biomarkers have already been developed and used clinically, but they have yet to be commercialized.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>This year's Nobel Prize in Physiology, or Medicine, awarded to Victor Ambros and Gary Ruvkun, is for their discovery of microRNA, small RNA regulators of gene expression in eukaryotes, and its role in gene regulation after transcription - the process of making an RNA copy (messenger RNA or mRNA) of a gene's DNA sequence - and before cellular machinery is activated for protein production. Before the discovery of microRNAs and their role in gene regulation, it was believed that gene regulation was limited to specialized proteins called transcription factors, which bind to specific regions in DNA and deter- mine which mRNAs are produced. In 1993, using 1 mm long mutant roundworms called C. elegans, the winners of this year's Nobel provided proof that gene regulation is not confined to transcription factors. Instead, regulation by microRNAS occurs at a later stage in the process of gene ex- pression, post-transcription. Despite these seminal findings, it was initially thought that this un- usual mechanism of gene regulation was peculiar to C. elegans and not relevant to more complex organisms, including humans. However, the discovery of another microRNA encoded in a gene present in all organisms indicated that microRNA's role in gene regulation extends beyond roundworms. By 2001, microRNAs were found to be abundant in invertebrates and vertebrates, with some highly conserved across species, suggesting that \"microRNA-mediated post-transcriptional regulation is a general regulatory function\". As per current knowledge, the human genome codes for over 1,000 microRNAs.</p>\n<p>Cancer, diabetes and autoimmune diseases are associated with dysregulated microRNA ex- pression. In the case of cancer, dysregulation may include amplification or deletion of microRNA genes, abnormal transcriptional control of microRNAs, and defects in the microRNA biogenesis machinery. Studies have shown that dysregulated microRNAs affect the biological capabilities that cancer cells acquire during tumour development, including sustaining proliferative signaling, resisting cell death, and activating processes that allow cancer cells to spread in the body. Preliminary studies have also indicated that certain microRNAs can serve as potential biomarkers for human cancer diagnosis, prognosis, and therapeutic targets. It is now known that beyond perturbing immune responses, disruption and dysfunction of microRNAs can initiate the production of autoantibodies and contribute to the pathogenesis of autoimmune diseases, including rheumatoid arthritis and multiple sclerosis. Several microRNA-associated diagnostic biomarkers have already been developed and used clinically, though they have yet to be commercialized. Likewise, candidate drugs targeting microRNAs are currently being tested in clinical trials.</p><br><p><strong>What impact do defects in the microRNA biogenesis machinery have in cancer?</strong></p>", "options": ["<p>They help in tumor suppression</p>", "<p>They contribute to dysregulated microRNA expression, affecting tumor development</p>", "<p>They have no significant impact on cancer</p>", "<p>They eliminate the risk of cancer cells spreading</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage explains that defects in the microRNA biogenesis machinery can lead to dysregulation, affecting key biological processes in cancer cells during tumour development.</p>"}, {"question": "<p><strong>For the following questions, some sentences are given. Arrange the sentences in a meaningful paragraph and also find which of the sentences is out of context. Identify the correct answers for some of the activities given in the sentences. </strong></p>\n<p><strong>A).</strong> The legacy of colonial rule, with its arbitrary borders and divide-and-rule policies, continues to manifest in linguistic, religious, and ethnic tensions that <strong>pervade</strong> the Indian subcontinent.</p>\n<p><strong>B).</strong> In the vibrant tapestry that is New India, <strong>(A)/</strong> the trauma of Partition, <strong>(B)/</strong> the shadows of its colonial past, <strong>(C)/</strong> and the echoes of historical conflicts loom persistently,<strong> (D)/</strong> subtly yet significantly shaping its social and political contours <strong>(E).</strong></p>\n<p><strong>C).</strong> These spectral remnants are not mere footnotes in history; they are active participants in the nation’s present, influencing contemporary identity and communal relations in many ways.</p>\n<p><strong>D).</strong> Acknowledging and engaging with these spectres is crucial for forging a path toward a more inclusive and harmonious society where the lessons of the past inform the decisions of the present and the aspirations for the future.</p>\n<p><strong>E).</strong> In this context, historical hauntings act as a prism through which the complexities of nation-building, amidst diverging narratives and unresolved grievances, are not only highlighted but also interrogated.</p>\n<p><strong>F).</strong> Moreover, the political discourse surrounding these issues often invokes historical figures and events, from the freedom struggle to the Emergency of the 1970s, as points of reference or contention.</p><br><p><strong>Find the suitable Antonym of the word highlighted in bold.</strong></p>", "options": ["<p>deplete</p>", "<p>permeate</p>", "<p>percolate</p>", "<p>proliferate</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer</strong><strong>: A</strong></p>\n<p>The suitable antonym for \"pervade\" is \"deplete.\" So, the answer would be: a) deplete</p>\n<p>In the sentence, it states that the legacy of colonial rule continues to manifest in tensions that pervade the Indian subcontinent. \"Pervade\" means to spread throughout or to be present throughout every part of something. So, the sentence is suggesting that these tensions are widespread and present in various aspects of life across the Indian subcontinent.</p>\n<p>To find the suitable antonym for \"pervade,\" we need a word that means the opposite, indicating a reduction or decrease rather than a widespread presence. Among the options provided: The word <strong>deplete</strong> means to reduce or decrease something, usually in quantity or strength. In the context of the sentence, if tensions were to deplete, it would mean that they are decreasing or diminishing, which is the opposite of pervading or spreading throughout.</p>\n<p><strong>a). deplete:</strong> This means to reduce or decrease something, usually in quantity or strength. In the context of the sentence, if tensions were to deplete, it would mean that they are decreasing or diminishing.</p>\n<p><strong>b). permeate:</strong> This means to spread throughout something, often implying that it fills or saturates the entire space. In the context of the sentence, if tensions were to permeate, it would mean that they are spreading extensively throughout the Indian subcontinent.</p>\n<p><strong>c). percolate:</strong> This means to filter through or spread gradually, usually suggesting a slow and subtle diffusion. In the context of the sentence, if tensions were to percolate, it would mean that they are gradually spreading or seeping into different aspects of the Indian subcontinent.</p>\n<p><strong>d). proliferate:</strong> This means to increase rapidly in number or spread, often implying a rapid and unchecked growth. In the context of the sentence, if tensions were to proliferate, it would mean that they are rapidly increasing or spreading throughout the Indian subcontinent.</p>"}, {"question": "<p><strong>For the following questions, some sentences are given. Arrange the sentences in a meaningful paragraph and also find which of the sentences is out of context. Identify the correct answers for some of the activities given in the sentences. </strong></p>\n<p><strong>A).</strong> The legacy of colonial rule, with its arbitrary borders and divide-and-rule policies, continues to manifest in linguistic, religious, and ethnic tensions that <strong>pervade</strong> the Indian subcontinent.</p>\n<p><strong>B).</strong> In the vibrant tapestry that is New India, <strong>(A)/</strong> the trauma of Partition, <strong>(B)/</strong> the shadows of its colonial past, <strong>(C)/</strong> and the echoes of historical conflicts loom persistently,<strong> (D)/</strong> subtly yet significantly shaping its social and political contours <strong>(E).</strong></p>\n<p><strong>C).</strong> These spectral remnants are not mere footnotes in history; they are active participants in the nation’s present, influencing contemporary identity and communal relations in many ways.</p>\n<p><strong>D).</strong> Acknowledging and engaging with these spectres is crucial for forging a path toward a more inclusive and harmonious society where the lessons of the past inform the decisions of the present and the aspirations for the future.</p>\n<p><strong>E).</strong> In this context, historical hauntings act as a prism through which the complexities of nation-building, amidst diverging narratives and unresolved grievances, are not only highlighted but also interrogated.</p>\n<p><strong>F).</strong> Moreover, the political discourse surrounding these issues often invokes historical figures and events, from the freedom struggle to the Emergency of the 1970s, as points of reference or contention.</p><br><p><strong>Identify the sentence which is out of the central theme of the passage.</strong></p>", "options": ["<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>", "<p>F</p>"], "correctIndex": 4, "solution": "<p><strong>Answer</strong><strong>: E</strong></p>\n<p>The odd one out is Sentence F: \"As people had to choose between one nation and the other during and after Partition, homes were lost and lives were altered forever.\"</p>\n<p>Sentences A to E primarily focus on the lasting impact of colonialism, Partition, and historical conflicts on the Indian subcontinent, emphasizing their influence on contemporary society and the need to address them for a more inclusive future. However, sentence F provides a specific example related to the consequences of Partition, which is more concrete and specific compared to the broader discussion in the other sentences about the ongoing influence of historical events.</p>"}, {"question": "<p><strong>For the following questions, some sentences are given. Arrange the sentences in a meaningful paragraph and also find which of the sentences is out of context. Identify the correct answers for some of the activities given in the sentences. </strong></p>\n<p><strong>A).</strong> The legacy of colonial rule, with its arbitrary borders and divide-and-rule policies, continues to manifest in linguistic, religious, and ethnic tensions that <strong>pervade</strong> the Indian subcontinent.</p>\n<p><strong>B).</strong> In the vibrant tapestry that is New India, <strong>(A)/</strong> the trauma of Partition, <strong>(B)/</strong> the shadows of its colonial past, <strong>(C)/</strong> and the echoes of historical conflicts loom persistently,<strong> (D)/</strong> subtly yet significantly shaping its social and political contours <strong>(E).</strong></p>\n<p><strong>C).</strong> These spectral remnants are not mere footnotes in history; they are active participants in the nation’s present, influencing contemporary identity and communal relations in many ways.</p>\n<p><strong>D).</strong> Acknowledging and engaging with these spectres is crucial for forging a path toward a more inclusive and harmonious society where the lessons of the past inform the decisions of the present and the aspirations for the future.</p>\n<p><strong>E).</strong> In this context, historical hauntings act as a prism through which the complexities of nation-building, amidst diverging narratives and unresolved grievances, are not only highlighted but also interrogated.</p>\n<p><strong>F).</strong> Moreover, the political discourse surrounding these issues often invokes historical figures and events, from the freedom struggle to the Emergency of the 1970s, as points of reference or contention.</p><br><p><strong>Find the correct rearrangement of the sentence (B) which is divided into five parts.</strong></p>", "options": ["<p>ABCDE</p>", "<p>ACDBE</p>", "<p>ABDCE</p>", "<p>ADBCE</p>", "<p>ACBDE</p>"], "correctIndex": 4, "solution": "<p><strong>Answer</strong><strong>: E</strong></p>\n<p>While going through the sentence, only arrangement (e) makes a contextually meaningful sentence. The sentence thus formed is: “In the vibrant tapestry that is New India, the shadows of its colonial past, the trauma of Partition, and the echoes of historical conflicts loom persistently, subtly yet significantly shaping its social and political contours.”</p>"}, {"question": "<p><strong>For the following questions, some sentences are given. Arrange the sentences in a meaningful paragraph and also find which of the sentences is out of context. Identify the correct answers for some of the activities given in the sentences. </strong></p>\n<p><strong>A).</strong> The legacy of colonial rule, with its arbitrary borders and divide-and-rule policies, continues to manifest in linguistic, religious, and ethnic tensions that <strong>pervade</strong> the Indian subcontinent.</p>\n<p><strong>B).</strong> In the vibrant tapestry that is New India, <strong>(A)/</strong> the trauma of Partition, <strong>(B)/</strong> the shadows of its colonial past, <strong>(C)/</strong> and the echoes of historical conflicts loom persistently,<strong> (D)/</strong> subtly yet significantly shaping its social and political contours <strong>(E).</strong></p>\n<p><strong>C).</strong> These spectral remnants are not mere footnotes in history; they are active participants in the nation’s present, influencing contemporary identity and communal relations in many ways.</p>\n<p><strong>D).</strong> Acknowledging and engaging with these spectres is crucial for forging a path toward a more inclusive and harmonious society where the lessons of the past inform the decisions of the present and the aspirations for the future.</p>\n<p><strong>E).</strong> In this context, historical hauntings act as a prism through which the complexities of nation-building, amidst diverging narratives and unresolved grievances, are not only highlighted but also interrogated.</p>\n<p><strong>F).</strong> Moreover, the political discourse surrounding these issues often invokes historical figures and events, from the freedom struggle to the Emergency of the 1970s, as points of reference or contention.</p><br><p><strong>Find the error in the sentence (D) divided into four parts, given in italics, if the sentence is correct, mark option E.</strong></p>", "options": ["<p>Acknowledging and engaging with these specters is crucial for</p>", "<p>forging a path toward a more inclusive and harmonious society</p>", "<p>where the lessons of the past informing the decisions</p>", "<p>of the present and the aspirations for the future.</p>", "<p>No correction required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer</strong><strong>: C</strong></p>\n<p>The error is in part (C). Part C should be corrected to \"where the lessons of the past inform the decisions.\"</p>\n<p>The error in this sentence involves incorrect verb usage. The phrase \"where the lessons of the past informing the decisions\" is grammatically incorrect. The verb \"informing\" should be in the present tense form \"inform\" to agree with the subject \"lessons of the past.\"</p>\n<p>Corrected Version: To address the error, Part C should be corrected to \"where the lessons of the past inform the decisions.\"</p>\n<p>So, the corrected sentence would read: \"Acknowledging and engaging with these specters is crucial for forging a path toward a more inclusive and harmonious society where the lessons of the past inform the decisions of the present and the aspirations for the future.\" This version uses the correct verb tense to convey the intended meaning.</p>"}, {"question": "<p><strong>For the following questions, some sentences are given. Arrange the sentences in a meaningful paragraph and also find which of the sentences is out of context. Identify the correct answers for some of the activities given in the sentences. </strong></p>\n<p><strong>A).</strong> The legacy of colonial rule, with its arbitrary borders and divide-and-rule policies, continues to manifest in linguistic, religious, and ethnic tensions that <strong>pervade</strong> the Indian subcontinent.</p>\n<p><strong>B).</strong> In the vibrant tapestry that is New India, <strong>(A)/</strong> the trauma of Partition, <strong>(B)/</strong> the shadows of its colonial past, <strong>(C)/</strong> and the echoes of historical conflicts loom persistently,<strong> (D)/</strong> subtly yet significantly shaping its social and political contours <strong>(E).</strong></p>\n<p><strong>C).</strong> These spectral remnants are not mere footnotes in history; they are active participants in the nation’s present, influencing contemporary identity and communal relations in many ways.</p>\n<p><strong>D).</strong> Acknowledging and engaging with these spectres is crucial for forging a path toward a more inclusive and harmonious society where the lessons of the past inform the decisions of the present and the aspirations for the future.</p>\n<p><strong>E).</strong> In this context, historical hauntings act as a prism through which the complexities of nation-building, amidst diverging narratives and unresolved grievances, are not only highlighted but also interrogated.</p>\n<p><strong>F).</strong> Moreover, the political discourse surrounding these issues often invokes historical figures and events, from the freedom struggle to the Emergency of the 1970s, as points of reference or contention.</p><br><p><strong>Find the suitable arrangement of the sentences.</strong></p>", "options": ["<p>ABCDE</p>", "<p>ABECD</p>", "<p>ABEDF</p>", "<p>BCAED</p>", "<p>BCADF</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: </strong><strong>D</strong></p>\n<p>The paragraph discusses the lingering impact of colonialism and historical conflicts on the social and political landscape of contemporary India, emphasizing the importance of acknowledging and addressing these influences for building a more inclusive society.</p>\n<p>The sequence begins with <strong>sentence B</strong>, which sets the stage by highlighting the persistent influence of colonial past and historical conflicts on contemporary India. <strong>Sentence C</strong> follows, reinforcing the active role of historical remnants in shaping contemporary identity and communal relations. <strong>Sentence A</strong> introduces the lingering impact of colonialism on linguistic, religious, and ethnic tensions in the Indian subcontinent.<strong> Sentence E</strong> adds further depth by emphasizing historical hauntings as a prism to understand the complexities of nation-building. Finally, <strong>sentence D</strong> concludes by stressing the importance of acknowledging and addressing these influences for building a more inclusive and harmonious society.</p>\n<p><strong>So, the correct sequence is: B - C – A – E - D.</strong></p>"}, {"question": "<p><strong>In each question below, words have been highlighted. These words used might be correct or may be inappropriate in usage. You must read the given sentences carefully and choose the option with the incorrect used word as your answer. If all words are used correctly, choose Option E as your answer.</strong></p><br><p><strong>A).</strong> The politician’s <strong>effusive</strong> praise for the new policy was viewed with skepticism, as many suspected he had ulterior motives.</p>\n<p><strong>B).</strong> The report provided a <strong>salient</strong> analysis of the issues facing the company, highlighting key areas for improvement.</p>\n<p><strong>C).</strong> The <strong>apocryphal</strong> story about the founder’s early struggles has been widely accepted as fact, even though it lacks any real evidence.</p>\n<p><strong>D).</strong> The artist's work was often described as <strong>soporific</strong>, evoking a sense of energy and excitement in those who viewed it.</p>\n<p><strong>E).</strong> All correct.</p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>Effusive:</strong> expressing feelings of gratitude, pleasure, or approval in an unrestrained manner.</p>\n<p><strong>Salient:</strong> most noticeable or important.</p>\n<p><strong>Apocryphal:</strong> a story or statement of doubtful authenticity, though widely circulated as being true.</p>\n<p>\"Soporific\" means tending to induce drowsiness or sleep, which contradicts the description of the artwork evoking energy and excitement. A better word might be invigorating or dynamic.</p>"}, {"question": "<p><strong>In each question below, words have been highlighted. These words used might be correct or may be inappropriate in usage. You must read the given sentences carefully and choose the option with the incorrect used word as your answer. If all words are used correctly, choose Option E as your answer.</strong></p><br><p><strong>A).</strong> The government-imposed <strong>austerity</strong> measures in an attempt to curb the rising national debt, which had spiraled out of control.</p>\n<p><strong>B).</strong> His <strong>intransigent</strong> stance during the negotiations led to a breakdown in discussions, as he refused to compromise on any point.</p>\n<p><strong>C).</strong> The CEO gave a <strong>laconic</strong> presentation, lasting over two hours and filled with intricate details about the company’s future.</p>\n<p><strong>D).</strong> The detective's <strong>assiduous</strong> investigation uncovered critical evidence that ultimately solved the case.</p>\n<p><strong>E).</strong> All correct.</p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>Austerity:</strong> economic policies aimed at reducing public expenditure.</p>\n<p><strong>Intransigent:</strong> unwilling or refusing to change one's views or agree.</p>\n<p><strong>Assiduous:</strong> showing great care and perseverance.</p>\n<p>\"Laconic\" means using very few words. A two-hour presentation filled with intricate details would be anything but laconic. A more appropriate word might be detailed or extensive.</p>"}, {"question": "<p><strong>In each question below, words have been highlighted. These words used might be correct or may be inappropriate in usage. You must read the given sentences carefully and choose the option with the incorrect used word as your answer. If all words are used correctly, choose Option E as your answer.</strong></p><br><p><strong>A).</strong> The engineer’s <strong>meticulous</strong> attention to detail ensured that every aspect of the design was thoroughly examined, leaving no room for error.</p>\n<p><strong>B).</strong> The manager's <strong>disparaging</strong> remarks during the meeting created tension among the staff, undermining the team's morale and cohesiveness.</p>\n<p><strong>C).</strong> The philosopher’s theory was <strong>cogent</strong>, offering a clear and logical framework for understanding complex ethical dilemmas.</p>\n<p><strong>D).</strong> The project was <strong>sporadic</strong>, with the team maintaining a consistent level of productivity throughout the development phase.</p>\n<p><strong>E).</strong> All correct.</p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>Meticulous:</strong> showing great attention to detail.</p>\n<p><strong>Disparaging</strong>: expressing the opinion that something is of little worth; derogatory.</p>\n<p><strong>Cogent</strong>: clear, logical, and convincing.</p>\n<p>The word \"sporadic\" means occurring at irregular intervals or only in a few places; scattered or isolated. This contradicts the idea of consistent productivity. A more appropriate word would be consistent, which matches the description of steady productivity.</p>"}, {"question": "<p><strong>In each question below, words have been highlighted. These words used might be correct or may be inappropriate in usage. You must read the given sentences carefully and choose the option with the incorrect used word as your answer. If all words are used correctly, choose Option E as your answer.</strong></p><br><p><strong>A).</strong> The charity gala aimed to raise funds for the <strong>destitute</strong>, ensuring that those living in extreme poverty could receive the support they needed.</p>\n<p><strong>B).</strong> The architect’s design was praised for its <strong>esoteric </strong>appeal, as it resonated deeply with the general public and became a cultural icon.</p>\n<p><strong>C).</strong> The judge’s <strong>unimpeachable</strong> integrity was a key reason why he was selected to preside over such a high-profile case.</p>\n<p><strong>D).</strong> The professor’s <strong>erudition</strong> was evident in his lectures, which covered a wide range of topics with depth and clarity.</p>\n<p><strong>E).</strong> All correct.</p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>Destitute:</strong> extremely poor and lacking the means to provide for oneself.</p>\n<p><strong>Unimpeachable:</strong> beyond doubt or reproach.</p>\n<p><strong>Erudition:</strong> having or showing great knowledge or learning.</p>\n<p>\"Esoteric\" means intended for or likely to be understood by only a small number of people with specialized knowledge or interest. If the design resonated with the general public and became a cultural icon, it cannot be described as esoteric. A better word might be universal or popular.</p>"}, {"question": "<p><strong>In each question below, words have been highlighted. These words used might be correct or may be inappropriate in usage. You must read the given sentences carefully and choose the option with the incorrect used word as your answer. If all words are used correctly, choose Option E as your answer.</strong></p><br><p><strong>A).</strong> The president's speech sought to <strong>galvanize </strong>the nation, inspiring citizens to take action in the face of the growing crisis.</p>\n<p><strong>B).</strong> The film was <strong>incisive</strong>, delving into the complexities of human relationships with remarkable subtlety and nuance.</p>\n<p><strong>C).</strong> His approach to solving the problem was <strong>pedantic</strong>, focusing on the larger conceptual picture while neglecting minor details.</p>\n<p><strong>D).</strong> The new policy aimed to <strong>inoculate</strong> the economy against future downturns, by introducing preventive fiscal measures.</p>\n<p><strong>E).</strong> All correct.</p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>Galvanize:</strong> to shock or excite someone into taking action.</p>\n<p><strong>Incisive:</strong> clear and sharp in expression or analysis.</p>\n<p><strong>Inoculate:</strong> to introduce an agent to prevent disease, used metaphorically here to describe shielding the economy from downturns.</p>\n<p>\"Pedantic\" means overly concerned with minor details or rules. Describing an approach that focuses on the larger picture as pedantic is incorrect. A more appropriate word might be holistic or broad.</p>"}, {"question": "<p><strong>In the following questions, a sentence is given with two phrase highlighted in each. The highlighted phrases are grammatically incorrect, you are required to improve the highlighted phrases with the correct option.</strong></p><br><p>Yoga is being seen as an <strong>valuable</strong> gift of the ancient Indian tradition to the world as it embodies unity of mind and body, thought and action, restraint and fulfilment, <strong>harmony among man and nature and a holistic </strong>approach to health and well-being.</p>", "options": ["<p>Supercilious; harmony between man and nature and a holistic</p>", "<p>Extrinsic; harmonies between man and nature and a holistic</p>", "<p>Noble; harmonies among man and nature and a holistic</p>", "<p>Invaluable; harmony between man and nature and a holistic</p>", "<p>No improvement required</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>Valuable - </strong>having monetary value.</p>\n<p><strong>Invaluable - </strong>extremely useful.</p>\n<p>The word <strong>\"valuable\"</strong> is inappropriately placed, as it is dealing with <strong>\"yoga\" </strong>not <strong>money</strong>, so it should be replaced with <strong>\"invaluable\"</strong>. Also, <strong>\"between\"</strong> should be used to express the relation between two things, <strong>\"among\" </strong>will be used for more than two persons. Therefore, <strong>option D</strong> is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, a sentence is given with two phrase highlighted in each. The highlighted phrases are grammatically incorrect, you are required to improve the highlighted phrases with the correct option.</strong></p><br><p>It's <strong>trustworthy</strong> that our textbooks have become a new battleground for politics, <strong>with changes being making based in political party ideologies.</strong></p>", "options": ["<p>Disheartening; with changes being made based on political</p>", "<p>Dexterous; the change being made based from political</p>", "<p>Bumbling; with change based across political</p>", "<p>Pernicious; with the changes from political</p>", "<p>No improvement required</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The sentence talks about textbook ideology is being changed. It has been changed to a political one. This is an unwelcoming event. It can be termed as <strong>\"disheartening\"</strong>. Also, <strong>\"being made\"</strong> should be used and <strong>\"on\"</strong> should be used instead of <strong>\"in\"</strong>. Therefore, <strong>option A </strong>is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, a sentence is given with two phrase highlighted in each. The highlighted phrases are grammatically incorrect, you are required to improve the highlighted phrases with the correct option.</strong></p><br><p>The areas of shortfall must improve, but for that, <strong>the contribution of teachers is mandatory</strong>. Social interaction among teachers is vital for the successful <strong>deliberation</strong> of teaching.</p>", "options": ["<p>Deprivation; the contributing of teachers is mandatory</p>", "<p>Liberation; the contribution of teachers are mandatory</p>", "<p>Tranche; the contribution made by teacher is mandatory</p>", "<p>Disagreement; the contributions made by teachers is mandatory</p>", "<p>No improvement required</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>Here, the highlighted word and the highlighted phrase is grammatically correct, hence improvement is not needed. Therefore, <strong>option E</strong> is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, a sentence is given with two phrase highlighted in each. The highlighted phrases are grammatically incorrect, you are required to improve the highlighted phrases with the correct option.</strong></p><br><p>If countries can forget their differences, their people will <strong>deplete, which is the objectives of many governance.</strong></p>", "options": ["<p>Restrain; that may be the objectives of the governance</p>", "<p>Prosper; which is the objective of any governance</p>", "<p>Travail; that would be the objective of any government</p>", "<p>Abrogate; that could be the objectives of all governments</p>", "<p>No improvement required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>Here, the phrase <strong>\"forget their differences\"</strong> indicates <strong>\"dissimilarities among the people\"</strong>, if the difference is not present, everything will be in a better condition. For that, the word <strong>\"prosper\"</strong> should be used, also <strong>\"any governance\"</strong> should be used.</p>\n<p>Therefore, <strong>option B</strong> is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, a sentence is given with two phrase highlighted in each. The highlighted phrases are grammatically incorrect, you are required to improve the highlighted phrases with the correct option.</strong></p><br><p>A <strong>stable</strong> coalition government with a weak mandate would then <strong>be unable or willing to take the</strong> bold and decisive actions needed to extricate the economy from crisis.</p>", "options": ["<p>Clumsy; be unable or unwilling for take the</p>", "<p>Stable; be able or unwilling to take the</p>", "<p>Shaky; be unable or unwilling to take the</p>", "<p>Lineal; be able or willing to take the</p>", "<p>No improvement required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Here, the phrase <strong>\"weak mandate\"</strong> indicates that the government is not in a stable condition, so it can be termed as <strong>\"shaky\"</strong> instead of <strong>\"stable\".</strong> Also, the word <strong>\"unable\"</strong> and <strong>\"willing\" </strong>is connected using <strong>\"or\",</strong> so the same kind of word should be connected. From this, we can infer that <strong>\"unwilling\"</strong> should be placed instead of <strong>\"willing\".</strong></p>\n<p>Therefore, <strong>option C</strong> is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, a sentence is given with a blank. You are required to choose the appropriate word for the blank to make the sentence contextually correct and meaningful.</strong></p><br><p><strong>India has had an ______________ (exotic) monsoon season and due to other factors, too, Indian rice stock position within the country is also not so comfortable.</strong></p>", "options": ["<p>Excellent</p>", "<p>Erratic</p>", "<p>Abrupt</p>", "<p>Anonymous</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>Erratic – </strong>irregular pattern.</p>\n<p><strong>Abrupt – </strong>sudden and unexpected.</p>\n<p><strong>Anonymous – </strong>not identified by name.</p>\n<p>The monsoon made the country uncomfortable, if the monsoon arrived at the right time or pattern, the country would have planned everything in a scrupulous manner. Here, the pattern is not as expected, so the country faces issues. For that, we can use <strong>\"erratic\"</strong> in the blank. Therefore, <strong>option B</strong> is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, a sentence is given with a blank. You are required to choose the appropriate word for the blank to make the sentence contextually correct and meaningful.</strong></p><br><p><strong>The Centre also approved PLI scheme for promotion of domestic manufacturing of critical KSMs/drug intermediates and APIs in the country with financial _____________ (evasion) of Rs. 6,940 crore for the next eight years.</strong></p>", "options": ["<p>Implications</p>", "<p>Inclusion</p>", "<p>Extension</p>", "<p>Probation</p>", "<p>All of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>Implications – </strong>the conclusion that can be drawn; suggestion.</p>\n<p>The centre has approved a scheme for the next nine years with an amount of 6,940 crores, it is suggesting the amount. To refer that, <strong>\"implications\"</strong> should be used. Therefore, <strong>option A</strong> is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, a sentence is given with a blank. You are required to choose the appropriate word for the blank to make the sentence contextually correct and meaningful.</strong></p><br><p><strong>The country has been seeing session after session literally being washed out by the unruly attitude of the Opposition on _________ (massive) and imaginary issues.</strong></p>", "options": ["<p>Sustained</p>", "<p>Tribunal</p>", "<p>Sophisticated</p>", "<p>Trivial</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>Trivial – </strong>little value or no importance.</p>\n<p><strong>Sophisticated – </strong>having, revealing, or involving a great deal of worldly experience and knowledge of fashion and culture.</p>\n<p><strong>Tribunal – </strong>a body established to settle certain types of disputes.</p>\n<p>Here, the word <strong>\"imaginary\"</strong> is used which means unreal, so the same kind of word should be used before. For that, <strong>\"trivial\" </strong>should be used in the blank. Therefore, <strong>option D</strong> is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, a sentence is given with a blank. You are required to choose the appropriate word for the blank to make the sentence contextually correct and meaningful.</strong></p><br><p><strong>The __________ (emergency) use of such AI tools has posed serious threats to research ethics and scholarly honesty.</strong></p>", "options": ["<p>Triage</p>", "<p>Excess</p>", "<p>Rampant</p>", "<p>Volatile</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>Rampant – </strong>flourishing or spreading.</p>\n<p><strong>Triage – </strong>preliminary assessment of patients.</p>\n<p>The blank will take a negative word since it conveys serious threats posed. So, <strong>\"rampant\"</strong> can be used in the blank that is with the excessive usage of AI, threats are highly posed. Therefore, <strong>option C</strong> is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, a sentence is given with a blank. You are required to choose the appropriate word for the blank to make the sentence contextually correct and meaningful.</strong></p><br><p><strong>While the origins of ‘civil servant’ may be tied to a _____________ (sheering) private enterprise, the transformation of its meaning reflects our complex history and the evolution of administrative systems.</strong></p>", "options": ["<p>Peril</p>", "<p>Rapacious</p>", "<p>Allured</p>", "<p>Exodus</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>Rapacious – </strong>aggressively greedy.</p>\n<p><strong>Exodus – </strong>mass departure of people.</p>\n<p>The blank will take adjective as it represents the term <strong>“private enterprise”,</strong> so, the word <strong>“rapacious”</strong> will be used in the blank. Therefore, <strong>option B</strong> is the correct answer.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-51)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-51)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

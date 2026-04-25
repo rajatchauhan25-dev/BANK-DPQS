@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-41)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>In each question below, words have been highlighted. These words used might be correct or may be inappropriate in usage. You must read the given sentences carefully and choose the option with the inappropriate usage.</strong></p><br><p><strong>Assertive</strong></p>\n<p><strong>1).</strong> Jane's <strong>assertive</strong> attitude in meetings has earned her respect from her colleagues.</p>\n<p><strong>2).</strong> Being <strong>assertive</strong> helps in expressing your needs and desires clearly and confidently.</p>\n<p><strong>3).</strong> His passive approach to conflicts made him seem anything but <strong>assertive</strong>.</p>", "options": ["<p>Only 1</p>", "<p>Only 2</p>", "<p>Only 3</p>", "<p>Both 1 &amp; 3</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Sentences 1 and 2 use \"assertive\" in a positive context, describing someone who is confident and clear in expressing their needs. However, sentence 3 uses \"assertive\" in an opposite context, describing a passive approach to conflicts, indicating a lack of assertiveness.</p>"}, {"question": "<p><strong>In each question below, words have been highlighted. These words used might be correct or may be inappropriate in usage. You must read the given sentences carefully and choose the option with the inappropriate usage.</strong></p><br><p><strong>Flexible</strong></p>\n<p><strong>1).</strong> His rigid thinking and inability to adapt showed that he was <strong>flexible</strong>.</p>\n<p><strong>2).</strong> Her <strong>flexible</strong> approach to problem-solving often led to innovative solutions.</p>\n<p><strong>3).</strong> The <strong>flexible</strong> schedule allowed employees to balance work and personal commitments effectively.</p>", "options": ["<p>Only 1</p>", "<p>Only 2</p>", "<p>Only 3</p>", "<p>Both 1 &amp; 3</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Sentences 2 and 3 use \"flexible\" in a positive context, describing a schedule or approach that allows for adaptation and change. In contrast, sentence 1 uses \"flexible\" in an opposite context, describing rigid thinking and an inability to adapt, indicating a lack of flexibility.</p>"}, {"question": "<p><strong>In each question below, words have been highlighted. These words used might be correct or may be inappropriate in usage. You must read the given sentences carefully and choose the option with the inappropriate usage.</strong></p><br><p><strong>Motivated</strong></p>\n<p><strong>1).</strong> The motivated team worked tirelessly to meet the project deadline.</p>\n<p><strong>2).</strong> Her self-motivation led her to achieve remarkable success in her career.</p>\n<p><strong>3).</strong> His interest and effort in his work showed that he was motivated.</p>", "options": ["<p>Only 1</p>", "<p>Only 2</p>", "<p>Only 3</p>", "<p>All 1, 2 &amp; 3</p>", "<p>None of these</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>Sentences 1, 2 and 3 use \"motivated\" in a positive context, describing individuals or teams that are driven, energetic and motivated.</p>"}, {"question": "<p><strong>In each question below, words have been highlighted. These words used might be correct or may be inappropriate in usage. You must read the given sentences carefully and choose the option with the inappropriate usage.</strong></p><br><p><strong>Persistent</strong></p>\n<p><strong>1).</strong> Her <strong>persistent</strong> efforts eventually led to the breakthrough she had been working towards.</p>\n<p><strong>2).</strong> Despite numerous rejections, his <strong>persistent</strong> pursuit of his goals never wavered.</p>\n<p><strong>3).</strong> His quick surrender at the first sign of difficulty showed that he was not <strong>persistent</strong>.</p>", "options": ["<p>Only 1</p>", "<p>Only 2</p>", "<p>Only 3</p>", "<p>Both 1 &amp; 3</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Sentences 1 and 2 use \"persistent\" in a positive context, describing efforts and pursuits that are continuous and unwavering. However, sentence 3 uses \"persistent\" in an opposite context, describing someone who gives up easily, indicating a lack of persistence.</p>"}, {"question": "<p><strong>In each question below, words have been highlighted. These words used might be correct or may be inappropriate in usage. You must read the given sentences carefully and choose the option with the inappropriate usage.</strong></p><br><p><strong>Innovative</strong></p>\n<p><strong>1). </strong>The startup's <strong>innovative</strong> technology has revolutionized the industry.</p>\n<p><strong>2).</strong> The company's reluctance to adopt new methods showed a lack of <strong>innovative</strong> ideas.</p>\n<p><strong>3).</strong> Her <strong>innovative</strong> thinking led to the development of a new and effective marketing strategy.</p>", "options": ["<p>Only 1</p>", "<p>Only 2</p>", "<p>Only 3</p>", "<p>All 1, 2 &amp; 3</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>Sentences 1 and 3 use \"innovative\" in a positive context, describing technology and thinking that are new and forward-thinking. However, sentence 2 uses \"innovative\" in an opposite context, describing a reluctance to adopt new methods, indicating a lack of innovation.</p>"}, {"question": "<p><strong>In the following passage, some of the words have been highlighted in bold. Read the passage and try to understand what it wants to convey. Then replace the highlighted words with the correct option in order to make the sentence grammatically and contextually correct. In any case the highlighted word is given correctly, then mark ‘No Improvement required’ as the answer.</strong></p>\n<p>The RBI’s Monetary Policy Committee (MPC) has prudently opted to persist with its objective of ‘ensuring that inflation progressively aligns to the target’ by keeping benchmark interest rates unchanged, and sticking with its stance of ‘withdrawal of accommodation’. With a 5-1 majority, it has committed to keeping monetary policy <strong>exceptionally (A)</strong> disinflationary so as to anchor inflation expectations, especially at a time when ‘large and repetitive price shocks are interrupting the pace of disinflation’. On the rationale to leave the repo rate unchanged at 6.5% for a sixth straight meeting, Governor Shaktikanta Das observed that while domestic economic momentum remained strong, uncertainties in food prices continued to <strong>dodge (B)</strong> on the headline inflation trajectory. The tangible risk that food price pressures could become more generalized and impact broader headline inflation was the main consideration, he explained. That the majority of the MPC was aligned in prioritizing the battle against inflation needs to be seen in the backdrop of the recent trends in retail inflation. Headline retail inflation, which had eased from July’s 15-month peak of 7.4% to 4.87% in October, however, rebounded to a four-month high of 5.69% in December, with food price gains gauged by the Consumer Food Price Index racing ahead to 9.53%, a sizeable 292 basis points faster than October’s 6.61%. That the uncertainty surrounding food price gains has begun to vex policymakers is reflected in a recent RBI Bulletin article that pointedly sought to find an answer to the question, ‘Are Food Prices the ‘True’ Core of India’s Inflation?’. Concluding that there is enough <strong>empirical</strong> <strong>(C)</strong> evidence to support an assertion that ‘there are times when food inflation mimics core inflation’, the officials caution that given food’s substantial share in the consumption basket, large and repeated food price shocks have the potential to ripple outward and undermine the goal of price stability by de-anchoring inflation expectations. The MPC’s downward revision of its projection for average retail inflation in the January-March quarter to 5.0%, 20 basis points lower than its December forecast, reflects the small comfort policymakers have taken from the improvement in rabi sowing as well as a seasonal correction in vegetable prices. Still, the Department of Consumer Affairs’ daily price monitoring dashboard shows the average retail price of more than two-thirds of the key food items it tracks remained higher on a year-on-year basis as on February 8. Policymakers need to stay <strong>perfidious (D)</strong> in their resolve to durably slow price gains towards the 4% target or risk <strong>drowning (E)</strong> consumption and thereby undermining the growth momentum.</p><br><p><strong>Which of the following words will replace the word in (A)?</strong></p>", "options": ["<p>decisively</p>", "<p>conclusively</p>", "<p>evidently</p>", "<p>unambiguously</p>", "<p>No Improvement required</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>a).</strong> decisively: This option could be a possible replacement, but it doesn't capture the idea of clarity or lack of ambiguity as effectively as some other options. The central idea is that the RBI's Monetary Policy Committee is clear and unambiguous in its commitment to keeping monetary policy disinflationary.</p>\n<p><strong>b).</strong> conclusively: Similar to \"decisively,\" this option conveys a sense of making a decision, but it may not emphasize the lack of ambiguity as strongly as some other options. It's more about reaching a conclusion rather than the clarity of the decision itself.</p>\n<p><strong>c).</strong> evidently: This option suggests that the decision is evident or clear, which is in line with the context. However, \"unambiguously\" more precisely conveys the idea of removing any possible ambiguity.</p>\n<p><strong>d).</strong> unambiguously: This is the correct answer. \"Unambiguously\" perfectly fits the context, emphasizing that the MPC's objective is clear and lacks any ambiguity. It aligns with the tone and meaning of the passage.</p>\n<p>exceptionally: This Word doesn't quite convey the same meaning. \"Exceptionally\" suggests that the decision is extraordinary or unusual, which may not be the intended emphasis in this context. The focus is on clarity and lack of ambiguity in pursuing the objective.</p>\n<p>In summary, while some options could convey a similar general idea, \"unambiguously\" best captures the sense of clarity and lack of ambiguity emphasized in the passage.</p>\n<p>Therefore, \"d) unambiguously\" is the word that most appropriately replaces the word in (A).</p>"}, {"question": "<p><strong>In the following passage, some of the words have been highlighted in bold. Read the passage and try to understand what it wants to convey. Then replace the highlighted words with the correct option in order to make the sentence grammatically and contextually correct. In any case the highlighted word is given correctly, then mark ‘No Improvement required’ as the answer.</strong></p>\n<p>The RBI’s Monetary Policy Committee (MPC) has prudently opted to persist with its objective of ‘ensuring that inflation progressively aligns to the target’ by keeping benchmark interest rates unchanged, and sticking with its stance of ‘withdrawal of accommodation’. With a 5-1 majority, it has committed to keeping monetary policy <strong>exceptionally (A)</strong> disinflationary so as to anchor inflation expectations, especially at a time when ‘large and repetitive price shocks are interrupting the pace of disinflation’. On the rationale to leave the repo rate unchanged at 6.5% for a sixth straight meeting, Governor Shaktikanta Das observed that while domestic economic momentum remained strong, uncertainties in food prices continued to <strong>dodge (B)</strong> on the headline inflation trajectory. The tangible risk that food price pressures could become more generalized and impact broader headline inflation was the main consideration, he explained. That the majority of the MPC was aligned in prioritizing the battle against inflation needs to be seen in the backdrop of the recent trends in retail inflation. Headline retail inflation, which had eased from July’s 15-month peak of 7.4% to 4.87% in October, however, rebounded to a four-month high of 5.69% in December, with food price gains gauged by the Consumer Food Price Index racing ahead to 9.53%, a sizeable 292 basis points faster than October’s 6.61%. That the uncertainty surrounding food price gains has begun to vex policymakers is reflected in a recent RBI Bulletin article that pointedly sought to find an answer to the question, ‘Are Food Prices the ‘True’ Core of India’s Inflation?’. Concluding that there is enough <strong>empirical</strong> <strong>(C)</strong> evidence to support an assertion that ‘there are times when food inflation mimics core inflation’, the officials caution that given food’s substantial share in the consumption basket, large and repeated food price shocks have the potential to ripple outward and undermine the goal of price stability by de-anchoring inflation expectations. The MPC’s downward revision of its projection for average retail inflation in the January-March quarter to 5.0%, 20 basis points lower than its December forecast, reflects the small comfort policymakers have taken from the improvement in rabi sowing as well as a seasonal correction in vegetable prices. Still, the Department of Consumer Affairs’ daily price monitoring dashboard shows the average retail price of more than two-thirds of the key food items it tracks remained higher on a year-on-year basis as on February 8. Policymakers need to stay <strong>perfidious (D)</strong> in their resolve to durably slow price gains towards the 4% target or risk <strong>drowning (E)</strong> consumption and thereby undermining the growth momentum.</p><br><p><strong>Which of the following words will replace the word in (B)?</strong></p>", "options": ["<p>nudge</p>", "<p>obtrude</p>", "<p>impinge</p>", "<p>intrude</p>", "<p>No Improvement required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The word \"impinge\" is suitable to replace the word in (B).</p>\n<p><strong>a).</strong> nudge - This word generally implies a gentle push or encouragement. In the context of the sentence, \"nudge\" doesn't convey the idea of uncertainties in food prices affecting the inflation trajectory with the required intensity.</p>\n<p><strong>b).</strong> obtrude - This word means to thrust forward, often undesirably. While it carries a sense of force, it may not fully capture the ongoing and persistent impact of uncertainties in food prices on inflation.</p>\n<p><strong>c).</strong> impinge - This word means to have an effect or impact, especially a negative one. In the given context, \"impinge\" fits well as it conveys the idea that uncertainties in food prices are affecting the headline inflation trajectory.</p>\n<p><strong>d).</strong> intrude - Similar to \"obtrude,\" \"intrude\" implies a forced entry or interruption. While it conveys some disruption, it may not precisely capture the ongoing nature of the impact as effectively as \"impinge\" does.</p>\n<p>dodge - This word means to avoid or evade. It is not suitable in this context because it suggests avoiding uncertainties in food prices rather than acknowledging their impact.</p>\n<p>So, \"impinge\" is the most appropriate choice to convey the continuous and impactful nature of uncertainties in food prices on the headline inflation trajectory in the given sentence.</p>\n<p>Therefore, \"c) impinge\" is the word that appropriately replaces the word in (B).</p>"}, {"question": "<p><strong>In the following passage, some of the words have been highlighted in bold. Read the passage and try to understand what it wants to convey. Then replace the highlighted words with the correct option in order to make the sentence grammatically and contextually correct. In any case the highlighted word is given correctly, then mark ‘No Improvement required’ as the answer.</strong></p>\n<p>The RBI’s Monetary Policy Committee (MPC) has prudently opted to persist with its objective of ‘ensuring that inflation progressively aligns to the target’ by keeping benchmark interest rates unchanged, and sticking with its stance of ‘withdrawal of accommodation’. With a 5-1 majority, it has committed to keeping monetary policy <strong>exceptionally (A)</strong> disinflationary so as to anchor inflation expectations, especially at a time when ‘large and repetitive price shocks are interrupting the pace of disinflation’. On the rationale to leave the repo rate unchanged at 6.5% for a sixth straight meeting, Governor Shaktikanta Das observed that while domestic economic momentum remained strong, uncertainties in food prices continued to <strong>dodge (B)</strong> on the headline inflation trajectory. The tangible risk that food price pressures could become more generalized and impact broader headline inflation was the main consideration, he explained. That the majority of the MPC was aligned in prioritizing the battle against inflation needs to be seen in the backdrop of the recent trends in retail inflation. Headline retail inflation, which had eased from July’s 15-month peak of 7.4% to 4.87% in October, however, rebounded to a four-month high of 5.69% in December, with food price gains gauged by the Consumer Food Price Index racing ahead to 9.53%, a sizeable 292 basis points faster than October’s 6.61%. That the uncertainty surrounding food price gains has begun to vex policymakers is reflected in a recent RBI Bulletin article that pointedly sought to find an answer to the question, ‘Are Food Prices the ‘True’ Core of India’s Inflation?’. Concluding that there is enough <strong>empirical</strong> <strong>(C)</strong> evidence to support an assertion that ‘there are times when food inflation mimics core inflation’, the officials caution that given food’s substantial share in the consumption basket, large and repeated food price shocks have the potential to ripple outward and undermine the goal of price stability by de-anchoring inflation expectations. The MPC’s downward revision of its projection for average retail inflation in the January-March quarter to 5.0%, 20 basis points lower than its December forecast, reflects the small comfort policymakers have taken from the improvement in rabi sowing as well as a seasonal correction in vegetable prices. Still, the Department of Consumer Affairs’ daily price monitoring dashboard shows the average retail price of more than two-thirds of the key food items it tracks remained higher on a year-on-year basis as on February 8. Policymakers need to stay <strong>perfidious (D)</strong> in their resolve to durably slow price gains towards the 4% target or risk <strong>drowning (E)</strong> consumption and thereby undermining the growth momentum.</p><br><p><strong>Which of the following words will replace the word in (C)?</strong></p>", "options": ["<p>pragmatic</p>", "<p>provisional</p>", "<p>speculative</p>", "<p>impulsive</p>", "<p>No Improvement required</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>The word in (C) in the passage \"empirical” is appropriately used in the context.</p>\n<p><strong>a).</strong> pragmatic: This word does not fit well in the context. Pragmatic refers to a practical, realistic approach, and it doesn't convey the same meaning as the original \"empirical\" in the sentence.</p>\n<p><strong>b).</strong> provisional: This word also doesn't fit well. \"Provisional\" means temporary or subject to change, which doesn't accurately convey the idea of relying on evidence and data, as implied by \"empirical.\"</p>\n<p><strong>c).</strong> speculative: This is not a suitable replacement. \"Speculative\" implies conjecture or guesswork, which is different from the concept of relying on empirical evidence.</p>\n<p><strong>d).</strong> impulsive: This word is entirely unrelated to the context. \"Impulsive\" refers to acting without careful thought, and it doesn't convey the idea of basing decisions on evidence or data.</p>\n<p><strong>e).</strong> No Improvement required: This is the correct choice. \"Empirical\" means based on observation or experience rather than theory or pure logic, and it fits well in the context of the sentence.</p>\n<p>The word \"empirical\" in the context of the sentence refers to evidence that is based on observation or experience rather than theory.</p>\n<p>In conclusion, \"No Improvement required\" is the correct choice as it (empirical) maintains the meaning and context of the sentence.</p>"}, {"question": "<p><strong>In the following passage, some of the words have been highlighted in bold. Read the passage and try to understand what it wants to convey. Then replace the highlighted words with the correct option in order to make the sentence grammatically and contextually correct. In any case the highlighted word is given correctly, then mark ‘No Improvement required’ as the answer.</strong></p>\n<p>The RBI’s Monetary Policy Committee (MPC) has prudently opted to persist with its objective of ‘ensuring that inflation progressively aligns to the target’ by keeping benchmark interest rates unchanged, and sticking with its stance of ‘withdrawal of accommodation’. With a 5-1 majority, it has committed to keeping monetary policy <strong>exceptionally (A)</strong> disinflationary so as to anchor inflation expectations, especially at a time when ‘large and repetitive price shocks are interrupting the pace of disinflation’. On the rationale to leave the repo rate unchanged at 6.5% for a sixth straight meeting, Governor Shaktikanta Das observed that while domestic economic momentum remained strong, uncertainties in food prices continued to <strong>dodge (B)</strong> on the headline inflation trajectory. The tangible risk that food price pressures could become more generalized and impact broader headline inflation was the main consideration, he explained. That the majority of the MPC was aligned in prioritizing the battle against inflation needs to be seen in the backdrop of the recent trends in retail inflation. Headline retail inflation, which had eased from July’s 15-month peak of 7.4% to 4.87% in October, however, rebounded to a four-month high of 5.69% in December, with food price gains gauged by the Consumer Food Price Index racing ahead to 9.53%, a sizeable 292 basis points faster than October’s 6.61%. That the uncertainty surrounding food price gains has begun to vex policymakers is reflected in a recent RBI Bulletin article that pointedly sought to find an answer to the question, ‘Are Food Prices the ‘True’ Core of India’s Inflation?’. Concluding that there is enough <strong>empirical</strong> <strong>(C)</strong> evidence to support an assertion that ‘there are times when food inflation mimics core inflation’, the officials caution that given food’s substantial share in the consumption basket, large and repeated food price shocks have the potential to ripple outward and undermine the goal of price stability by de-anchoring inflation expectations. The MPC’s downward revision of its projection for average retail inflation in the January-March quarter to 5.0%, 20 basis points lower than its December forecast, reflects the small comfort policymakers have taken from the improvement in rabi sowing as well as a seasonal correction in vegetable prices. Still, the Department of Consumer Affairs’ daily price monitoring dashboard shows the average retail price of more than two-thirds of the key food items it tracks remained higher on a year-on-year basis as on February 8. Policymakers need to stay <strong>perfidious (D)</strong> in their resolve to durably slow price gains towards the 4% target or risk <strong>drowning (E)</strong> consumption and thereby undermining the growth momentum.</p><br><p><strong>Which of the following words will replace the word in (D)?</strong></p>", "options": ["<p>ardent</p>", "<p>fervent</p>", "<p>obdurate</p>", "<p>steadfast</p>", "<p>No Improvement required</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The word that appropriately replaces the word in (D) is: d) steadfast</p>\n<p><strong>a).</strong> <strong>Ardent:</strong> This word means enthusiastic or passionate. While it conveys a sense of strong commitment, it may not capture the specific idea of resolute determination or unwavering commitment that \"steadfast\" does in the given context.</p>\n<p><strong>b).</strong> <strong>Fervent:</strong> Similar to \"ardent,\" \"fervent\" also implies intense passion or enthusiasm. However, it lacks the nuance of unwavering determination that is crucial in the context of the passage.</p>\n<p><strong>c).</strong> <strong>Obdurate:</strong> This word means stubborn or resistant to change. While it does convey a sense of resistance, it may not precisely capture the idea of staying committed to a particular course of action, which is the context of the passage.</p>\n<p><strong>d).</strong> <strong>Steadfast:</strong> This word means resolutely or dutifully firm and unwavering. In the context of the passage, where policymakers are urged to stay committed to slowing price gains, \"steadfast\" is the most suitable term, as it conveys a sense of firm determination and resolve.</p>\n<p><strong>Perfidious:</strong> This word means deceitful or treacherous. It has a negative connotation that doesn't align with the positive and determined tone needed in the context. Policymakers are not being accused of betrayal; rather, they are encouraged to remain committed to their resolve.</p>\n<p>Therefore, \"d) steadfast\" is the most appropriate choice in the given context, as it accurately conveys the idea of unwavering commitment and determination.</p>"}, {"question": "<p><strong>In the following passage, some of the words have been highlighted in bold. Read the passage and try to understand what it wants to convey. Then replace the highlighted words with the correct option in order to make the sentence grammatically and contextually correct. In any case the highlighted word is given correctly, then mark ‘No Improvement required’ as the answer.</strong></p>\n<p>The RBI’s Monetary Policy Committee (MPC) has prudently opted to persist with its objective of ‘ensuring that inflation progressively aligns to the target’ by keeping benchmark interest rates unchanged, and sticking with its stance of ‘withdrawal of accommodation’. With a 5-1 majority, it has committed to keeping monetary policy <strong>exceptionally (A)</strong> disinflationary so as to anchor inflation expectations, especially at a time when ‘large and repetitive price shocks are interrupting the pace of disinflation’. On the rationale to leave the repo rate unchanged at 6.5% for a sixth straight meeting, Governor Shaktikanta Das observed that while domestic economic momentum remained strong, uncertainties in food prices continued to <strong>dodge (B)</strong> on the headline inflation trajectory. The tangible risk that food price pressures could become more generalized and impact broader headline inflation was the main consideration, he explained. That the majority of the MPC was aligned in prioritizing the battle against inflation needs to be seen in the backdrop of the recent trends in retail inflation. Headline retail inflation, which had eased from July’s 15-month peak of 7.4% to 4.87% in October, however, rebounded to a four-month high of 5.69% in December, with food price gains gauged by the Consumer Food Price Index racing ahead to 9.53%, a sizeable 292 basis points faster than October’s 6.61%. That the uncertainty surrounding food price gains has begun to vex policymakers is reflected in a recent RBI Bulletin article that pointedly sought to find an answer to the question, ‘Are Food Prices the ‘True’ Core of India’s Inflation?’. Concluding that there is enough <strong>empirical</strong> <strong>(C)</strong> evidence to support an assertion that ‘there are times when food inflation mimics core inflation’, the officials caution that given food’s substantial share in the consumption basket, large and repeated food price shocks have the potential to ripple outward and undermine the goal of price stability by de-anchoring inflation expectations. The MPC’s downward revision of its projection for average retail inflation in the January-March quarter to 5.0%, 20 basis points lower than its December forecast, reflects the small comfort policymakers have taken from the improvement in rabi sowing as well as a seasonal correction in vegetable prices. Still, the Department of Consumer Affairs’ daily price monitoring dashboard shows the average retail price of more than two-thirds of the key food items it tracks remained higher on a year-on-year basis as on February 8. Policymakers need to stay <strong>perfidious (D)</strong> in their resolve to durably slow price gains towards the 4% target or risk <strong>drowning (E)</strong> consumption and thereby undermining the growth momentum.</p><br><p><strong>Which of the following words will replace the word in (E)?</strong></p>", "options": ["<p>daunting</p>", "<p>dampening</p>", "<p>deterring</p>", "<p>dismaying</p>", "<p>No Improvement required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The word in (E) is \"dampening,\" and it is appropriately used in the context.</p>\n<p><strong>a). daunting:</strong> This word means intimidating or discouraging. In the context of the sentence, it doesn't fit well because it suggests that policymakers need to stay steadfast or risk intimidating consumption, which doesn't convey the intended meaning.</p>\n<p><strong>b). dampening:</strong> This is the correct answer. \"Dampening\" means to make less strong or active. In the context of the sentence, policymakers need to slow price gains to avoid making consumption less active or strong, thereby undermining growth momentum.</p>\n<p><strong>c). deterring:</strong> This word means preventing or discouraging. While it has a similar meaning to \"dampening,\" it doesn't quite capture the nuance of making something less strong or active, which is the context of the sentence.</p>\n<p><strong>d). dismaying:</strong> This word means causing distress or disappointment. In the context of the sentence, it doesn't convey the idea that policymakers need to slow price gains to prevent distress or disappointment in consumption.</p>\n<p><strong>drowning:</strong> This word means to be submerged or overwhelmed. In the context of the sentence, it doesn't fit well because it suggests that policymakers need to slow price gains to avoid overwhelming consumption, which is not the intended meaning.</p>\n<p>In summary, \"dampening\" is the most appropriate word in the given context as it conveys the idea of making consumption less strong or active, aligning with the overall tone of the sentence.</p>\n<p>Therefore, \"b) dampening\" is the word that appropriately replaces the word in (E).</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Big black holes, which can have masses up to hundreds of thousands of times that of the sun, are less common than small black holes, which are often found between five and 100 times that of the sun. There are still unanswered concerns regarding the genesis and growth of black holes due to the <strong>elusiveness</strong> of intermediate-mass black holes (IMBH). Intermediate-mass black holes should be more <strong>prevalent</strong> if they form gradually from smaller ones. In contrast, it would contradict what we know about black hole physics if they are limited to tiny or gigantic sizes, as per the reports of MSN.</p>\n<p>Astronomers have been searching for these IMBHs for a long time. Some of the greatest evidence for an IMBH in the Milky Way, notably in the Omega Centauri cluster, has just been revealed by the Hubble Space Telescope. About 10 million stars reside in Omega Centauri, and Hubble has played a crucial role in the cataloging of these stars.<br/>An anomaly was discovered by researchers while cataloging. \"We found seven stars that shouldn't be there,\" Max Planck Institute for Astronomy lead researcher Maximilian Haberle remarked. These stars were traveling so quickly that they ought to break free of the cluster completely. The most likely scenario is that these stars are being pulled toward the center of the galaxy by a large object.</p>\n<p>Strong gravitational pulls can only be produced by black holes, which have masses estimated to be at least 8,200 times that of the sun. This categorizes the item firmly inside the IMBH group. Although earlier research suggested that there might be an IMBH in Omega Centauri, this new data is the strongest to date. It implies the existence of a close-by IMBH, which may be essential for researching the evolution of black holes.<br/>As per the reports of MSN, the James Webb Space Telescope will now be used by researchers to study this black hole in more detail. With the use of this cutting-edge telescope, it will be possible to pinpoint the IMBH's precise mass and location, shedding light on both its characteristics and the larger processes behind black hole formation.</p><br><p><strong>Which type of black holes is less common according to the passage?</strong></p>", "options": ["<p>Small black holes</p>", "<p>Intermediate-mass black holes (IMBHs)</p>", "<p>Big black holes</p>", "<p>Mini black holes</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The passage states that big black holes, which have masses up to hundreds of thousands of times that of the sun, are less common than small black holes.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Big black holes, which can have masses up to hundreds of thousands of times that of the sun, are less common than small black holes, which are often found between five and 100 times that of the sun. There are still unanswered concerns regarding the genesis and growth of black holes due to the <strong>elusiveness</strong> of intermediate-mass black holes (IMBH). Intermediate-mass black holes should be more <strong>prevalent</strong> if they form gradually from smaller ones. In contrast, it would contradict what we know about black hole physics if they are limited to tiny or gigantic sizes, as per the reports of MSN.</p>\n<p>Astronomers have been searching for these IMBHs for a long time. Some of the greatest evidence for an IMBH in the Milky Way, notably in the Omega Centauri cluster, has just been revealed by the Hubble Space Telescope. About 10 million stars reside in Omega Centauri, and Hubble has played a crucial role in the cataloging of these stars.<br/>An anomaly was discovered by researchers while cataloging. \"We found seven stars that shouldn't be there,\" Max Planck Institute for Astronomy lead researcher Maximilian Haberle remarked. These stars were traveling so quickly that they ought to break free of the cluster completely. The most likely scenario is that these stars are being pulled toward the center of the galaxy by a large object.</p>\n<p>Strong gravitational pulls can only be produced by black holes, which have masses estimated to be at least 8,200 times that of the sun. This categorizes the item firmly inside the IMBH group. Although earlier research suggested that there might be an IMBH in Omega Centauri, this new data is the strongest to date. It implies the existence of a close-by IMBH, which may be essential for researching the evolution of black holes.<br/>As per the reports of MSN, the James Webb Space Telescope will now be used by researchers to study this black hole in more detail. With the use of this cutting-edge telescope, it will be possible to pinpoint the IMBH's precise mass and location, shedding light on both its characteristics and the larger processes behind black hole formation.</p><br><p><strong>What recent discovery was made by the Hubble Space Telescope in the Omega Centauri cluster?</strong></p>", "options": ["<p>A new type of black hole</p>", "<p>Seven stars traveling at high speeds</p>", "<p>An anomaly in star formation</p>", "<p>The presence of multiple small black holes</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage notes that researchers found seven stars in Omega Centauri that were traveling so quickly they should break free of the cluster, suggesting the presence of a large object.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Big black holes, which can have masses up to hundreds of thousands of times that of the sun, are less common than small black holes, which are often found between five and 100 times that of the sun. There are still unanswered concerns regarding the genesis and growth of black holes due to the <strong>elusiveness</strong> of intermediate-mass black holes (IMBH). Intermediate-mass black holes should be more <strong>prevalent</strong> if they form gradually from smaller ones. In contrast, it would contradict what we know about black hole physics if they are limited to tiny or gigantic sizes, as per the reports of MSN.</p>\n<p>Astronomers have been searching for these IMBHs for a long time. Some of the greatest evidence for an IMBH in the Milky Way, notably in the Omega Centauri cluster, has just been revealed by the Hubble Space Telescope. About 10 million stars reside in Omega Centauri, and Hubble has played a crucial role in the cataloging of these stars.<br/>An anomaly was discovered by researchers while cataloging. \"We found seven stars that shouldn't be there,\" Max Planck Institute for Astronomy lead researcher Maximilian Haberle remarked. These stars were traveling so quickly that they ought to break free of the cluster completely. The most likely scenario is that these stars are being pulled toward the center of the galaxy by a large object.</p>\n<p>Strong gravitational pulls can only be produced by black holes, which have masses estimated to be at least 8,200 times that of the sun. This categorizes the item firmly inside the IMBH group. Although earlier research suggested that there might be an IMBH in Omega Centauri, this new data is the strongest to date. It implies the existence of a close-by IMBH, which may be essential for researching the evolution of black holes.<br/>As per the reports of MSN, the James Webb Space Telescope will now be used by researchers to study this black hole in more detail. With the use of this cutting-edge telescope, it will be possible to pinpoint the IMBH's precise mass and location, shedding light on both its characteristics and the larger processes behind black hole formation.</p><br><p><strong>What can be inferred about the significance of the newly discovered IMBH in Omega Centauri?</strong></p>", "options": ["<p>It is irrelevant to black hole research</p>", "<p>It confirms previous findings of IMBHs in the region</p>", "<p>It provides crucial new evidence for the existence of IMBHs.</p>", "<p>It contradicts existing theories about black hole sizes</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The passage indicates that the new data is the strongest evidence to date for an IMBH in Omega Centauri, which is significant for understanding black hole evolution.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Big black holes, which can have masses up to hundreds of thousands of times that of the sun, are less common than small black holes, which are often found between five and 100 times that of the sun. There are still unanswered concerns regarding the genesis and growth of black holes due to the <strong>elusiveness</strong> of intermediate-mass black holes (IMBH). Intermediate-mass black holes should be more <strong>prevalent</strong> if they form gradually from smaller ones. In contrast, it would contradict what we know about black hole physics if they are limited to tiny or gigantic sizes, as per the reports of MSN.</p>\n<p>Astronomers have been searching for these IMBHs for a long time. Some of the greatest evidence for an IMBH in the Milky Way, notably in the Omega Centauri cluster, has just been revealed by the Hubble Space Telescope. About 10 million stars reside in Omega Centauri, and Hubble has played a crucial role in the cataloging of these stars.<br/>An anomaly was discovered by researchers while cataloging. \"We found seven stars that shouldn't be there,\" Max Planck Institute for Astronomy lead researcher Maximilian Haberle remarked. These stars were traveling so quickly that they ought to break free of the cluster completely. The most likely scenario is that these stars are being pulled toward the center of the galaxy by a large object.</p>\n<p>Strong gravitational pulls can only be produced by black holes, which have masses estimated to be at least 8,200 times that of the sun. This categorizes the item firmly inside the IMBH group. Although earlier research suggested that there might be an IMBH in Omega Centauri, this new data is the strongest to date. It implies the existence of a close-by IMBH, which may be essential for researching the evolution of black holes.<br/>As per the reports of MSN, the James Webb Space Telescope will now be used by researchers to study this black hole in more detail. With the use of this cutting-edge telescope, it will be possible to pinpoint the IMBH's precise mass and location, shedding light on both its characteristics and the larger processes behind black hole formation.</p><br><p><strong>Why is the discovery of the IMBH in Omega Centauri important for the study of black holes?</strong></p>", "options": ["<p>It challenges the current understanding of black hole formation.</p>", "<p>It provides insights into the formation and growth of black holes</p>", "<p>It suggests that black holes are smaller than previously thought</p>", "<p>It indicates that black holes are only found in distant galaxies</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage suggests that the discovery of the IMBH could be essential for researching the evolution and formation of black holes.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Big black holes, which can have masses up to hundreds of thousands of times that of the sun, are less common than small black holes, which are often found between five and 100 times that of the sun. There are still unanswered concerns regarding the genesis and growth of black holes due to the <strong>elusiveness</strong> of intermediate-mass black holes (IMBH). Intermediate-mass black holes should be more <strong>prevalent</strong> if they form gradually from smaller ones. In contrast, it would contradict what we know about black hole physics if they are limited to tiny or gigantic sizes, as per the reports of MSN.</p>\n<p>Astronomers have been searching for these IMBHs for a long time. Some of the greatest evidence for an IMBH in the Milky Way, notably in the Omega Centauri cluster, has just been revealed by the Hubble Space Telescope. About 10 million stars reside in Omega Centauri, and Hubble has played a crucial role in the cataloging of these stars.<br/>An anomaly was discovered by researchers while cataloging. \"We found seven stars that shouldn't be there,\" Max Planck Institute for Astronomy lead researcher Maximilian Haberle remarked. These stars were traveling so quickly that they ought to break free of the cluster completely. The most likely scenario is that these stars are being pulled toward the center of the galaxy by a large object.</p>\n<p>Strong gravitational pulls can only be produced by black holes, which have masses estimated to be at least 8,200 times that of the sun. This categorizes the item firmly inside the IMBH group. Although earlier research suggested that there might be an IMBH in Omega Centauri, this new data is the strongest to date. It implies the existence of a close-by IMBH, which may be essential for researching the evolution of black holes.<br/>As per the reports of MSN, the James Webb Space Telescope will now be used by researchers to study this black hole in more detail. With the use of this cutting-edge telescope, it will be possible to pinpoint the IMBH's precise mass and location, shedding light on both its characteristics and the larger processes behind black hole formation.</p><br><p><strong>What is the purpose of using the James Webb Space Telescope according to the passage?</strong></p>", "options": ["<p>To catalog stars in Omega Centauri</p>", "<p>To pinpoint the IMBH's precise mass and location</p>", "<p>To search for new galaxies</p>", "<p>To replace the Hubble Space Telescope</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage mentions that the James Webb Space Telescope will be used to study the IMBH in detail, including determining its mass and location.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Big black holes, which can have masses up to hundreds of thousands of times that of the sun, are less common than small black holes, which are often found between five and 100 times that of the sun. There are still unanswered concerns regarding the genesis and growth of black holes due to the <strong>elusiveness</strong> of intermediate-mass black holes (IMBH). Intermediate-mass black holes should be more <strong>prevalent</strong> if they form gradually from smaller ones. In contrast, it would contradict what we know about black hole physics if they are limited to tiny or gigantic sizes, as per the reports of MSN.</p>\n<p>Astronomers have been searching for these IMBHs for a long time. Some of the greatest evidence for an IMBH in the Milky Way, notably in the Omega Centauri cluster, has just been revealed by the Hubble Space Telescope. About 10 million stars reside in Omega Centauri, and Hubble has played a crucial role in the cataloging of these stars.<br/>An anomaly was discovered by researchers while cataloging. \"We found seven stars that shouldn't be there,\" Max Planck Institute for Astronomy lead researcher Maximilian Haberle remarked. These stars were traveling so quickly that they ought to break free of the cluster completely. The most likely scenario is that these stars are being pulled toward the center of the galaxy by a large object.</p>\n<p>Strong gravitational pulls can only be produced by black holes, which have masses estimated to be at least 8,200 times that of the sun. This categorizes the item firmly inside the IMBH group. Although earlier research suggested that there might be an IMBH in Omega Centauri, this new data is the strongest to date. It implies the existence of a close-by IMBH, which may be essential for researching the evolution of black holes.<br/>As per the reports of MSN, the James Webb Space Telescope will now be used by researchers to study this black hole in more detail. With the use of this cutting-edge telescope, it will be possible to pinpoint the IMBH's precise mass and location, shedding light on both its characteristics and the larger processes behind black hole formation.</p><br><p><strong>What is a synonym for \"elusiveness\" as used in the passage?</strong></p>", "options": ["<p>Clarity</p>", "<p>Obscurity</p>", "<p>Precision</p>", "<p>Simplicit</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>\"Elusiveness\" refers to the quality of being hard to grasp or define, which is synonymous with \"obscurity.\"</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Big black holes, which can have masses up to hundreds of thousands of times that of the sun, are less common than small black holes, which are often found between five and 100 times that of the sun. There are still unanswered concerns regarding the genesis and growth of black holes due to the <strong>elusiveness</strong> of intermediate-mass black holes (IMBH). Intermediate-mass black holes should be more <strong>prevalent</strong> if they form gradually from smaller ones. In contrast, it would contradict what we know about black hole physics if they are limited to tiny or gigantic sizes, as per the reports of MSN.</p>\n<p>Astronomers have been searching for these IMBHs for a long time. Some of the greatest evidence for an IMBH in the Milky Way, notably in the Omega Centauri cluster, has just been revealed by the Hubble Space Telescope. About 10 million stars reside in Omega Centauri, and Hubble has played a crucial role in the cataloging of these stars.<br/>An anomaly was discovered by researchers while cataloging. \"We found seven stars that shouldn't be there,\" Max Planck Institute for Astronomy lead researcher Maximilian Haberle remarked. These stars were traveling so quickly that they ought to break free of the cluster completely. The most likely scenario is that these stars are being pulled toward the center of the galaxy by a large object.</p>\n<p>Strong gravitational pulls can only be produced by black holes, which have masses estimated to be at least 8,200 times that of the sun. This categorizes the item firmly inside the IMBH group. Although earlier research suggested that there might be an IMBH in Omega Centauri, this new data is the strongest to date. It implies the existence of a close-by IMBH, which may be essential for researching the evolution of black holes.<br/>As per the reports of MSN, the James Webb Space Telescope will now be used by researchers to study this black hole in more detail. With the use of this cutting-edge telescope, it will be possible to pinpoint the IMBH's precise mass and location, shedding light on both its characteristics and the larger processes behind black hole formation.</p><br><p><strong>What is the antonym of \"prevalent\" as used in the passage?</strong></p>", "options": ["<p>Common</p>", "<p>Abundant</p>", "<p>Rare</p>", "<p>Widespread</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>\"Prevalent\" means widespread or common, while \"rare\" is its antonym, indicating something that is infrequent or uncommon.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Big black holes, which can have masses up to hundreds of thousands of times that of the sun, are less common than small black holes, which are often found between five and 100 times that of the sun. There are still unanswered concerns regarding the genesis and growth of black holes due to the <strong>elusiveness</strong> of intermediate-mass black holes (IMBH). Intermediate-mass black holes should be more <strong>prevalent</strong> if they form gradually from smaller ones. In contrast, it would contradict what we know about black hole physics if they are limited to tiny or gigantic sizes, as per the reports of MSN.</p>\n<p>Astronomers have been searching for these IMBHs for a long time. Some of the greatest evidence for an IMBH in the Milky Way, notably in the Omega Centauri cluster, has just been revealed by the Hubble Space Telescope. About 10 million stars reside in Omega Centauri, and Hubble has played a crucial role in the cataloging of these stars.<br/>An anomaly was discovered by researchers while cataloging. \"We found seven stars that shouldn't be there,\" Max Planck Institute for Astronomy lead researcher Maximilian Haberle remarked. These stars were traveling so quickly that they ought to break free of the cluster completely. The most likely scenario is that these stars are being pulled toward the center of the galaxy by a large object.</p>\n<p>Strong gravitational pulls can only be produced by black holes, which have masses estimated to be at least 8,200 times that of the sun. This categorizes the item firmly inside the IMBH group. Although earlier research suggested that there might be an IMBH in Omega Centauri, this new data is the strongest to date. It implies the existence of a close-by IMBH, which may be essential for researching the evolution of black holes.<br/>As per the reports of MSN, the James Webb Space Telescope will now be used by researchers to study this black hole in more detail. With the use of this cutting-edge telescope, it will be possible to pinpoint the IMBH's precise mass and location, shedding light on both its characteristics and the larger processes behind black hole formation.</p><br><p><strong>What is a synonym for \"elusiveness\" as used in the passage?</strong></p>", "options": ["<p>Clarity</p>", "<p>Obscurity</p>", "<p>Precision</p>", "<p>Simplicit</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>\"Elusiveness\" refers to the quality of being hard to grasp or define, which is synonymous with \"obscurity.\"</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Big black holes, which can have masses up to hundreds of thousands of times that of the sun, are less common than small black holes, which are often found between five and 100 times that of the sun. There are still unanswered concerns regarding the genesis and growth of black holes due to the <strong>elusiveness</strong> of intermediate-mass black holes (IMBH). Intermediate-mass black holes should be more <strong>prevalent</strong> if they form gradually from smaller ones. In contrast, it would contradict what we know about black hole physics if they are limited to tiny or gigantic sizes, as per the reports of MSN.</p>\n<p>Astronomers have been searching for these IMBHs for a long time. Some of the greatest evidence for an IMBH in the Milky Way, notably in the Omega Centauri cluster, has just been revealed by the Hubble Space Telescope. About 10 million stars reside in Omega Centauri, and Hubble has played a crucial role in the cataloging of these stars.<br/>An anomaly was discovered by researchers while cataloging. \"We found seven stars that shouldn't be there,\" Max Planck Institute for Astronomy lead researcher Maximilian Haberle remarked. These stars were traveling so quickly that they ought to break free of the cluster completely. The most likely scenario is that these stars are being pulled toward the center of the galaxy by a large object.</p>\n<p>Strong gravitational pulls can only be produced by black holes, which have masses estimated to be at least 8,200 times that of the sun. This categorizes the item firmly inside the IMBH group. Although earlier research suggested that there might be an IMBH in Omega Centauri, this new data is the strongest to date. It implies the existence of a close-by IMBH, which may be essential for researching the evolution of black holes.<br/>As per the reports of MSN, the James Webb Space Telescope will now be used by researchers to study this black hole in more detail. With the use of this cutting-edge telescope, it will be possible to pinpoint the IMBH's precise mass and location, shedding light on both its characteristics and the larger processes behind black hole formation.</p><br><p><strong>What is the antonym of \"prevalent\" as used in the passage?</strong></p>", "options": ["<p>Common</p>", "<p>Abundant</p>", "<p>Rare</p>", "<p>Widespread</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>\"Prevalent\" means widespread or common, while \"rare\" is its antonym, indicating something that is infrequent or uncommon.</p>"}, {"question": "<p><strong>Rearrange the following six sentences (A), (B), (C), (D), (E), and (F) in the proper sequence to form a meaningful paragraph; then answer the questions given below them.</strong></p>\n<p><strong>A).</strong> Assuming that all these reasons are true, the fact <strong>(A) remains</strong> that there is an <strong>(B</strong>) <strong>initiate</strong> need to check the <strong>(C)</strong> <strong>accelerated</strong> costs and <strong>(D)</strong> <strong>urgent</strong> suitable measures.</p>\n<p><strong>B).</strong> Some people attribute it to the increasing greediness among the medicos.</p>\n<p><strong>C).</strong> The impact of these <strong>(A)</strong> <strong>measures</strong> will be <strong>(B)</strong> <strong>visible</strong> only after a <strong>(C)</strong> <strong>considerable</strong> passage of <strong>(D)</strong> <strong>time</strong>.</p>\n<p><strong>D).</strong> Healthcare costs have been skyrocketing in our country.</p>\n<p><strong>E).</strong> The measures include yoga classes with <strong>(A)</strong> <strong>exercises</strong> on physical and mental <strong>(B)</strong> <strong>emphasis</strong> and also <strong>(C)</strong> <strong>habits</strong> in food <strong>(D) Change.</strong></p>\n<p><strong>F).</strong> Certain others <strong>(A)</strong> <strong>feel</strong> that it is because of <strong>(B)</strong> <strong>drastic</strong> changes in people's <strong>(C)</strong> <strong>habits</strong> and eating <strong>(D)</strong> <strong>lifestyle.</strong></p><br><p><strong>In Sentence A, certain words are in bold and numbered from A to D, which are the possible pairs to be interchanged. Choose the pair(s) of words that need(s) to be interchanged to make the sentence grammatically correct and meaningful.</strong></p>", "options": ["<p>Only A-C</p>", "<p>B-C &amp; A-D</p>", "<p>Only B-D</p>", "<p>A-B &amp; C-D</p>", "<p>No correction required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>The corrected sentence is:</strong></p>\n<p>Assuming that all these reasons are true, the fact <strong>remains</strong> that there is an <strong>urgent</strong> need to check the <strong>accelerated</strong> costs and <strong>initiate</strong> suitable measures.</p>"}, {"question": "<p><strong>Rearrange the following six sentences (A), (B), (C), (D), (E), and (F) in the proper sequence to form a meaningful paragraph; then answer the questions given below them.</strong></p>\n<p><strong>A).</strong> Assuming that all these reasons are true, the fact <strong>(A) remains</strong> that there is an <strong>(B</strong>) <strong>initiate</strong> need to check the <strong>(C)</strong> <strong>accelerated</strong> costs and <strong>(D)</strong> <strong>urgent</strong> suitable measures.</p>\n<p><strong>B).</strong> Some people attribute it to the increasing greediness among the medicos.</p>\n<p><strong>C).</strong> The impact of these <strong>(A)</strong> <strong>measures</strong> will be <strong>(B)</strong> <strong>visible</strong> only after a <strong>(C)</strong> <strong>considerable</strong> passage of <strong>(D)</strong> <strong>time</strong>.</p>\n<p><strong>D).</strong> Healthcare costs have been skyrocketing in our country.</p>\n<p><strong>E).</strong> The measures include yoga classes with <strong>(A)</strong> <strong>exercises</strong> on physical and mental <strong>(B)</strong> <strong>emphasis</strong> and also <strong>(C)</strong> <strong>habits</strong> in food <strong>(D) Change.</strong></p>\n<p><strong>F).</strong> Certain others <strong>(A)</strong> <strong>feel</strong> that it is because of <strong>(B)</strong> <strong>drastic</strong> changes in people's <strong>(C)</strong> <strong>habits</strong> and eating <strong>(D)</strong> <strong>lifestyle.</strong></p><br><p><strong>In Sentence E, certain words are in bold and numbered from A to D, which are the possible pairs to be interchanged. Choose the pair(s) of words that need(s) to be interchanged to make the sentence grammatically correct and meaningful.</strong></p>", "options": ["<p>Only A-C</p>", "<p>B-C &amp; A-D</p>", "<p>Only B-D</p>", "<p>A-B &amp; C-D</p>", "<p>No correction required</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>The corrected sentence is:</strong></p>\n<p>The measures include yoga classes with <strong>emphasis</strong> on physical and mental <strong>exercises</strong> and also <strong>change</strong> in food <strong>habits</strong>.</p>"}, {"question": "<p><strong>Rearrange the following six sentences (A), (B), (C), (D), (E), and (F) in the proper sequence to form a meaningful paragraph; then answer the questions given below them.</strong></p>\n<p><strong>A).</strong> Assuming that all these reasons are true, the fact <strong>(A) remains</strong> that there is an <strong>(B</strong>) <strong>initiate</strong> need to check the <strong>(C)</strong> <strong>accelerated</strong> costs and <strong>(D)</strong> <strong>urgent</strong> suitable measures.</p>\n<p><strong>B).</strong> Some people attribute it to the increasing greediness among the medicos.</p>\n<p><strong>C).</strong> The impact of these <strong>(A)</strong> <strong>measures</strong> will be <strong>(B)</strong> <strong>visible</strong> only after a <strong>(C)</strong> <strong>considerable</strong> passage of <strong>(D)</strong> <strong>time</strong>.</p>\n<p><strong>D).</strong> Healthcare costs have been skyrocketing in our country.</p>\n<p><strong>E).</strong> The measures include yoga classes with <strong>(A)</strong> <strong>exercises</strong> on physical and mental <strong>(B)</strong> <strong>emphasis</strong> and also <strong>(C)</strong> <strong>habits</strong> in food <strong>(D) Change.</strong></p>\n<p><strong>F).</strong> Certain others <strong>(A)</strong> <strong>feel</strong> that it is because of <strong>(B)</strong> <strong>drastic</strong> changes in people's <strong>(C)</strong> <strong>habits</strong> and eating <strong>(D)</strong> <strong>lifestyle.</strong></p><br><p><strong>In Sentence F, certain words are in bold and numbered from A to D, which are the possible pairs to be interchanged. Choose the pair(s) of words that need(s) to be interchanged to make the sentence grammatically correct and meaningful.</strong></p>", "options": ["<p>Only C-D</p>", "<p>B-C &amp; A-D</p>", "<p>Only B-D</p>", "<p>A-B &amp; C-D</p>", "<p>No correction required</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>The corrected sentence is:</strong></p>\n<p>Certain others <strong>feel</strong> that it is because of <strong>drastic</strong> changes in people's <strong>lifestyle</strong> and eating <strong>habits</strong>.</p>"}, {"question": "<p><strong>Given below are a few questions with three highlighted words that may or may not be appropriate as per the context of the sentence. You have to mark that word as your answer which is inappropriately used as per the context of the sentence. If none of the options are correct then choose option E as your answer.</strong></p><br><p>The curator's <strong>(A)</strong> <strong>asuage</strong> understanding of art history allowed her to <strong>(B)</strong> <strong>organize </strong>an exhibit that seamlessly blended classical masterpieces with <strong>(C)</strong> <strong>contemporary</strong> innovations.</p>", "options": ["<p>Only A</p>", "<p>Only B</p>", "<p>Only C</p>", "<p>Both A &amp; C</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>Astute: </strong>Having or showing sharp insight and good judgment.</p>\n<p><strong>Assuage: </strong>To make an unpleasant feeling less intense or to satisfy a need or desire.</p>\n<p><strong>The corrected sentence is:</strong></p>\n<p>The curator's <strong>astute</strong> understanding of art history allowed her to <strong>organize </strong>an exhibit that seamlessly blended classical masterpieces with <strong>contemporary</strong> innovations.</p>"}, {"question": "<p><strong>Given below are a few questions with three highlighted words that may or may not be appropriate as per the context of the sentence. You have to mark that word as your answer which is inappropriately used as per the context of the sentence. If none of the options are correct then choose option E as your answer.</strong></p><br><p>The scientist’s <strong>(A)</strong> <strong>meticulous </strong>experiment, designed to test the <strong>(B)</strong> <strong>accuracy</strong> of a new compound, yielded results that could <strong>(C)</strong> <strong>revolutionize</strong> the field of pharmacology.</p>", "options": ["<p>Only A</p>", "<p>Only B</p>", "<p>Only C</p>", "<p>Both A &amp; C</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>The corrected sentence is:</strong></p>\n<p>The scientist’s <strong>meticulous </strong>experiment, designed to test the <strong>efficacy</strong> of a new compound, yielded results that could <strong>revolutionize</strong> the field of pharmacology.</p>"}, {"question": "<p><strong>Given below are a few questions with three highlighted words that may or may not be appropriate as per the context of the sentence. You have to mark that word as your answer which is inappropriately used as per the context of the sentence. If none of the options are correct then choose option E as your answer.</strong></p><br><p>Her <strong>(A)</strong> <strong>eloquent</strong> discourse on the ethical implications of artificial intelligence <strong>(B)</strong> <strong>highlighted</strong> the profound challenges and opportunities <strong>(C)</strong> <strong>posed </strong>by emerging technologies.</p>", "options": ["<p>Only A</p>", "<p>Only B</p>", "<p>Only C</p>", "<p>Both A &amp; C</p>", "<p>None of these</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p><strong>The corrected sentence is:</strong></p>\n<p>Her <strong>eloquent</strong> discourse on the ethical implications of artificial intelligence <strong>highlighted</strong> the profound challenges and opportunities <strong>posed</strong> by emerging technologies.</p>"}, {"question": "<p><strong>Given below are a few questions with three highlighted words that may or may not be appropriate as per the context of the sentence. You have to mark that word as your answer which is inappropriately used as per the context of the sentence. If none of the options are correct then choose option E as your answer.</strong></p><br><p>The architect's visionary design, characterized by its fluid lines and <strong>(A)</strong> <strong>sustainable </strong>materials, <strong>(B)</strong> <strong>set </strong>a new standard for eco-friendly <strong>(C)</strong> <strong>urban</strong> development.</p>", "options": ["<p>Only A</p>", "<p>Only B</p>", "<p>Only C</p>", "<p>Both A &amp; C</p>", "<p>None of these</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p><strong>The corrected sentence is:</strong></p>\n<p>The architect's visionary design, characterized by its fluid lines and <strong>sustainable</strong> materials, <strong>set</strong> a new standard for eco-friendly <strong>urban</strong> development.</p>"}, {"question": "<p><strong>Given below are a few questions with three highlighted words that may or may not be appropriate as per the context of the sentence. You have to mark that word as your answer which is inappropriately used as per the context of the sentence. If none of the options are correct then choose option E as your answer.</strong></p><br><p>The linguist’s <strong>(A)</strong> <strong>exhaustive</strong> study of ancient languages provided new insights into the <strong>(B)</strong> <strong>evolution</strong> of human communication and the interconnectedness of <strong>(C)</strong> <strong>diverse </strong>cultures.</p>", "options": ["<p>Only A</p>", "<p>Only B</p>", "<p>Only C</p>", "<p>Both B &amp; C</p>", "<p>None of these</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p><strong>The corrected sentence is:</strong></p>\n<p>The linguist’s <strong>exhaustive</strong> study of ancient languages provided new insights into the <strong>evolution</strong> of human communication and the interconnectedness of <strong>diverse </strong>cultures.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-41)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-41)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

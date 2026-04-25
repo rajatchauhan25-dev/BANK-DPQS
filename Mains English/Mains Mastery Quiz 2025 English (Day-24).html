@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-24)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>In the questions given below, three sentences are given, each divided into four parts, which may or may not contain grammatical errors. From the options, choose the one that provides the combination of the part(s) of each sentence that are incorrect.</strong></p><br><p><strong>1).</strong> PE firms have invest <strong>(A)/</strong> $44.8 billion, which is $200 million <strong>(B)/</strong> more than what they invested <strong>(C)/</strong> in China during the same period <strong>(D).</strong></p>\n<p><strong>2).</strong> Travellers cheques (TCs) dates back <strong>(A)/</strong> to the end of the 19th century <strong>(B)/</strong> with American Express and Thomas Cook <strong>(C)/</strong> as the first issuers <strong>(D).</strong></p>\n<p><strong>3).</strong> Reusing oil does not mean <strong>(A)/</strong> that the same oil <strong>(B)/</strong> is used for frying everything <strong>(C)/</strong> for days on end <strong>(D).</strong></p>", "options": ["<p>Only 3-B</p>", "<p>2-B, 3-C</p>", "<p>1-A, 2-A</p>", "<p>1-B, 2-C, 3-A</p>", "<p>1-C, 2-B, 3-C</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>In 1, part A is erroneous. The usage of the base form of verb ‘invest’ after ‘have’ is wrong and should be replaced with ‘invested’ as the present perfect construction of HAVE+VERB requires a verb in its past participle form.</p>\n<p>In 2, part A is erroneous. The usage of singular verb ‘dates’ after a plural subject ‘Travellers cheques’ is wrong. Replace ‘dates’ with ‘date’.</p>\n<p>Sentence 3 is grammatically correct.</p>\n<p>So, the correct sequence is 1-A, 2-A. Hence, option (c) is the correct answer.</p>"}, {"question": "<p><strong>In the questions given below, three sentences are given, each divided into four parts, which may or may not contain grammatical errors. From the options, choose the one that provides the combination of the part(s) of each sentence that are incorrect.</strong></p><br><p><strong>1).</strong> The RBI refused to allow <strong>(A)/</strong> Indian banks to purchased gold <strong>(B)/</strong> under the Gold Accreditation Plans where banks wanted to keep <strong>(C)/</strong> part of their own cash reserve ratio amounts in gold <strong>(D).</strong></p>\n<p><strong>2).</strong> At that stage, we felt that <strong>(A)/</strong> we needed someone <strong>(B)/</strong> to give us <strong>(C)/</strong> an outsider perspective to business <strong>(D).</strong></p>\n<p><strong>3).</strong> Nobody could have notice <strong>(A)/</strong> the spark of entrepreneurship <strong>(B)/</strong> in the 16-year-old who stepped out of the train <strong>(C)/</strong> that reached Mumbai from Durgapur one day in 1988 <strong>(D).</strong></p>", "options": ["<p>2-C, 3-B</p>", "<p>1-B, 3-A</p>", "<p>Only 1-C</p>", "<p>1-B, 2-C, 3-B</p>", "<p>1-D, 2-C, 3-A</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>In 1, part B is erroneous. The usage of past participle form of the verb ‘purchased’ after ‘to’ in an infinitive phrase is wrong Replace ‘purchased’ with ‘purchase’</p>\n<p>Sentence 2 is grammatically correct.</p>\n<p>In 3, part (A) is erroneous. The usage of a base form of the verb after ‘could have’ is wrong. Replace ‘notice’ with ‘noticed’.</p>\n<p>So, the correct sequence is 1-B and 3-A. Hence, (b) is the correct answer.</p>"}, {"question": "<p><strong>In the questions given below, three sentences are given, each divided into four parts, which may or may not contain grammatical errors. From the options, choose the one that provides the combination of the part(s) of each sentence that are incorrect.</strong></p><br><p><strong>1).</strong> Thomas Cook had issued <strong>(A)/</strong> a precursor to the <strong>(B)/</strong> Traveller’s Cheque, Cook’s Circular Note, <strong>(C)/</strong> in 1874 in New York <strong>(D).</strong></p>\n<p><strong>2).</strong> Oil that is use for <strong>(A)/</strong> marinating some items <strong>(B)/</strong> acquires a flavour <strong>(C)/</strong> which adds flavour when roasting <strong>(D).</strong></p>\n<p><strong>3).</strong> The Reserve Bank of India (RBI) has surprised <strong>(A)/</strong> almost everyone in the world <strong>(B)/</strong> by announce that it had purchased <strong>(C)/</strong> 200 tonnes of gold bullion from the International Monetary Fund (IMF) <strong>(D).</strong></p>", "options": ["<p>1-C, 2-D, 3-C</p>", "<p>1-B, 2-B, 3-A</p>", "<p>Only 2-D</p>", "<p>1-A, 3-D</p>", "<p>2-A, 3-C</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>Sentence 1 is grammatically correct.</p>\n<p>In 2, the voice of the sentence is passive. So, the usage of a base form of the verb ‘use’ after the auxiliary ‘is’ is erroneous. Replace ‘use’ with ‘used’.</p>\n<p>In 3, part (C) is erroneous. The usage of a verb ‘announce’ after the preposition ‘by’ is incorrect. A noun or gerund follows a preposition. So, replace ‘announce’ with ‘announcing’.</p>\n<p>So, the correct sequence is 2-A and 3-C. Hence, (e) is the correct answer.</p>"}, {"question": "<p><strong>In the questions given below, three sentences are given, each divided into four parts, which may or may not contain grammatical errors. From the options, choose the one that provides the combination of the part(s) of each sentence that are incorrect.</strong></p><br><p><strong>1).</strong> Sudip Dutta checked into India’s financial capital <strong>(A)/</strong> as the sole breadwinner <strong>(B)/</strong> for his family after the successive deaths <strong>(C)/</strong> of his father and elder brother <strong>(D).</strong></p>\n<p><strong>2).</strong> In December 2007, <strong>(A)/</strong> the sun almost <strong>(B)/</strong> set on <strong>(C)/</strong> Kalanithi Maran’s media empire <strong>(D).</strong></p>\n<p><strong>3).</strong> Eureka Forbes was an <strong>(A)/</strong> undisputed leader in the <strong>(B)/</strong> water purifier segment <strong>(C)/</strong> until HUL stormed its bastion <strong>(D).</strong></p>", "options": ["<p>Only 3-A</p>", "<p>1-C, 2-B, 3-A</p>", "<p>1-D, 2-A, 3-C</p>", "<p>2-B, 3-D</p>", "<p>1-A, 3-A</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Sentences (1) and (2) are grammatically correct.</p>\n<p>In 3, the usage of the article AN is erroneous. It should be replaced with THE. THE is used with definite noun while A/AN are used with indefinite nouns. There can be only one undisputed leader. So, THE should be used in 3-A.</p>\n<p>Hence (a) is the right answer.</p>"}, {"question": "<p><strong>In the questions given below, three sentences are given, each divided into four parts, which may or may not contain grammatical errors. From the options, choose the one that provides the combination of the part(s) of each sentence that are incorrect.</strong></p><br><p><strong>1).</strong> French fries does not <strong>(A)/</strong> acquire a golden colour <strong>(B)/</strong> unless they are fried <strong>(C)/</strong> in oil that has been used once <strong>(D).</strong></p>\n<p><strong>2).</strong> In September 2009, the IMF decides <strong>(A)/</strong> to sell 403.3 metric tonnes <strong>(B)/</strong> of gold from the <strong>(C)/</strong> 3,217 tonnes it had in early 2009 <strong>(D).</strong></p>\n<p><strong>3).</strong> The first change was in 1981, <strong>(A)/</strong> when we bought EID <strong>(B)/</strong> but we don’t grow too much <strong>(C)/</strong> in the 70s due to License Raj and our value system <strong>(D).</strong></p>", "options": ["<p>2-C, 3-C</p>", "<p>Only 1-B</p>", "<p>1-A, 3-C</p>", "<p>1-A, 2-A, 3-C</p>", "<p>1-C, 2-B, 3-A</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>In 1, part (A) is wrong. The usage of singular verb ‘does’ after plural noun ‘French fries’ is wrong. Replace ‘does’ with ‘do’.</p>\n<p>In 2, part (A) is erroneous. The usage of the phrase ‘In September 2009’ suggests that the tense of the sentence should be past. So, the usage of the present tense verb ‘decides’ in the sentence is incorrect. Replace ‘decides’ with ‘decided’.</p>\n<p>In 3, part (C) is erroneous. The usage of the phrase ‘in the 70s’ in the clause after ‘but’ suggests that the tense of the sentence is past tense. So, the usage of the present tense auxiliary ‘don’t’ is wrong. Replace ‘don’t’ with ‘didn’t’.</p>\n<p>So, the correct sequence is 1-A, 2-A, 3-C. Hence, (d) is the correct answer.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>This summer has been unlike any other. The relentless heat intensifies with each passing day, and there is no relief in sight. India is currently grappling with one of the most intense heat waves in recent history, with temperatures soaring above 45 degrees Celsius in many regions. This extreme heat is taking a significant toll on the health of the people, straining healthcare systems, and prompting urgent government action to mitigate the crisis. The immediate health impacts of the heatwave are severe and widespread. Hospitals across the country are reporting a surge in cases of heat-related illnesses such as heat exhaustion and heatstroke. Heat exhaustion, characterised by symptoms like heavy sweating, muscle cramps, and fatigue, can escalate into heatstroke. Heatstroke is a life-threatening condition that occurs when the body’s temperature regulation fails, leading to confusion, unconsciousness, and potentially fatal organ damage. Chronic health conditions are also being exacerbated by the extreme heat. Individuals with cardiovascular diseases are at increased risk of heart attacks and strokes as the body struggles to cool itself, leading to higher heart rates and blood pressure. Respiratory issues are worsening too, with higher levels of air pollutants combining with the heat to create a hazardous environment for those with asthma and other lung conditions. It is time the Indian Government declared a health emergency and implemented measures aimed at protecting public health and alleviating the impact of the heatwave. The government must actively disseminate information through various media channels, advising people to stay indoors during peak heat hours and drink plenty of water. The office timings must be changed.   Some states like Rajasthan are doing good jo. External coolers have been installed on public buses to mitigate the soaring temperatures. In response to the extreme heat, the Jaipur administration has initiated the use of artificial rain. Large water tankers have been stationed along the roads to spray water on pedestrians, adopting this method to combat the sweltering conditions. The rest of the country could take a cue from Rajasthan. Indeed, healthcare systems are under significant pressure, with hospitals and clinics witnessing a sharp increase in heat-related medical emergencies. To cope with the surge, additional medical staff must be deployed, and temporary medical facilities must be set up in some areas to handle the overflow of patients. What we are witnessing can be attributed to climate change. Urban areas must have more green spaces which help lower temperatures.  Climate experts warn that such events are likely to become more frequent and severe in the coming years due to climate change, necessitating comprehensive plans to protect public health. By investing in sustainable infrastructure, enhancing healthcare system capacities, and promoting public awareness, India can build resilience against future heatwaves and safeguard the health of its population in an increasingly warming world.</p><br><p><strong>What measures has the Jaipur administration taken in response to the heatwave?</strong></p>", "options": ["<p>Distributed free water bottles</p>", "<p>Installed air conditioners in public spaces</p>", "<p>Initiated the use of artificial rain</p>", "<p>Provided free medical check-ups</p>", "<p>Conducted awareness campaigns</p>"], "correctIndex": 2, "solution": "<p><strong>Answer:</strong><strong> C</strong></p>\n<p>The passage specifically mentions that \"the Jaipur administration has initiated the use of artificial rain\" as a measure to combat the extreme heat. This is an innovative approach where large water tankers are stationed along the roads to spray water on pedestrians, helping to mitigate the sweltering conditions.</p>\n<p>a). Distributed free water bottles: This option is not mentioned in the passage. While providing water could be a useful measure during a heatwave, the text does not indicate that this specific action was taken by the Jaipur administration.</p>\n<p>b). Installed air conditioners in public spaces: The passage does not mention installing air conditioners in public spaces. Instead, it focuses on the use of artificial rain as a cooling measure.</p>\n<p>d). Provided free medical check-ups: Although healthcare measures are discussed in the passage, such as deploying additional medical staff and setting up temporary medical facilities, there is no mention of the Jaipur administration providing free medical check-ups.</p>\n<p>e). Conducted awareness campaigns: While the passage advises the government to disseminate information and promote public awareness about staying indoors and drinking plenty of water, it does not state that the Jaipur administration specifically conducted awareness campaigns.</p>\n<p>Thus, the correct answer is c) Initiated the use of artificial rain, as this is explicitly stated in the passage as a measure taken by the Jaipur administration to address the heatwave.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>This summer has been unlike any other. The relentless heat intensifies with each passing day, and there is no relief in sight. India is currently grappling with one of the most intense heat waves in recent history, with temperatures soaring above 45 degrees Celsius in many regions. This extreme heat is taking a significant toll on the health of the people, straining healthcare systems, and prompting urgent government action to mitigate the crisis. The immediate health impacts of the heatwave are severe and widespread. Hospitals across the country are reporting a surge in cases of heat-related illnesses such as heat exhaustion and heatstroke. Heat exhaustion, characterised by symptoms like heavy sweating, muscle cramps, and fatigue, can escalate into heatstroke. Heatstroke is a life-threatening condition that occurs when the body’s temperature regulation fails, leading to confusion, unconsciousness, and potentially fatal organ damage. Chronic health conditions are also being exacerbated by the extreme heat. Individuals with cardiovascular diseases are at increased risk of heart attacks and strokes as the body struggles to cool itself, leading to higher heart rates and blood pressure. Respiratory issues are worsening too, with higher levels of air pollutants combining with the heat to create a hazardous environment for those with asthma and other lung conditions. It is time the Indian Government declared a health emergency and implemented measures aimed at protecting public health and alleviating the impact of the heatwave. The government must actively disseminate information through various media channels, advising people to stay indoors during peak heat hours and drink plenty of water. The office timings must be changed.   Some states like Rajasthan are doing good jo. External coolers have been installed on public buses to mitigate the soaring temperatures. In response to the extreme heat, the Jaipur administration has initiated the use of artificial rain. Large water tankers have been stationed along the roads to spray water on pedestrians, adopting this method to combat the sweltering conditions. The rest of the country could take a cue from Rajasthan. Indeed, healthcare systems are under significant pressure, with hospitals and clinics witnessing a sharp increase in heat-related medical emergencies. To cope with the surge, additional medical staff must be deployed, and temporary medical facilities must be set up in some areas to handle the overflow of patients. What we are witnessing can be attributed to climate change. Urban areas must have more green spaces which help lower temperatures.  Climate experts warn that such events are likely to become more frequent and severe in the coming years due to climate change, necessitating comprehensive plans to protect public health. By investing in sustainable infrastructure, enhancing healthcare system capacities, and promoting public awareness, India can build resilience against future heatwaves and safeguard the health of its population in an increasingly warming world.</p><br><p><strong>Why are individuals with cardiovascular diseases at increased risk during the heatwave?</strong></p>", "options": ["<p>They are more likely to get sunburned</p>", "<p>The heat causes dehydration more quickly in them</p>", "<p>The body struggles to cool itself, increasing heart rates and blood pressure</p>", "<p>They are unable to sweat properly</p>", "<p>The heat wave affects their immune system</p>"], "correctIndex": 2, "solution": "<p><strong>Answer:</strong><strong> C</strong></p>\n<p>The passage explains that the extreme heat exacerbates chronic health conditions, particularly for individuals with cardiovascular diseases. The key issue is that the body struggles to cool itself in the heat, which leads to higher heart rates and increased blood pressure. This physiological response increases the risk of heart attacks and strokes for these individuals.</p>\n<p>a). They are more likely to get sunburned: Sunburn is not mentioned in the passage as a risk factor for individuals with cardiovascular diseases during a heatwave. The primary concern is the internal strain on the cardiovascular system rather than external skin damage.</p>\n<p>b). The heat causes dehydration more quickly in them: While dehydration is a general risk during heatwaves, the passage specifically focuses on how the inability to cool down affects heart rates and blood pressure, which are direct concerns for cardiovascular health.</p>\n<p>d). They are unable to sweat properly: The passage does not mention an inability to sweat as a specific issue for individuals with cardiovascular diseases. The problem highlighted is the body's overall difficulty in regulating temperature.</p>\n<p>e). The heat wave affects their immune system: The passage does not mention any impact on the immune system for individuals with cardiovascular diseases. The focus is on the cardiovascular strain due to increased heart rates and blood pressure.</p>\n<p>Thus, the correct answer is c) The body struggles to cool itself, increasing heart rates and blood pressure. This explanation aligns directly with the passage's description of how the heatwave impacts individuals with cardiovascular diseases.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>This summer has been unlike any other. The relentless heat intensifies with each passing day, and there is no relief in sight. India is currently grappling with one of the most intense heat waves in recent history, with temperatures soaring above 45 degrees Celsius in many regions. This extreme heat is taking a significant toll on the health of the people, straining healthcare systems, and prompting urgent government action to mitigate the crisis. The immediate health impacts of the heatwave are severe and widespread. Hospitals across the country are reporting a surge in cases of heat-related illnesses such as heat exhaustion and heatstroke. Heat exhaustion, characterised by symptoms like heavy sweating, muscle cramps, and fatigue, can escalate into heatstroke. Heatstroke is a life-threatening condition that occurs when the body’s temperature regulation fails, leading to confusion, unconsciousness, and potentially fatal organ damage. Chronic health conditions are also being exacerbated by the extreme heat. Individuals with cardiovascular diseases are at increased risk of heart attacks and strokes as the body struggles to cool itself, leading to higher heart rates and blood pressure. Respiratory issues are worsening too, with higher levels of air pollutants combining with the heat to create a hazardous environment for those with asthma and other lung conditions. It is time the Indian Government declared a health emergency and implemented measures aimed at protecting public health and alleviating the impact of the heatwave. The government must actively disseminate information through various media channels, advising people to stay indoors during peak heat hours and drink plenty of water. The office timings must be changed.   Some states like Rajasthan are doing good jo. External coolers have been installed on public buses to mitigate the soaring temperatures. In response to the extreme heat, the Jaipur administration has initiated the use of artificial rain. Large water tankers have been stationed along the roads to spray water on pedestrians, adopting this method to combat the sweltering conditions. The rest of the country could take a cue from Rajasthan. Indeed, healthcare systems are under significant pressure, with hospitals and clinics witnessing a sharp increase in heat-related medical emergencies. To cope with the surge, additional medical staff must be deployed, and temporary medical facilities must be set up in some areas to handle the overflow of patients. What we are witnessing can be attributed to climate change. Urban areas must have more green spaces which help lower temperatures.  Climate experts warn that such events are likely to become more frequent and severe in the coming years due to climate change, necessitating comprehensive plans to protect public health. By investing in sustainable infrastructure, enhancing healthcare system capacities, and promoting public awareness, India can build resilience against future heatwaves and safeguard the health of its population in an increasingly warming world.</p><br><p><strong>What symptoms are associated with heat exhaustion according to the passage?</strong></p>", "options": ["<p>High fever and chills</p>", "<p>Muscle cramps and heavy sweating</p>", "<p>Nausea and vomiting</p>", "<p>Coughing and sneezing</p>", "<p>Rash and itching</p>"], "correctIndex": 1, "solution": "<p><strong>Answer:</strong><strong> B</strong></p>\n<p>The passage specifically mentions that heat exhaustion is characterized by symptoms such as heavy sweating, muscle cramps, and fatigue. This indicates that the body is struggling to cope with the extreme heat, leading to these physical manifestations.</p>\n<p>a). High fever and chills: These symptoms are typically associated with infections or conditions like flu, not heat exhaustion. The passage does not mention high fever and chills in the context of heat exhaustion.</p>\n<p>b). Muscle cramps and heavy sweating: Correct. The passage explicitly lists muscle cramps and heavy sweating as symptoms of heat exhaustion, making this the right answer.</p>\n<p>c). Nausea and vomiting: While nausea and vomiting can sometimes occur in severe heat-related illnesses, the passage does not specifically mention these symptoms for heat exhaustion. The primary symptoms highlighted are muscle cramps and heavy sweating.</p>\n<p>d). Coughing and sneezing: These symptoms are generally associated with respiratory infections or allergies, not heat exhaustion. The passage does not link coughing and sneezing to heat exhaustion.</p>\n<p>e). Rash and itching: These symptoms are usually related to dermatological conditions, not heat exhaustion. The passage does not mention rash and itching as symptoms of heat exhaustion.</p>\n<p>Thus, the correct answer is b) Muscle cramps and heavy sweating, as these symptoms are directly mentioned in the passage as indicators of heat exhaustion.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>This summer has been unlike any other. The relentless heat intensifies with each passing day, and there is no relief in sight. India is currently grappling with one of the most intense heat waves in recent history, with temperatures soaring above 45 degrees Celsius in many regions. This extreme heat is taking a significant toll on the health of the people, straining healthcare systems, and prompting urgent government action to mitigate the crisis. The immediate health impacts of the heatwave are severe and widespread. Hospitals across the country are reporting a surge in cases of heat-related illnesses such as heat exhaustion and heatstroke. Heat exhaustion, characterised by symptoms like heavy sweating, muscle cramps, and fatigue, can escalate into heatstroke. Heatstroke is a life-threatening condition that occurs when the body’s temperature regulation fails, leading to confusion, unconsciousness, and potentially fatal organ damage. Chronic health conditions are also being exacerbated by the extreme heat. Individuals with cardiovascular diseases are at increased risk of heart attacks and strokes as the body struggles to cool itself, leading to higher heart rates and blood pressure. Respiratory issues are worsening too, with higher levels of air pollutants combining with the heat to create a hazardous environment for those with asthma and other lung conditions. It is time the Indian Government declared a health emergency and implemented measures aimed at protecting public health and alleviating the impact of the heatwave. The government must actively disseminate information through various media channels, advising people to stay indoors during peak heat hours and drink plenty of water. The office timings must be changed.   Some states like Rajasthan are doing good jo. External coolers have been installed on public buses to mitigate the soaring temperatures. In response to the extreme heat, the Jaipur administration has initiated the use of artificial rain. Large water tankers have been stationed along the roads to spray water on pedestrians, adopting this method to combat the sweltering conditions. The rest of the country could take a cue from Rajasthan. Indeed, healthcare systems are under significant pressure, with hospitals and clinics witnessing a sharp increase in heat-related medical emergencies. To cope with the surge, additional medical staff must be deployed, and temporary medical facilities must be set up in some areas to handle the overflow of patients. What we are witnessing can be attributed to climate change. Urban areas must have more green spaces which help lower temperatures.  Climate experts warn that such events are likely to become more frequent and severe in the coming years due to climate change, necessitating comprehensive plans to protect public health. By investing in sustainable infrastructure, enhancing healthcare system capacities, and promoting public awareness, India can build resilience against future heatwaves and safeguard the health of its population in an increasingly warming world.</p><br><p><strong>What long-term solution does the passage suggest for urban areas to combat heatwaves?</strong></p>", "options": ["<p>Installing air purifiers</p>", "<p>Increasing the number of green spaces</p>", "<p>Building more hospitals</p>", "<p>Reducing industrial activities</p>", "<p>Promoting indoor sports</p>"], "correctIndex": 1, "solution": "<p><strong>Answer:</strong><strong> B</strong></p>\n<p>The passage suggests that one effective long-term solution for urban areas to combat heatwaves is to increase the number of green spaces. It highlights that urban areas must have more green spaces to help lower temperatures, which can mitigate the impact of heatwaves and contribute to a cooler environment.</p>\n<p>a). Installing air purifiers: While air purifiers can improve air quality, they do not directly address the issue of reducing temperatures in urban areas. The passage does not mention air purifiers as a solution to combat heatwaves.</p>\n<p>b). Increasing the number of green spaces: Correct. The passage explicitly states that urban areas must have more green spaces to help lower temperatures, making this the right answer. Green spaces can cool the surrounding environment and provide a more sustainable and natural way to combat heat.</p>\n<p>c). Building more hospitals: Although enhancing healthcare system capacities is important, building more hospitals does not directly address the root cause of heatwaves. The passage focuses on preventive measures like increasing green spaces.</p>\n<p>d). Reducing industrial activities: While reducing industrial activities might help lower pollution levels, the passage does not mention this as a specific solution for combating heatwaves. The emphasis is on creating green spaces.</p>\n<p>e). Promoting indoor sports: Promoting indoor sports may help people avoid the heat temporarily, but it does not provide a long-term solution to the problem of rising urban temperatures. The passage does not mention promoting indoor sports as a solution.</p>\n<p>Thus, the correct answer is b) Increasing the number of green spaces, as this is the solution explicitly recommended in the passage to help urban areas combat heatwaves by lowering temperatures.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>This summer has been unlike any other. The relentless heat intensifies with each passing day, and there is no relief in sight. India is currently grappling with one of the most intense heat waves in recent history, with temperatures soaring above 45 degrees Celsius in many regions. This extreme heat is taking a significant toll on the health of the people, straining healthcare systems, and prompting urgent government action to mitigate the crisis. The immediate health impacts of the heatwave are severe and widespread. Hospitals across the country are reporting a surge in cases of heat-related illnesses such as heat exhaustion and heatstroke. Heat exhaustion, characterised by symptoms like heavy sweating, muscle cramps, and fatigue, can escalate into heatstroke. Heatstroke is a life-threatening condition that occurs when the body’s temperature regulation fails, leading to confusion, unconsciousness, and potentially fatal organ damage. Chronic health conditions are also being exacerbated by the extreme heat. Individuals with cardiovascular diseases are at increased risk of heart attacks and strokes as the body struggles to cool itself, leading to higher heart rates and blood pressure. Respiratory issues are worsening too, with higher levels of air pollutants combining with the heat to create a hazardous environment for those with asthma and other lung conditions. It is time the Indian Government declared a health emergency and implemented measures aimed at protecting public health and alleviating the impact of the heatwave. The government must actively disseminate information through various media channels, advising people to stay indoors during peak heat hours and drink plenty of water. The office timings must be changed.   Some states like Rajasthan are doing good jo. External coolers have been installed on public buses to mitigate the soaring temperatures. In response to the extreme heat, the Jaipur administration has initiated the use of artificial rain. Large water tankers have been stationed along the roads to spray water on pedestrians, adopting this method to combat the sweltering conditions. The rest of the country could take a cue from Rajasthan. Indeed, healthcare systems are under significant pressure, with hospitals and clinics witnessing a sharp increase in heat-related medical emergencies. To cope with the surge, additional medical staff must be deployed, and temporary medical facilities must be set up in some areas to handle the overflow of patients. What we are witnessing can be attributed to climate change. Urban areas must have more green spaces which help lower temperatures.  Climate experts warn that such events are likely to become more frequent and severe in the coming years due to climate change, necessitating comprehensive plans to protect public health. By investing in sustainable infrastructure, enhancing healthcare system capacities, and promoting public awareness, India can build resilience against future heatwaves and safeguard the health of its population in an increasingly warming world.</p><br><p><strong>What does the passage attribute the increasing frequency and severity of heatwaves to?</strong></p>", "options": ["<p>Poor urban planning</p>", "<p>Industrial pollution</p>", "<p>Climate change</p>", "<p>Overpopulation</p>", "<p>Deforestation</p>"], "correctIndex": 2, "solution": "<p><strong>Answer:</strong><strong> C</strong></p>\n<p>The passage attributes the increasing frequency and severity of heatwaves to climate change. It states that climate experts warn about such events becoming more frequent and severe due to climate change, necessitating comprehensive plans to protect public health.</p>\n<p>a). Poor urban planning: While poor urban planning can exacerbate the effects of heatwaves, the passage does not attribute the increasing frequency and severity of heatwaves to this factor. The main cause discussed is climate change.</p>\n<p>b). Industrial pollution: Although industrial pollution can contribute to broader environmental issues, the passage specifically mentions climate change as the cause of more frequent and severe heatwaves. Industrial pollution is not directly cited as the primary reason for the increased heatwave events.</p>\n<p>c). Climate change: Correct. The passage explicitly links the increasing frequency and severity of heatwaves to climate change. This is supported by climate experts' warnings mentioned in the text.</p>\n<p>d). Overpopulation: Overpopulation may put additional strain on resources and infrastructure, but the passage does not attribute the increasing heatwaves to overpopulation. The focus is on climate change as the driving factor.</p>\n<p>e). Deforestation: While deforestation can impact local climates and contribute to broader climate change, the passage does not specifically attribute the increased heatwave events to deforestation. It directly cites climate change as the cause.</p>\n<p>Thus, the correct answer is c) Climate change, as the passage clearly attributes the increasing frequency and severity of heatwaves to this global phenomenon.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>This summer has been unlike any other. The relentless heat intensifies with each passing day, and there is no relief in sight. India is currently grappling with one of the most intense heat waves in recent history, with temperatures soaring above 45 degrees Celsius in many regions. This extreme heat is taking a significant toll on the health of the people, straining healthcare systems, and prompting urgent government action to mitigate the crisis. The immediate health impacts of the heatwave are severe and widespread. Hospitals across the country are reporting a surge in cases of heat-related illnesses such as heat exhaustion and heatstroke. Heat exhaustion, characterised by symptoms like heavy sweating, muscle cramps, and fatigue, can escalate into heatstroke. Heatstroke is a life-threatening condition that occurs when the body’s temperature regulation fails, leading to confusion, unconsciousness, and potentially fatal organ damage. Chronic health conditions are also being exacerbated by the extreme heat. Individuals with cardiovascular diseases are at increased risk of heart attacks and strokes as the body struggles to cool itself, leading to higher heart rates and blood pressure. Respiratory issues are worsening too, with higher levels of air pollutants combining with the heat to create a hazardous environment for those with asthma and other lung conditions. It is time the Indian Government declared a health emergency and implemented measures aimed at protecting public health and alleviating the impact of the heatwave. The government must actively disseminate information through various media channels, advising people to stay indoors during peak heat hours and drink plenty of water. The office timings must be changed.   Some states like Rajasthan are doing good jo. External coolers have been installed on public buses to mitigate the soaring temperatures. In response to the extreme heat, the Jaipur administration has initiated the use of artificial rain. Large water tankers have been stationed along the roads to spray water on pedestrians, adopting this method to combat the sweltering conditions. The rest of the country could take a cue from Rajasthan. Indeed, healthcare systems are under significant pressure, with hospitals and clinics witnessing a sharp increase in heat-related medical emergencies. To cope with the surge, additional medical staff must be deployed, and temporary medical facilities must be set up in some areas to handle the overflow of patients. What we are witnessing can be attributed to climate change. Urban areas must have more green spaces which help lower temperatures.  Climate experts warn that such events are likely to become more frequent and severe in the coming years due to climate change, necessitating comprehensive plans to protect public health. By investing in sustainable infrastructure, enhancing healthcare system capacities, and promoting public awareness, India can build resilience against future heatwaves and safeguard the health of its population in an increasingly warming world.</p><br><p><strong>What immediate health impacts are mentioned in the passage as a result of the heatwave?</strong></p>", "options": ["<p>Dehydration and sunburn</p>", "<p>Heat exhaustion and heatstroke</p>", "<p>Frostbite and hypothermia</p>", "<p>Migraine and dizziness</p>", "<p>Flu and cold</p>"], "correctIndex": 1, "solution": "<p><strong>Answer:</strong><strong> B</strong></p>\n<p>The passage explicitly mentions that the immediate health impacts of the heatwave include heat exhaustion and heatstroke. It describes heat exhaustion as being characterized by symptoms like heavy sweating, muscle cramps, and fatigue, which can escalate into heatstroke. Heatstroke is a more severe, life-threatening condition that results from the body's failure to regulate its temperature, leading to confusion, unconsciousness, and potentially fatal organ damage.</p>\n<p>a). Dehydration and sunburn: While dehydration can occur during a heatwave and sunburn is possible with excessive sun exposure, the passage specifically highlights heat exhaustion and heatstroke as the immediate health impacts, not dehydration and sunburn.</p>\n<p>b). Heat exhaustion and heatstroke: Correct. The passage directly mentions these conditions as immediate health impacts, providing detailed descriptions of their symptoms and severity.</p>\n<p>c). Frostbite and hypothermia: These conditions are associated with extreme cold, not heat. They are entirely irrelevant to the context of a heatwave.</p>\n<p>d). Migraine and dizziness: While dizziness might be a symptom of heat exhaustion, migraines are not specifically mentioned in the passage. The focus is on the more severe conditions of heat exhaustion and heatstroke.</p>\n<p>e). Flu and cold: These are viral infections that are not related to heatwaves. The passage does not mention them in the context of heat-related illnesses.</p>\n<p>Thus, the correct answer is b) Heat exhaustion and heatstroke, as these are the immediate health impacts explicitly discussed in the passage.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>This summer has been unlike any other. The relentless heat intensifies with each passing day, and there is no relief in sight. India is currently grappling with one of the most intense heat waves in recent history, with temperatures soaring above 45 degrees Celsius in many regions. This extreme heat is taking a significant toll on the health of the people, straining healthcare systems, and prompting urgent government action to mitigate the crisis. The immediate health impacts of the heatwave are severe and widespread. Hospitals across the country are reporting a surge in cases of heat-related illnesses such as heat exhaustion and heatstroke. Heat exhaustion, characterised by symptoms like heavy sweating, muscle cramps, and fatigue, can escalate into heatstroke. Heatstroke is a life-threatening condition that occurs when the body’s temperature regulation fails, leading to confusion, unconsciousness, and potentially fatal organ damage. Chronic health conditions are also being exacerbated by the extreme heat. Individuals with cardiovascular diseases are at increased risk of heart attacks and strokes as the body struggles to cool itself, leading to higher heart rates and blood pressure. Respiratory issues are worsening too, with higher levels of air pollutants combining with the heat to create a hazardous environment for those with asthma and other lung conditions. It is time the Indian Government declared a health emergency and implemented measures aimed at protecting public health and alleviating the impact of the heatwave. The government must actively disseminate information through various media channels, advising people to stay indoors during peak heat hours and drink plenty of water. The office timings must be changed.   Some states like Rajasthan are doing good jo. External coolers have been installed on public buses to mitigate the soaring temperatures. In response to the extreme heat, the Jaipur administration has initiated the use of artificial rain. Large water tankers have been stationed along the roads to spray water on pedestrians, adopting this method to combat the sweltering conditions. The rest of the country could take a cue from Rajasthan. Indeed, healthcare systems are under significant pressure, with hospitals and clinics witnessing a sharp increase in heat-related medical emergencies. To cope with the surge, additional medical staff must be deployed, and temporary medical facilities must be set up in some areas to handle the overflow of patients. What we are witnessing can be attributed to climate change. Urban areas must have more green spaces which help lower temperatures.  Climate experts warn that such events are likely to become more frequent and severe in the coming years due to climate change, necessitating comprehensive plans to protect public health. By investing in sustainable infrastructure, enhancing healthcare system capacities, and promoting public awareness, India can build resilience against future heatwaves and safeguard the health of its population in an increasingly warming world.</p><br><p><strong>What is the primary subject of the passage?</strong></p>", "options": ["<p>Government initiatives in Rajasthan</p>", "<p>The impact of heatwaves in India</p>", "<p>Climate change effects on urban areas</p>", "<p>Health benefits of green spaces</p>", "<p>Pollution control measures</p>"], "correctIndex": 1, "solution": "<p><strong>Answer:</strong><strong> B</strong></p>\n<p>The primary subject of the passage is the impact of heatwaves in India. The passage describes the severe heatwave conditions currently affecting India, their effects on public health, healthcare systems, and the urgent actions needed to address the crisis. It highlights the immediate and long-term health impacts, measures taken by the government, and the necessity for sustainable solutions to mitigate such extreme weather events.</p>\n<p>a). Government initiatives in Rajasthan: Although the passage does mention some specific initiatives in Rajasthan, this is just one part of the broader discussion on the heatwave's impact across India. The primary focus is not solely on these initiatives.</p>\n<p>b). The impact of heatwaves in India: Correct. The passage extensively discusses how the heatwave is affecting different regions in India, its toll on health and healthcare systems, and the measures being taken and proposed to cope with it. This is the central theme of the passage.</p>\n<p>c). Climate change effects on urban areas: While climate change is mentioned as a contributing factor to the increasing frequency and severity of heatwaves, the passage does not focus specifically on its effects on urban areas. The broader impact on the entire country and public health is the main subject.</p>\n<p>d). Health benefits of green spaces: The passage briefly touches on the idea of increasing green spaces as a long-term solution, but this is not the primary focus. It is more about the current heatwave and its effects.</p>\n<p>e). Pollution control measures: Pollution control measures are not the central theme of the passage. The focus is on the immediate and long-term responses to the heatwave, rather than on pollution specifically.</p>\n<p>Thus, the correct answer is b) The impact of heatwaves in India, as the passage centers on discussing the current heatwave crisis in India, its health implications, and the necessary measures to address it.</p>"}, {"question": "<p><strong>Select the most appropriate words that are both grammatically and contextually correct to fill in the blanks.</strong></p><br><p><strong>To achieve comprehensive urban renewal, the government is implementing ____________ zoning policies and supporting ____________ redevelopment projects in underserved areas.</strong></p>", "options": ["<p>archaic, experimental</p>", "<p>rudimentary, obsolete</p>", "<p>inconsistent, marginal</p>", "<p>forward-thinking, transformative</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>To achieve comprehensive urban renewal, the government is implementing \"forward-thinking\" zoning policies and supporting \"transformative\" redevelopment projects in underserved areas. Forward-thinking zoning policies are progressive and anticipate future needs, while transformative redevelopment projects aim to significantly improve and revitalize areas that are lacking investment.</p>"}, {"question": "<p><strong>Select the most appropriate words that are both grammatically and contextually correct to fill in the blanks.</strong></p><br><p><strong>In order to foster innovation within the technology sector, the government is introducing ____________ research grants and facilitating ____________ partnerships between academia and industry.</strong></p>", "options": ["<p>substantial, synergistic</p>", "<p>minimal, sporadic</p>", "<p>negligible, incidental</p>", "<p>limited, exclusive</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>In order to foster innovation within the technology sector, the government is introducing \"substantial\" research grants and facilitating \"synergistic\" partnerships between academia and industry. Substantial research grants provide significant financial support for technology development, while synergistic partnerships create collaborative opportunities that enhance innovation.</p>"}, {"question": "<p><strong>Select the most appropriate words that are both grammatically and contextually correct to fill in the blanks.</strong></p><br><p><strong>To address the rising concerns about climate change, the government is enforcing ____________ emission standards and investing in ____________ alternative energy sources.</strong></p>", "options": ["<p>lax, conventional</p>", "<p>rigorous, cutting-edge</p>", "<p>outdated, standard</p>", "<p>lenient, traditional</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>To address the rising concerns about climate change, the government is enforcing \"rigorous\" emission standards and investing in \"cutting-edge\" alternative energy sources. Rigorous emission standards are strict and comprehensive regulations designed to reduce pollution, while cutting-edge alternative energy sources represent the latest advancements in sustainable technology.</p>"}, {"question": "<p><strong>Select the most appropriate words that are both grammatically and contextually correct to fill in the blanks.</strong></p><br><p><strong>The government's strategy for enhancing public safety involves deploying ____________ surveillance technologies and increasing ____________ community engagement programs.</strong></p>", "options": ["<p>antiquated, passive</p>", "<p>obsolete, minimal</p>", "<p>advanced, proactive</p>", "<p>basic, sporadic</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The government's strategy for enhancing public safety involves deploying \"advanced\" surveillance technologies and increasing \"proactive\" community engagement programs. Advanced surveillance technologies use modern techniques for effective monitoring, while proactive community engagement programs work to prevent crime and build strong relationships with the community.</p>"}, {"question": "<p><strong>Select the most appropriate words that are both grammatically and contextually correct to fill in the blanks.</strong></p><br><p><strong>To ensure equitable access to quality education, the government is expanding ____________ funding for educational institutions and developing ____________ programs aimed at bridging achievement gaps.</strong></p>", "options": ["<p>sporadic, selective</p>", "<p>generous, inclusive</p>", "<p>restricted, exclusive</p>", "<p>limited, arbitrary</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>To ensure equitable access to quality education, the government is expanding \"generous\" funding for educational institutions and developing \"inclusive\" programs aimed at bridging achievement gaps. Generous funding provides substantial financial support to schools, while inclusive programs ensure that educational resources and opportunities are accessible to all students, regardless of their background.</p>"}, {"question": "<p><strong>For the following questions, some sentences are given. Arrange the sentences in a meaningful paragraph and also find which of the sentences is out of context. Identify the correct answers for some of the activities given in the sentences. </strong></p>\n<p><strong>A).</strong> VSHORADS is a man-portable air-defence system designed and developed <strong>indigenously</strong> by Research Centre Imarat (RCI) in collaboration with other Defence Research and Development Organisation (DRDO) laboratories and Indian industry partners.</p>\n<p><strong>B).</strong> India has conducted two successful flight tests of a very short-range air defence missile off the coast of Odisha.<em> </em></p>\n<p><strong>C).</strong> On February 28 and 29 from a ground-based portable launcher off the coast of Odisha (P)/ The DRDO conducted two successful flight tests (Q)/ from integrated test range, Chandipur (R)/ of Very Short-Range Air Defence System (VSHORADS) missiles (S).</p>\n<p><strong>D).</strong> The tests were carried out against high-speed unmanned aerial targets under different interception scenarios.</p>\n<p><strong>E).</strong> During all the test flights, the targets were intercepted and destroyed by the missiles, met the mission objectives.</p>\n<p><strong>F).</strong> Yet at the same time, the DRDO has done some path-breaking work in guided missile systems.</p><br><p><strong>Identify the sentence which is out of the central theme of the passage.</strong></p>", "options": ["<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>", "<p>F</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>F</p>\n<p>Sentences A to E primarily focus on the successful flight tests of the Very Short-Range Air Defence System (VSHORADS) missiles, providing details about the development, testing, and outcomes of the system. <strong>Sentence F</strong>, however, shifts the focus to the broader achievements of the DRDO in guided missile systems, introducing a different aspect not directly related to the specific topic of the VSHORADS missile tests off the coast of Odisha.</p>"}, {"question": "<p><strong>For the following questions, some sentences are given. Arrange the sentences in a meaningful paragraph and also find which of the sentences is out of context. Identify the correct answers for some of the activities given in the sentences. </strong></p>\n<p><strong>A).</strong> VSHORADS is a man-portable air-defence system designed and developed <strong>indigenously</strong> by Research Centre Imarat (RCI) in collaboration with other Defence Research and Development Organisation (DRDO) laboratories and Indian industry partners.</p>\n<p><strong>B).</strong> India has conducted two successful flight tests of a very short-range air defence missile off the coast of Odisha.<em> </em></p>\n<p><strong>C).</strong> On February 28 and 29 from a ground-based portable launcher off the coast of Odisha (P)/ The DRDO conducted two successful flight tests (Q)/ from integrated test range, Chandipur (R)/ of Very Short-Range Air Defence System (VSHORADS) missiles (S).</p>\n<p><strong>D).</strong> The tests were carried out against high-speed unmanned aerial targets under different interception scenarios.</p>\n<p><strong>E).</strong> During all the test flights, the targets were intercepted and destroyed by the missiles, met the mission objectives.</p>\n<p><strong>F).</strong> Yet at the same time, the DRDO has done some path-breaking work in guided missile systems.</p><br><p><strong>Find the correct rearrangement of the sentence (C) which is divided into four parts.</strong></p>", "options": ["<p>PQRS</p>", "<p>QSPR</p>", "<p>PQSR</p>", "<p>RQSP</p>", "<p>QPSR</p>"], "correctIndex": 1, "solution": "<p><strong>Answer</strong><strong>: B</strong></p>\n<p>QSPR</p>\n<p>While going through the sentence, only arrangement (b) makes a contextually meaningful sentence. The sentence thus formed is: “The DRDO conducted two successful flight tests of Very Short-Range Air Defense System (VSHORADS) missiles on February 28 and 29 from a ground-based portable launcher off the coast of Odisha from integrated test range, Chandipur.”</p>"}, {"question": "<p><strong>For the following questions, some sentences are given. Arrange the sentences in a meaningful paragraph and also find which of the sentences is out of context. Identify the correct answers for some of the activities given in the sentences. </strong></p>\n<p><strong>A).</strong> VSHORADS is a man-portable air-defence system designed and developed <strong>indigenously</strong> by Research Centre Imarat (RCI) in collaboration with other Defence Research and Development Organisation (DRDO) laboratories and Indian industry partners.</p>\n<p><strong>B).</strong> India has conducted two successful flight tests of a very short-range air defence missile off the coast of Odisha.<em> </em></p>\n<p><strong>C).</strong> On February 28 and 29 from a ground-based portable launcher off the coast of Odisha (P)/ The DRDO conducted two successful flight tests (Q)/ from integrated test range, Chandipur (R)/ of Very Short-Range Air Defence System (VSHORADS) missiles (S).</p>\n<p><strong>D).</strong> The tests were carried out against high-speed unmanned aerial targets under different interception scenarios.</p>\n<p><strong>E).</strong> During all the test flights, the targets were intercepted and destroyed by the missiles, met the mission objectives.</p>\n<p><strong>F).</strong> Yet at the same time, the DRDO has done some path-breaking work in guided missile systems.</p><br><p><strong>Find the error in the sentence (E) divided into four parts, given in italics, if the sentence is correct, mark option E.</strong></p>", "options": ["<p>During all the test flights</p>", "<p>the targets were intercepted</p>", "<p>and destroyed by the missiles</p>", "<p>met the mission objectives</p>", "<p>No correction required</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D</strong></p>\n<p>met the mission objectives.</p>\n<p>The error in this sentence involves the incorrect structure of the sentence. The phrase \"met the mission objectives\" lacks a conjunction or a connector to properly link it to the previous part of the sentence.</p>\n<p>Error: Part d) should be corrected to \"meeting the mission objectives.\"</p>\n<p>Corrected Version: To address the error, Part d) should be corrected to \"meeting the mission objectives.\"</p>\n<p>So, the corrected sentence would read: \"During all the test flights, the targets were intercepted and destroyed by the missiles, meeting the mission objectives.\" This version provides a proper structure and coherence to the sentence.</p>"}, {"question": "<p><strong>For the following questions, some sentences are given. Arrange the sentences in a meaningful paragraph and also find which of the sentences is out of context. Identify the correct answers for some of the activities given in the sentences. </strong></p>\n<p><strong>A).</strong> VSHORADS is a man-portable air-defence system designed and developed <strong>indigenously</strong> by Research Centre Imarat (RCI) in collaboration with other Defence Research and Development Organisation (DRDO) laboratories and Indian industry partners.</p>\n<p><strong>B).</strong> India has conducted two successful flight tests of a very short-range air defence missile off the coast of Odisha.<em> </em></p>\n<p><strong>C).</strong> On February 28 and 29 from a ground-based portable launcher off the coast of Odisha (P)/ The DRDO conducted two successful flight tests (Q)/ from integrated test range, Chandipur (R)/ of Very Short-Range Air Defence System (VSHORADS) missiles (S).</p>\n<p><strong>D).</strong> The tests were carried out against high-speed unmanned aerial targets under different interception scenarios.</p>\n<p><strong>E).</strong> During all the test flights, the targets were intercepted and destroyed by the missiles, met the mission objectives.</p>\n<p><strong>F).</strong> Yet at the same time, the DRDO has done some path-breaking work in guided missile systems.</p><br><p><strong>Find the suitable arrangement of the sentences.</strong></p>", "options": ["<p>ABCDE</p>", "<p>BCADE</p>", "<p>BCDAE</p>", "<p>CDAEB</p>", "<p>CDEBA</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: </strong><strong>B</strong></p>\n<p>BCADE</p>\n<p>The correct sequence starts with <strong>sentence B</strong>, highlighting the successful flight tests of a very short-range air defense missile off the coast of Odisha. <strong>Sentence C </strong>follows, providing details about the DRDO conducting two successful flight tests of VSHORADS on February 28 and 29. <strong>Sentence A</strong> adds additional information about VSHORADS and its development<strong>. Sentence D</strong> specifies that the tests were carried out against high-speed unmanned aerial targets. Finally, <strong>sentence E</strong> concludes by stating that the targets were intercepted and destroyed during all the test flights, meeting the mission objectives.</p>\n<p>The paragraph provides information about the successful flight tests of the Very Short-Range Air Defense System (VSHORADS) conducted by the Defense Research and Development Organization (DRDO) in collaboration with other entities.</p>\n<p>So, the correct sequence is: B - C – A – D - E.</p>"}, {"question": "<p><strong>For the following questions, some sentences are given. Arrange the sentences in a meaningful paragraph and also find which of the sentences is out of context. Identify the correct answers for some of the activities given in the sentences. </strong></p>\n<p><strong>A).</strong> VSHORADS is a man-portable air-defence system designed and developed <strong>indigenously</strong> by Research Centre Imarat (RCI) in collaboration with other Defence Research and Development Organisation (DRDO) laboratories and Indian industry partners.</p>\n<p><strong>B).</strong> India has conducted two successful flight tests of a very short-range air defence missile off the coast of Odisha.<em> </em></p>\n<p><strong>C).</strong> On February 28 and 29 from a ground-based portable launcher off the coast of Odisha (P)/ The DRDO conducted two successful flight tests (Q)/ from integrated test range, Chandipur (R)/ of Very Short-Range Air Defence System (VSHORADS) missiles (S).</p>\n<p><strong>D).</strong> The tests were carried out against high-speed unmanned aerial targets under different interception scenarios.</p>\n<p><strong>E).</strong> During all the test flights, the targets were intercepted and destroyed by the missiles, met the mission objectives.</p>\n<p><strong>F).</strong> Yet at the same time, the DRDO has done some path-breaking work in guided missile systems.</p><br><p>Find the suitable Antonym of the word highlighted <strong>(indigenous) </strong>in bold.</p>", "options": ["<p>endemic</p>", "<p>intrinsic</p>", "<p>innate</p>", "<p>exotic</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D</strong></p>\n<p>exotic</p>\n<p><strong> </strong>In this context, the suitable antonym for the word \"indigenously\" (highlighted) is: d) exotic</p>\n<p>\"Indigenously\" in this context means that the VSHORADS system was designed and developed within the native country, in this case, India.</p>\n<p>The antonym for \"indigenously\" would be \"exotic,\" indicating something that is foreign or not native to the region where it is being discussed.</p>\n<p><strong>a).</strong> <strong>Endemic:</strong> Endemic refers to the presence or prevalence of something within a specific geographic area or population. This term does not directly convey the opposite meaning of \"indigenously,\" which is about being native or originating in a particular region.</p>\n<p><strong>b).</strong> <strong>Intrinsic:</strong> Intrinsic relates to the essential nature or inherent qualities of something. Intrinsic doesn't represent the opposite of \"indigenously.\" It focuses on inherent qualities rather than the origin or native status.</p>\n<p><strong>c).</strong> <strong>Innate:</strong> Innate describes qualities or characteristics that are inborn or natural. Like \"intrinsic,\" \"innate\" does not directly oppose the concept of \"indigenously,\" which is more about origin or native status.</p>\n<p><strong>d).</strong> <strong>Exotic:</strong> Exotic refers to something that is foreign, not native, or originating from another place.</p>\n<p>In the context provided, the word \"indigenously\" indicates that the system was developed within the native country, making \"exotic\" the most suitable antonym.</p>\n<p>In summary, while options (a), (b), and (c) have some relation to the concept of origin or nature, they do not directly oppose the meaning of \"indigenously.\" Option (d), \"exotic,\" is the best choice as it conveys the idea of something foreign or non-native, which is the opposite of \"indigenously\" in this context.</p>"}, {"question": "<p><strong>Below, a passage is given with five blanks labelled (A-E). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>In the current financial environment, investors face numerous challenges that require careful consideration and strategic planning. One major concern is the volatility of global markets, which has been exacerbated by factors such as <strong>(A) __________</strong> tensions, economic instability, and unpredictable monetary policies. These elements can significantly influence investor sentiment and market performance.</p>\n<p>Furthermore, the rise of alternative investment options has provided investors with a wider array of choices. Assets like cryptocurrencies and peer-to-peer lending platforms are gaining popularity, but they also come with their own set of <strong>(B) __________.</strong> Investors must navigate regulatory uncertainties and potential risks associated with these new financial instruments.</p>\n<p>To mitigate these risks, many experts advocate for a diversified investment portfolio that includes a mix of <strong>(C) __________</strong> assets. By spreading investments across various sectors, investors can reduce their exposure to any single market downturn. Additionally, the importance of conducting thorough <strong>(D) __________</strong> before making investment decisions cannot be overstated. Understanding market trends, company performance, and economic indicators is crucial for informed investing. Finally, the growing interest in sustainable investing reflects a broader <strong>(E) __________</strong> among investors who prioritize social responsibility alongside financial returns. This shift has prompted companies to adopt more ethical practices, recognizing that long-term success is often linked to sustainable business strategies.</p><br><p><strong>Which word comes in the blank labelled A?</strong></p>", "options": ["<p>environmental</p>", "<p>political</p>", "<p>social</p>", "<p>technological</p>", "<p>financial</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The context of the passage addresses factors affecting global markets, with \"political tensions\" being a significant concern that influences market behavior. Other options such as \"environmental,\" \"social,\" \"technological,\" and \"financial\" do not specifically address the type of tensions causing market volatility.</p>"}, {"question": "<p><strong>Below, a passage is given with five blanks labelled (A-E). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>In the current financial environment, investors face numerous challenges that require careful consideration and strategic planning. One major concern is the volatility of global markets, which has been exacerbated by factors such as <strong>(A) __________</strong> tensions, economic instability, and unpredictable monetary policies. These elements can significantly influence investor sentiment and market performance.</p>\n<p>Furthermore, the rise of alternative investment options has provided investors with a wider array of choices. Assets like cryptocurrencies and peer-to-peer lending platforms are gaining popularity, but they also come with their own set of <strong>(B) __________.</strong> Investors must navigate regulatory uncertainties and potential risks associated with these new financial instruments.</p>\n<p>To mitigate these risks, many experts advocate for a diversified investment portfolio that includes a mix of <strong>(C) __________</strong> assets. By spreading investments across various sectors, investors can reduce their exposure to any single market downturn. Additionally, the importance of conducting thorough <strong>(D) __________</strong> before making investment decisions cannot be overstated. Understanding market trends, company performance, and economic indicators is crucial for informed investing. Finally, the growing interest in sustainable investing reflects a broader <strong>(E) __________</strong> among investors who prioritize social responsibility alongside financial returns. This shift has prompted companies to adopt more ethical practices, recognizing that long-term success is often linked to sustainable business strategies.</p><br><p><strong>Which word comes in the blank labelled B?</strong></p>", "options": ["<p>complexities</p>", "<p>advantages</p>", "<p>rewards</p>", "<p>guarantees</p>", "<p>liabilities</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The rise of alternative investment options presents challenges, which are best described as \"complexities.\" This word captures the intricate issues surrounding regulatory uncertainties and associated risks. Other options like \"advantages,\" \"rewards,\" \"guarantees,\" and \"liabilities\" do not fit the context of challenges posed by new financial instruments.</p>"}, {"question": "<p><strong>Below, a passage is given with five blanks labelled (A-E). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>In the current financial environment, investors face numerous challenges that require careful consideration and strategic planning. One major concern is the volatility of global markets, which has been exacerbated by factors such as <strong>(A) __________</strong> tensions, economic instability, and unpredictable monetary policies. These elements can significantly influence investor sentiment and market performance.</p>\n<p>Furthermore, the rise of alternative investment options has provided investors with a wider array of choices. Assets like cryptocurrencies and peer-to-peer lending platforms are gaining popularity, but they also come with their own set of <strong>(B) __________.</strong> Investors must navigate regulatory uncertainties and potential risks associated with these new financial instruments.</p>\n<p>To mitigate these risks, many experts advocate for a diversified investment portfolio that includes a mix of <strong>(C) __________</strong> assets. By spreading investments across various sectors, investors can reduce their exposure to any single market downturn. Additionally, the importance of conducting thorough <strong>(D) __________</strong> before making investment decisions cannot be overstated. Understanding market trends, company performance, and economic indicators is crucial for informed investing. Finally, the growing interest in sustainable investing reflects a broader <strong>(E) __________</strong> among investors who prioritize social responsibility alongside financial returns. This shift has prompted companies to adopt more ethical practices, recognizing that long-term success is often linked to sustainable business strategies.</p><br><p><strong>Which word comes in the blank labelled C?</strong></p>", "options": ["<p>volatile</p>", "<p>speculative</p>", "<p>traditional</p>", "<p>alternative</p>", "<p>risky</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The passage discusses the importance of diversifying investments, highlighting \"alternative assets\" as part of a well-rounded portfolio. This term signifies non-traditional investments, which aligns with the context. \"Speculative,\" \"traditional,\" \"volatile,\" and \"risky\" do not encompass the broader concept of diversification presented.</p>"}, {"question": "<p><strong>Below, a passage is given with five blanks labelled (A-E). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>In the current financial environment, investors face numerous challenges that require careful consideration and strategic planning. One major concern is the volatility of global markets, which has been exacerbated by factors such as <strong>(A) __________</strong> tensions, economic instability, and unpredictable monetary policies. These elements can significantly influence investor sentiment and market performance.</p>\n<p>Furthermore, the rise of alternative investment options has provided investors with a wider array of choices. Assets like cryptocurrencies and peer-to-peer lending platforms are gaining popularity, but they also come with their own set of <strong>(B) __________.</strong> Investors must navigate regulatory uncertainties and potential risks associated with these new financial instruments.</p>\n<p>To mitigate these risks, many experts advocate for a diversified investment portfolio that includes a mix of <strong>(C) __________</strong> assets. By spreading investments across various sectors, investors can reduce their exposure to any single market downturn. Additionally, the importance of conducting thorough <strong>(D) __________</strong> before making investment decisions cannot be overstated. Understanding market trends, company performance, and economic indicators is crucial for informed investing. Finally, the growing interest in sustainable investing reflects a broader <strong>(E) __________</strong> among investors who prioritize social responsibility alongside financial returns. This shift has prompted companies to adopt more ethical practices, recognizing that long-term success is often linked to sustainable business strategies.</p><br><p><strong>Which word comes in the blank labelled D?</strong></p>", "options": ["<p>speculation</p>", "<p>evaluation</p>", "<p>diversification</p>", "<p>administration</p>", "<p>verification</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>Conducting a thorough \"evaluation\" is essential before making investment decisions. This term indicates the careful analysis needed to understand market conditions and investment performance. Other options like \"speculation,\" \"diversification,\" \"administration,\" and \"verification\" do not fit the context of informed decision-making.</p>"}, {"question": "<p><strong>Below, a passage is given with five blanks labelled (A-E). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>In the current financial environment, investors face numerous challenges that require careful consideration and strategic planning. One major concern is the volatility of global markets, which has been exacerbated by factors such as <strong>(A) __________</strong> tensions, economic instability, and unpredictable monetary policies. These elements can significantly influence investor sentiment and market performance.</p>\n<p>Furthermore, the rise of alternative investment options has provided investors with a wider array of choices. Assets like cryptocurrencies and peer-to-peer lending platforms are gaining popularity, but they also come with their own set of <strong>(B) __________.</strong> Investors must navigate regulatory uncertainties and potential risks associated with these new financial instruments.</p>\n<p>To mitigate these risks, many experts advocate for a diversified investment portfolio that includes a mix of <strong>(C) __________</strong> assets. By spreading investments across various sectors, investors can reduce their exposure to any single market downturn. Additionally, the importance of conducting thorough <strong>(D) __________</strong> before making investment decisions cannot be overstated. Understanding market trends, company performance, and economic indicators is crucial for informed investing. Finally, the growing interest in sustainable investing reflects a broader <strong>(E) __________</strong> among investors who prioritize social responsibility alongside financial returns. This shift has prompted companies to adopt more ethical practices, recognizing that long-term success is often linked to sustainable business strategies.</p><br><p><strong>Which word comes in the blank labelled E?</strong></p>", "options": ["<p>trend</p>", "<p>interest</p>", "<p>mandate</p>", "<p>awareness</p>", "<p>challenge</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The growing interest in sustainable investing reflects a broader \"awareness\" among investors regarding social responsibility. This choice effectively conveys the shift in priorities toward ethical investing. Options like \"trend,\" \"interest,\" \"mandate,\" and \"challenge\" do not capture the idea of heightened consciousness or understanding in this context.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-24)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-24)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

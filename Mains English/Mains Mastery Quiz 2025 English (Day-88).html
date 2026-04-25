@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Mains Mastery Quiz 2025 English (Day-88)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>In the given question, two parts of the sentences are printed in bold. Below the sentence alternatives to the bold parts are given at (A), (B), (C), and (D) which may help improve the sentence. Choose the correct alternative. If the sentence is correct, choose option (E) which is “No correction required” as your answer.</strong></p><br><p>The company’s board <strong>had come up with</strong> innovative strategies to stay competitive in an <strong>increasingly digital marketplace.</strong></p>", "options": ["<p>had to come up with, increasing digital marketplace</p>", "<p>had to come up with, increasingly digital marketplace</p>", "<p>had to come with up, increasingly digital marketplace</p>", "<p>have to come up with, increasingly digital marketplace</p>", "<p>No correction required</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>The company’s board <strong>had come up with</strong> innovative strategies to stay competitive in an <strong>increasingly digital marketplace.</strong></p>"}, {"question": "<p><strong>In the given question, two parts of the sentences are printed in bold. Below the sentence alternatives to the bold parts are given at (A), (B), (C), and (D) which may help improve the sentence. Choose the correct alternative. If the sentence is correct, choose option (E) which is “No correction required” as your answer.</strong></p><br><p>As the project <strong>fell apart due to</strong> poor planning, the team <strong>were forced to re-evaluate</strong> their entire approach to meet the looming deadline.</p>", "options": ["<p>fell apart due to, was forced to re-evaluate</p>", "<p>fall apart due to, was forced to re-evaluate</p>", "<p>fell apart due to, is forced to re-evaluate</p>", "<p>fell apart due to, was forcing to re-evaluate</p>", "<p>No correction required</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>As the project <strong>fell apart due to</strong> poor planning, the team <strong>was forced to re-evaluate</strong> their entire approach to meet the looming deadline.</p>"}, {"question": "<p><strong>In the given question, two parts of the sentences are printed in bold. Below the sentence alternatives to the bold parts are given at (A), (B), (C), and (D) which may help improve the sentence. Choose the correct alternative. If the sentence is correct, choose option (E) which is “No correction required” as your answer.</strong></p><br><p>The professor's <strong>lecture dwelled on the</strong> intricate relationship <strong>between economical theory</strong> and real-world financial markets.</p>", "options": ["<p>lecture dwelling on the, between economic theory</p>", "<p>lecture dwelled in the, between economic theory</p>", "<p>lecture dwelled on the, between economic theory</p>", "<p>lecture dwelled the, between economical theory</p>", "<p>No correction required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The professor's <strong>lecture dwelled on the</strong> intricate relationship <strong>between economic theory</strong> and real-world financial markets.</p>"}, {"question": "<p><strong>In the given question, two parts of the sentences are printed in bold. Below the sentence alternatives to the bold parts are given at (A), (B), (C), and (D) which may help improve the sentence. Choose the correct alternative. If the sentence is correct, choose option (E) which is “No correction required” as your answer.</strong></p><br><p>The organization’s efforts to root out corruption <strong>have been met with </strong>both internal resistance and public support, <strong>signaling the complexity of</strong> institutional reform.</p>", "options": ["<p>have been meet with, signaling the complexity of</p>", "<p>have met, signaling the complexity of</p>", "<p>have been met with, signaling the complexity in</p>", "<p>have met with, signaling the complexity of</p>", "<p>No correction required</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The organization’s efforts to root out corruption <strong>have met with </strong>both internal resistance and public support, <strong>signaling the complexity of</strong> institutional reform.</p>"}, {"question": "<p><strong>In the given question, two parts of the sentences are printed in bold. Below the sentence alternatives to the bold parts are given at (A), (B), (C), and (D) which may help improve the sentence. Choose the correct alternative. If the sentence is correct, choose option (E) which is “No correction required” as your answer.</strong></p><br><p><strong>Despite the initial resistant</strong>, the new policies caught on quickly, <strong>as</strong> <strong>they addressed</strong> longstanding inefficiencies and promoted sustainable practices.</p>", "options": ["<p>Despite of the initial resistance, as they addressed</p>", "<p>Despite the initial resistance, so they addressed</p>", "<p>Despite the initial resistance, as they addressed</p>", "<p>Despite the initially resistance, as they addressed</p>", "<p>No correction required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>Despite the initial resistance</strong>, the new policies caught on quickly, <strong>as</strong> <strong>they addressed</strong> longstanding inefficiencies and promoted sustainable practices.</p>"}, {"question": "<p><strong>Given below are a few questions with three sentences in each of them which may or may not contain errors in them. You have to find the sentence which has or have errors in them and mark your answers accordingly. If none of the sentence contains errors then choose option E as your answer.</strong></p><br><p><strong>A).</strong> He was accused for stealing money from the company's fund.</p>\n<p><strong>B).</strong> Despite the rain, the outdoor event continued as planned.</p>\n<p><strong>C).</strong> The cat jumped onto the table and knocked over a vase of flowers.</p>", "options": ["<p>Only A</p>", "<p>Both B and C</p>", "<p>Both A and C</p>", "<p>All A, B and C</p>", "<p>No error</p>"], "correctIndex": 0, "solution": "<p><strong>Answer</strong><strong>: A</strong></p>\n<p><strong>A).</strong> The error in this sentence is \"accused for stealing.\" The correct preposition to use after \"accused\" is \"of,\" so it should be \"accused of stealing money from the company's fund.\"</p>\n<p>Corrected Sentence A: \"He was accused of stealing money from the company's fund.\"</p>\n<p><strong>B).</strong> There is no error in this sentence.</p>\n<p><strong>C).</strong> There is no error in this sentence.</p>"}, {"question": "<p><strong>Given below are a few questions with three sentences in each of them which may or may not contain errors in them. You have to find the sentence which has or have errors in them and mark your answers accordingly. If none of the sentence contains errors then choose option E as your answer.</strong></p><br><p><strong>A).</strong> She runs very fastly during the races, often winning first place.</p>\n<p><strong>B).</strong> She received a big and an expensive gift for her birthday.</p>\n<p><strong>C).</strong> He spoke too loudly, disturbing the entire class.</p>", "options": ["<p>Both A and B</p>", "<p>Both B and C</p>", "<p>Both A and C</p>", "<p>All A, B and C</p>", "<p>No error</p>"], "correctIndex": 0, "solution": "<p><strong>Answer</strong><strong>: A</strong></p>\n<p><strong>A).</strong> The error in this sentence is \"very fastly.\" The correct form is \"very fast.\" \"Fast\" is already an adverb, so \"fastly\" is redundant.</p>\n<p>Corrected Sentence A: \"She runs very fast during the races, often winning first place.\"</p>\n<p><strong>B).</strong> The error in this sentence is \"a big and an expensive gift.\" When using multiple adjectives before a noun, the same article should be used for each adjective. The correct form is \"a big and expensive gift.\"</p>\n<p>Corrected Sentence B: \"She received a big and expensive gift for her birthday.\"</p>\n<p><strong>C).</strong> There is no error in this sentence.</p>"}, {"question": "<p><strong>Given below are a few questions with three sentences in each of them which may or may not contain errors in them. You have to find the sentence which has or have errors in them and mark your answers accordingly. If none of the sentence contains errors then choose option E as your answer.</strong></p><br><p><strong>A).</strong> Not only the movie was interesting, but it was also a thought-provoking experience.</p>\n<p><strong>B).</strong> Despite the obstacles, neither the team nor the coach were deterred.</p>\n<p><strong>C).</strong> The dog found a cozy and warm spot to take a nap.</p>", "options": ["<p>Both A and B</p>", "<p>Both B and C</p>", "<p>Both A and C</p>", "<p>All A, B and C</p>", "<p>No error</p>"], "correctIndex": 0, "solution": "<p><strong>Answer</strong><strong>: A</strong></p>\n<p><strong>A).</strong> The error in this sentence is \"Not only the movie was interesting.\" The correct form is \"Not only was the movie interesting.\" In this structure, the auxiliary verb \"was\" should come before the subject \"the movie.\"</p>\n<p>Corrected Sentence A: \"Not only was the movie interesting, but it was also a thought-provoking experience.\"</p>\n<p><strong>B). </strong>The error in this sentence is \"neither the team nor the coach were.\" The correct form should be \"neither the team nor the coach was.\" When \"neither...nor\" is used, the verb agrees with the subject closest to it, which is \"the coach\" in this case.</p>\n<p>Corrected Sentence B: \"Despite the obstacles, neither the team nor the coach was deterred.\"</p>\n<p><strong>C).</strong> There is no error in this sentence.</p>"}, {"question": "<p><strong>Given below are a few questions with three sentences in each of them which may or may not contain errors in them. You have to find the sentence which has or have errors in them and mark your answers accordingly. If none of the sentence contains errors then choose option E as your answer.</strong></p><br><p><strong>A).</strong> She is interested in joining the club to enhance her social skills.</p>\n<p><strong>B).</strong> Despite the rain, a flock of birds flew gracefully across the sky.</p>\n<p><strong>C).</strong> She speaks French well enough to hold a conversation.</p>", "options": ["<p>Both A and B</p>", "<p>Both B and C</p>", "<p>Both A and C</p>", "<p>All A, B and C</p>", "<p>No error</p>"], "correctIndex": 4, "solution": "<p><strong>Answer</strong><strong>: E</strong></p>\n<p><strong>A).</strong> There is no error in this sentence.</p>\n<p><strong>B).</strong> There is no error in this sentence.</p>\n<p><strong>C).</strong> There is no error in this sentence.</p>"}, {"question": "<p><strong>Select the most appropriate words that are both grammatically and contextually correct to fill in the blanks.</strong></p><br><p><strong>The artist’s ability to ____________ different styles of painting allowed her to create unique works that ____________ both traditional and modern elements.</strong></p>", "options": ["<p>discard, omit</p>", "<p>suppress, remove</p>", "<p>merge, combine</p>", "<p>isolate, exclude</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The artist’s ability to \"merge\" different styles of painting allowed her to create unique works that \"combine\" both traditional and modern elements. \"Merge\" means to blend or fuse, and \"combine\" means to bring together, which fits the context of blending different artistic styles.</p>"}, {"question": "<p><strong>Select the most appropriate words that are both grammatically and contextually correct to fill in the blanks.</strong></p><br><p><strong>In his speech, the leader sought to ____________ fears about the economy, while simultaneously laying out a plan to ____________ future growth.</strong></p>", "options": ["<p>exacerbate, thwart</p>", "<p>allay, foster</p>", "<p>instill, stagnate</p>", "<p>amplify, prevent</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>In his speech, the leader sought to \"allay\" fears about the economy, while simultaneously laying out a plan to \"foster\" future growth. \"Allay\" means to reduce or calm down (fears), and \"foster\" means to encourage or promote (growth), making them the appropriate choices for this context.</p>"}, {"question": "<p><strong>Select the most appropriate words that are both grammatically and contextually correct to fill in the blanks.</strong></p><br><p><strong>The environmentalist movement strives to ____________ awareness of climate change and to ____________ more sustainable practices in industries.</strong></p>", "options": ["<p>increase, advocate</p>", "<p>obscure, ignore</p>", "<p>diminish, neglect</p>", "<p>curtail, stifle</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The environmentalist movement strives to \"increase\" awareness of climate change and to \"advocate\" more sustainable practices in industries. \"Increase\" means to raise or grow, and \"advocate\" means to support or promote, which fits the efforts of environmental movements.</p>"}, {"question": "<p><strong>Select the most appropriate words that are both grammatically and contextually correct to fill in the blanks.</strong></p><br><p><strong>The athlete’s ____________ dedication to training was matched only by his ____________ to overcome every challenge he faced.</strong></p>", "options": ["<p>sporadic, reluctance</p>", "<p>fleeting, hesitation</p>", "<p>ambivalent, indifference</p>", "<p>unwavering, determination</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The athlete’s \"unwavering\" dedication to training was matched only by his \"determination\" to overcome every challenge he faced. \"Unwavering\" means steady and consistent, and \"determination\" means a strong resolve or commitment, both of which suit the description of an athlete's dedication and willpower.</p>"}, {"question": "<p><strong>Select the most appropriate words that are both grammatically and contextually correct to fill in the blanks.</strong></p><br><p><strong>The new legislation is expected to ____________ the housing market by increasing supply, while also attempting to ____________ affordability for lower-income families.</strong></p>", "options": ["<p>destabilize, hamper</p>", "<p>stimulate, ensure</p>", "<p>diminish, jeopardize</p>", "<p>stifle, restrict</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The new legislation is expected to \"stimulate\" the housing market by increasing supply, while also attempting to \"ensure\" affordability for lower-income families. \"Stimulate\" means to encourage or boost, and \"ensure\" means to make certain or guarantee, which makes these words appropriate in the context of economic and social policy.</p>"}, {"question": "<p><strong>Read the following passage and answer the questions that follow.</strong></p>\n<p>Population ageing is a defining global trend of our time. People are living longer, and more are older than ever before. Spectacular improvements in health and survival and diminution in fecundity have driven this momentous shift, which has begun or is expected to begin soon in all countries and areas. This change brings both challenges and opportunities as countries strive to achieve the Sustainable Development Goals (SDGs). In 2022, the world marked the twentieth anniversary of the adoption of the Madrid International Plan of Action on Ageing. To commemorate this landmark, the World Social Report 2023 explores the economic and social entailments of the ageing of the human population. It builds on the Plan of Action’s framework for national policies to create equitable, <strong>compendious</strong> societies for people of all ages, providing recommendations to put the rights and well-being of older persons at the center, across the life course. Population ageing is an ineluctable result of the demographic transition towards longer lives and smaller families. While the shift towards older populations is largely irredeemable, collective actions and policy decisions shape its path and consequences. Postponing critical measures that allow societies to benefit from and adapt to population ageing would impose high social, economic, fiscal and health-related costs, for both current and future generations. By contrast, with appropriate <strong>prescience</strong> and planning, Governments can manage the challenges from population ageing while enhancing opportunities for all people to thrive and ensuring that no one is left behind. Population ageing needs to be widely understood as more than just a set of discrete concerns mainly for one group of people who have advanced beyond a given age. Ageing touches all parts of economies and societies, from health care and education to employment and taxation. Each stage of life can contribute to or detract from well-being at older ages.</p>\n<p>Population ageing signals our extraordinary collective success in improving living conditions for billions of people around the world. Better sanitation and medical therapies, greater access to education and family planning, and strides towards gender equality and women’s empowerment have all contributed to, and in some cases benefitted from, the steady move from high to low levels of fertility and mortality. These advances have ushered in an era where rapid population growth is slowly coming to an end, accompanied by a gradual but permanent shift towards older ages. Over several decades, both the number and population share of older persons have risen globally, while the number and share of children and youth have begun to shrink. By 2050, the number of persons aged 65 years or older is expected to double, surpassing 1.6 billion. Currently, population ageing is furthest along in Europe and Northern America, Australia and New Zealand, and most of Eastern and South-Eastern Asia. In most countries of those regions, the proportion of older persons – by convention, those aged 65 years or older – exceeds 10 per cent and in some cases 20 per cent of the total population. Most parts of sub-Saharan Africa and Oceania (excluding Australia and New Zealand) are still in an early stage of this transition, while most countries in Central and Southern Asia, Western Asia and Northern Africa, and Latin America and the Caribbean are at an intermediate stage. Declining mortality throughout the life course has driven the increase of life expectancy at birth in most countries and globally. Greater longevity has accompanied a narrowing of the age range in which most deaths occur. In the past, death was common at all ages. Many children died from infectious diseases, for example, and women frequently perished in childbirth. In most countries today, “premature death” before age 60 or 70 is relatively rare. Greater global life expectancy reflects underlying improvements in health. In countries with available data, the number of years lived in good health has climbed, accounting for most of the increase in years lived overall. Statistical averages hide broad disparities in life expectancy, however, including by sex and socioeconomic status. In almost all societies, women live longer than men on average, and the rich longer than the poor. These differences stem partly from poor nutrition and exposures to environmental and occupational hazards that are more common among men and people with limited income and education. In 2020, the World Health Organization and the United Nations designated 20212030 as the Decade of Healthy Ageing. Its purpose is to promote strategies, grounded in solid evidence, that support well-being among older people. It advocates for developing and maintaining functional abilities, recognizing that these depend on each individual’s <strong>immanent</strong> capacity, the surrounding environment and interactions between the two.</p><br><p><strong>What is the tone of the passage?</strong></p>", "options": ["<p>subjective</p>", "<p>satire</p>", "<p>jocular</p>", "<p>critical</p>", "<p>None of these</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>Subjective - A subjective tone uses words that describe feelings, judgments, or opinions. The details are likely to include experiences, senses, feelings, and thoughts.</p>\n<p>Satire - uses sarcasm or irony to make fun of something.</p>\n<p>Jocular - When the author is humorous, he/she tries to make the context of the passage funny and amusing.</p>\n<p>Critical - A fault-finding attitude of the author is frequently described by a critical tone, hence in a negative meaning.</p>\n<p>The tone of the passage does not match with any of the tones mentioned above. Hence, option e is the right answer.</p>"}, {"question": "<p><strong>Read the following passage and answer the questions that follow.</strong></p>\n<p>Population ageing is a defining global trend of our time. People are living longer, and more are older than ever before. Spectacular improvements in health and survival and diminution in fecundity have driven this momentous shift, which has begun or is expected to begin soon in all countries and areas. This change brings both challenges and opportunities as countries strive to achieve the Sustainable Development Goals (SDGs). In 2022, the world marked the twentieth anniversary of the adoption of the Madrid International Plan of Action on Ageing. To commemorate this landmark, the World Social Report 2023 explores the economic and social entailments of the ageing of the human population. It builds on the Plan of Action’s framework for national policies to create equitable, <strong>compendious</strong> societies for people of all ages, providing recommendations to put the rights and well-being of older persons at the center, across the life course. Population ageing is an ineluctable result of the demographic transition towards longer lives and smaller families. While the shift towards older populations is largely irredeemable, collective actions and policy decisions shape its path and consequences. Postponing critical measures that allow societies to benefit from and adapt to population ageing would impose high social, economic, fiscal and health-related costs, for both current and future generations. By contrast, with appropriate <strong>prescience</strong> and planning, Governments can manage the challenges from population ageing while enhancing opportunities for all people to thrive and ensuring that no one is left behind. Population ageing needs to be widely understood as more than just a set of discrete concerns mainly for one group of people who have advanced beyond a given age. Ageing touches all parts of economies and societies, from health care and education to employment and taxation. Each stage of life can contribute to or detract from well-being at older ages.</p>\n<p>Population ageing signals our extraordinary collective success in improving living conditions for billions of people around the world. Better sanitation and medical therapies, greater access to education and family planning, and strides towards gender equality and women’s empowerment have all contributed to, and in some cases benefitted from, the steady move from high to low levels of fertility and mortality. These advances have ushered in an era where rapid population growth is slowly coming to an end, accompanied by a gradual but permanent shift towards older ages. Over several decades, both the number and population share of older persons have risen globally, while the number and share of children and youth have begun to shrink. By 2050, the number of persons aged 65 years or older is expected to double, surpassing 1.6 billion. Currently, population ageing is furthest along in Europe and Northern America, Australia and New Zealand, and most of Eastern and South-Eastern Asia. In most countries of those regions, the proportion of older persons – by convention, those aged 65 years or older – exceeds 10 per cent and in some cases 20 per cent of the total population. Most parts of sub-Saharan Africa and Oceania (excluding Australia and New Zealand) are still in an early stage of this transition, while most countries in Central and Southern Asia, Western Asia and Northern Africa, and Latin America and the Caribbean are at an intermediate stage. Declining mortality throughout the life course has driven the increase of life expectancy at birth in most countries and globally. Greater longevity has accompanied a narrowing of the age range in which most deaths occur. In the past, death was common at all ages. Many children died from infectious diseases, for example, and women frequently perished in childbirth. In most countries today, “premature death” before age 60 or 70 is relatively rare. Greater global life expectancy reflects underlying improvements in health. In countries with available data, the number of years lived in good health has climbed, accounting for most of the increase in years lived overall. Statistical averages hide broad disparities in life expectancy, however, including by sex and socioeconomic status. In almost all societies, women live longer than men on average, and the rich longer than the poor. These differences stem partly from poor nutrition and exposures to environmental and occupational hazards that are more common among men and people with limited income and education. In 2020, the World Health Organization and the United Nations designated 20212030 as the Decade of Healthy Ageing. Its purpose is to promote strategies, grounded in solid evidence, that support well-being among older people. It advocates for developing and maintaining functional abilities, recognizing that these depend on each individual’s <strong>immanent</strong> capacity, the surrounding environment and interactions between the two.</p><br><p><strong>Which of the following is/are reason/reasons for people to live longer than before according to the passage?</strong></p>", "options": ["<p>Reduction in the ability of the women to bear and produce offspring.</p>", "<p>Striking advancements in the fields of health and survival.</p>", "<p>Decreased prevalence of death-inducing and grievous diseases amongst mankind.</p>", "<p>Only a and b</p>", "<p>Options a, b, and c</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>In the first paragraph of the passage, there is a line which states that ‘People are living longer, and more are older than ever before. Spectacular improvements in health and survival and diminution in fecundity have driven this momentous shift’. Here, diminution means a decrease or reduction and fecundity means the ability to produce offspring. Thus, options a and b are the reasons for the momentous shift. Thus, option d is the right answer.</p>"}, {"question": "<p><strong>Read the following passage and answer the questions that follow.</strong></p>\n<p>Population ageing is a defining global trend of our time. People are living longer, and more are older than ever before. Spectacular improvements in health and survival and diminution in fecundity have driven this momentous shift, which has begun or is expected to begin soon in all countries and areas. This change brings both challenges and opportunities as countries strive to achieve the Sustainable Development Goals (SDGs). In 2022, the world marked the twentieth anniversary of the adoption of the Madrid International Plan of Action on Ageing. To commemorate this landmark, the World Social Report 2023 explores the economic and social entailments of the ageing of the human population. It builds on the Plan of Action’s framework for national policies to create equitable, <strong>compendious</strong> societies for people of all ages, providing recommendations to put the rights and well-being of older persons at the center, across the life course. Population ageing is an ineluctable result of the demographic transition towards longer lives and smaller families. While the shift towards older populations is largely irredeemable, collective actions and policy decisions shape its path and consequences. Postponing critical measures that allow societies to benefit from and adapt to population ageing would impose high social, economic, fiscal and health-related costs, for both current and future generations. By contrast, with appropriate <strong>prescience</strong> and planning, Governments can manage the challenges from population ageing while enhancing opportunities for all people to thrive and ensuring that no one is left behind. Population ageing needs to be widely understood as more than just a set of discrete concerns mainly for one group of people who have advanced beyond a given age. Ageing touches all parts of economies and societies, from health care and education to employment and taxation. Each stage of life can contribute to or detract from well-being at older ages.</p>\n<p>Population ageing signals our extraordinary collective success in improving living conditions for billions of people around the world. Better sanitation and medical therapies, greater access to education and family planning, and strides towards gender equality and women’s empowerment have all contributed to, and in some cases benefitted from, the steady move from high to low levels of fertility and mortality. These advances have ushered in an era where rapid population growth is slowly coming to an end, accompanied by a gradual but permanent shift towards older ages. Over several decades, both the number and population share of older persons have risen globally, while the number and share of children and youth have begun to shrink. By 2050, the number of persons aged 65 years or older is expected to double, surpassing 1.6 billion. Currently, population ageing is furthest along in Europe and Northern America, Australia and New Zealand, and most of Eastern and South-Eastern Asia. In most countries of those regions, the proportion of older persons – by convention, those aged 65 years or older – exceeds 10 per cent and in some cases 20 per cent of the total population. Most parts of sub-Saharan Africa and Oceania (excluding Australia and New Zealand) are still in an early stage of this transition, while most countries in Central and Southern Asia, Western Asia and Northern Africa, and Latin America and the Caribbean are at an intermediate stage. Declining mortality throughout the life course has driven the increase of life expectancy at birth in most countries and globally. Greater longevity has accompanied a narrowing of the age range in which most deaths occur. In the past, death was common at all ages. Many children died from infectious diseases, for example, and women frequently perished in childbirth. In most countries today, “premature death” before age 60 or 70 is relatively rare. Greater global life expectancy reflects underlying improvements in health. In countries with available data, the number of years lived in good health has climbed, accounting for most of the increase in years lived overall. Statistical averages hide broad disparities in life expectancy, however, including by sex and socioeconomic status. In almost all societies, women live longer than men on average, and the rich longer than the poor. These differences stem partly from poor nutrition and exposures to environmental and occupational hazards that are more common among men and people with limited income and education. In 2020, the World Health Organization and the United Nations designated 20212030 as the Decade of Healthy Ageing. Its purpose is to promote strategies, grounded in solid evidence, that support well-being among older people. It advocates for developing and maintaining functional abilities, recognizing that these depend on each individual’s <strong>immanent</strong> capacity, the surrounding environment and interactions between the two.</p><br><p><strong>Which of the following statement/statements is/are TRUE according to the passage?</strong></p>", "options": ["<p>The World Social Report 2023 digs into the economic and social implications of the ageing of human population to commemorate the anniversary of the Madrid International Plan of Action on Ageing which was adopted in 2022.</p>", "<p>Population ageing is an avoidable result of the demographic transition towards longer lives and smaller families.</p>", "<p>The shift towards older populations is largely irreversible.</p>", "<p>Only a and c</p>", "<p>Options a, b, and c</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>In the first paragraph of the passage, there is a line which states that ‘In 2022, the world marked the twentieth anniversary of the adoption of the Madrid International Plan of Action on Ageing. To commemorate this landmark, the World Social Report 2023 explores the economic and social entailments of the ageing of the human population’. Here, explores means to inquire or dig into; and entailments means implications. It is also given than the Madrid international plan celebrated its 20<sup>th</sup> anniversary in 2022. Thus, it should have been adopted in 2002. Thus, option a in inorrect.</p>\n<p>In the first paragraph of the passage, there is a line which states that ‘Population ageing is an ineluctable result of the demographic transition towards longer lives and smaller families’. Here, ineluctable means impossible to avoid or evade. But the statement in option c does not match with the statement mentioned in the passage. Thus, option b is incorrect.</p>\n<p>In the first paragraph of the passage, there is a line which states that ‘the shift towards older populations is largely irredeemable’, here irredeemable means irreversible. Thus, option c is correct.</p>\n<p>Only option c is true.</p>"}, {"question": "<p><strong>Read the following passage and answer the questions that follow.</strong></p>\n<p>Population ageing is a defining global trend of our time. People are living longer, and more are older than ever before. Spectacular improvements in health and survival and diminution in fecundity have driven this momentous shift, which has begun or is expected to begin soon in all countries and areas. This change brings both challenges and opportunities as countries strive to achieve the Sustainable Development Goals (SDGs). In 2022, the world marked the twentieth anniversary of the adoption of the Madrid International Plan of Action on Ageing. To commemorate this landmark, the World Social Report 2023 explores the economic and social entailments of the ageing of the human population. It builds on the Plan of Action’s framework for national policies to create equitable, <strong>compendious</strong> societies for people of all ages, providing recommendations to put the rights and well-being of older persons at the center, across the life course. Population ageing is an ineluctable result of the demographic transition towards longer lives and smaller families. While the shift towards older populations is largely irredeemable, collective actions and policy decisions shape its path and consequences. Postponing critical measures that allow societies to benefit from and adapt to population ageing would impose high social, economic, fiscal and health-related costs, for both current and future generations. By contrast, with appropriate <strong>prescience</strong> and planning, Governments can manage the challenges from population ageing while enhancing opportunities for all people to thrive and ensuring that no one is left behind. Population ageing needs to be widely understood as more than just a set of discrete concerns mainly for one group of people who have advanced beyond a given age. Ageing touches all parts of economies and societies, from health care and education to employment and taxation. Each stage of life can contribute to or detract from well-being at older ages.</p>\n<p>Population ageing signals our extraordinary collective success in improving living conditions for billions of people around the world. Better sanitation and medical therapies, greater access to education and family planning, and strides towards gender equality and women’s empowerment have all contributed to, and in some cases benefitted from, the steady move from high to low levels of fertility and mortality. These advances have ushered in an era where rapid population growth is slowly coming to an end, accompanied by a gradual but permanent shift towards older ages. Over several decades, both the number and population share of older persons have risen globally, while the number and share of children and youth have begun to shrink. By 2050, the number of persons aged 65 years or older is expected to double, surpassing 1.6 billion. Currently, population ageing is furthest along in Europe and Northern America, Australia and New Zealand, and most of Eastern and South-Eastern Asia. In most countries of those regions, the proportion of older persons – by convention, those aged 65 years or older – exceeds 10 per cent and in some cases 20 per cent of the total population. Most parts of sub-Saharan Africa and Oceania (excluding Australia and New Zealand) are still in an early stage of this transition, while most countries in Central and Southern Asia, Western Asia and Northern Africa, and Latin America and the Caribbean are at an intermediate stage. Declining mortality throughout the life course has driven the increase of life expectancy at birth in most countries and globally. Greater longevity has accompanied a narrowing of the age range in which most deaths occur. In the past, death was common at all ages. Many children died from infectious diseases, for example, and women frequently perished in childbirth. In most countries today, “premature death” before age 60 or 70 is relatively rare. Greater global life expectancy reflects underlying improvements in health. In countries with available data, the number of years lived in good health has climbed, accounting for most of the increase in years lived overall. Statistical averages hide broad disparities in life expectancy, however, including by sex and socioeconomic status. In almost all societies, women live longer than men on average, and the rich longer than the poor. These differences stem partly from poor nutrition and exposures to environmental and occupational hazards that are more common among men and people with limited income and education. In 2020, the World Health Organization and the United Nations designated 20212030 as the Decade of Healthy Ageing. Its purpose is to promote strategies, grounded in solid evidence, that support well-being among older people. It advocates for developing and maintaining functional abilities, recognizing that these depend on each individual’s <strong>immanent</strong> capacity, the surrounding environment and interactions between the two.</p><br><p><strong>Which of the following statement/statements is/are FALSE according to the passage?</strong></p>", "options": ["<p>The advances in the living conditions for billions of people around the world have paved the way to an era where rapid growth in population is slowly coming to a halt.</p>", "<p>Longer life-span has resulted in the shrinking of the age range between which most deaths are recorded to occur.</p>", "<p>Countries like Australia and New Zealand are in the early stage of population ageing.</p>", "<p>Options a and c</p>", "<p>None of the options a, b, and c is false</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Option a is true. There is a line in the second paragraph of the passage that states that ‘Population ageing signals our extraordinary collective success in improving living conditions for billions of people around the world. Better sanitation and medical therapies, greater access to education and family planning, and strides towards gender equality and women’s empowerment have all contributed to, and in some cases benefitted from, the steady move from high to low levels of fertility and mortality. These advances have ushered in an era where rapid population growth is slowly coming to an end’. Here the advances refer to the ones described in the second line of the text within the inverted commas. Here, urged means to steer or pave the way for something. Thus, option a is true.</p>\n<p>Option b is true. There is a line in the second paragraph of the passage that states that ‘Greater longevity has accompanied a narrowing of the age range in which most deaths occur’. Here longevity means the time period during which something exists or lasts or lifespan. Thus, option b is true.</p>\n<p>Option c is false. There is a line in the second paragraph of the passage which states that ‘Most parts of sub-Saharan Africa and Oceania (excluding Australia and New Zealand) are still in an early stage of this transition’. Here, the countries Australia and New Zealand are excluded from the list of countries in the early stage of this transition – population ageing. Thus, option c is false.</p>\n<p>Thus, option c is the right answer.</p>"}, {"question": "<p><strong>Read the following passage and answer the questions that follow.</strong></p>\n<p>Population ageing is a defining global trend of our time. People are living longer, and more are older than ever before. Spectacular improvements in health and survival and diminution in fecundity have driven this momentous shift, which has begun or is expected to begin soon in all countries and areas. This change brings both challenges and opportunities as countries strive to achieve the Sustainable Development Goals (SDGs). In 2022, the world marked the twentieth anniversary of the adoption of the Madrid International Plan of Action on Ageing. To commemorate this landmark, the World Social Report 2023 explores the economic and social entailments of the ageing of the human population. It builds on the Plan of Action’s framework for national policies to create equitable, <strong>compendious</strong> societies for people of all ages, providing recommendations to put the rights and well-being of older persons at the center, across the life course. Population ageing is an ineluctable result of the demographic transition towards longer lives and smaller families. While the shift towards older populations is largely irredeemable, collective actions and policy decisions shape its path and consequences. Postponing critical measures that allow societies to benefit from and adapt to population ageing would impose high social, economic, fiscal and health-related costs, for both current and future generations. By contrast, with appropriate <strong>prescience</strong> and planning, Governments can manage the challenges from population ageing while enhancing opportunities for all people to thrive and ensuring that no one is left behind. Population ageing needs to be widely understood as more than just a set of discrete concerns mainly for one group of people who have advanced beyond a given age. Ageing touches all parts of economies and societies, from health care and education to employment and taxation. Each stage of life can contribute to or detract from well-being at older ages.</p>\n<p>Population ageing signals our extraordinary collective success in improving living conditions for billions of people around the world. Better sanitation and medical therapies, greater access to education and family planning, and strides towards gender equality and women’s empowerment have all contributed to, and in some cases benefitted from, the steady move from high to low levels of fertility and mortality. These advances have ushered in an era where rapid population growth is slowly coming to an end, accompanied by a gradual but permanent shift towards older ages. Over several decades, both the number and population share of older persons have risen globally, while the number and share of children and youth have begun to shrink. By 2050, the number of persons aged 65 years or older is expected to double, surpassing 1.6 billion. Currently, population ageing is furthest along in Europe and Northern America, Australia and New Zealand, and most of Eastern and South-Eastern Asia. In most countries of those regions, the proportion of older persons – by convention, those aged 65 years or older – exceeds 10 per cent and in some cases 20 per cent of the total population. Most parts of sub-Saharan Africa and Oceania (excluding Australia and New Zealand) are still in an early stage of this transition, while most countries in Central and Southern Asia, Western Asia and Northern Africa, and Latin America and the Caribbean are at an intermediate stage. Declining mortality throughout the life course has driven the increase of life expectancy at birth in most countries and globally. Greater longevity has accompanied a narrowing of the age range in which most deaths occur. In the past, death was common at all ages. Many children died from infectious diseases, for example, and women frequently perished in childbirth. In most countries today, “premature death” before age 60 or 70 is relatively rare. Greater global life expectancy reflects underlying improvements in health. In countries with available data, the number of years lived in good health has climbed, accounting for most of the increase in years lived overall. Statistical averages hide broad disparities in life expectancy, however, including by sex and socioeconomic status. In almost all societies, women live longer than men on average, and the rich longer than the poor. These differences stem partly from poor nutrition and exposures to environmental and occupational hazards that are more common among men and people with limited income and education. In 2020, the World Health Organization and the United Nations designated 20212030 as the Decade of Healthy Ageing. Its purpose is to promote strategies, grounded in solid evidence, that support well-being among older people. It advocates for developing and maintaining functional abilities, recognizing that these depend on each individual’s <strong>immanent</strong> capacity, the surrounding environment and interactions between the two.</p><br><p><strong>Which of the following is/are the antonym/antonyms for the word ‘compendious’?</strong></p>", "options": ["<p>embracive</p>", "<p>panoramic</p>", "<p>comprehensive</p>", "<p>exhaustive</p>", "<p>None of the above</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>Compendious, embracive, panoramic, comprehensive, and exhaustive are all adjectives that unanimously mean to cover or include everything or all important points. Thus, none of these options is an antonym.</p>\n<p>Thus, option e is the right answer.</p>"}, {"question": "<p><strong>In the following questions, a sentence is divided into three parts. You have to choose the correct connector to combine the sentence, so that a meaningful sentence can be formed.</strong></p><br><p><strong>I).</strong> The athlete suffered a severe injury during training,</p>\n<p><strong>II).</strong> He was determined to compete in the upcoming championship,</p>\n<p><strong>III).</strong> He had been preparing for it all year.</p>\n<p><strong>A).</strong> therefore, although</p>\n<p><strong>B).</strong> yet, because</p>\n<p><strong>C).</strong> consequently, since</p>", "options": ["<p>Only A</p>", "<p>Only B</p>", "<p>Only C</p>", "<p>Both A and B</p>", "<p>Both B and C</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The correct answer is B. yet, because.</p>\n<p>Combined Sentence: The athlete suffered a severe injury during training, yet he was determined to compete in the upcoming championship because he had been preparing for it all year.</p>\n<p>\"Yet\" is used to introduce a contrast or contradiction. It indicates that despite the severe injury, the athlete's determination remained strong.</p>\n<p>\"Because\" is used to provide a reason or cause. It explains why the athlete was determined to compete, attributing it to his year-long preparation for the championship.</p>\n<p>This combination effectively conveys the contrast between the athlete's injury and his determination to compete, providing a clear reason for his motivation despite the setback.</p>"}, {"question": "<p><strong>In the following questions, a sentence is divided into three parts. You have to choose the correct connector to combine the sentence, so that a meaningful sentence can be formed.</strong></p><br><p><strong>I).</strong> The city council proposed a new public transportation system,</p>\n<p><strong>II). </strong>Some residents opposed the plan,</p>\n<p><strong>III).</strong> They preferred to invest in road infrastructure.</p>\n<p><strong>A).</strong> nevertheless, as</p>\n<p><strong>B).</strong> although, because</p>\n<p><strong>C).</strong> however, since</p>", "options": ["<p>Only A</p>", "<p>Only B</p>", "<p>Only C</p>", "<p>Both A and B</p>", "<p>Both A and C</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The correct answer is C. however, since.</p>\n<p>Combined Sentence: The city council proposed a new public transportation system; however, some residents opposed the plan since they preferred to invest in road infrastructure.</p>\n<p>\"However,\" is used to introduce a contrast or contradiction. It indicates that despite the proposal for a new public transportation system, there was opposition from some residents.</p>\n<p>\"Since\" is used to provide a reason or cause. It explains why some residents opposed the plan, attributing it to their preference for investing in road infrastructure.</p>\n<p>This combination effectively conveys the contrast between the city council's proposal and the residents' opposition, providing a clear reason for their preference.</p>"}, {"question": "<p><strong>In the following questions, a sentence is divided into three parts. You have to choose the correct connector to combine the sentence, so that a meaningful sentence can be formed.</strong></p><br><p><strong>I).</strong> The new software update promised improved performance,</p>\n<p><strong>II).</strong> Some users reported bugs and glitches,</p>\n<p><strong>III).</strong> The company issued a patch quickly.</p>\n<p><strong>A).</strong> but, so</p>\n<p><strong>B).</strong> therefore, as</p>\n<p><strong>C).</strong> although, because</p>", "options": ["<p>Only A</p>", "<p>Only B</p>", "<p>Only C</p>", "<p>Both A and B</p>", "<p>Both B and C</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The correct answer is A. but, so.</p>\n<p>Combined Sentence: The new software update promised improved performance, but some users reported bugs and glitches, so the company issued a patch quickly.</p>\n<p>\"But\" is used to introduce a contrast or contradiction. It indicates that despite the promise of improved performance, there were negative reports from some users.</p>\n<p>\"So\" is used to indicate a result or consequence. It explains the company's response to the reported bugs and glitches, leading to the quick issuance of a patch.</p>\n<p>This combination effectively conveys the contrast between the promise of the software update and the issues reported by users, and it also provides the logical consequence of the company's action to address the problems.</p>"}, {"question": "<p><strong>In the following questions, a sentence is divided into three parts. You have to choose the correct connector to combine the sentence, so that a meaningful sentence can be formed.</strong></p><br><p><strong>I).</strong> The weather forecast predicted heavy rain,</p>\n<p><strong>II).</strong> The outdoor concert was not cancelled,</p>\n<p><strong>III).</strong> Organizers were hopeful the rain would pass.</p>\n<p><strong>A).</strong> yet, because</p>\n<p><strong>B).</strong> so, as</p>\n<p><strong>C).</strong> although, since</p>", "options": ["<p>Only A</p>", "<p>Only B</p>", "<p>Only C</p>", "<p>Both A and B</p>", "<p>Both B and C</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The correct answer is A. yet, because.</p>\n<p>Combined Sentence: The weather forecast predicted heavy rain, yet the outdoor concert was not cancelled because organizers were hopeful the rain would pass.</p>\n<p>\"Yet\" is used to introduce a contrast or contradiction. It indicates that despite the forecast of heavy rain, the concert was not cancelled.</p>\n<p>\"Because\" is used to provide a reason or cause. It explains why the concert was not cancelled, attributing it to the organizers' hope that the rain would pass.</p>\n<p>This combination effectively conveys the contrast between the weather forecast and the decision to proceed with the concert, providing a clear reason for the organizers' optimism.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Mains Mastery Quiz 2025 English (Day-88)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Mains Mastery Quiz 2025 English (Day-88)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
