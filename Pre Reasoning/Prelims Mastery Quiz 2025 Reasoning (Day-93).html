@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Prelims Mastery Quiz 2025 Reasoning (Day-93)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Nine tokens - K, L, M, N, O, P, Q, R and S are printed by the token machine in the bank one after another, but not necessarily in the same order.</p>\n<p>Only two tokens are printed between N and R. L is printed two tokens before R. Only three tokens are printed between L and P, which is printed two token before S. S is printed exactly between Q and P. As many tokens printed before N is same as after K. M is printed after O.</p><br><p><strong>Which of the following token is printed three tokens before M?</strong></p>", "options": ["<p>K</p>", "<p>N</p>", "<p>R</p>", "<p>P</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Final Arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165647821173.png\" title=\"31.PNG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>Only two tokens are printed between N and R.</li>\n<li>L is printed two tokens before R.</li>\n<li>Only three tokens are printed between L and P, which is printed two token before S.</li>\n</ul>\n<p>From the above conditions, there are three possibilities</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165647825629.png\" title=\"32.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>S is printed exactly between Q and P.</li>\n<li>As many tokens printed before N is same as after K.</li>\n<li>M is printed after O.</li>\n</ul>\n<p>From the above conditions, case II, case IIa get eliminated. Hence, case I shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165647829871.png\" title=\"33.PNG\"/></p>\n<p><strong>Answer: D</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Nine tokens - K, L, M, N, O, P, Q, R and S are printed by the token machine in the bank one after another, but not necessarily in the same order.</p>\n<p>Only two tokens are printed between N and R. L is printed two tokens before R. Only three tokens are printed between L and P, which is printed two token before S. S is printed exactly between Q and P. As many tokens printed before N is same as after K. M is printed after O.</p><br><p><strong>How many tokens are printed between O and the token which is printed immediately after N?</strong></p>", "options": ["<p>As many tokens printed between L and P</p>", "<p>As many tokens printed between Q and N</p>", "<p>As many tokens printed between S and M</p>", "<p>As many tokens printed between K and Q</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Final Arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165647821173.png\" title=\"31.PNG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>Only two tokens are printed between N and R.</li>\n<li>L is printed two tokens before R.</li>\n<li>Only three tokens are printed between L and P, which is printed two token before S.</li>\n</ul>\n<p>From the above conditions, there are three possibilities</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165647825629.png\" title=\"32.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>S is printed exactly between Q and P.</li>\n<li>As many tokens printed before N is same as after K.</li>\n<li>M is printed after O.</li>\n</ul>\n<p>From the above conditions, case II, case IIa get eliminated. Hence, case I shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165647829871.png\" title=\"33.PNG\"/></p>\n<p><strong>Answer: D</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Nine tokens - K, L, M, N, O, P, Q, R and S are printed by the token machine in the bank one after another, but not necessarily in the same order.</p>\n<p>Only two tokens are printed between N and R. L is printed two tokens before R. Only three tokens are printed between L and P, which is printed two token before S. S is printed exactly between Q and P. As many tokens printed before N is same as after K. M is printed after O.</p><br><p><strong>As many tokens printed before ____ is same as after R.</strong></p>", "options": ["<p>The token which is printed two tokens before S</p>", "<p>N</p>", "<p>The token which is printed three tokens after K</p>", "<p>O</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Final Arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165647821173.png\" title=\"31.PNG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>Only two tokens are printed between N and R.</li>\n<li>L is printed two tokens before R.</li>\n<li>Only three tokens are printed between L and P, which is printed two token before S.</li>\n</ul>\n<p>From the above conditions, there are three possibilities</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165647825629.png\" title=\"32.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>S is printed exactly between Q and P.</li>\n<li>As many tokens printed before N is same as after K.</li>\n<li>M is printed after O.</li>\n</ul>\n<p>From the above conditions, case II, case IIa get eliminated. Hence, case I shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165647829871.png\" title=\"33.PNG\"/></p>\n<p><strong>Answer: C</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Nine tokens - K, L, M, N, O, P, Q, R and S are printed by the token machine in the bank one after another, but not necessarily in the same order.</p>\n<p>Only two tokens are printed between N and R. L is printed two tokens before R. Only three tokens are printed between L and P, which is printed two token before S. S is printed exactly between Q and P. As many tokens printed before N is same as after K. M is printed after O.</p><br><p><strong>How many tokens are printed after N?</strong></p>", "options": ["<p>One</p>", "<p>Three</p>", "<p>Five</p>", "<p>Two</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Final Arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165647821173.png\" title=\"31.PNG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>Only two tokens are printed between N and R.</li>\n<li>L is printed two tokens before R.</li>\n<li>Only three tokens are printed between L and P, which is printed two token before S.</li>\n</ul>\n<p>From the above conditions, there are three possibilities</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165647825629.png\" title=\"32.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>S is printed exactly between Q and P.</li>\n<li>As many tokens printed before N is same as after K.</li>\n<li>M is printed after O.</li>\n</ul>\n<p>From the above conditions, case II, case IIa get eliminated. Hence, case I shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165647829871.png\" title=\"33.PNG\"/></p>\n<p><strong>Answer: B</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Nine tokens - K, L, M, N, O, P, Q, R and S are printed by the token machine in the bank one after another, but not necessarily in the same order.</p>\n<p>Only two tokens are printed between N and R. L is printed two tokens before R. Only three tokens are printed between L and P, which is printed two token before S. S is printed exactly between Q and P. As many tokens printed before N is same as after K. M is printed after O.</p><br><p><strong>If all the tokens are printed in the alphabetical order from the last to first, then how many tokens remain unchanged in its position?</strong></p>", "options": ["<p>None</p>", "<p>Three</p>", "<p>Two</p>", "<p>One</p>", "<p>More than three</p>"], "correctIndex": 3, "solution": "<p><strong>Final Arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165647821173.png\" title=\"31.PNG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>Only two tokens are printed between N and R.</li>\n<li>L is printed two tokens before R.</li>\n<li>Only three tokens are printed between L and P, which is printed two token before S.</li>\n</ul>\n<p>From the above conditions, there are three possibilities</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165647825629.png\" title=\"32.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>S is printed exactly between Q and P.</li>\n<li>As many tokens printed before N is same as after K.</li>\n<li>M is printed after O.</li>\n</ul>\n<p>From the above conditions, case II, case IIa get eliminated. Hence, case I shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165647829871.png\" title=\"33.PNG\"/></p>\n<p><strong>Answer: D</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the given questions. </strong></p>\n<p>Eight persons – O, P, Q, R, S, T, U and W are sitting around a rectangular table in such a way that four of them are sitting at the corners and four of them are sitting in the middle of the sides and all of them are facing away from the centre.</p>\n<p>Q sits third to the right of O. Two persons sit between Q and P, who sits opposite of R. S sits immediate left of R. W does not sit adjacent to P. The number of persons sitting between W and O is same as the number of persons sitting between S and T, who does not sit at the corner of the table.</p><br><p><strong>Who among the following person sits second to the left of S?</strong></p>", "options": ["<p>The one who sits opposite to Q<strong> </strong></p>", "<p>O</p>", "<p>W</p>", "<p>R</p>", "<p>The one who sits opposite to T</p>"], "correctIndex": 0, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397889040.jpg\" title=\"29.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>Q sits third to the right of O.</li>\n<li>Two persons sit between Q and P, who sits opposite to R.</li>\n</ul>\n<p>From the above conditions, we have two possibilities:</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397892528.jpg\" title=\"30.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>S sits immediate left of R.</li>\n<li>W does not sit adjacent to P.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397896189.jpg\" title=\"31.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>The number of persons sitting between W and O is same as the number of persons sitting between S and T, who does not sit at the corner of the table.</li>\n</ul>\n<p>From the above conditions, case 2 gets eliminated because T sit at the corner. So, we have case 1 as the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397899228.jpg\" title=\"32.JPG\"/></p>\n<p><strong>Answer: A</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the given questions. </strong></p>\n<p>Eight persons – O, P, Q, R, S, T, U and W are sitting around a rectangular table in such a way that four of them are sitting at the corners and four of them are sitting in the middle of the sides and all of them are facing away from the centre.</p>\n<p>Q sits third to the right of O. Two persons sit between Q and P, who sits opposite of R. S sits immediate left of R. W does not sit adjacent to P. The number of persons sitting between W and O is same as the number of persons sitting between S and T, who does not sit at the corner of the table.</p><br><p><strong>How many persons sit between R and T, when counted from the right of R?</strong></p>", "options": ["<p>One</p>", "<p>None</p>", "<p>Two</p>", "<p>Three</p>", "<p>More than three</p>"], "correctIndex": 2, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397889040.jpg\" title=\"29.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>Q sits third to the right of O.</li>\n<li>Two persons sit between Q and P, who sits opposite to R.</li>\n</ul>\n<p>From the above conditions, we have two possibilities:</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397892528.jpg\" title=\"30.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>S sits immediate left of R.</li>\n<li>W does not sit adjacent to P.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397896189.jpg\" title=\"31.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>The number of persons sitting between W and O is same as the number of persons sitting between S and T, who does not sit at the corner of the table.</li>\n</ul>\n<p>From the above conditions, case 2 gets eliminated because T sit at the corner. So, we have case 1 as the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397899228.jpg\" title=\"32.JPG\"/></p>\n<p><strong>Answer: C</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the given questions. </strong></p>\n<p>Eight persons – O, P, Q, R, S, T, U and W are sitting around a rectangular table in such a way that four of them are sitting at the corners and four of them are sitting in the middle of the sides and all of them are facing away from the centre.</p>\n<p>Q sits third to the right of O. Two persons sit between Q and P, who sits opposite of R. S sits immediate left of R. W does not sit adjacent to P. The number of persons sitting between W and O is same as the number of persons sitting between S and T, who does not sit at the corner of the table.</p><br><p><strong>If R is related to W and S is related to Q in a certain way, then who among the following person is related to S?</strong></p>", "options": ["<p>O</p>", "<p>R</p>", "<p>P</p>", "<p>U</p>", "<p>W</p>"], "correctIndex": 3, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397889040.jpg\" title=\"29.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>Q sits third to the right of O.</li>\n<li>Two persons sit between Q and P, who sits opposite to R.</li>\n</ul>\n<p>From the above conditions, we have two possibilities:</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397892528.jpg\" title=\"30.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>S sits immediate left of R.</li>\n<li>W does not sit adjacent to P.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397896189.jpg\" title=\"31.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>The number of persons sitting between W and O is same as the number of persons sitting between S and T, who does not sit at the corner of the table.</li>\n</ul>\n<p>From the above conditions, case 2 gets eliminated because T sit at the corner. So, we have case 1 as the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397899228.jpg\" title=\"32.JPG\"/></p>\n<p><strong>Answer: D</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the given questions. </strong></p>\n<p>Eight persons – O, P, Q, R, S, T, U and W are sitting around a rectangular table in such a way that four of them are sitting at the corners and four of them are sitting in the middle of the sides and all of them are facing away from the centre.</p>\n<p>Q sits third to the right of O. Two persons sit between Q and P, who sits opposite of R. S sits immediate left of R. W does not sit adjacent to P. The number of persons sitting between W and O is same as the number of persons sitting between S and T, who does not sit at the corner of the table.</p><br><p><strong>Four of the following five are alike in a certain way based on the given arrangement and thus form a group. Which one of the following does not belong to the group?</strong></p>", "options": ["<p>O</p>", "<p>U</p>", "<p>P</p>", "<p>W</p>", "<p>R</p>"], "correctIndex": 1, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397889040.jpg\" title=\"29.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>Q sits third to the right of O.</li>\n<li>Two persons sit between Q and P, who sits opposite to R.</li>\n</ul>\n<p>From the above conditions, we have two possibilities:</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397892528.jpg\" title=\"30.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>S sits immediate left of R.</li>\n<li>W does not sit adjacent to P.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397896189.jpg\" title=\"31.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>The number of persons sitting between W and O is same as the number of persons sitting between S and T, who does not sit at the corner of the table.</li>\n</ul>\n<p>From the above conditions, case 2 gets eliminated because T sit at the corner. So, we have case 1 as the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397899228.jpg\" title=\"32.JPG\"/></p>\n<p><strong>Answer: B </strong>(All of them sit at the corner except in option (b) )</p>"}, {"question": "<p><strong>Study the following information carefully and answer the given questions. </strong></p>\n<p>Eight persons – O, P, Q, R, S, T, U and W are sitting around a rectangular table in such a way that four of them are sitting at the corners and four of them are sitting in the middle of the sides and all of them are facing away from the centre.</p>\n<p>Q sits third to the right of O. Two persons sit between Q and P, who sits opposite of R. S sits immediate left of R. W does not sit adjacent to P. The number of persons sitting between W and O is same as the number of persons sitting between S and T, who does not sit at the corner of the table.</p><br><p><strong>What is the position of Q with respect to T?</strong></p>", "options": ["<p>Second to the left</p>", "<p>Third to the left</p>", "<p>Second to the right</p>", "<p>Immediate right</p>", "<p>Immediate left</p>"], "correctIndex": 0, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397889040.jpg\" title=\"29.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>Q sits third to the right of O.</li>\n<li>Two persons sit between Q and P, who sits opposite to R.</li>\n</ul>\n<p>From the above conditions, we have two possibilities:</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397892528.jpg\" title=\"30.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>S sits immediate left of R.</li>\n<li>W does not sit adjacent to P.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397896189.jpg\" title=\"31.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>The number of persons sitting between W and O is same as the number of persons sitting between S and T, who does not sit at the corner of the table.</li>\n</ul>\n<p>From the above conditions, case 2 gets eliminated because T sit at the corner. So, we have case 1 as the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397899228.jpg\" title=\"32.JPG\"/></p>\n<p><strong>Answer: A</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the below questions</strong></p>\n<p>Seven persons - I, J, K, L, M, N and O were born on the same date of January in different years viz., 1990, 1992, 1994, 1995, 1998, 2001 and 2003, but not necessarily in the same order. Their ages were calculated based on the year 2022.</p>\n<p>Only one person was born between O and L. Less than two persons were born after O. I is four years younger than K. N was born immediately after K. The difference between the ages of N and J is the same as the difference between the ages of O and L.</p><br><p><strong>What is the age of J?</strong></p>", "options": ["<p>Three years younger than I</p>", "<p>Two years elder than O</p>", "<p>Four years younger than N</p>", "<p>Five years elder than M</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Final Arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165191000172.jpg\" title=\"1.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>Only one person was born between O and L.</li>\n<li>Less than two persons were born after O.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165191003047.jpg\" title=\"2.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>I is four years younger than K.</li>\n<li>N was born immediately after K.</li>\n<li>The difference between the ages of N and J is the same as the difference between the ages of O and L.</li>\n</ul>\n<p>Hence, case II gets eliminated.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165191004355.jpg\" title=\"3.JPG\"/></p>\n<p><strong>Answer: D</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the below questions</strong></p>\n<p>Seven persons - I, J, K, L, M, N and O were born on the same date of January in different years viz., 1990, 1992, 1994, 1995, 1998, 2001 and 2003, but not necessarily in the same order. Their ages were calculated based on the year 2022.</p>\n<p>Only one person was born between O and L. Less than two persons were born after O. I is four years younger than K. N was born immediately after K. The difference between the ages of N and J is the same as the difference between the ages of O and L.</p><br><p><strong>How many persons were born between M and the one who was born in 1994?</strong></p>", "options": ["<p>No one</p>", "<p>Two</p>", "<p>One</p>", "<p>Three</p>", "<p>More than three</p>"], "correctIndex": 3, "solution": "<p><strong>Final Arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165191000172.jpg\" title=\"1.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>Only one person was born between O and L.</li>\n<li>Less than two persons were born after O.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165191003047.jpg\" title=\"2.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>I is four years younger than K.</li>\n<li>N was born immediately after K.</li>\n<li>The difference between the ages of N and J is the same as the difference between the ages of O and L.</li>\n</ul>\n<p>Hence, case II gets eliminated.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165191004355.jpg\" title=\"3.JPG\"/></p>\n<p> <strong>Answer: D</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the below questions</strong></p>\n<p>Seven persons - I, J, K, L, M, N and O were born on the same date of January in different years viz., 1990, 1992, 1994, 1995, 1998, 2001 and 2003, but not necessarily in the same order. Their ages were calculated based on the year 2022.</p>\n<p>Only one person was born between O and L. Less than two persons were born after O. I is four years younger than K. N was born immediately after K. The difference between the ages of N and J is the same as the difference between the ages of O and L.</p><br><p><strong>Who among the following person’s age is divisible by 5?</strong></p>", "options": ["<p>The person who was born two years before O</p>", "<p>I</p>", "<p>The person who was born two years after K</p>", "<p>O</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Final Arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165191000172.jpg\" title=\"1.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>Only one person was born between O and L.</li>\n<li>Less than two persons were born after O.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165191003047.jpg\" title=\"2.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>I is four years younger than K.</li>\n<li>N was born immediately after K.</li>\n<li>The difference between the ages of N and J is the same as the difference between the ages of O and L.</li>\n</ul>\n<p>Hence, case II gets eliminated.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165191004355.jpg\" title=\"3.JPG\"/></p>\n<p><strong>Answer: C</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the below questions</strong></p>\n<p>Seven persons - I, J, K, L, M, N and O were born on the same date of January in different years viz., 1990, 1992, 1994, 1995, 1998, 2001 and 2003, but not necessarily in the same order. Their ages were calculated based on the year 2022.</p>\n<p>Only one person was born between O and L. Less than two persons were born after O. I is four years younger than K. N was born immediately after K. The difference between the ages of N and J is the same as the difference between the ages of O and L.</p><br><p><strong>As many persons born after J as before_____.</strong></p>", "options": ["<p>The person who was born in 1990</p>", "<p>The person who was born in 1994</p>", "<p>The person who was born in 2001</p>", "<p>The person who was born in 1998</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Final Arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165191000172.jpg\" title=\"1.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>Only one person was born between O and L.</li>\n<li>Less than two persons were born after O.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165191003047.jpg\" title=\"2.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>I is four years younger than K.</li>\n<li>N was born immediately after K.</li>\n<li>The difference between the ages of N and J is the same as the difference between the ages of O and L.</li>\n</ul>\n<p>Hence, case II gets eliminated.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165191004355.jpg\" title=\"3.JPG\"/></p>\n<p><strong>Answer: B</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the below questions</strong></p>\n<p>Seven persons - I, J, K, L, M, N and O were born on the same date of January in different years viz., 1990, 1992, 1994, 1995, 1998, 2001 and 2003, but not necessarily in the same order. Their ages were calculated based on the year 2022.</p>\n<p>Only one person was born between O and L. Less than two persons were born after O. I is four years younger than K. N was born immediately after K. The difference between the ages of N and J is the same as the difference between the ages of O and L.</p><br><p><strong>Four of the five among the following are similar in such a way to form a group, which one of the following doesn’t belong to that group?</strong></p>", "options": ["<p>N</p>", "<p>I</p>", "<p>M</p>", "<p>K</p>", "<p>J</p>"], "correctIndex": 2, "solution": "<p><strong>Final Arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165191000172.jpg\" title=\"1.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>Only one person was born between O and L.</li>\n<li>Less than two persons were born after O.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165191003047.jpg\" title=\"2.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>I is four years younger than K.</li>\n<li>N was born immediately after K.</li>\n<li>The difference between the ages of N and J is the same as the difference between the ages of O and L.</li>\n</ul>\n<p>Hence, case II gets eliminated.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165191004355.jpg\" title=\"3.JPG\"/></p>\n<p><strong><strong>Answer: C</strong></strong></p>\n<p>(All the persons were born in an even-numbered year, except option C) </p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Six persons - P, Q, R, S, T, and U are sitting on an equilateral triangular table such that three persons sit on the corners while three persons sit in the middle of the sides of the table and all of them are facing towards the center, but not necessarily in the same order.</p>\n<p>Q sits second to the right of P. R is neither an immediate neighbor of P nor Q.<strong> </strong>As many persons sit between Q and P is same as between S and U, when counted from the right of both S and P. U neither sits adjacent to P nor in the middle of the sides of the table.</p><br><p><strong>How many persons sit between R and Q, when counted from the right of Q?</strong></p>", "options": ["<p>One</p>", "<p>Two</p>", "<p>Three</p>", "<p>Four</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165357382015.png\" title=\"54.PNG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>Q sits second to the right of P.</li>\n<li>R is neither an immediate neighbor of P nor Q.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165357389261.png\" title=\"55.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>As many persons sit between Q and P is same as between S and U, when counted from the right of both S and P.</li>\n<li>U neither sits adjacent to P nor on the middle of the sides of the table.</li>\n</ul>\n<p>Hence, case 2 gets eliminated. Case 1 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/1653574018100.png\" title=\"55.PNG\"/></p>\n<p><strong>Answer: A</strong></p>\n<p> </p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Six persons - P, Q, R, S, T, and U are sitting on an equilateral triangular table such that three persons sit on the corners while three persons sit in the middle of the sides of the table and all of them are facing towards the center, but not necessarily in the same order.</p>\n<p>Q sits second to the right of P. R is neither an immediate neighbor of P nor Q.<strong> </strong>As many persons sit between Q and P is same as between S and U, when counted from the right of both S and P. U neither sits adjacent to P nor in the middle of the sides of the table.</p><br><p><strong>Who among the following person sits facing towards U?</strong></p>", "options": ["<p>Q</p>", "<p>The one who sits immediate left of S</p>", "<p>R</p>", "<p>The one who sits second to the left of T</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165357382015.png\" title=\"54.PNG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>Q sits second to the right of P.</li>\n<li>R is neither an immediate neighbor of P nor Q.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165357389261.png\" title=\"55.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>As many persons sit between Q and P is same as between S and U, when counted from the right of both S and P.</li>\n<li>U neither sits adjacent to P nor on the middle of the sides of the table.</li>\n</ul>\n<p>Hence, case 2 gets eliminated. Case 1 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/1653574018100.png\" title=\"55.PNG\"/></p>\n<p><strong>Answer: B</strong></p>\n<p> </p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Six persons - P, Q, R, S, T, and U are sitting on an equilateral triangular table such that three persons sit on the corners while three persons sit in the middle of the sides of the table and all of them are facing towards the center, but not necessarily in the same order.</p>\n<p>Q sits second to the right of P. R is neither an immediate neighbor of P nor Q.<strong> </strong>As many persons sit between Q and P is same as between S and U, when counted from the right of both S and P. U neither sits adjacent to P nor in the middle of the sides of the table.</p><br><p><strong>How many persons sit between T and Q?</strong></p>", "options": ["<p>One</p>", "<p>As many persons between P and S</p>", "<p>As many persons between R and S</p>", "<p>Three</p>", "<p>Both c &amp; d</p>"], "correctIndex": 2, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165357382015.png\" title=\"54.PNG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>Q sits second to the right of P.</li>\n<li>R is neither an immediate neighbor of P nor Q.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165357389261.png\" title=\"55.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>As many persons sit between Q and P is same as between S and U, when counted from the right of both S and P.</li>\n<li>U neither sits adjacent to P nor on the middle of the sides of the table.</li>\n</ul>\n<p>Hence, case 2 gets eliminated. Case 1 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/1653574018100.png\" title=\"55.PNG\"/></p>\n<p><strong>Answer: C</strong></p>\n<p> </p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Six persons - P, Q, R, S, T, and U are sitting on an equilateral triangular table such that three persons sit on the corners while three persons sit in the middle of the sides of the table and all of them are facing towards the center, but not necessarily in the same order.</p>\n<p>Q sits second to the right of P. R is neither an immediate neighbor of P nor Q.<strong> </strong>As many persons sit between Q and P is same as between S and U, when counted from the right of both S and P. U neither sits adjacent to P nor in the middle of the sides of the table.</p><br><p><strong>What is the position of R with respect to U?</strong></p>", "options": ["<p>Immediate left</p>", "<p>Immediate right</p>", "<p>Second to the right</p>", "<p>Third to the left</p>", "<p>No one</p>"], "correctIndex": 1, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165357382015.png\" title=\"54.PNG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>Q sits second to the right of P.</li>\n<li>R is neither an immediate neighbor of P nor Q.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165357389261.png\" title=\"55.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>As many persons sit between Q and P is same as between S and U, when counted from the right of both S and P.</li>\n<li>U neither sits adjacent to P nor on the middle of the sides of the table.</li>\n</ul>\n<p>Hence, case 2 gets eliminated. Case 1 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/1653574018100.png\" title=\"55.PNG\"/></p>\n<p><strong>Answer: B</strong></p>\n<p> </p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Six persons - P, Q, R, S, T, and U are sitting on an equilateral triangular table such that three persons sit on the corners while three persons sit in the middle of the sides of the table and all of them are facing towards the center, but not necessarily in the same order.</p>\n<p>Q sits second to the right of P. R is neither an immediate neighbor of P nor Q.<strong> </strong>As many persons sit between Q and P is same as between S and U, when counted from the right of both S and P. U neither sits adjacent to P nor in the middle of the sides of the table.</p><br><p><strong>If all the persons are made to sit in the alphabetical order starting from P in an anticlockwise direction, then how many persons remain unchanged in their position (excluding P)?</strong></p>", "options": ["<p>One</p>", "<p>Two</p>", "<p>Three</p>", "<p>Four</p>", "<p>None</p>"], "correctIndex": 4, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165357382015.png\" title=\"54.PNG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>Q sits second to the right of P.</li>\n<li>R is neither an immediate neighbor of P nor Q.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165357389261.png\" title=\"55.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>As many persons sit between Q and P is same as between S and U, when counted from the right of both S and P.</li>\n<li>U neither sits adjacent to P nor on the middle of the sides of the table.</li>\n</ul>\n<p>Hence, case 2 gets eliminated. Case 1 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/1653574018100.png\" title=\"55.PNG\"/></p>\n<p><strong>Answer: E</strong></p>\n<p> </p>"}] ,
+    hi: [{"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>बैंक में टोकन मशीन द्वारा एक के बाद एक नौ टोकन - K, L, M, N, O, P, Q, R और S प्रिंट किए जाते हैं, लेकिन जरूरी नहीं कि इसी क्रम में हो।</p>\n<p>N और R के बीच केवल दो टोकन प्रिंट होते हैं। L, R से दो टोकन पहले प्रिंट होता है। L और P के बीच केवल तीन टोकन प्रिंट होते हैं, जो S से दो टोकन पहले प्रिंट होता है। S, Q और P के ठीक बीच में प्रिंट है। जितने टोकन N से पहले प्रिंट होते हैं उतने ही K के बाद प्रिंट होते हैं। M, O के बाद प्रिंट होता है।</p><br><p><strong>निम्नलिखित में से कौन सा टोकन M से तीन टोकन पहले प्रिंट</strong> <strong>होता है?</strong></p>", "options": ["<p>K</p>", "<p>N</p>", "<p>R</p>", "<p>P</p>", "<p>इनमें से कोई नहीं</p>"], "correctIndex": 3, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165647727969.jpg\" title=\"93.JPG\"/></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>N और R के बीच केवल दो टोकन प्रिंट होते हैं।</li>\n<li>L, R से दो टोकन पहले प्रिंट होता है।</li>\n<li>L और P के बीच केवल तीन टोकन प्रिंट होते हैं, जो S से दो टोकन पहले प्रिंट होता है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, तीन संभावनाएं हैं</p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165647742086.jpg\" title=\"94.JPG\"/></strong></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>S, Q और P के ठीक बीच में प्रिंट है।</li>\n<li>जितने टोकन N से पहले प्रिंट होते हैं उतने ही K के बाद प्रिंट होते हैं।</li>\n<li>M, O के बाद प्रिंट होता है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, केस II, केस IIa समाप्त हो जाता है। इसलिए, केस I अंतिम व्यवस्था दिखाता है।</p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165647767111.jpg\" title=\"95.JPG\"/></strong></p>\n<p><strong>उत्तर: D</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>बैंक में टोकन मशीन द्वारा एक के बाद एक नौ टोकन - K, L, M, N, O, P, Q, R और S प्रिंट किए जाते हैं, लेकिन जरूरी नहीं कि इसी क्रम में हो।</p>\n<p>N और R के बीच केवल दो टोकन प्रिंट होते हैं। L, R से दो टोकन पहले प्रिंट होता है। L और P के बीच केवल तीन टोकन प्रिंट होते हैं, जो S से दो टोकन पहले प्रिंट होता है। S, Q और P के ठीक बीच में प्रिंट है। जितने टोकन N से पहले प्रिंट होते हैं उतने ही K के बाद प्रिंट होते हैं। M, O के बाद प्रिंट होता है।</p><br><p><strong>O और N के तत्काल बाद प्रिंट</strong> <strong>होने वाले</strong> <strong>टोकन के बीच कितने टोकन प्रिंट</strong> <strong>हो</strong><strong>ते हैं?</strong></p>", "options": ["<p>जितने टोकन L और P के बीच प्रिंट होते<strong> </strong>हैं</p>", "<p>जितने टोकन Q और N के बीच प्रिंट होते<strong> </strong>हैं</p>", "<p>जितने टोकन S और M के बीच प्रिंट होते<strong> </strong>हैं</p>", "<p>जितने टोकन K और Q के बीच प्रिंट होते हैं</p>", "<p>इनमें से कोई नहीं</p>"], "correctIndex": 3, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165647727969.jpg\" title=\"93.JPG\"/></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>N और R के बीच केवल दो टोकन प्रिंट होते हैं।</li>\n<li>L, R से दो टोकन पहले प्रिंट होता है।</li>\n<li>L और P के बीच केवल तीन टोकन प्रिंट होते हैं, जो S से दो टोकन पहले प्रिंट होता है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, तीन संभावनाएं हैं</p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165647742086.jpg\" title=\"94.JPG\"/></strong></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>S, Q और P के ठीक बीच में प्रिंट है।</li>\n<li>जितने टोकन N से पहले प्रिंट होते हैं उतने ही K के बाद प्रिंट होते हैं।</li>\n<li>M, O के बाद प्रिंट होता है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, केस II, केस IIa समाप्त हो जाता है। इसलिए, केस I अंतिम व्यवस्था दिखाता है।</p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165647767111.jpg\" title=\"95.JPG\"/></strong></p>\n<p><strong>उत्तर: D</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>बैंक में टोकन मशीन द्वारा एक के बाद एक नौ टोकन - K, L, M, N, O, P, Q, R और S प्रिंट किए जाते हैं, लेकिन जरूरी नहीं कि इसी क्रम में हो।</p>\n<p>N और R के बीच केवल दो टोकन प्रिंट होते हैं। L, R से दो टोकन पहले प्रिंट होता है। L और P के बीच केवल तीन टोकन प्रिंट होते हैं, जो S से दो टोकन पहले प्रिंट होता है। S, Q और P के ठीक बीच में प्रिंट है। जितने टोकन N से पहले प्रिंट होते हैं उतने ही K के बाद प्रिंट होते हैं। M, O के बाद प्रिंट होता है।</p><br><p><strong>जितने टोकन ____ से पहले प्रिंट होते हैं उतने ही R के बाद प्रिंट होते हैं।</strong></p>", "options": ["<p>वह टोकन जो S से दो टोकन पहले प्रिंट<strong> </strong>होता है</p>", "<p>N</p>", "<p>वह टोकन जो K के तीन टोकन बाद प्रिंट होता है</p>", "<p>O</p>", "<p>इनमें से कोई नहीं</p>"], "correctIndex": 2, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165647727969.jpg\" title=\"93.JPG\"/></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>N और R के बीच केवल दो टोकन प्रिंट होते हैं।</li>\n<li>L, R से दो टोकन पहले प्रिंट होता है।</li>\n<li>L और P के बीच केवल तीन टोकन प्रिंट होते हैं, जो S से दो टोकन पहले प्रिंट होता है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, तीन संभावनाएं हैं</p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165647742086.jpg\" title=\"94.JPG\"/></strong></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>S, Q और P के ठीक बीच में प्रिंट है।</li>\n<li>जितने टोकन N से पहले प्रिंट होते हैं उतने ही K के बाद प्रिंट होते हैं।</li>\n<li>M, O के बाद प्रिंट होता है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, केस II, केस IIa समाप्त हो जाता है। इसलिए, केस I अंतिम व्यवस्था दिखाता है।</p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165647767111.jpg\" title=\"95.JPG\"/></strong></p>\n<p><strong>उत्तर: C</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>बैंक में टोकन मशीन द्वारा एक के बाद एक नौ टोकन - K, L, M, N, O, P, Q, R और S प्रिंट किए जाते हैं, लेकिन जरूरी नहीं कि इसी क्रम में हो।</p>\n<p>N और R के बीच केवल दो टोकन प्रिंट होते हैं। L, R से दो टोकन पहले प्रिंट होता है। L और P के बीच केवल तीन टोकन प्रिंट होते हैं, जो S से दो टोकन पहले प्रिंट होता है। S, Q और P के ठीक बीच में प्रिंट है। जितने टोकन N से पहले प्रिंट होते हैं उतने ही K के बाद प्रिंट होते हैं। M, O के बाद प्रिंट होता है।</p><br><p><strong>N के बाद कितने टोकन प्रिंट होते हैं?</strong></p>", "options": ["<p>एक</p>", "<p>तीन</p>", "<p>पांच</p>", "<p>दो</p>", "<p>इनमें से कोई नहीं</p>"], "correctIndex": 1, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165647727969.jpg\" title=\"93.JPG\"/></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>N और R के बीच केवल दो टोकन प्रिंट होते हैं।</li>\n<li>L, R से दो टोकन पहले प्रिंट होता है।</li>\n<li>L और P के बीच केवल तीन टोकन प्रिंट होते हैं, जो S से दो टोकन पहले प्रिंट होता है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, तीन संभावनाएं हैं</p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165647742086.jpg\" title=\"94.JPG\"/></strong></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>S, Q और P के ठीक बीच में प्रिंट है।</li>\n<li>जितने टोकन N से पहले प्रिंट होते हैं उतने ही K के बाद प्रिंट होते हैं।</li>\n<li>M, O के बाद प्रिंट होता है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, केस II, केस IIa समाप्त हो जाता है। इसलिए, केस I अंतिम व्यवस्था दिखाता है।</p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165647767111.jpg\" title=\"95.JPG\"/></strong></p>\n<p><strong>उत्तर: B</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>बैंक में टोकन मशीन द्वारा एक के बाद एक नौ टोकन - K, L, M, N, O, P, Q, R और S प्रिंट किए जाते हैं, लेकिन जरूरी नहीं कि इसी क्रम में हो।</p>\n<p>N और R के बीच केवल दो टोकन प्रिंट होते हैं। L, R से दो टोकन पहले प्रिंट होता है। L और P के बीच केवल तीन टोकन प्रिंट होते हैं, जो S से दो टोकन पहले प्रिंट होता है। S, Q और P के ठीक बीच में प्रिंट है। जितने टोकन N से पहले प्रिंट होते हैं उतने ही K के बाद प्रिंट होते हैं। M, O के बाद प्रिंट होता है।</p><br><p><strong>यदि सभी टोकन अंतिम से पहले तक वर्णानुक्रम में प्रिंट होते हैं, तो कितने टोकन अपनी स्थिति में अपरिवर्तित रहते हैं?</strong></p>", "options": ["<p>कोई नहीं</p>", "<p>तीन</p>", "<p>दो</p>", "<p>एक</p>", "<p>तीन से अधिक</p>"], "correctIndex": 3, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165647727969.jpg\" title=\"93.JPG\"/></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>N और R के बीच केवल दो टोकन प्रिंट होते हैं।</li>\n<li>L, R से दो टोकन पहले प्रिंट होता है।</li>\n<li>L और P के बीच केवल तीन टोकन प्रिंट होते हैं, जो S से दो टोकन पहले प्रिंट होता है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, तीन संभावनाएं हैं</p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165647742086.jpg\" title=\"94.JPG\"/></strong></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>S, Q और P के ठीक बीच में प्रिंट है।</li>\n<li>जितने टोकन N से पहले प्रिंट होते हैं उतने ही K के बाद प्रिंट होते हैं।</li>\n<li>M, O के बाद प्रिंट होता है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, केस II, केस IIa समाप्त हो जाता है। इसलिए, केस I अंतिम व्यवस्था दिखाता है।</p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165647767111.jpg\" title=\"95.JPG\"/></strong></p>\n<p><strong>उत्तर: D</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>आठ व्यक्ति - O, P, Q, R, S, T, U और W एक आयताकार मेज़ के चारों ओर इस प्रकार बैठे हैं कि उनमें से चार कोने पर बैठे हैं और उनमें से चार भुजाओं के मध्य में बैठे हैं और उन सभी का मुख केंद्र से बाहर की ओर है।</p>\n<p>Q, O के दायें से तीसरे स्थान पर बैठा है। Q और P के मध्य दो व्यक्ति बैठे हैं, जो R के विपरीत बैठा है। S, R के तत्काल बायें बैठा है। W, P के आसन्न नहीं बैठा है। W और O के बीच बैठे व्यक्तियों की संख्या S और T के बीच बैठे व्यक्तियों की संख्या के समान है, जो मेज़ के कोने पर नहीं बैठता है।</p><br><p><strong>निम्नलिखित में से कौन सा व्यक्ति S के बाएं से दूसरे स्थान पर बैठता है?</strong></p>", "options": ["<p>वह व्यक्ति जो Q के विपरीत बैठा है</p>", "<p>O</p>", "<p>W</p>", "<p>R</p>", "<p>वह व्यक्ति जो T के विपरीत बैठा है</p>"], "correctIndex": 0, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397889040.jpg\" title=\"29.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>Q, O के दायें से तीसरे स्थान पर बैठा है।</li>\n<li>Q और P के मध्य दो व्यक्ति बैठे हैं, जो R के विपरीत बैठा है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, हमारे पास दो संभावनाएँ हैं:</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397892528.jpg\" title=\"30.JPG\"/></p>\n<p>फिर से हमारे पास है,</p>\n<ul>\n<li>S, R के तत्काल बायें बैठा है।</li>\n<li>W, P के आसन्न नहीं बैठा है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397896189.jpg\" title=\"31.JPG\"/></p>\n<p>फिर से हमारे पास है,</p>\n<ul>\n<li>W और O के बीच बैठे व्यक्तियों की संख्या S और T के बीच बैठे व्यक्तियों की संख्या के समान है, जो मेज़ के कोने पर नहीं बैठता है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, केस 2 समाप्त हो जाता है क्योंकि T कोने पर बैठता है । इसलिए, हमारे पास अंतिम व्यवस्था के रूप में केस- 1 है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397899228.jpg\" title=\"32.JPG\"/></p>\n<p><strong>उत्तर: A</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>आठ व्यक्ति - O, P, Q, R, S, T, U और W एक आयताकार मेज़ के चारों ओर इस प्रकार बैठे हैं कि उनमें से चार कोने पर बैठे हैं और उनमें से चार भुजाओं के मध्य में बैठे हैं और उन सभी का मुख केंद्र से बाहर की ओर है।</p>\n<p>Q, O के दायें से तीसरे स्थान पर बैठा है। Q और P के मध्य दो व्यक्ति बैठे हैं, जो R के विपरीत बैठा है। S, R के तत्काल बायें बैठा है। W, P के आसन्न नहीं बैठा है। W और O के बीच बैठे व्यक्तियों की संख्या S और T के बीच बैठे व्यक्तियों की संख्या के समान है, जो मेज़ के कोने पर नहीं बैठता है।</p><br><p><strong>R के दाईं ओर से गिनने पर, R और T के बीच कितने व्यक्ति बैठते हैं?</strong></p>", "options": ["<p>एक</p>", "<p>कोई नहीं</p>", "<p>दो</p>", "<p>तीन</p>", "<p>तीन से अधिक</p>"], "correctIndex": 2, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397889040.jpg\" title=\"29.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>Q, O के दायें से तीसरे स्थान पर बैठा है।</li>\n<li>Q और P के मध्य दो व्यक्ति बैठे हैं, जो R के विपरीत बैठा है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, हमारे पास दो संभावनाएँ हैं:</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397892528.jpg\" title=\"30.JPG\"/></p>\n<p>फिर से हमारे पास है,</p>\n<ul>\n<li>S, R के तत्काल बायें बैठा है।</li>\n<li>W, P के आसन्न नहीं बैठा है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397896189.jpg\" title=\"31.JPG\"/></p>\n<p>फिर से हमारे पास है,</p>\n<ul>\n<li>W और O के बीच बैठे व्यक्तियों की संख्या S और T के बीच बैठे व्यक्तियों की संख्या के समान है, जो मेज़ के कोने पर नहीं बैठता है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, केस 2 समाप्त हो जाता है क्योंकि T कोने पर बैठता है । इसलिए, हमारे पास अंतिम व्यवस्था के रूप में केस- 1 है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397899228.jpg\" title=\"32.JPG\"/></p>\n<p><strong>उत्तर: C</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>आठ व्यक्ति - O, P, Q, R, S, T, U और W एक आयताकार मेज़ के चारों ओर इस प्रकार बैठे हैं कि उनमें से चार कोने पर बैठे हैं और उनमें से चार भुजाओं के मध्य में बैठे हैं और उन सभी का मुख केंद्र से बाहर की ओर है।</p>\n<p>Q, O के दायें से तीसरे स्थान पर बैठा है। Q और P के मध्य दो व्यक्ति बैठे हैं, जो R के विपरीत बैठा है। S, R के तत्काल बायें बैठा है। W, P के आसन्न नहीं बैठा है। W और O के बीच बैठे व्यक्तियों की संख्या S और T के बीच बैठे व्यक्तियों की संख्या के समान है, जो मेज़ के कोने पर नहीं बैठता है।</p><br><p><strong>यदि एक निश्चित तरीके से R, W से संबंधित है और S, Q से संबंधित है, तो निम्नलिखित में से कौन सा व्यक्ति S से संबंधित है?</strong></p>", "options": ["<p>O</p>", "<p>R</p>", "<p>P</p>", "<p>U</p>", "<p>W</p>"], "correctIndex": 3, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397889040.jpg\" title=\"29.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>Q, O के दायें से तीसरे स्थान पर बैठा है।</li>\n<li>Q और P के मध्य दो व्यक्ति बैठे हैं, जो R के विपरीत बैठा है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, हमारे पास दो संभावनाएँ हैं:</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397892528.jpg\" title=\"30.JPG\"/></p>\n<p>फिर से हमारे पास है,</p>\n<ul>\n<li>S, R के तत्काल बायें बैठा है।</li>\n<li>W, P के आसन्न नहीं बैठा है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397896189.jpg\" title=\"31.JPG\"/></p>\n<p>फिर से हमारे पास है,</p>\n<ul>\n<li>W और O के बीच बैठे व्यक्तियों की संख्या S और T के बीच बैठे व्यक्तियों की संख्या के समान है, जो मेज़ के कोने पर नहीं बैठता है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, केस 2 समाप्त हो जाता है क्योंकि T कोने पर बैठता है । इसलिए, हमारे पास अंतिम व्यवस्था के रूप में केस- 1 है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397899228.jpg\" title=\"32.JPG\"/></p>\n<p><strong>उत्तर: D</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>आठ व्यक्ति - O, P, Q, R, S, T, U और W एक आयताकार मेज़ के चारों ओर इस प्रकार बैठे हैं कि उनमें से चार कोने पर बैठे हैं और उनमें से चार भुजाओं के मध्य में बैठे हैं और उन सभी का मुख केंद्र से बाहर की ओर है।</p>\n<p>Q, O के दायें से तीसरे स्थान पर बैठा है। Q और P के मध्य दो व्यक्ति बैठे हैं, जो R के विपरीत बैठा है। S, R के तत्काल बायें बैठा है। W, P के आसन्न नहीं बैठा है। W और O के बीच बैठे व्यक्तियों की संख्या S और T के बीच बैठे व्यक्तियों की संख्या के समान है, जो मेज़ के कोने पर नहीं बैठता है।</p><br><p><strong>दी गई व्यवस्था के आधार पर निम्नलिखित पांच में से चार एक निश्चित तरीके से समान हैं और इस प्रकार एक समूह बनाते हैं। निम्नलिखित में से कौन सा </strong><strong>एक</strong> <strong>समूह से संबंधित नहीं है?</strong></p>", "options": ["<p>O</p>", "<p>U</p>", "<p>P</p>", "<p>W</p>", "<p>R</p>"], "correctIndex": 1, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397889040.jpg\" title=\"29.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>Q, O के दायें से तीसरे स्थान पर बैठा है।</li>\n<li>Q और P के मध्य दो व्यक्ति बैठे हैं, जो R के विपरीत बैठा है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, हमारे पास दो संभावनाएँ हैं:</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397892528.jpg\" title=\"30.JPG\"/></p>\n<p>फिर से हमारे पास है,</p>\n<ul>\n<li>S, R के तत्काल बायें बैठा है।</li>\n<li>W, P के आसन्न नहीं बैठा है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397896189.jpg\" title=\"31.JPG\"/></p>\n<p>फिर से हमारे पास है,</p>\n<ul>\n<li>W और O के बीच बैठे व्यक्तियों की संख्या S और T के बीच बैठे व्यक्तियों की संख्या के समान है, जो मेज़ के कोने पर नहीं बैठता है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, केस 2 समाप्त हो जाता है क्योंकि T कोने पर बैठता है । इसलिए, हमारे पास अंतिम व्यवस्था के रूप में केस- 1 है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397899228.jpg\" title=\"32.JPG\"/></p>\n<p><strong>उत्तर: B (विकल्प (b) को छोड़कर सभी कोने पर बैठे हैं)</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>आठ व्यक्ति - O, P, Q, R, S, T, U और W एक आयताकार मेज़ के चारों ओर इस प्रकार बैठे हैं कि उनमें से चार कोने पर बैठे हैं और उनमें से चार भुजाओं के मध्य में बैठे हैं और उन सभी का मुख केंद्र से बाहर की ओर है।</p>\n<p>Q, O के दायें से तीसरे स्थान पर बैठा है। Q और P के मध्य दो व्यक्ति बैठे हैं, जो R के विपरीत बैठा है। S, R के तत्काल बायें बैठा है। W, P के आसन्न नहीं बैठा है। W और O के बीच बैठे व्यक्तियों की संख्या S और T के बीच बैठे व्यक्तियों की संख्या के समान है, जो मेज़ के कोने पर नहीं बैठता है।</p><br><p><strong>T के संबंध में Q का स्थान क्या है?</strong></p>", "options": ["<p>बाएं से दूसरा</p>", "<p>बाएं से तीसरा</p>", "<p>दायें से दूसरा</p>", "<p>तत्काल दायें</p>", "<p>तत्काल बाएं</p>"], "correctIndex": 0, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397889040.jpg\" title=\"29.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>Q, O के दायें से तीसरे स्थान पर बैठा है।</li>\n<li>Q और P के मध्य दो व्यक्ति बैठे हैं, जो R के विपरीत बैठा है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, हमारे पास दो संभावनाएँ हैं:</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397892528.jpg\" title=\"30.JPG\"/></p>\n<p>फिर से हमारे पास है,</p>\n<ul>\n<li>S, R के तत्काल बायें बैठा है।</li>\n<li>W, P के आसन्न नहीं बैठा है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397896189.jpg\" title=\"31.JPG\"/></p>\n<p>फिर से हमारे पास है,</p>\n<ul>\n<li>W और O के बीच बैठे व्यक्तियों की संख्या S और T के बीच बैठे व्यक्तियों की संख्या के समान है, जो मेज़ के कोने पर नहीं बैठता है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, केस 2 समाप्त हो जाता है क्योंकि T कोने पर बैठता है । इसलिए, हमारे पास अंतिम व्यवस्था के रूप में केस- 1 है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168397899228.jpg\" title=\"32.JPG\"/></p>\n<p><strong>उत्तर: A</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें</strong></p>\n<p>सात व्यक्ति- I, J, K, L, M, N और O का जन्म जनवरी की एक ही तारीख को अलग-अलग वर्षों अर्थात 1990, 1992, 1994, 1995, 1998, 2001 और 2003 में हुआ था, लेकिन जरूरी नहीं कि इसी क्रम में हो। उनकी उम्र की गणना वर्ष 2022 के आधार पर की गई थी।</p>\n<p>O और L के मध्य केवल एक व्यक्ति का जन्म हुआ था। O के बाद दो से कम व्यक्तियों का जन्म हुआ। I, K से चार वर्ष छोटा है। N, K के तत्काल बाद पैदा हुआ था। N और J की आयु के बीच का अंतर, O और L की आयु के बीच के अंतर के समान है।</p>\n<p> </p><br><p><strong>J की आयु क्या है?</strong></p>", "options": ["<p>I से तीन वर्ष छोटा</p>", "<p>O से दो वर्ष बड़ा</p>", "<p>N से चार वर्ष छोटा</p>", "<p>M से पांच वर्ष बड़ा</p>", "<p>इनमें से कोई नहीं</p>"], "correctIndex": 3, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165191000172.jpg\" title=\"1.JPG\"/></strong></p>\n<p><strong>हमारे पास है,</strong></p>\n<ul>\n<li>O और L के मध्य केवल एक व्यक्ति का जन्म हुआ था।</li>\n<li>O के बाद दो से कम व्यक्तियों का जन्म हुआ।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165191003047.jpg\" title=\"2.JPG\"/></p>\n<p><strong>हमारे पास फिर से है,</strong></p>\n<ul>\n<li>I, K से चार वर्ष छोटा है।</li>\n<li>N, K के तत्काल बाद पैदा हुआ था।</li>\n<li>N और J की आयु के बीच का अंतर, O और L की आयु के बीच के अंतर के समान है।</li>\n</ul>\n<p>इसलिए, केस II समाप्त हो जाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165191004355.jpg\" title=\"3.JPG\"/></p>\n<p><strong>उत्तर: D</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें</strong></p>\n<p>सात व्यक्ति- I, J, K, L, M, N और O का जन्म जनवरी की एक ही तारीख को अलग-अलग वर्षों अर्थात 1990, 1992, 1994, 1995, 1998, 2001 और 2003 में हुआ था, लेकिन जरूरी नहीं कि इसी क्रम में हो। उनकी उम्र की गणना वर्ष 2022 के आधार पर की गई थी।</p>\n<p>O और L के मध्य केवल एक व्यक्ति का जन्म हुआ था। O के बाद दो से कम व्यक्तियों का जन्म हुआ। I, K से चार वर्ष छोटा है। N, K के तत्काल बाद पैदा हुआ था। N और J की आयु के बीच का अंतर, O और L की आयु के बीच के अंतर के समान है।</p>\n<p> </p><br><p><strong>M और 1994 में पैदा हुए व्यक्ति के बीच कितने व्यक्ति पैदा हुए थे?</strong></p>", "options": ["<p>कोई नहीं</p>", "<p>दो</p>", "<p>एक</p>", "<p>तीन</p>", "<p>तीन से अधिक</p>"], "correctIndex": 3, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165191000172.jpg\" title=\"1.JPG\"/></strong></p>\n<p><strong>हमारे पास है,</strong></p>\n<ul>\n<li>O और L के मध्य केवल एक व्यक्ति का जन्म हुआ था।</li>\n<li>O के बाद दो से कम व्यक्तियों का जन्म हुआ।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165191003047.jpg\" title=\"2.JPG\"/></p>\n<p><strong>हमारे पास फिर से है,</strong></p>\n<ul>\n<li>I, K से चार वर्ष छोटा है।</li>\n<li>N, K के तत्काल बाद पैदा हुआ था।</li>\n<li>N और J की आयु के बीच का अंतर, O और L की आयु के बीच के अंतर के समान है।</li>\n</ul>\n<p>इसलिए, केस II समाप्त हो जाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165191004355.jpg\" title=\"3.JPG\"/></p>\n<p><strong>उत्तर: D</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें</strong></p>\n<p>सात व्यक्ति- I, J, K, L, M, N और O का जन्म जनवरी की एक ही तारीख को अलग-अलग वर्षों अर्थात 1990, 1992, 1994, 1995, 1998, 2001 और 2003 में हुआ था, लेकिन जरूरी नहीं कि इसी क्रम में हो। उनकी उम्र की गणना वर्ष 2022 के आधार पर की गई थी।</p>\n<p>O और L के मध्य केवल एक व्यक्ति का जन्म हुआ था। O के बाद दो से कम व्यक्तियों का जन्म हुआ। I, K से चार वर्ष छोटा है। N, K के तत्काल बाद पैदा हुआ था। N और J की आयु के बीच का अंतर, O और L की आयु के बीच के अंतर के समान है।</p>\n<p> </p><br><p><strong>निम्नलिखित में से किस व्यक्ति की आयु 5 से विभाज्य है?</strong></p>", "options": ["<p>वह व्यक्ति जो O से दो वर्ष पहले पैदा हुआ था</p>", "<p>I</p>", "<p>वह व्यक्ति जो K के दो वर्ष बाद पैदा हुआ था</p>", "<p>O</p>", "<p>इनमें से कोई नहीं</p>"], "correctIndex": 2, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165191000172.jpg\" title=\"1.JPG\"/></strong></p>\n<p><strong>हमारे पास है,</strong></p>\n<ul>\n<li>O और L के मध्य केवल एक व्यक्ति का जन्म हुआ था।</li>\n<li>O के बाद दो से कम व्यक्तियों का जन्म हुआ।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165191003047.jpg\" title=\"2.JPG\"/></p>\n<p><strong>हमारे पास फिर से है,</strong></p>\n<ul>\n<li>I, K से चार वर्ष छोटा है।</li>\n<li>N, K के तत्काल बाद पैदा हुआ था।</li>\n<li>N और J की आयु के बीच का अंतर, O और L की आयु के बीच के अंतर के समान है।</li>\n</ul>\n<p>इसलिए, केस II समाप्त हो जाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165191004355.jpg\" title=\"3.JPG\"/></p>\n<p><strong>उत्तर: C</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें</strong></p>\n<p>सात व्यक्ति- I, J, K, L, M, N और O का जन्म जनवरी की एक ही तारीख को अलग-अलग वर्षों अर्थात 1990, 1992, 1994, 1995, 1998, 2001 और 2003 में हुआ था, लेकिन जरूरी नहीं कि इसी क्रम में हो। उनकी उम्र की गणना वर्ष 2022 के आधार पर की गई थी।</p>\n<p>O और L के मध्य केवल एक व्यक्ति का जन्म हुआ था। O के बाद दो से कम व्यक्तियों का जन्म हुआ। I, K से चार वर्ष छोटा है। N, K के तत्काल बाद पैदा हुआ था। N और J की आयु के बीच का अंतर, O और L की आयु के बीच के अंतर के समान है।</p>\n<p> </p><br><p><strong>जितने व्यक्ति J के बाद पैदा हुए उतने ही व्यक्ति _____ से पहले पैदा हुए।</strong></p>", "options": ["<p>वह व्यक्ति जिसका जन्म 1990 में हुआ था</p>", "<p>वह व्यक्ति जिसका जन्म 1994 में हुआ था</p>", "<p>वह व्यक्ति जिसका जन्म 2001 में हुआ था</p>", "<p>वह व्यक्ति जिसका जन्म 1998 में हुआ था</p>", "<p>इनमें से कोई नहीं</p>"], "correctIndex": 1, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165191000172.jpg\" title=\"1.JPG\"/></strong></p>\n<p><strong>हमारे पास है,</strong></p>\n<ul>\n<li>O और L के मध्य केवल एक व्यक्ति का जन्म हुआ था।</li>\n<li>O के बाद दो से कम व्यक्तियों का जन्म हुआ।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165191003047.jpg\" title=\"2.JPG\"/></p>\n<p><strong>हमारे पास फिर से है,</strong></p>\n<ul>\n<li>I, K से चार वर्ष छोटा है।</li>\n<li>N, K के तत्काल बाद पैदा हुआ था।</li>\n<li>N और J की आयु के बीच का अंतर, O और L की आयु के बीच के अंतर के समान है।</li>\n</ul>\n<p>इसलिए, केस II समाप्त हो जाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165191004355.jpg\" title=\"3.JPG\"/></p>\n<p><strong>उत्तर: B</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें</strong></p>\n<p>सात व्यक्ति- I, J, K, L, M, N और O का जन्म जनवरी की एक ही तारीख को अलग-अलग वर्षों अर्थात 1990, 1992, 1994, 1995, 1998, 2001 और 2003 में हुआ था, लेकिन जरूरी नहीं कि इसी क्रम में हो। उनकी उम्र की गणना वर्ष 2022 के आधार पर की गई थी।</p>\n<p>O और L के मध्य केवल एक व्यक्ति का जन्म हुआ था। O के बाद दो से कम व्यक्तियों का जन्म हुआ। I, K से चार वर्ष छोटा है। N, K के तत्काल बाद पैदा हुआ था। N और J की आयु के बीच का अंतर, O और L की आयु के बीच के अंतर के समान है।</p>\n<p> </p><br><p><strong>निम्नलिखित पांच में से चार एक समूह बनाने के लिए समान हैं, निम्नलिखित में से कौन सा उस समूह से संबंधित नहीं है?</strong></p>", "options": ["<p>N</p>", "<p>I</p>", "<p>M</p>", "<p>K</p>", "<p>J</p>"], "correctIndex": 2, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165191000172.jpg\" title=\"1.JPG\"/></strong></p>\n<p><strong>हमारे पास है,</strong></p>\n<ul>\n<li>O और L के मध्य केवल एक व्यक्ति का जन्म हुआ था।</li>\n<li>O के बाद दो से कम व्यक्तियों का जन्म हुआ।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165191003047.jpg\" title=\"2.JPG\"/></p>\n<p><strong>हमारे पास फिर से है,</strong></p>\n<ul>\n<li>I, K से चार वर्ष छोटा है।</li>\n<li>N, K के तत्काल बाद पैदा हुआ था।</li>\n<li>N और J की आयु के बीच का अंतर, O और L की आयु के बीच के अंतर के समान है।</li>\n</ul>\n<p>इसलिए, केस II समाप्त हो जाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165191004355.jpg\" title=\"3.JPG\"/></p>\n<p><strong>उत्तर: C </strong>(विकल्प C को छोड़कर सभी व्यक्ति एक सम-संख्या वाले वर्ष में पैदा हुए थे)</p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>छह व्यक्ति- P, Q, R, S, T, और U एक समबाहु त्रिभुजाकार मेज़ पर इस प्रकार बैठे हैं कि तीन व्यक्ति कोनों पर बैठे हैं जबकि तीन व्यक्ति मेज़ की भुजाओं के बीच में बैठे हैं और उन सभी का मुख केंद्र की ओर है, लेकिन जरूरी नहीं कि इसी क्रम में हो।</p>\n<p>Q, P के दायें से दूसरे स्थान पर बैठा है। R न तो P का और न ही Q का तत्काल पड़ोसी है। जितने व्यक्ति Q और P के बीच बैठे हैं उतने ही व्यक्ति S और U के बीच बैठे हैं, जब S और P दोनों के दायें से गिना जाता है। U न तो P के आसन्न बैठा है और न ही मेज़ की भुजाओं के मध्य में बैठा है।</p><br><p><strong>Q के दायें से गिनने पर R और Q के मध्य कितने व्यक्ति बैठे हैं?</strong></p>", "options": ["<p>एक</p>", "<p>दो</p>", "<p>तीन</p>", "<p>चार</p>", "<p>इनमें से कोई नहीं</p>"], "correctIndex": 0, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165357382015.png\" title=\"54.PNG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>Q, P के दायें से दूसरे स्थान पर बैठा है।</li>\n<li>R न तो P का और न ही Q का तत्काल पड़ोसी है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165357389261.png\" title=\"55.PNG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>जितने व्यक्ति Q और P के बीच बैठे हैं उतने ही व्यक्ति S और U के बीच बैठे हैं, जब S और P दोनों के दायें से गिना जाता है।</li>\n<li>U न तो P के आसन्न बैठा है और न ही मेज़ की भुजाओं के मध्य में बैठा है।</li>\n</ul>\n<p>इसलिए, केस 2 समाप्त हो जाता है। केस 1 अंतिम व्यवस्था दिखाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/1653574018100.png\" title=\"55.PNG\"/></p>\n<p><strong>उत्तर: A</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>छह व्यक्ति- P, Q, R, S, T, और U एक समबाहु त्रिभुजाकार मेज़ पर इस प्रकार बैठे हैं कि तीन व्यक्ति कोनों पर बैठे हैं जबकि तीन व्यक्ति मेज़ की भुजाओं के बीच में बैठे हैं और उन सभी का मुख केंद्र की ओर है, लेकिन जरूरी नहीं कि इसी क्रम में हो।</p>\n<p>Q, P के दायें से दूसरे स्थान पर बैठा है। R न तो P का और न ही Q का तत्काल पड़ोसी है। जितने व्यक्ति Q और P के बीच बैठे हैं उतने ही व्यक्ति S और U के बीच बैठे हैं, जब S और P दोनों के दायें से गिना जाता है। U न तो P के आसन्न बैठा है और न ही मेज़ की भुजाओं के मध्य में बैठा है।</p><br><p><strong>निम्नलिखित में से कौन सा व्यक्ति U की ओर उन्मुख होकर बैठा है?</strong></p>", "options": ["<p>Q</p>", "<p>वह व्यक्ति जो S के तत्काल बायें बैठा है</p>", "<p>R</p>", "<p>वह व्यक्ति जो T के बायें से दूसरे स्थान पर बैठा है</p>", "<p>इनमें से कोई नहीं</p>"], "correctIndex": 1, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165357382015.png\" title=\"54.PNG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>Q, P के दायें से दूसरे स्थान पर बैठा है।</li>\n<li>R न तो P का और न ही Q का तत्काल पड़ोसी है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165357389261.png\" title=\"55.PNG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>जितने व्यक्ति Q और P के बीच बैठे हैं उतने ही व्यक्ति S और U के बीच बैठे हैं, जब S और P दोनों के दायें से गिना जाता है।</li>\n<li>U न तो P के आसन्न बैठा है और न ही मेज़ की भुजाओं के मध्य में बैठा है।</li>\n</ul>\n<p>इसलिए, केस 2 समाप्त हो जाता है। केस 1 अंतिम व्यवस्था दिखाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/1653574018100.png\" title=\"55.PNG\"/></p>\n<p><strong>उत्तर: B</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>छह व्यक्ति- P, Q, R, S, T, और U एक समबाहु त्रिभुजाकार मेज़ पर इस प्रकार बैठे हैं कि तीन व्यक्ति कोनों पर बैठे हैं जबकि तीन व्यक्ति मेज़ की भुजाओं के बीच में बैठे हैं और उन सभी का मुख केंद्र की ओर है, लेकिन जरूरी नहीं कि इसी क्रम में हो।</p>\n<p>Q, P के दायें से दूसरे स्थान पर बैठा है। R न तो P का और न ही Q का तत्काल पड़ोसी है। जितने व्यक्ति Q और P के बीच बैठे हैं उतने ही व्यक्ति S और U के बीच बैठे हैं, जब S और P दोनों के दायें से गिना जाता है। U न तो P के आसन्न बैठा है और न ही मेज़ की भुजाओं के मध्य में बैठा है।</p><br><p><strong>T और Q के मध्य कितने व्यक्ति बैठे हैं?</strong></p>", "options": ["<p>एक</p>", "<p>जितने व्यक्ति P और S के बीच बैठे हैं</p>", "<p>जितने व्यक्ति R और S के बीच बैठे हैं</p>", "<p>तीन</p>", "<p>c और d दोनों</p>"], "correctIndex": 2, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165357382015.png\" title=\"54.PNG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>Q, P के दायें से दूसरे स्थान पर बैठा है।</li>\n<li>R न तो P का और न ही Q का तत्काल पड़ोसी है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165357389261.png\" title=\"55.PNG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>जितने व्यक्ति Q और P के बीच बैठे हैं उतने ही व्यक्ति S और U के बीच बैठे हैं, जब S और P दोनों के दायें से गिना जाता है।</li>\n<li>U न तो P के आसन्न बैठा है और न ही मेज़ की भुजाओं के मध्य में बैठा है।</li>\n</ul>\n<p>इसलिए, केस 2 समाप्त हो जाता है। केस 1 अंतिम व्यवस्था दिखाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/1653574018100.png\" title=\"55.PNG\"/></p>\n<p><strong>उत्तर: C</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>छह व्यक्ति- P, Q, R, S, T, और U एक समबाहु त्रिभुजाकार मेज़ पर इस प्रकार बैठे हैं कि तीन व्यक्ति कोनों पर बैठे हैं जबकि तीन व्यक्ति मेज़ की भुजाओं के बीच में बैठे हैं और उन सभी का मुख केंद्र की ओर है, लेकिन जरूरी नहीं कि इसी क्रम में हो।</p>\n<p>Q, P के दायें से दूसरे स्थान पर बैठा है। R न तो P का और न ही Q का तत्काल पड़ोसी है। जितने व्यक्ति Q और P के बीच बैठे हैं उतने ही व्यक्ति S और U के बीच बैठे हैं, जब S और P दोनों के दायें से गिना जाता है। U न तो P के आसन्न बैठा है और न ही मेज़ की भुजाओं के मध्य में बैठा है।</p><br><p><strong>U के सन्दर्भ में R का स्थान क्या है?</strong></p>", "options": ["<p>तत्काल बाएं</p>", "<p>तत्काल दायें</p>", "<p>दायें से दूसरा</p>", "<p>बायें से तीसरा</p>", "<p>कोई नहीं</p>"], "correctIndex": 1, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165357382015.png\" title=\"54.PNG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>Q, P के दायें से दूसरे स्थान पर बैठा है।</li>\n<li>R न तो P का और न ही Q का तत्काल पड़ोसी है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165357389261.png\" title=\"55.PNG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>जितने व्यक्ति Q और P के बीच बैठे हैं उतने ही व्यक्ति S और U के बीच बैठे हैं, जब S और P दोनों के दायें से गिना जाता है।</li>\n<li>U न तो P के आसन्न बैठा है और न ही मेज़ की भुजाओं के मध्य में बैठा है।</li>\n</ul>\n<p>इसलिए, केस 2 समाप्त हो जाता है। केस 1 अंतिम व्यवस्था दिखाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/1653574018100.png\" title=\"55.PNG\"/></p>\n<p><strong>उत्तर: B</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>छह व्यक्ति- P, Q, R, S, T, और U एक समबाहु त्रिभुजाकार मेज़ पर इस प्रकार बैठे हैं कि तीन व्यक्ति कोनों पर बैठे हैं जबकि तीन व्यक्ति मेज़ की भुजाओं के बीच में बैठे हैं और उन सभी का मुख केंद्र की ओर है, लेकिन जरूरी नहीं कि इसी क्रम में हो।</p>\n<p>Q, P के दायें से दूसरे स्थान पर बैठा है। R न तो P का और न ही Q का तत्काल पड़ोसी है। जितने व्यक्ति Q और P के बीच बैठे हैं उतने ही व्यक्ति S और U के बीच बैठे हैं, जब S और P दोनों के दायें से गिना जाता है। U न तो P के आसन्न बैठा है और न ही मेज़ की भुजाओं के मध्य में बैठा है।</p><br><p><strong>यदि सभी व्यक्तियों को P से शुरू होकर वामावर्त दिशा में वर्णानुक्रम में बैठाया जाता है, तो कितने व्यक्ति अपनी स्थिति में अपरिवर्तित रहते हैं (P को छोड़कर)?</strong></p>", "options": ["<p>एक</p>", "<p>दो</p>", "<p>तीन</p>", "<p>चार</p>", "<p>कोई नहीं</p>"], "correctIndex": 4, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165357382015.png\" title=\"54.PNG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>Q, P के दायें से दूसरे स्थान पर बैठा है।</li>\n<li>R न तो P का और न ही Q का तत्काल पड़ोसी है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165357389261.png\" title=\"55.PNG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>जितने व्यक्ति Q और P के बीच बैठे हैं उतने ही व्यक्ति S और U के बीच बैठे हैं, जब S और P दोनों के दायें से गिना जाता है।</li>\n<li>U न तो P के आसन्न बैठा है और न ही मेज़ की भुजाओं के मध्य में बैठा है।</li>\n</ul>\n<p>इसलिए, केस 2 समाप्त हो जाता है। केस 1 अंतिम व्यवस्था दिखाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/1653574018100.png\" title=\"55.PNG\"/></p>\n<p><strong>उत्तर: E</strong></p>"}] 
+};
+        const rawTitle = "Prelims Mastery Quiz 2025 Reasoning (Day-93)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Prelims Mastery Quiz 2025 Reasoning (Day-93)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

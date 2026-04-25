@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Prelims Mastery Quiz 2025 Reasoning (Day-13)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>Study the following information carefully and answer the questions given below:</strong></p>\n<p>Eight persons- A, B, C, D, E, F, G and H are living on four different floors where the bottommost floor is numbered as one and the topmost floor is numbered as four. Each floor has two flats- Flat R and Flat M from west to east respectively.</p>\n<p>B lives on an even-numbered floor. Only one floor is between B and H who lives in flat R. E lives immediately below H in the same flat. As many persons live above E is same as below G. C lives towards the south of G and north of F. D lives below F.</p><br><p><strong>Who among the following person lives on the third floor of flat R?</strong></p>", "options": ["<p>C</p>", "<p>A</p>", "<p>E</p>", "<p>F</p>", "<p>D</p>"], "correctIndex": 1, "solution": "<p><strong>Final arrangement</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165728453835.jpg\" title=\"51.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>B lives on an even numbered floor.</li>\n<li>Only one floor is between B and H who lives in flat R.</li>\n</ul>\n<p>From the above condition, there are four possibilities<strong>.</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165728459243.jpg\" title=\"54.JPG\"/></strong></p>\n<p>Again we have,</p>\n<ul>\n<li>E lives immediately below H in the same flat.</li>\n<li>As many persons live above E as below G.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165728464659.jpg\" title=\"55.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>C lives towards the south of G and north of F.</li>\n<li>D lives below F.</li>\n</ul>\n<p>So case-1, case-2 and case-4 get eliminated, hence Case3 shows the final arrangement</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165728472878.jpg\" title=\"56.JPG\"/></p>\n<p><strong>Answer: B</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below:</strong></p>\n<p>Eight persons- A, B, C, D, E, F, G and H are living on four different floors where the bottommost floor is numbered as one and the topmost floor is numbered as four. Each floor has two flats- Flat R and Flat M from west to east respectively.</p>\n<p>B lives on an even-numbered floor. Only one floor is between B and H who lives in flat R. E lives immediately below H in the same flat. As many persons live above E is same as below G. C lives towards the south of G and north of F. D lives below F.</p><br><p><strong>As many floors above F is same as below____. </strong></p>", "options": ["<p>The one who lives towards the east of B</p>", "<p>E</p>", "<p>The one who lives towards the west of C</p>", "<p>D</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Final arrangement</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165728453835.jpg\" title=\"51.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>B lives on an even numbered floor.</li>\n<li>Only one floor is between B and H who lives in flat R.</li>\n</ul>\n<p>From the above condition, there are four possibilities<strong>.</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165728459243.jpg\" title=\"54.JPG\"/></strong></p>\n<p>Again we have,</p>\n<ul>\n<li>E lives immediately below H in the same flat.</li>\n<li>As many persons live above E as below G.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165728464659.jpg\" title=\"55.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>C lives towards the south of G and north of F.</li>\n<li>D lives below F.</li>\n</ul>\n<p>So case-1, case-2 and case-4 get eliminated, hence Case3 shows the final arrangement</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165728472878.jpg\" title=\"56.JPG\"/></p>\n<p><strong>Answer: C </strong>(A)</p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below:</strong></p>\n<p>Eight persons- A, B, C, D, E, F, G and H are living on four different floors where the bottommost floor is numbered as one and the topmost floor is numbered as four. Each floor has two flats- Flat R and Flat M from west to east respectively.</p>\n<p>B lives on an even-numbered floor. Only one floor is between B and H who lives in flat R. E lives immediately below H in the same flat. As many persons live above E is same as below G. C lives towards the south of G and north of F. D lives below F.</p><br><p><strong>Four of the following five are alike in a certain way as per the given arrangement and thus form a group. Find the one that does not belong to that group.</strong></p>", "options": ["<p>A</p>", "<p>D</p>", "<p>E</p>", "<p>F</p>", "<p>C</p>"], "correctIndex": 3, "solution": "<p><strong>Final arrangement</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165728453835.jpg\" title=\"51.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>B lives on an even numbered floor.</li>\n<li>Only one floor is between B and H who lives in flat R.</li>\n</ul>\n<p>From the above condition, there are four possibilities<strong>.</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165728459243.jpg\" title=\"54.JPG\"/></strong></p>\n<p>Again we have,</p>\n<ul>\n<li>E lives immediately below H in the same flat.</li>\n<li>As many persons live above E as below G.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165728464659.jpg\" title=\"55.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>C lives towards the south of G and north of F.</li>\n<li>D lives below F.</li>\n</ul>\n<p>So case-1, case-2 and case-4 get eliminated, hence Case3 shows the final arrangement</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165728472878.jpg\" title=\"56.JPG\"/></p>\n<p><strong>Answer: D </strong>(All persons live on the odd numbered floors except option d)</p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below:</strong></p>\n<p>Eight persons- A, B, C, D, E, F, G and H are living on four different floors where the bottommost floor is numbered as one and the topmost floor is numbered as four. Each floor has two flats- Flat R and Flat M from west to east respectively.</p>\n<p>B lives on an even-numbered floor. Only one floor is between B and H who lives in flat R. E lives immediately below H in the same flat. As many persons live above E is same as below G. C lives towards the south of G and north of F. D lives below F.</p><br><p><strong>Who among the following person does not live in flat R?</strong></p>", "options": ["<p>C</p>", "<p>B</p>", "<p>A</p>", "<p>H</p>", "<p>E</p>"], "correctIndex": 0, "solution": "<p><strong>Final arrangement</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165728453835.jpg\" title=\"51.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>B lives on an even numbered floor.</li>\n<li>Only one floor is between B and H who lives in flat R.</li>\n</ul>\n<p>From the above condition, there are four possibilities<strong>.</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165728459243.jpg\" title=\"54.JPG\"/></strong></p>\n<p>Again we have,</p>\n<ul>\n<li>E lives immediately below H in the same flat.</li>\n<li>As many persons live above E as below G.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165728464659.jpg\" title=\"55.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>C lives towards the south of G and north of F.</li>\n<li>D lives below F.</li>\n</ul>\n<p>So case-1, case-2 and case-4 get eliminated, hence Case3 shows the final arrangement</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165728472878.jpg\" title=\"56.JPG\"/></p>\n<p><strong>Answer: A</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below:</strong></p>\n<p>Eight persons- A, B, C, D, E, F, G and H are living on four different floors where the bottommost floor is numbered as one and the topmost floor is numbered as four. Each floor has two flats- Flat R and Flat M from west to east respectively.</p>\n<p>B lives on an even-numbered floor. Only one floor is between B and H who lives in flat R. E lives immediately below H in the same flat. As many persons live above E is same as below G. C lives towards the south of G and north of F. D lives below F.</p><br><p><strong>_____ lives towards the north of A?</strong></p>", "options": ["<p>The one who lives towards the west of F</p>", "<p>F</p>", "<p>The one who lives towards the west of G</p>", "<p>D</p>", "<p>C</p>"], "correctIndex": 2, "solution": "<p><strong>Final arrangement</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165728453835.jpg\" title=\"51.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>B lives on an even numbered floor.</li>\n<li>Only one floor is between B and H who lives in flat R.</li>\n</ul>\n<p>From the above condition, there are four possibilities<strong>.</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165728459243.jpg\" title=\"54.JPG\"/></strong></p>\n<p>Again we have,</p>\n<ul>\n<li>E lives immediately below H in the same flat.</li>\n<li>As many persons live above E as below G.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165728464659.jpg\" title=\"55.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>C lives towards the south of G and north of F.</li>\n<li>D lives below F.</li>\n</ul>\n<p>So case-1, case-2 and case-4 get eliminated, hence Case3 shows the final arrangement</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165728472878.jpg\" title=\"56.JPG\"/></p>\n<p><strong>Answer: C</strong>(B)</p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Eight persons- E, F, G, H, I, J, K and L are standing around a circular table facing away from the centre, but not necessarily in the same order.</p>\n<p>E stands three places away from F. Two persons stand between E and L. H stands second to the right of J. J stands adjacent to G. G doesn’t stand adjacent to E. As many persons stand between K and I is same as between J and L when counted from the right of both K  and L.</p><br><p><strong>Who among the following person stands adjacent to F?</strong></p>", "options": ["<p>The one who stands immediate left of G</p>", "<p>K</p>", "<p>The one who stands immediate right of L</p>", "<p>Both (a) and (b)</p>", "<p>H</p>"], "correctIndex": 1, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788341627.jpg\" title=\"42.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>E stands three places away from F.</li>\n<li>Two persons stand between E and L.</li>\n</ul>\n<p>From the above conditions, there are two possibilities</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788345653.jpg\" title=\"43.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>H stands second to the right of J.</li>\n<li>J stands adjacent to G.</li>\n<li>G doesn’t stand adjacent to E.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788348897.jpg\" title=\"44.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>As many persons stand between K and I is same as between J and L when counted from the right of both K and L.</li>\n</ul>\n<p>So Case 2 gets eliminated, hence Case1 shows the final arrangement</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788352282.jpg\" title=\"45.JPG\"/></p>\n<p><strong>Answer: B</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Eight persons- E, F, G, H, I, J, K and L are standing around a circular table facing away from the centre, but not necessarily in the same order.</p>\n<p>E stands three places away from F. Two persons stand between E and L. H stands second to the right of J. J stands adjacent to G. G doesn’t stand adjacent to E. As many persons stand between K and I is same as between J and L when counted from the right of both K  and L.</p><br><p><strong>If all the persons are made to stand according to alphabetical order from E in a clockwise direction, then how many persons remain unchanged in their position? (Excluding E)</strong></p>", "options": ["<p>One<strong> </strong></p>", "<p>Two</p>", "<p>No one</p>", "<p>Three</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788341627.jpg\" title=\"42.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>E stands three places away from F.</li>\n<li>Two persons stand between E and L.</li>\n</ul>\n<p>From the above conditions, there are two possibilities</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788345653.jpg\" title=\"43.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>H stands second to the right of J.</li>\n<li>J stands adjacent to G.</li>\n<li>G doesn’t stand adjacent to E.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788348897.jpg\" title=\"44.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>As many persons stand between K and I is same as between J and L when counted from the right of both K and L.</li>\n</ul>\n<p>So Case 2 gets eliminated, hence Case1 shows the final arrangement</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788352282.jpg\" title=\"45.JPG\"/></p>\n<p><strong>Answer: A</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Eight persons- E, F, G, H, I, J, K and L are standing around a circular table facing away from the centre, but not necessarily in the same order.</p>\n<p>E stands three places away from F. Two persons stand between E and L. H stands second to the right of J. J stands adjacent to G. G doesn’t stand adjacent to E. As many persons stand between K and I is same as between J and L when counted from the right of both K  and L.</p><br><p><strong>How many persons stand between L and H when counted from the left of H?</strong></p>", "options": ["<p>One</p>", "<p>Two</p>", "<p>Three</p>", "<p>Four</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788341627.jpg\" title=\"42.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>E stands three places away from F.</li>\n<li>Two persons stand between E and L.</li>\n</ul>\n<p>From the above conditions, there are two possibilities</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788345653.jpg\" title=\"43.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>H stands second to the right of J.</li>\n<li>J stands adjacent to G.</li>\n<li>G doesn’t stand adjacent to E.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788348897.jpg\" title=\"44.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>As many persons stand between K and I is same as between J and L when counted from the right of both K and L.</li>\n</ul>\n<p>So Case 2 gets eliminated, hence Case1 shows the final arrangement</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788352282.jpg\" title=\"45.JPG\"/></p>\n<p><strong>Answer: C</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Eight persons- E, F, G, H, I, J, K and L are standing around a circular table facing away from the centre, but not necessarily in the same order.</p>\n<p>E stands three places away from F. Two persons stand between E and L. H stands second to the right of J. J stands adjacent to G. G doesn’t stand adjacent to E. As many persons stand between K and I is same as between J and L when counted from the right of both K  and L.</p><br><p><strong>Who among the following person stands second to the left of K?</strong></p>", "options": ["<p>The one who stands third to the left of F</p>", "<p>The one who stands third to the left of L</p>", "<p>The one who stands opposite to I</p>", "<p>Both (a) and (c)</p>", "<p>Both (a) and (b)</p>"], "correctIndex": 3, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788341627.jpg\" title=\"42.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>E stands three places away from F.</li>\n<li>Two persons stand between E and L.</li>\n</ul>\n<p>From the above conditions, there are two possibilities</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788345653.jpg\" title=\"43.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>H stands second to the right of J.</li>\n<li>J stands adjacent to G.</li>\n<li>G doesn’t stand adjacent to E.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788348897.jpg\" title=\"44.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>As many persons stand between K and I is same as between J and L when counted from the right of both K and L.</li>\n</ul>\n<p>So Case 2 gets eliminated, hence Case1 shows the final arrangement</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788352282.jpg\" title=\"45.JPG\"/></p>\n<p><strong>Answer: D</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Eight persons- E, F, G, H, I, J, K and L are standing around a circular table facing away from the centre, but not necessarily in the same order.</p>\n<p>E stands three places away from F. Two persons stand between E and L. H stands second to the right of J. J stands adjacent to G. G doesn’t stand adjacent to E. As many persons stand between K and I is same as between J and L when counted from the right of both K  and L.</p><br><p><strong>If J is related to L and H is related to J in a certain way, then who among the following person is related to I?</strong></p>", "options": ["<p>K</p>", "<p>F</p>", "<p>G</p>", "<p>E</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788341627.jpg\" title=\"42.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>E stands three places away from F.</li>\n<li>Two persons stand between E and L.</li>\n</ul>\n<p>From the above conditions, there are two possibilities</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788345653.jpg\" title=\"43.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>H stands second to the right of J.</li>\n<li>J stands adjacent to G.</li>\n<li>G doesn’t stand adjacent to E.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788348897.jpg\" title=\"44.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>As many persons stand between K and I is same as between J and L when counted from the right of both K and L.</li>\n</ul>\n<p>So Case 2 gets eliminated, hence Case1 shows the final arrangement</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788352282.jpg\" title=\"45.JPG\"/></p>\n<p><strong>Answer: C</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the below questions</strong></p>\n<p>Eight boxes-P, Q, R, S, T, U, V and W are kept one above another in the form of a stack, but not necessarily in the same order.</p>\n<p>Box T is kept three boxes above box W. Only one box is kept between box W and box P. Only three boxes are kept between box P and box Q which is kept above box P. Box V is kept immediately below box Q. As many boxes kept above box V as below box W. Box S is kept three boxes below box R.</p><br><p><strong>Which of the following box is kept three boxes below box P?</strong></p>", "options": ["<p>Box R</p>", "<p>Box T</p>", "<p>Box S</p>", "<p>Box U</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164993072191.jpg\" title=\"5.jpg\"/></p>\n<p>We have,</p>\n<ul>\n<li>Box T is kept three boxes above box W.</li>\n<li>Only one box is kept between box W and box P.</li>\n<li>Only three boxes are kept between box P and box Q which is kept above box P.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164993072763.jpg\" title=\"6.jpg\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>Box S is kept three boxes below box R.</li>\n<li>Box V is kept immediately below box Q.</li>\n<li>As many boxes kept above box V as below box W.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164993073112.jpg\" title=\"7.jpg\"/></p>\n<p><strong>Answer: D</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the below questions</strong></p>\n<p>Eight boxes-P, Q, R, S, T, U, V and W are kept one above another in the form of a stack, but not necessarily in the same order.</p>\n<p>Box T is kept three boxes above box W. Only one box is kept between box W and box P. Only three boxes are kept between box P and box Q which is kept above box P. Box V is kept immediately below box Q. As many boxes kept above box V as below box W. Box S is kept three boxes below box R.</p><br><p><strong>How many boxes are kept between box V and the box which is kept two boxes above box W?</strong></p>", "options": ["<p>None</p>", "<p>Two</p>", "<p>One</p>", "<p>Three</p>", "<p>More than three</p>"], "correctIndex": 1, "solution": "<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164993072191.jpg\" title=\"5.jpg\"/></p>\n<p>We have,</p>\n<ul>\n<li>Box T is kept three boxes above box W.</li>\n<li>Only one box is kept between box W and box P.</li>\n<li>Only three boxes are kept between box P and box Q which is kept above box P.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164993072763.jpg\" title=\"6.jpg\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>Box S is kept three boxes below box R.</li>\n<li>Box V is kept immediately below box Q.</li>\n<li>As many boxes kept above box V as below box W.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164993073112.jpg\" title=\"7.jpg\"/></p>\n<p><strong>Answer: B</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the below questions</strong></p>\n<p>Eight boxes-P, Q, R, S, T, U, V and W are kept one above another in the form of a stack, but not necessarily in the same order.</p>\n<p>Box T is kept three boxes above box W. Only one box is kept between box W and box P. Only three boxes are kept between box P and box Q which is kept above box P. Box V is kept immediately below box Q. As many boxes kept above box V as below box W. Box S is kept three boxes below box R.</p><br><p><strong>Which of the following box is kept fourth from the top?</strong></p>", "options": ["<p>The box which is kept immediately below box P</p>", "<p>V</p>", "<p>Q</p>", "<p>The box which is kept immediately below box R</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164993072191.jpg\" title=\"5.jpg\"/></p>\n<p>We have,</p>\n<ul>\n<li>Box T is kept three boxes above box W.</li>\n<li>Only one box is kept between box W and box P.</li>\n<li>Only three boxes are kept between box P and box Q which is kept above box P.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164993072763.jpg\" title=\"6.jpg\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>Box S is kept three boxes below box R.</li>\n<li>Box V is kept immediately below box Q.</li>\n<li>As many boxes kept above box V as below box W.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164993073112.jpg\" title=\"7.jpg\"/></p>\n<p><strong>Answer: D</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the below questions</strong></p>\n<p>Eight boxes-P, Q, R, S, T, U, V and W are kept one above another in the form of a stack, but not necessarily in the same order.</p>\n<p>Box T is kept three boxes above box W. Only one box is kept between box W and box P. Only three boxes are kept between box P and box Q which is kept above box P. Box V is kept immediately below box Q. As many boxes kept above box V as below box W. Box S is kept three boxes below box R.</p><br><p><strong>As many boxes kept above ____ as below box S.</strong></p>", "options": ["<p>Box T</p>", "<p>Box P</p>", "<p>Box Q</p>", "<p>Box R</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164993072191.jpg\" title=\"5.jpg\"/></p>\n<p>We have,</p>\n<ul>\n<li>Box T is kept three boxes above box W.</li>\n<li>Only one box is kept between box W and box P.</li>\n<li>Only three boxes are kept between box P and box Q which is kept above box P.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164993072763.jpg\" title=\"6.jpg\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>Box S is kept three boxes below box R.</li>\n<li>Box V is kept immediately below box Q.</li>\n<li>As many boxes kept above box V as below box W.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164993073112.jpg\" title=\"7.jpg\"/></p>\n<p><strong>Answer: D</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the below questions</strong></p>\n<p>Eight boxes-P, Q, R, S, T, U, V and W are kept one above another in the form of a stack, but not necessarily in the same order.</p>\n<p>Box T is kept three boxes above box W. Only one box is kept between box W and box P. Only three boxes are kept between box P and box Q which is kept above box P. Box V is kept immediately below box Q. As many boxes kept above box V as below box W. Box S is kept three boxes below box R.</p><br><p><strong>Four of the five among the following are similar in such a way to form a group, which one of the following doesn’t belong to that group?</strong></p>", "options": ["<p>QR</p>", "<p>TS</p>", "<p>RW</p>", "<p>SU</p>", "<p>VT</p>"], "correctIndex": 2, "solution": "<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164993072191.jpg\" title=\"5.jpg\"/></p>\n<p>We have,</p>\n<ul>\n<li>Box T is kept three boxes above box W.</li>\n<li>Only one box is kept between box W and box P.</li>\n<li>Only three boxes are kept between box P and box Q which is kept above box P.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164993072763.jpg\" title=\"6.jpg\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>Box S is kept three boxes below box R.</li>\n<li>Box V is kept immediately below box Q.</li>\n<li>As many boxes kept above box V as below box W.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164993073112.jpg\" title=\"7.jpg\"/></p>\n<p><strong>Answer: C (Only one box is kept between both boxes except in option C)</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Eight persons - P, Q, R, S, T, U, V and W are sitting in a linear row facing north, but not necessarily in the same order.</p>\n<p>V sits fourth to the left of T, where neither of them sits at the end of the row. Only one person sits between V and P. P sits immediate right of S. The number of persons sitting to the left of S is one more than the number of persons sitting to the right of R. U sits third to the right of W.</p><br><p><strong>As many persons sit to the left of Q as to the right of ____.</strong></p>", "options": ["<p>T</p>", "<p>R</p>", "<p>The one who sits immediate right of R</p>", "<p>The one who sits immediate left of T</p>", "<p>P</p>"], "correctIndex": 2, "solution": "<p><strong>Final Arrangement</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164984580866.jpg\" title=\"1.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>V sits fourth to the left of T, where neither of them sits at the end of the row.</li>\n<li>Only one person sits between V and P.</li>\n<li>P sits immediate right of S.</li>\n</ul>\n<p>From the above condition, there are two possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164984582691.jpg\" title=\"2.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>The number of persons sitting to the left of S is one more than the number of persons sitting to the right of R.</li>\n<li>U sits third to the right of W.</li>\n</ul>\n<p>From the above condition, Case-2 gets eliminated. Case-1 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164984584218.jpg\" title=\"3.JPG\"/></p>\n<p><strong>Answer: C</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Eight persons - P, Q, R, S, T, U, V and W are sitting in a linear row facing north, but not necessarily in the same order.</p>\n<p>V sits fourth to the left of T, where neither of them sits at the end of the row. Only one person sits between V and P. P sits immediate right of S. The number of persons sitting to the left of S is one more than the number of persons sitting to the right of R. U sits third to the right of W.</p><br><p><strong>Who among the following persons sit between S and T?</strong></p>\n<p><strong>I. </strong>W</p>\n<p><strong>II. </strong>The one who sits second to the right of V</p>\n<p><strong>III.</strong> R</p>\n<p><strong>IV. </strong>U</p>", "options": ["<p>Only I and II</p>", "<p>Only III and IV</p>", "<p>Only I and III</p>", "<p>Only II and IV</p>", "<p>All I, II, III and IV</p>"], "correctIndex": 0, "solution": "<p><strong>Final Arrangement</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164984580866.jpg\" title=\"1.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>V sits fourth to the left of T, where neither of them sits at the end of the row.</li>\n<li>Only one person sits between V and P.</li>\n<li>P sits immediate right of S.</li>\n</ul>\n<p>From the above condition, there are two possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164984582691.jpg\" title=\"2.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>The number of persons sitting to the left of S is one more than the number of persons sitting to the right of R.</li>\n<li>U sits third to the right of W.</li>\n</ul>\n<p>From the above condition, Case-2 gets eliminated. Case-1 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164984584218.jpg\" title=\"3.JPG\"/></p>\n<p><strong>Answer: A</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Eight persons - P, Q, R, S, T, U, V and W are sitting in a linear row facing north, but not necessarily in the same order.</p>\n<p>V sits fourth to the left of T, where neither of them sits at the end of the row. Only one person sits between V and P. P sits immediate right of S. The number of persons sitting to the left of S is one more than the number of persons sitting to the right of R. U sits third to the right of W.</p><br><p><strong>Who among the following person sits second to the right of T?</strong></p>", "options": ["<p>S</p>", "<p>The one who sits immediate right of R</p>", "<p>V</p>", "<p>The one who sits immediate left of V</p>", "<p>P</p>"], "correctIndex": 1, "solution": "<p><strong>Final Arrangement</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164984580866.jpg\" title=\"1.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>V sits fourth to the left of T, where neither of them sits at the end of the row.</li>\n<li>Only one person sits between V and P.</li>\n<li>P sits immediate right of S.</li>\n</ul>\n<p>From the above condition, there are two possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164984582691.jpg\" title=\"2.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>The number of persons sitting to the left of S is one more than the number of persons sitting to the right of R.</li>\n<li>U sits third to the right of W.</li>\n</ul>\n<p>From the above condition, Case-2 gets eliminated. Case-1 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164984584218.jpg\" title=\"3.JPG\"/></p>\n<p><strong>Answer: B</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Eight persons - P, Q, R, S, T, U, V and W are sitting in a linear row facing north, but not necessarily in the same order.</p>\n<p>V sits fourth to the left of T, where neither of them sits at the end of the row. Only one person sits between V and P. P sits immediate right of S. The number of persons sitting to the left of S is one more than the number of persons sitting to the right of R. U sits third to the right of W.</p><br><p><strong>How many persons sit to the left of W?</strong></p>", "options": ["<p>Four</p>", "<p>Five</p>", "<p>Three</p>", "<p>Two</p>", "<p>One</p>"], "correctIndex": 0, "solution": "<p><strong>Final Arrangement</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164984580866.jpg\" title=\"1.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>V sits fourth to the left of T, where neither of them sits at the end of the row.</li>\n<li>Only one person sits between V and P.</li>\n<li>P sits immediate right of S.</li>\n</ul>\n<p>From the above condition, there are two possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164984582691.jpg\" title=\"2.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>The number of persons sitting to the left of S is one more than the number of persons sitting to the right of R.</li>\n<li>U sits third to the right of W.</li>\n</ul>\n<p>From the above condition, Case-2 gets eliminated. Case-1 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164984584218.jpg\" title=\"3.JPG\"/></p>\n<p><strong>Answer: A</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Eight persons - P, Q, R, S, T, U, V and W are sitting in a linear row facing north, but not necessarily in the same order.</p>\n<p>V sits fourth to the left of T, where neither of them sits at the end of the row. Only one person sits between V and P. P sits immediate right of S. The number of persons sitting to the left of S is one more than the number of persons sitting to the right of R. U sits third to the right of W.</p><br><p><strong>What is the position of T with respect to S?</strong></p>", "options": ["<p>Immediate right</p>", "<p>Third to the left</p>", "<p>Third to the right</p>", "<p>Second to the left</p>", "<p>Second to the right</p>"], "correctIndex": 2, "solution": "<p><strong>Final Arrangement</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164984580866.jpg\" title=\"1.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>V sits fourth to the left of T, where neither of them sits at the end of the row.</li>\n<li>Only one person sits between V and P.</li>\n<li>P sits immediate right of S.</li>\n</ul>\n<p>From the above condition, there are two possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164984582691.jpg\" title=\"2.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>The number of persons sitting to the left of S is one more than the number of persons sitting to the right of R.</li>\n<li>U sits third to the right of W.</li>\n</ul>\n<p>From the above condition, Case-2 gets eliminated. Case-1 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164984584218.jpg\" title=\"3.JPG\"/></p>\n<p><strong><strong>Answer: C</strong> </strong></p>"}] ,
+    hi: [{"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें:</strong></p>\n<p>आठ व्यक्ति -A, B, C, D, E, F, G और H चार अलग-अलग मंजिलों पर रहते हैं जहां सबसे नीचे की मंजिल की संख्या एक है और सबसे ऊपरी मंजिल की संख्या चार है। प्रत्येक मंजिल में दो फ्लैट - फ्लैट R और फ्लैट M क्रमशः पश्चिम से पूर्व की ओर हैं।</p>\n<p>B एक सम संख्या वाली मंजिल पर रहता है। B और H के मध्य केवल एक मंजिल है, जो फ्लैट R में रहता है। E समान फ्लैट में H के तत्काल नीचे रहता है। जितने व्यक्ति E के ऊपर रहते हैं उतने ही व्यक्ति G के नीचे रहते हैं। C, G के दक्षिण में और F के उत्तर में रहता है। D, F के नीचे रहता है।</p><br><p><strong>निम्नलिखित में से कौन सा व्यक्ति तीसरी मंजिल की फ्लैट R पर रहता है?</strong></p>", "options": ["<p>C</p>", "<p>A</p>", "<p>E</p>", "<p>F</p>", "<p>D</p>"], "correctIndex": 1, "solution": "<p><strong>अंतिम व्यवस्था</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165760367441.jpg\" title=\"5.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>B एक सम संख्या वाली मंजिल पर रहता है।</li>\n<li>B और H के मध्य केवल एक मंजिल है, जो फ्लैट R में रहता है।</li>\n</ul>\n<p>उपरोक्त स्थिति से, चार संभावनाएं हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165760376287.jpg\" title=\"6.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>E समान फ्लैट में H के तत्काल नीचे रहता है।</li>\n</ul>\n<p>जितने व्यक्ति E के ऊपर रहते हैं उतने ही व्यक्ति G के नीचे रहते हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165760381928.jpg\" title=\"7.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>C, G के दक्षिण में और F के उत्तर में रहता है।</li>\n<li>D, F के नीचे रहता है।</li>\n</ul>\n<p>तो केस- 1, केस -2 और केस -4 समाप्त हो जाते हैं, इसलिए केस 3 अंतिम व्यवस्था दिखाता है</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165760438617.jpg\" title=\"8.JPG\"/></p>\n<p><strong>उत्तर: B</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें:</strong></p>\n<p>आठ व्यक्ति -A, B, C, D, E, F, G और H चार अलग-अलग मंजिलों पर रहते हैं जहां सबसे नीचे की मंजिल की संख्या एक है और सबसे ऊपरी मंजिल की संख्या चार है। प्रत्येक मंजिल में दो फ्लैट - फ्लैट R और फ्लैट M क्रमशः पश्चिम से पूर्व की ओर हैं।</p>\n<p>B एक सम संख्या वाली मंजिल पर रहता है। B और H के मध्य केवल एक मंजिल है, जो फ्लैट R में रहता है। E समान फ्लैट में H के तत्काल नीचे रहता है। जितने व्यक्ति E के ऊपर रहते हैं उतने ही व्यक्ति G के नीचे रहते हैं। C, G के दक्षिण में और F के उत्तर में रहता है। D, F के नीचे रहता है।</p><br><p><strong>जितनी मंजिलें F के ऊपर हैं, उतनी ही मंजिलें ____ के नीचे हैं।</strong></p>", "options": ["<p>वह व्यक्ति जो B के पूर्व की ओर रहता है</p>", "<p>E</p>", "<p>वह व्यक्ति जो C के पश्चिम की ओर रहता है</p>", "<p>D</p>", "<p>इनमें से कोई नहीं</p>"], "correctIndex": 2, "solution": "<p><strong>अंतिम व्यवस्था</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165760367441.jpg\" title=\"5.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>B एक सम संख्या वाली मंजिल पर रहता है।</li>\n<li>B और H के मध्य केवल एक मंजिल है, जो फ्लैट R में रहता है।</li>\n</ul>\n<p>उपरोक्त स्थिति से, चार संभावनाएं हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165760376287.jpg\" title=\"6.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>E समान फ्लैट में H के तत्काल नीचे रहता है।</li>\n</ul>\n<p>जितने व्यक्ति E के ऊपर रहते हैं उतने ही व्यक्ति G के नीचे रहते हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165760381928.jpg\" title=\"7.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>C, G के दक्षिण में और F के उत्तर में रहता है।</li>\n<li>D, F के नीचे रहता है।</li>\n</ul>\n<p>तो केस- 1, केस -2 और केस -4 समाप्त हो जाते हैं, इसलिए केस 3 अंतिम व्यवस्था दिखाता है</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165760438617.jpg\" title=\"8.JPG\"/></p>\n<p><strong>उत्तर: C </strong>(A)</p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें:</strong></p>\n<p>आठ व्यक्ति -A, B, C, D, E, F, G और H चार अलग-अलग मंजिलों पर रहते हैं जहां सबसे नीचे की मंजिल की संख्या एक है और सबसे ऊपरी मंजिल की संख्या चार है। प्रत्येक मंजिल में दो फ्लैट - फ्लैट R और फ्लैट M क्रमशः पश्चिम से पूर्व की ओर हैं।</p>\n<p>B एक सम संख्या वाली मंजिल पर रहता है। B और H के मध्य केवल एक मंजिल है, जो फ्लैट R में रहता है। E समान फ्लैट में H के तत्काल नीचे रहता है। जितने व्यक्ति E के ऊपर रहते हैं उतने ही व्यक्ति G के नीचे रहते हैं। C, G के दक्षिण में और F के उत्तर में रहता है। D, F के नीचे रहता है।</p><br><p><strong>दी गई व्यवस्था के अनुसार निम्नलिखित पांच में से चार एक निश्चित तरीके से समान हैं और इस प्रकार एक समूह बनाते हैं। वह खोजें जो उस समूह से संबंधित नहीं है।</strong></p>", "options": ["<p>A</p>", "<p>D</p>", "<p>E</p>", "<p>F</p>", "<p>C</p>"], "correctIndex": 3, "solution": "<p><strong>अंतिम व्यवस्था</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165760367441.jpg\" title=\"5.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>B एक सम संख्या वाली मंजिल पर रहता है।</li>\n<li>B और H के मध्य केवल एक मंजिल है, जो फ्लैट R में रहता है।</li>\n</ul>\n<p>उपरोक्त स्थिति से, चार संभावनाएं हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165760376287.jpg\" title=\"6.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>E समान फ्लैट में H के तत्काल नीचे रहता है।</li>\n</ul>\n<p>जितने व्यक्ति E के ऊपर रहते हैं उतने ही व्यक्ति G के नीचे रहते हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165760381928.jpg\" title=\"7.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>C, G के दक्षिण में और F के उत्तर में रहता है।</li>\n<li>D, F के नीचे रहता है।</li>\n</ul>\n<p>तो केस- 1, केस -2 और केस -4 समाप्त हो जाते हैं, इसलिए केस 3 अंतिम व्यवस्था दिखाता है</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165760438617.jpg\" title=\"8.JPG\"/></p>\n<p><strong>उत्तर: D </strong>(विकल्प d को छोड़कर सभी व्यक्ति विषम संख्या वाली मंजिलों पर रहते हैं)</p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें:</strong></p>\n<p>आठ व्यक्ति -A, B, C, D, E, F, G और H चार अलग-अलग मंजिलों पर रहते हैं जहां सबसे नीचे की मंजिल की संख्या एक है और सबसे ऊपरी मंजिल की संख्या चार है। प्रत्येक मंजिल में दो फ्लैट - फ्लैट R और फ्लैट M क्रमशः पश्चिम से पूर्व की ओर हैं।</p>\n<p>B एक सम संख्या वाली मंजिल पर रहता है। B और H के मध्य केवल एक मंजिल है, जो फ्लैट R में रहता है। E समान फ्लैट में H के तत्काल नीचे रहता है। जितने व्यक्ति E के ऊपर रहते हैं उतने ही व्यक्ति G के नीचे रहते हैं। C, G के दक्षिण में और F के उत्तर में रहता है। D, F के नीचे रहता है।</p><br><p><strong>निम्नलिखित में से कौन सा व्यक्ति फ्लैट R में नहीं रहता है?</strong></p>", "options": ["<p>C</p>", "<p>B</p>", "<p>A</p>", "<p>H</p>", "<p>E</p>"], "correctIndex": 0, "solution": "<p><strong>अंतिम व्यवस्था</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165760367441.jpg\" title=\"5.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>B एक सम संख्या वाली मंजिल पर रहता है।</li>\n<li>B और H के मध्य केवल एक मंजिल है, जो फ्लैट R में रहता है।</li>\n</ul>\n<p>उपरोक्त स्थिति से, चार संभावनाएं हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165760376287.jpg\" title=\"6.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>E समान फ्लैट में H के तत्काल नीचे रहता है।</li>\n</ul>\n<p>जितने व्यक्ति E के ऊपर रहते हैं उतने ही व्यक्ति G के नीचे रहते हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165760381928.jpg\" title=\"7.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>C, G के दक्षिण में और F के उत्तर में रहता है।</li>\n<li>D, F के नीचे रहता है।</li>\n</ul>\n<p>तो केस- 1, केस -2 और केस -4 समाप्त हो जाते हैं, इसलिए केस 3 अंतिम व्यवस्था दिखाता है</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165760438617.jpg\" title=\"8.JPG\"/></p>\n<p><strong>उत्तर: A</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें:</strong></p>\n<p>आठ व्यक्ति -A, B, C, D, E, F, G और H चार अलग-अलग मंजिलों पर रहते हैं जहां सबसे नीचे की मंजिल की संख्या एक है और सबसे ऊपरी मंजिल की संख्या चार है। प्रत्येक मंजिल में दो फ्लैट - फ्लैट R और फ्लैट M क्रमशः पश्चिम से पूर्व की ओर हैं।</p>\n<p>B एक सम संख्या वाली मंजिल पर रहता है। B और H के मध्य केवल एक मंजिल है, जो फ्लैट R में रहता है। E समान फ्लैट में H के तत्काल नीचे रहता है। जितने व्यक्ति E के ऊपर रहते हैं उतने ही व्यक्ति G के नीचे रहते हैं। C, G के दक्षिण में और F के उत्तर में रहता है। D, F के नीचे रहता है।</p><br><p><strong>_____ A के उत्तर की ओर रहता है?</strong></p>", "options": ["<p>वह व्यक्ति जो F के पश्चिम की ओर रहता है</p>", "<p>F</p>", "<p>वह व्यक्ति जो G के पश्चिम की ओर रहता है</p>", "<p>D</p>", "<p>C</p>"], "correctIndex": 2, "solution": "<p><strong>अंतिम व्यवस्था</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165760367441.jpg\" title=\"5.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>B एक सम संख्या वाली मंजिल पर रहता है।</li>\n<li>B और H के मध्य केवल एक मंजिल है, जो फ्लैट R में रहता है।</li>\n</ul>\n<p>उपरोक्त स्थिति से, चार संभावनाएं हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165760376287.jpg\" title=\"6.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>E समान फ्लैट में H के तत्काल नीचे रहता है।</li>\n</ul>\n<p>जितने व्यक्ति E के ऊपर रहते हैं उतने ही व्यक्ति G के नीचे रहते हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165760381928.jpg\" title=\"7.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>C, G के दक्षिण में और F के उत्तर में रहता है।</li>\n<li>D, F के नीचे रहता है।</li>\n</ul>\n<p>तो केस- 1, केस -2 और केस -4 समाप्त हो जाते हैं, इसलिए केस 3 अंतिम व्यवस्था दिखाता है</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165760438617.jpg\" title=\"8.JPG\"/></p>\n<p><strong>उत्तर: C </strong>(B)</p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>आठ व्यक्ति- E, F, G, H, I, J, K और L एक वृत्ताकार मेज़ के चारों ओर केंद्र से बाहर की ओर मुख करके खड़े हैं, लेकिन जरूरी नहीं कि इसी क्रम में हों।</p>\n<p>E, F से तीन स्थान दूर खड़ा है। E और L के मध्य दो व्यक्ति खड़े हैं। H, J के दायें से दूसरे स्थान पर खड़ा है। J, G के आसन्न खड़ा है। G, E के आसन्न नहीं खड़ा है। जितने व्यक्ति K और I के बीच खड़े हैं, उतने ही व्यक्ति J और L के बीच खड़े हैं, जब K और L दोनों के दाईं ओर से गिना जाता है।</p><br><p><strong>निम्नलिखित में से कौन सा व्यक्ति F के आसन्न खड़ा है?</strong></p>", "options": ["<p>वह व्यक्ति जो G के तत्काल बायें खड़ा है</p>", "<p>K</p>", "<p>वह व्यक्ति जो L के तत्काल दायें खड़ा है</p>", "<p>(a) और (b) दोनों</p>", "<p>H</p>"], "correctIndex": 1, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788341627.jpg\" title=\"42.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>E, F से तीन स्थान दूर खड़ा है।</li>\n<li>E और L के मध्य दो व्यक्ति खड़े हैं।</li>\n</ul>\n<p>उपरोक्त स्थितियों से, दो संभावनाएं हैं</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788345653.jpg\" title=\"43.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>H, J के दायें से दूसरे स्थान पर खड़ा है।</li>\n<li>J, G के आसन्न खड़ा है।</li>\n<li>G, E के आसन्न नहीं खड़ा है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788348897.jpg\" title=\"44.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>जितने व्यक्ति K और I के बीच खड़े हैं, उतने ही व्यक्ति J और L के बीच खड़े हैं, जब K और L दोनों के दाईं ओर से गिना जाता है।</li>\n</ul>\n<p>तो केस 2 समाप्त हो जाता है, इसलिए केस 1 अंतिम व्यवस्था दिखाता है</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788352282.jpg\" title=\"45.JPG\"/></p>\n<p><strong>उत्तर: B</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>आठ व्यक्ति- E, F, G, H, I, J, K और L एक वृत्ताकार मेज़ के चारों ओर केंद्र से बाहर की ओर मुख करके खड़े हैं, लेकिन जरूरी नहीं कि इसी क्रम में हों।</p>\n<p>E, F से तीन स्थान दूर खड़ा है। E और L के मध्य दो व्यक्ति खड़े हैं। H, J के दायें से दूसरे स्थान पर खड़ा है। J, G के आसन्न खड़ा है। G, E के आसन्न नहीं खड़ा है। जितने व्यक्ति K और I के बीच खड़े हैं, उतने ही व्यक्ति J और L के बीच खड़े हैं, जब K और L दोनों के दाईं ओर से गिना जाता है।</p><br><p><strong>यदि सभी व्यक्तियों को E से वर्णानुक्रम के अनुसार घड़ी की दिशा में खड़ा किया जाता है, तो कितने व्यक्ति (e को छोड़कर) अपनी स्थिति में अपरिवर्तित रहते हैं?</strong></p>", "options": ["<p>एक</p>", "<p>दो</p>", "<p>कोई नहीं</p>", "<p>तीन</p>", "<p>इनमें से कोई नहीं</p>"], "correctIndex": 0, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788341627.jpg\" title=\"42.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>E, F से तीन स्थान दूर खड़ा है।</li>\n<li>E और L के मध्य दो व्यक्ति खड़े हैं।</li>\n</ul>\n<p>उपरोक्त स्थितियों से, दो संभावनाएं हैं</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788345653.jpg\" title=\"43.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>H, J के दायें से दूसरे स्थान पर खड़ा है।</li>\n<li>J, G के आसन्न खड़ा है।</li>\n<li>G, E के आसन्न नहीं खड़ा है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788348897.jpg\" title=\"44.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>जितने व्यक्ति K और I के बीच खड़े हैं, उतने ही व्यक्ति J और L के बीच खड़े हैं, जब K और L दोनों के दाईं ओर से गिना जाता है।</li>\n</ul>\n<p>तो केस 2 समाप्त हो जाता है, इसलिए केस 1 अंतिम व्यवस्था दिखाता है</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788352282.jpg\" title=\"45.JPG\"/></p>\n<p><strong>उत्तर: A (I)</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>आठ व्यक्ति- E, F, G, H, I, J, K और L एक वृत्ताकार मेज़ के चारों ओर केंद्र से बाहर की ओर मुख करके खड़े हैं, लेकिन जरूरी नहीं कि इसी क्रम में हों।</p>\n<p>E, F से तीन स्थान दूर खड़ा है। E और L के मध्य दो व्यक्ति खड़े हैं। H, J के दायें से दूसरे स्थान पर खड़ा है। J, G के आसन्न खड़ा है। G, E के आसन्न नहीं खड़ा है। जितने व्यक्ति K और I के बीच खड़े हैं, उतने ही व्यक्ति J और L के बीच खड़े हैं, जब K और L दोनों के दाईं ओर से गिना जाता है।</p><br><p><strong>H के बाएं से गिनने पर L और H के बीच कितने व्यक्ति खड़े हैं?</strong></p>", "options": ["<p>एक</p>", "<p>दो</p>", "<p>तीन</p>", "<p>चार</p>", "<p>इनमें से कोई नहीं</p>"], "correctIndex": 2, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788341627.jpg\" title=\"42.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>E, F से तीन स्थान दूर खड़ा है।</li>\n<li>E और L के मध्य दो व्यक्ति खड़े हैं।</li>\n</ul>\n<p>उपरोक्त स्थितियों से, दो संभावनाएं हैं</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788345653.jpg\" title=\"43.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>H, J के दायें से दूसरे स्थान पर खड़ा है।</li>\n<li>J, G के आसन्न खड़ा है।</li>\n<li>G, E के आसन्न नहीं खड़ा है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788348897.jpg\" title=\"44.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>जितने व्यक्ति K और I के बीच खड़े हैं, उतने ही व्यक्ति J और L के बीच खड़े हैं, जब K और L दोनों के दाईं ओर से गिना जाता है।</li>\n</ul>\n<p>तो केस 2 समाप्त हो जाता है, इसलिए केस 1 अंतिम व्यवस्था दिखाता है</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788352282.jpg\" title=\"45.JPG\"/></p>\n<p><strong>उत्तर: C</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>आठ व्यक्ति- E, F, G, H, I, J, K और L एक वृत्ताकार मेज़ के चारों ओर केंद्र से बाहर की ओर मुख करके खड़े हैं, लेकिन जरूरी नहीं कि इसी क्रम में हों।</p>\n<p>E, F से तीन स्थान दूर खड़ा है। E और L के मध्य दो व्यक्ति खड़े हैं। H, J के दायें से दूसरे स्थान पर खड़ा है। J, G के आसन्न खड़ा है। G, E के आसन्न नहीं खड़ा है। जितने व्यक्ति K और I के बीच खड़े हैं, उतने ही व्यक्ति J और L के बीच खड़े हैं, जब K और L दोनों के दाईं ओर से गिना जाता है।</p><br><p><strong>निम्नलिखित में से कौन K के बाएं से दूसरे स्थान पर खड़ा है?</strong></p>", "options": ["<p>वह व्यक्ति जो F के बायें से तीसरे स्थान पर खड़ा है</p>", "<p>वह व्यक्ति जो L के बायें से तीसरे स्थान पर खड़ा है</p>", "<p>वह व्यक्ति जो I के विपरीत खड़ा है</p>", "<p>(a) और (c) दोनों</p>", "<p>(a) और (b) दोनों</p>"], "correctIndex": 3, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788341627.jpg\" title=\"42.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>E, F से तीन स्थान दूर खड़ा है।</li>\n<li>E और L के मध्य दो व्यक्ति खड़े हैं।</li>\n</ul>\n<p>उपरोक्त स्थितियों से, दो संभावनाएं हैं</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788345653.jpg\" title=\"43.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>H, J के दायें से दूसरे स्थान पर खड़ा है।</li>\n<li>J, G के आसन्न खड़ा है।</li>\n<li>G, E के आसन्न नहीं खड़ा है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788348897.jpg\" title=\"44.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>जितने व्यक्ति K और I के बीच खड़े हैं, उतने ही व्यक्ति J और L के बीच खड़े हैं, जब K और L दोनों के दाईं ओर से गिना जाता है।</li>\n</ul>\n<p>तो केस 2 समाप्त हो जाता है, इसलिए केस 1 अंतिम व्यवस्था दिखाता है</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788352282.jpg\" title=\"45.JPG\"/></p>\n<p><strong>उत्तर: D</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>आठ व्यक्ति- E, F, G, H, I, J, K और L एक वृत्ताकार मेज़ के चारों ओर केंद्र से बाहर की ओर मुख करके खड़े हैं, लेकिन जरूरी नहीं कि इसी क्रम में हों।</p>\n<p>E, F से तीन स्थान दूर खड़ा है। E और L के मध्य दो व्यक्ति खड़े हैं। H, J के दायें से दूसरे स्थान पर खड़ा है। J, G के आसन्न खड़ा है। G, E के आसन्न नहीं खड़ा है। जितने व्यक्ति K और I के बीच खड़े हैं, उतने ही व्यक्ति J और L के बीच खड़े हैं, जब K और L दोनों के दाईं ओर से गिना जाता है।</p><br><p><strong>यदि एक निश्चित तरीके से J, L से संबंधित है और H, J से संबंधित है, तो निम्नलिखित में से कौन सा व्यक्ति I से संबंधित है?</strong></p>", "options": ["<p>K</p>", "<p>F</p>", "<p>G</p>", "<p>E</p>", "<p>इनमें से कोई नहीं</p>"], "correctIndex": 2, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788341627.jpg\" title=\"42.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>E, F से तीन स्थान दूर खड़ा है।</li>\n<li>E और L के मध्य दो व्यक्ति खड़े हैं।</li>\n</ul>\n<p>उपरोक्त स्थितियों से, दो संभावनाएं हैं</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788345653.jpg\" title=\"43.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>H, J के दायें से दूसरे स्थान पर खड़ा है।</li>\n<li>J, G के आसन्न खड़ा है।</li>\n<li>G, E के आसन्न नहीं खड़ा है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788348897.jpg\" title=\"44.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>जितने व्यक्ति K और I के बीच खड़े हैं, उतने ही व्यक्ति J और L के बीच खड़े हैं, जब K और L दोनों के दाईं ओर से गिना जाता है।</li>\n</ul>\n<p>तो केस 2 समाप्त हो जाता है, इसलिए केस 1 अंतिम व्यवस्था दिखाता है</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165788352282.jpg\" title=\"45.JPG\"/></p>\n<p><strong>उत्तर: C</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें</strong></p>\n<p>आठ बॉक्स - P, Q, R, S, T, U, V और W को एक के ऊपर एक स्टैक के रूप में रखा जाता है, लेकिन जरूरी नहीं कि इसी क्रम में हो।</p>\n<p>बॉक्स T, बॉक्स W के तीन बॉक्स ऊपर रखा गया है। बॉक्स W और बॉक्स P के मध्य केवल एक बॉक्स रखा है। बॉक्स P और बॉक्स Q के मध्य केवल तीन बॉक्स रखे गए हैं, जो बॉक्स P के ऊपर रखा गया है। बॉक्स V, बॉक्स Q के तत्काल नीचे रखा गया है। बॉक्स V के ऊपर उतने ही बॉक्स रखे हैं जितने बॉक्स W के नीचे रखे हैं। बॉक्स S, बॉक्स R के तीन बॉक्स नीचे रखा गया है।</p><br><p><strong>निम्नलिखित में से कौन सा बॉक्स, बॉक्स P के तीन बॉक्स नीचे रखा गया है</strong><strong> </strong><strong>?</strong></p>", "options": ["<p>बॉक्स<strong> </strong>R</p>", "<p>बॉक्स<strong> </strong>T</p>", "<p>बॉक्स<strong> </strong>S</p>", "<p>बॉक्स U</p>", "<p>इनमें से कोई नहीं</p>"], "correctIndex": 3, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164993072191.jpg\" title=\"5.jpg\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>बॉक्स T, बॉक्स W के तीन बॉक्स ऊपर रखा गया है।</li>\n<li>बॉक्स W और बॉक्स P के मध्य केवल एक बॉक्स रखा है।</li>\n<li>बॉक्स P और बॉक्स Q के मध्य केवल तीन बॉक्स रखे गए हैं, जो बॉक्स P के ऊपर रखा गया है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164993072763.jpg\" title=\"6.jpg\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>बॉक्स S, बॉक्स R के तीन बॉक्स नीचे रखा गया है।</li>\n<li>बॉक्स V, बॉक्स Q के तत्काल नीचे रखा गया है।</li>\n<li>बॉक्स V के ऊपर उतने ही बॉक्स रखे हैं जितने बॉक्स, W के नीचे रखे हैं।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164993073112.jpg\" title=\"7.jpg\"/></p>\n<p><strong>उत्तर: D</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें</strong></p>\n<p>आठ बॉक्स - P, Q, R, S, T, U, V और W को एक के ऊपर एक स्टैक के रूप में रखा जाता है, लेकिन जरूरी नहीं कि इसी क्रम में हो।</p>\n<p>बॉक्स T, बॉक्स W के तीन बॉक्स ऊपर रखा गया है। बॉक्स W और बॉक्स P के मध्य केवल एक बॉक्स रखा है। बॉक्स P और बॉक्स Q के मध्य केवल तीन बॉक्स रखे गए हैं, जो बॉक्स P के ऊपर रखा गया है। बॉक्स V, बॉक्स Q के तत्काल नीचे रखा गया है। बॉक्स V के ऊपर उतने ही बॉक्स रखे हैं जितने बॉक्स W के नीचे रखे हैं। बॉक्स S, बॉक्स R के तीन बॉक्स नीचे रखा गया है।</p><br><p><strong>बॉक्स V और बॉक्स W के दो बॉक्स ऊपर रखे गए बॉक्स के बीच कितने बॉक्स रखे गए हैं?</strong></p>", "options": ["<p>कोई नहीं</p>", "<p>दो</p>", "<p>एक</p>", "<p>तीन</p>", "<p>तीन से अधिक</p>"], "correctIndex": 1, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164993072191.jpg\" title=\"5.jpg\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>बॉक्स T, बॉक्स W के तीन बॉक्स ऊपर रखा गया है।</li>\n<li>बॉक्स W और बॉक्स P के मध्य केवल एक बॉक्स रखा है।</li>\n<li>बॉक्स P और बॉक्स Q के मध्य केवल तीन बॉक्स रखे गए हैं, जो बॉक्स P के ऊपर रखा गया है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164993072763.jpg\" title=\"6.jpg\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>बॉक्स S, बॉक्स R के तीन बॉक्स नीचे रखा गया है।</li>\n<li>बॉक्स V, बॉक्स Q के तत्काल नीचे रखा गया है।</li>\n<li>बॉक्स V के ऊपर उतने ही बॉक्स रखे हैं जितने बॉक्स, W के नीचे रखे हैं।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164993073112.jpg\" title=\"7.jpg\"/></p>\n<p><strong>उत्तर: B</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें</strong></p>\n<p>आठ बॉक्स - P, Q, R, S, T, U, V और W को एक के ऊपर एक स्टैक के रूप में रखा जाता है, लेकिन जरूरी नहीं कि इसी क्रम में हो।</p>\n<p>बॉक्स T, बॉक्स W के तीन बॉक्स ऊपर रखा गया है। बॉक्स W और बॉक्स P के मध्य केवल एक बॉक्स रखा है। बॉक्स P और बॉक्स Q के मध्य केवल तीन बॉक्स रखे गए हैं, जो बॉक्स P के ऊपर रखा गया है। बॉक्स V, बॉक्स Q के तत्काल नीचे रखा गया है। बॉक्स V के ऊपर उतने ही बॉक्स रखे हैं जितने बॉक्स W के नीचे रखे हैं। बॉक्स S, बॉक्स R के तीन बॉक्स नीचे रखा गया है।</p><br><p><strong>निम्नलिखित में से कौन सा बॉक्स ऊपर से चौथे स्थान पर रखा गया है?</strong></p>", "options": ["<p>वह बॉक्स जो बॉक्स P के तत्काल नीचे रखा गया है</p>", "<p>V</p>", "<p>Q</p>", "<p>वह बॉक्स जो बॉक्स R के तत्काल नीचे रखा गया है</p>", "<p>इनमें से कोई नहीं</p>"], "correctIndex": 3, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164993072191.jpg\" title=\"5.jpg\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>बॉक्स T, बॉक्स W के तीन बॉक्स ऊपर रखा गया है।</li>\n<li>बॉक्स W और बॉक्स P के मध्य केवल एक बॉक्स रखा है।</li>\n<li>बॉक्स P और बॉक्स Q के मध्य केवल तीन बॉक्स रखे गए हैं, जो बॉक्स P के ऊपर रखा गया है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164993072763.jpg\" title=\"6.jpg\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>बॉक्स S, बॉक्स R के तीन बॉक्स नीचे रखा गया है।</li>\n<li>बॉक्स V, बॉक्स Q के तत्काल नीचे रखा गया है।</li>\n<li>बॉक्स V के ऊपर उतने ही बॉक्स रखे हैं जितने बॉक्स, W के नीचे रखे हैं।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164993073112.jpg\" title=\"7.jpg\"/></p>\n<p><strong>उत्तर: D</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें</strong></p>\n<p>आठ बॉक्स - P, Q, R, S, T, U, V और W को एक के ऊपर एक स्टैक के रूप में रखा जाता है, लेकिन जरूरी नहीं कि इसी क्रम में हो।</p>\n<p>बॉक्स T, बॉक्स W के तीन बॉक्स ऊपर रखा गया है। बॉक्स W और बॉक्स P के मध्य केवल एक बॉक्स रखा है। बॉक्स P और बॉक्स Q के मध्य केवल तीन बॉक्स रखे गए हैं, जो बॉक्स P के ऊपर रखा गया है। बॉक्स V, बॉक्स Q के तत्काल नीचे रखा गया है। बॉक्स V के ऊपर उतने ही बॉक्स रखे हैं जितने बॉक्स W के नीचे रखे हैं। बॉक्स S, बॉक्स R के तीन बॉक्स नीचे रखा गया है।</p><br><p><strong>जितने बॉक्स ____ के ऊपर रखे गए हैं उतने ही बॉक्स S के नीचे रखे गए हैं।</strong></p>", "options": ["<p>बॉक्स<strong> </strong>T</p>", "<p>बॉक्स<strong> </strong>P</p>", "<p>बॉक्स<strong> </strong>Q</p>", "<p>बॉक्स R</p>", "<p>इनमें से कोई नहीं</p>"], "correctIndex": 3, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164993072191.jpg\" title=\"5.jpg\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>बॉक्स T, बॉक्स W के तीन बॉक्स ऊपर रखा गया है।</li>\n<li>बॉक्स W और बॉक्स P के मध्य केवल एक बॉक्स रखा है।</li>\n<li>बॉक्स P और बॉक्स Q के मध्य केवल तीन बॉक्स रखे गए हैं, जो बॉक्स P के ऊपर रखा गया है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164993072763.jpg\" title=\"6.jpg\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>बॉक्स S, बॉक्स R के तीन बॉक्स नीचे रखा गया है।</li>\n<li>बॉक्स V, बॉक्स Q के तत्काल नीचे रखा गया है।</li>\n<li>बॉक्स V के ऊपर उतने ही बॉक्स रखे हैं जितने बॉक्स, W के नीचे रखे हैं।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164993073112.jpg\" title=\"7.jpg\"/></p>\n<p><strong>उत्तर: D</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें</strong></p>\n<p>आठ बॉक्स - P, Q, R, S, T, U, V और W को एक के ऊपर एक स्टैक के रूप में रखा जाता है, लेकिन जरूरी नहीं कि इसी क्रम में हो।</p>\n<p>बॉक्स T, बॉक्स W के तीन बॉक्स ऊपर रखा गया है। बॉक्स W और बॉक्स P के मध्य केवल एक बॉक्स रखा है। बॉक्स P और बॉक्स Q के मध्य केवल तीन बॉक्स रखे गए हैं, जो बॉक्स P के ऊपर रखा गया है। बॉक्स V, बॉक्स Q के तत्काल नीचे रखा गया है। बॉक्स V के ऊपर उतने ही बॉक्स रखे हैं जितने बॉक्स W के नीचे रखे हैं। बॉक्स S, बॉक्स R के तीन बॉक्स नीचे रखा गया है।</p><br><p><strong>निम्नलिखित पांच में से चार एक समूह बनाने के लिए समान हैं, निम्नलिखित में से कौन </strong><strong>से</strong><strong> उस समूह से संबंधित नहीं है?</strong></p>", "options": ["<p>QR</p>", "<p>TS</p>", "<p>RW</p>", "<p>SU</p>", "<p>VT</p>"], "correctIndex": 2, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164993072191.jpg\" title=\"5.jpg\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>बॉक्स T, बॉक्स W के तीन बॉक्स ऊपर रखा गया है।</li>\n<li>बॉक्स W और बॉक्स P के मध्य केवल एक बॉक्स रखा है।</li>\n<li>बॉक्स P और बॉक्स Q के मध्य केवल तीन बॉक्स रखे गए हैं, जो बॉक्स P के ऊपर रखा गया है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164993072763.jpg\" title=\"6.jpg\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>बॉक्स S, बॉक्स R के तीन बॉक्स नीचे रखा गया है।</li>\n<li>बॉक्स V, बॉक्स Q के तत्काल नीचे रखा गया है।</li>\n<li>बॉक्स V के ऊपर उतने ही बॉक्स रखे हैं जितने बॉक्स, W के नीचे रखे हैं।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164993073112.jpg\" title=\"7.jpg\"/></p>\n<p><strong>उत्तर: C (विकल्प C को छोड़कर दोनों बॉक्स के बीच केवल एक बॉक्स रखा गया है)</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>आठ व्यक्ति - P, Q, R, S, T, U, V<strong> </strong>और W एक रैखिक पंक्ति में उत्तर की ओर मुख करके बैठे हैं<strong>, </strong>लेकिन जरूरी नहीं कि इसी क्रम में हों।</p>\n<p>V, T<strong> </strong>के बायें से चौथे स्थान पर बैठा है<strong>, </strong>जहाँ दोनों में से कोई भी पंक्ति के छोर पर नहीं बैठा है।<strong> </strong>V<strong> </strong>और P<strong> </strong>के मध्य केवल एक व्यक्ति बैठा है।<strong> </strong>P, S<strong> </strong>के तत्काल दायें बैठा है।<strong> </strong>S के बायीं ओर बैठे व्यक्तियों की संख्या<strong>, </strong>R<strong> </strong>के दायीं ओर बैठे व्यक्तियों की संख्या से एक अधिक है।<strong> </strong>U, W<strong> </strong>के दायें से तीसरे स्थान पर बैठा है।</p><br><p><strong>जितने व्यक्ति Q के बायीं ओर बैठे हैं उतने ही व्यक्ति ________ के दायीं ओर बैठे हैं।</strong></p>", "options": ["<p>T</p>", "<p>R</p>", "<p>वह व्यक्ति जो R के तत्काल दायें बैठा है</p>", "<p>वह व्यक्ति जो T के तत्काल बायें बैठा है</p>", "<p>P</p>"], "correctIndex": 2, "solution": "<p><strong> <strong>अंतिम व्यवस्था</strong></strong></p>\n<p><strong><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164984580866.jpg\" title=\"1.JPG\"/></strong></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>V, T<strong> </strong>के बायें से चौथे स्थान पर बैठा है<strong>, </strong>जहाँ दोनों में से कोई भी पंक्ति के छोर पर नहीं बैठा है।<strong> </strong></li>\n<li>V<strong> </strong>और P<strong> </strong>के मध्य केवल एक व्यक्ति बैठा है।<strong> </strong></li>\n<li>P, S<strong> </strong>के तत्काल दायें बैठा है।</li>\n</ul>\n<p>उपरोक्त स्थिति से, दो संभावनाएं हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164984582691.jpg\" title=\"2.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>S के बायीं ओर बैठे व्यक्तियों की संख्या<strong>, </strong>R<strong> </strong>के दायीं ओर बैठे व्यक्तियों की संख्या से एक अधिक है।<strong> </strong></li>\n<li>U, W<strong> </strong>के दायें से तीसरे स्थान पर बैठा है।</li>\n</ul>\n<p>उपरोक्त शर्त से, केस-2 समाप्त हो जाता है। केस -1 अंतिम व्यवस्था को दर्शाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164984584218.jpg\" title=\"3.JPG\"/></p>\n<p><strong>उत्तर: C</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>आठ व्यक्ति - P, Q, R, S, T, U, V<strong> </strong>और W एक रैखिक पंक्ति में उत्तर की ओर मुख करके बैठे हैं<strong>, </strong>लेकिन जरूरी नहीं कि इसी क्रम में हों।</p>\n<p>V, T<strong> </strong>के बायें से चौथे स्थान पर बैठा है<strong>, </strong>जहाँ दोनों में से कोई भी पंक्ति के छोर पर नहीं बैठा है।<strong> </strong>V<strong> </strong>और P<strong> </strong>के मध्य केवल एक व्यक्ति बैठा है।<strong> </strong>P, S<strong> </strong>के तत्काल दायें बैठा है।<strong> </strong>S के बायीं ओर बैठे व्यक्तियों की संख्या<strong>, </strong>R<strong> </strong>के दायीं ओर बैठे व्यक्तियों की संख्या से एक अधिक है।<strong> </strong>U, W<strong> </strong>के दायें से तीसरे स्थान पर बैठा है।</p><br><p><strong>निम्नलिखित में से कौन </strong><strong>सा व्यक्ति </strong><strong>S और T के बीच में बैठा है?</strong></p>\n<p><strong>I. </strong>W</p>\n<p><strong>II. </strong>वह व्यक्ति जो V के दायें से दूसरे स्थान पर बैठा है</p>\n<p><strong>III.</strong> R</p>\n<p><strong>IV. </strong>U</p>", "options": ["<p>केवल I और II</p>", "<p>केवल III और IV</p>", "<p>केवल I और III</p>", "<p>केवल II और IV</p>", "<p>सभी I, II, III और IV</p>"], "correctIndex": 0, "solution": "<p><strong> <strong>अंतिम व्यवस्था</strong></strong></p>\n<p><strong><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164984580866.jpg\" title=\"1.JPG\"/></strong></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>V, T<strong> </strong>के बायें से चौथे स्थान पर बैठा है<strong>, </strong>जहाँ दोनों में से कोई भी पंक्ति के छोर पर नहीं बैठा है।<strong> </strong></li>\n<li>V<strong> </strong>और P<strong> </strong>के मध्य केवल एक व्यक्ति बैठा है।<strong> </strong></li>\n<li>P, S<strong> </strong>के तत्काल दायें बैठा है।</li>\n</ul>\n<p>उपरोक्त स्थिति से, दो संभावनाएं हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164984582691.jpg\" title=\"2.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>S के बायीं ओर बैठे व्यक्तियों की संख्या<strong>, </strong>R<strong> </strong>के दायीं ओर बैठे व्यक्तियों की संख्या से एक अधिक है।<strong> </strong></li>\n<li>U, W<strong> </strong>के दायें से तीसरे स्थान पर बैठा है।</li>\n</ul>\n<p>उपरोक्त शर्त से, केस-2 समाप्त हो जाता है। केस -1 अंतिम व्यवस्था को दर्शाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164984584218.jpg\" title=\"3.JPG\"/></p>\n<p><strong> <strong>उत्तर: A</strong></strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>आठ व्यक्ति - P, Q, R, S, T, U, V<strong> </strong>और W एक रैखिक पंक्ति में उत्तर की ओर मुख करके बैठे हैं<strong>, </strong>लेकिन जरूरी नहीं कि इसी क्रम में हों।</p>\n<p>V, T<strong> </strong>के बायें से चौथे स्थान पर बैठा है<strong>, </strong>जहाँ दोनों में से कोई भी पंक्ति के छोर पर नहीं बैठा है।<strong> </strong>V<strong> </strong>और P<strong> </strong>के मध्य केवल एक व्यक्ति बैठा है।<strong> </strong>P, S<strong> </strong>के तत्काल दायें बैठा है।<strong> </strong>S के बायीं ओर बैठे व्यक्तियों की संख्या<strong>, </strong>R<strong> </strong>के दायीं ओर बैठे व्यक्तियों की संख्या से एक अधिक है।<strong> </strong>U, W<strong> </strong>के दायें से तीसरे स्थान पर बैठा है।</p><br><p><strong>निम्नलिखित में से कौन सा व्यक्ति T के दायें से दूसरे स्थान पर बैठा है?</strong></p>", "options": ["<p>S</p>", "<p>वह व्यक्ति जो R के तत्काल दायें बैठा है</p>", "<p>V</p>", "<p>वह व्यक्ति जो V के तत्काल बायें बैठा है</p>", "<p>P</p>"], "correctIndex": 1, "solution": "<p><strong> <strong>अंतिम व्यवस्था</strong></strong></p>\n<p><strong><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164984580866.jpg\" title=\"1.JPG\"/></strong></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>V, T<strong> </strong>के बायें से चौथे स्थान पर बैठा है<strong>, </strong>जहाँ दोनों में से कोई भी पंक्ति के छोर पर नहीं बैठा है।<strong> </strong></li>\n<li>V<strong> </strong>और P<strong> </strong>के मध्य केवल एक व्यक्ति बैठा है।<strong> </strong></li>\n<li>P, S<strong> </strong>के तत्काल दायें बैठा है।</li>\n</ul>\n<p>उपरोक्त स्थिति से, दो संभावनाएं हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164984582691.jpg\" title=\"2.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>S के बायीं ओर बैठे व्यक्तियों की संख्या<strong>, </strong>R<strong> </strong>के दायीं ओर बैठे व्यक्तियों की संख्या से एक अधिक है।<strong> </strong></li>\n<li>U, W<strong> </strong>के दायें से तीसरे स्थान पर बैठा है।</li>\n</ul>\n<p>उपरोक्त शर्त से, केस-2 समाप्त हो जाता है। केस -1 अंतिम व्यवस्था को दर्शाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164984584218.jpg\" title=\"3.JPG\"/></p>\n<p><strong><strong>उत्तर: B</strong> </strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>आठ व्यक्ति - P, Q, R, S, T, U, V<strong> </strong>और W एक रैखिक पंक्ति में उत्तर की ओर मुख करके बैठे हैं<strong>, </strong>लेकिन जरूरी नहीं कि इसी क्रम में हों।</p>\n<p>V, T<strong> </strong>के बायें से चौथे स्थान पर बैठा है<strong>, </strong>जहाँ दोनों में से कोई भी पंक्ति के छोर पर नहीं बैठा है।<strong> </strong>V<strong> </strong>और P<strong> </strong>के मध्य केवल एक व्यक्ति बैठा है।<strong> </strong>P, S<strong> </strong>के तत्काल दायें बैठा है।<strong> </strong>S के बायीं ओर बैठे व्यक्तियों की संख्या<strong>, </strong>R<strong> </strong>के दायीं ओर बैठे व्यक्तियों की संख्या से एक अधिक है।<strong> </strong>U, W<strong> </strong>के दायें से तीसरे स्थान पर बैठा है।</p><br><p><strong>W के बाईं ओर कितने व्यक्ति बैठे हैं?</strong></p>", "options": ["<p>चार</p>", "<p>पांच</p>", "<p>तीन</p>", "<p>दो</p>", "<p>एक</p>"], "correctIndex": 0, "solution": "<p><strong> <strong>अंतिम व्यवस्था</strong></strong></p>\n<p><strong><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164984580866.jpg\" title=\"1.JPG\"/></strong></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>V, T<strong> </strong>के बायें से चौथे स्थान पर बैठा है<strong>, </strong>जहाँ दोनों में से कोई भी पंक्ति के छोर पर नहीं बैठा है।<strong> </strong></li>\n<li>V<strong> </strong>और P<strong> </strong>के मध्य केवल एक व्यक्ति बैठा है।<strong> </strong></li>\n<li>P, S<strong> </strong>के तत्काल दायें बैठा है।</li>\n</ul>\n<p>उपरोक्त स्थिति से, दो संभावनाएं हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164984582691.jpg\" title=\"2.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>S के बायीं ओर बैठे व्यक्तियों की संख्या<strong>, </strong>R<strong> </strong>के दायीं ओर बैठे व्यक्तियों की संख्या से एक अधिक है।<strong> </strong></li>\n<li>U, W<strong> </strong>के दायें से तीसरे स्थान पर बैठा है।</li>\n</ul>\n<p>उपरोक्त शर्त से, केस-2 समाप्त हो जाता है। केस -1 अंतिम व्यवस्था को दर्शाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164984584218.jpg\" title=\"3.JPG\"/></p>\n<p><strong> <strong>उत्तर: A</strong></strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>आठ व्यक्ति - P, Q, R, S, T, U, V<strong> </strong>और W एक रैखिक पंक्ति में उत्तर की ओर मुख करके बैठे हैं<strong>, </strong>लेकिन जरूरी नहीं कि इसी क्रम में हों।</p>\n<p>V, T<strong> </strong>के बायें से चौथे स्थान पर बैठा है<strong>, </strong>जहाँ दोनों में से कोई भी पंक्ति के छोर पर नहीं बैठा है।<strong> </strong>V<strong> </strong>और P<strong> </strong>के मध्य केवल एक व्यक्ति बैठा है।<strong> </strong>P, S<strong> </strong>के तत्काल दायें बैठा है।<strong> </strong>S के बायीं ओर बैठे व्यक्तियों की संख्या<strong>, </strong>R<strong> </strong>के दायीं ओर बैठे व्यक्तियों की संख्या से एक अधिक है।<strong> </strong>U, W<strong> </strong>के दायें से तीसरे स्थान पर बैठा है।</p><br><p><strong>S के सन्दर्भ में T का स्थान क्या है?</strong></p>", "options": ["<p>तत्काल दायें</p>", "<p>बायें से तीसरा</p>", "<p>दायें से तीसरा</p>", "<p>बायें से दूसरा</p>", "<p>दायें<strong> </strong>से दूसरा</p>"], "correctIndex": 2, "solution": "<p><strong> <strong>अंतिम व्यवस्था</strong></strong></p>\n<p><strong><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164984580866.jpg\" title=\"1.JPG\"/></strong></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>V, T<strong> </strong>के बायें से चौथे स्थान पर बैठा है<strong>, </strong>जहाँ दोनों में से कोई भी पंक्ति के छोर पर नहीं बैठा है।<strong> </strong></li>\n<li>V<strong> </strong>और P<strong> </strong>के मध्य केवल एक व्यक्ति बैठा है।<strong> </strong></li>\n<li>P, S<strong> </strong>के तत्काल दायें बैठा है।</li>\n</ul>\n<p>उपरोक्त स्थिति से, दो संभावनाएं हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164984582691.jpg\" title=\"2.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>S के बायीं ओर बैठे व्यक्तियों की संख्या<strong>, </strong>R<strong> </strong>के दायीं ओर बैठे व्यक्तियों की संख्या से एक अधिक है।<strong> </strong></li>\n<li>U, W<strong> </strong>के दायें से तीसरे स्थान पर बैठा है।</li>\n</ul>\n<p>उपरोक्त शर्त से, केस-2 समाप्त हो जाता है। केस -1 अंतिम व्यवस्था को दर्शाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164984584218.jpg\" title=\"3.JPG\"/></p>\n<p><strong>उत्तर: C</strong></p>"}] 
+};
+        const rawTitle = "Prelims Mastery Quiz 2025 Reasoning (Day-13)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Prelims Mastery Quiz 2025 Reasoning (Day-13)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

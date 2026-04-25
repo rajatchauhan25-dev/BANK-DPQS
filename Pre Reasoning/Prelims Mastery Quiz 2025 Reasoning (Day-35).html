@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Prelims Mastery Quiz 2025 Reasoning (Day-35)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p><strong>        </strong>Six persons - M, N, O, P, Q, and R are sitting around a hexagonal table facing towards the center in such a way that one person sits in each corner of the table, but not necessarily in the same order.</p>\n<p>One person sits between M and N. O is neither an immediate neighbor of M nor N. R sits second to the left of Q, who is an immediate neighbor of O. Q is not an immediate neighbor of N. P sits third to the right of O.</p><br><p><strong>How many persons sit between R and Q, when counted from the right of R? </strong></p>", "options": ["<p>One</p>", "<p>Two</p>", "<p>Three</p>", "<p>Four</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165365380490.png\" title=\"59.PNG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>One person sits between M and N.</li>\n<li>O is neither an immediate neighbor of M nor N.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165365387337.png\" title=\"60.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>R sits second to the left of Q, who is an immediate neighbor of O.</li>\n<li>Q is not an immediate neighbor of N.</li>\n<li>P sits third to the right of O.</li>\n</ul>\n<p>Hence, case 1 gets eliminated.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165365399179.png\" title=\"61.PNG\"/></p>\n<p><strong>Answer: A</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p><strong>        </strong>Six persons - M, N, O, P, Q, and R are sitting around a hexagonal table facing towards the center in such a way that one person sits in each corner of the table, but not necessarily in the same order.</p>\n<p>One person sits between M and N. O is neither an immediate neighbor of M nor N. R sits second to the left of Q, who is an immediate neighbor of O. Q is not an immediate neighbor of N. P sits third to the right of O.</p><br><p><strong>O faces who among the following person? </strong></p>", "options": ["<p>Q</p>", "<p>The one who sits immediate right of M</p>", "<p>R</p>", "<p>The one who sits immediate right of Q</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165365380490.png\" title=\"59.PNG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>One person sits between M and N.</li>\n<li>O is neither an immediate neighbor of M nor N.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165365387337.png\" title=\"60.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>R sits second to the left of Q, who is an immediate neighbor of O.</li>\n<li>Q is not an immediate neighbor of N.</li>\n<li>P sits third to the right of O.</li>\n</ul>\n<p>Hence, case 1 gets eliminated.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165365399179.png\" title=\"61.PNG\"/></p>\n<p><strong>Answer: B</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p><strong>        </strong>Six persons - M, N, O, P, Q, and R are sitting around a hexagonal table facing towards the center in such a way that one person sits in each corner of the table, but not necessarily in the same order.</p>\n<p>One person sits between M and N. O is neither an immediate neighbor of M nor N. R sits second to the left of Q, who is an immediate neighbor of O. Q is not an immediate neighbor of N. P sits third to the right of O.</p><br><p><strong> How many persons sit between N and Q?</strong></p>", "options": ["<p>&nbsp;One</p>", "<p>As many persons<strong> </strong>sit<strong> </strong>between P and O</p>", "<p>As many persons<strong> </strong>sit<strong> </strong>between R and M</p>", "<p>Three</p>", "<p>Both b &amp; c</p>"], "correctIndex": 4, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165365380490.png\" title=\"59.PNG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>One person sits between M and N.</li>\n<li>O is neither an immediate neighbor of M nor N.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165365387337.png\" title=\"60.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>R sits second to the left of Q, who is an immediate neighbor of O.</li>\n<li>Q is not an immediate neighbor of N.</li>\n<li>P sits third to the right of O.</li>\n</ul>\n<p>Hence, case 1 gets eliminated.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165365399179.png\" title=\"61.PNG\"/></p>\n<p><strong>Answer: E</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p><strong>        </strong>Six persons - M, N, O, P, Q, and R are sitting around a hexagonal table facing towards the center in such a way that one person sits in each corner of the table, but not necessarily in the same order.</p>\n<p>One person sits between M and N. O is neither an immediate neighbor of M nor N. R sits second to the left of Q, who is an immediate neighbor of O. Q is not an immediate neighbor of N. P sits third to the right of O.</p><br><p><strong>What is the position of R with respect to P?</strong></p>", "options": ["<p>Immediate left</p>", "<p>Immediate right</p>", "<p>Second to the right</p>", "<p>Fourth to the left</p>", "<p>Both c &amp; d</p>"], "correctIndex": 4, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165365380490.png\" title=\"59.PNG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>One person sits between M and N.</li>\n<li>O is neither an immediate neighbor of M nor N.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165365387337.png\" title=\"60.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>R sits second to the left of Q, who is an immediate neighbor of O.</li>\n<li>Q is not an immediate neighbor of N.</li>\n<li>P sits third to the right of O.</li>\n</ul>\n<p>Hence, case 1 gets eliminated.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165365399179.png\" title=\"61.PNG\"/></p>\n<p><strong>Answer: E</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p><strong>        </strong>Six persons - M, N, O, P, Q, and R are sitting around a hexagonal table facing towards the center in such a way that one person sits in each corner of the table, but not necessarily in the same order.</p>\n<p>One person sits between M and N. O is neither an immediate neighbor of M nor N. R sits second to the left of Q, who is an immediate neighbor of O. Q is not an immediate neighbor of N. P sits third to the right of O.</p><br><p><strong>If all the persons are made to sit in the alphabetical order from M in an anticlockwise direction, then how many persons remain unchanged in their position (excluding M)?</strong></p>", "options": ["<p>One</p>", "<p>Two</p>", "<p>Three</p>", "<p>Four</p>", "<p>&nbsp;No one</p>"], "correctIndex": 4, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165365380490.png\" title=\"59.PNG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>One person sits between M and N.</li>\n<li>O is neither an immediate neighbor of M nor N.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165365387337.png\" title=\"60.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>R sits second to the left of Q, who is an immediate neighbor of O.</li>\n<li>Q is not an immediate neighbor of N.</li>\n<li>P sits third to the right of O.</li>\n</ul>\n<p>Hence, case 1 gets eliminated.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165365399179.png\" title=\"61.PNG\"/></p>\n<p><strong>Answer: E</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below:</strong></p>\n<p>Eight different Blood camps- E, F, G, H, I, J, K and L were held in different months- January, February, March, April, May, June, July and August but not necessarily in the same order.</p>\n<p>L was held four months after E which was not held in a month of having less than 30 days. J was held immediately before L. Three camps were held between J and H. As many camps held after H is same as before G. I was held before G but after F which was not held in a month of having 31 days.</p><br><p><strong>Find the odd one out?</strong></p>", "options": ["<p>The camp which was held two months before I</p>", "<p>J</p>", "<p>G</p>", "<p>K</p>", "<p>The camp which was held immediately after E</p>"], "correctIndex": 2, "solution": "<p><strong>Final arrangement</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165574294465.png\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>L was held four months after E which was not held in a month of having less than 30 days.</li>\n<li>J was held immediately before L.</li>\n</ul>\n<p>From the above condition, there are three possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165574296655.png\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>Three camps were held between J and H.</li>\n<li>As many camps held after H is same as before G.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165574298335.png\"/></p>\n<p>From the above condition, case-1 and case-2 get eliminated.</p>\n<p>Again we have,</p>\n<ul>\n<li>I was held before G but after F which was not held in a month of having 31 days.</li>\n</ul>\n<p>Hence Case-3 shows the final arrangement</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165574300176.png\"/></p>\n<p><strong>Answer: C (All the camps were held in the month having odd number of days except option C)</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below:</strong></p>\n<p>Eight different Blood camps- E, F, G, H, I, J, K and L were held in different months- January, February, March, April, May, June, July and August but not necessarily in the same order.</p>\n<p>L was held four months after E which was not held in a month of having less than 30 days. J was held immediately before L. Three camps were held between J and H. As many camps held after H is same as before G. I was held before G but after F which was not held in a month of having 31 days.</p><br><p><strong>Which of the following combination(s) is/are true with respect to the final arrangement?</strong></p>", "options": ["<p>I-April</p>", "<p>J- July</p>", "<p>K-June</p>", "<p>L-January</p>", "<p>G-May</p>"], "correctIndex": 1, "solution": "<p><strong>Final arrangement</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165574294465.png\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>L was held four months after E which was not held in a month of having less than 30 days.</li>\n<li>J was held immediately before L.</li>\n</ul>\n<p>From the above condition, there are three possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165574296655.png\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>Three camps were held between J and H.</li>\n<li>As many camps held after H is same as before G.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165574298335.png\"/></p>\n<p>From the above condition, case-1 and case-2 get eliminated.</p>\n<p>Again we have,</p>\n<ul>\n<li>I was held before G but after F which was not held in a month of having 31 days.</li>\n</ul>\n<p>Hence Case-3 shows the final arrangement</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165574300176.png\"/></p>\n<p><strong>Answer: B</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below:</strong></p>\n<p>Eight different Blood camps- E, F, G, H, I, J, K and L were held in different months- January, February, March, April, May, June, July and August but not necessarily in the same order.</p>\n<p>L was held four months after E which was not held in a month of having less than 30 days. J was held immediately before L. Three camps were held between J and H. As many camps held after H is same as before G. I was held before G but after F which was not held in a month of having 31 days.</p><br><p><strong>Which of the following camp was held three months after H?</strong></p>", "options": ["<p>Camp G</p>", "<p>Camp J</p>", "<p>Camp K</p>", "<p>Camp I</p>", "<p>Camp F</p>"], "correctIndex": 0, "solution": "<p><strong>Final arrangement</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165574294465.png\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>L was held four months after E which was not held in a month of having less than 30 days.</li>\n<li>J was held immediately before L.</li>\n</ul>\n<p>From the above condition, there are three possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165574296655.png\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>Three camps were held between J and H.</li>\n<li>As many camps held after H is same as before G.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165574298335.png\"/></p>\n<p>From the above condition, case-1 and case-2 get eliminated.</p>\n<p>Again we have,</p>\n<ul>\n<li>I was held before G but after F which was not held in a month of having 31 days.</li>\n</ul>\n<p>Hence Case-3 shows the final arrangement</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165574300176.png\"/></p>\n<p><strong>Answer: A</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below:</strong></p>\n<p>Eight different Blood camps- E, F, G, H, I, J, K and L were held in different months- January, February, March, April, May, June, July and August but not necessarily in the same order.</p>\n<p>L was held four months after E which was not held in a month of having less than 30 days. J was held immediately before L. Three camps were held between J and H. As many camps held after H is same as before G. I was held before G but after F which was not held in a month of having 31 days.</p><br><p><strong>Which of the following camp was held immediately before F?</strong></p>", "options": ["<p>The camp which was held in February</p>", "<p>H</p>", "<p>The camp which was held two months after E</p>", "<p>The camp which was held in January</p>", "<p>J</p>"], "correctIndex": 3, "solution": "<p><strong>Final arrangement</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165574294465.png\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>L was held four months after E which was not held in a month of having less than 30 days.</li>\n<li>J was held immediately before L.</li>\n</ul>\n<p>From the above condition, there are three possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165574296655.png\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>Three camps were held between J and H.</li>\n<li>As many camps held after H is same as before G.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165574298335.png\"/></p>\n<p>From the above condition, case-1 and case-2 get eliminated.</p>\n<p>Again we have,</p>\n<ul>\n<li>I was held before G but after F which was not held in a month of having 31 days.</li>\n</ul>\n<p>Hence Case-3 shows the final arrangement</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165574300176.png\"/></p>\n<p><strong>Answer: D (Camp K)</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below:</strong></p>\n<p>Eight different Blood camps- E, F, G, H, I, J, K and L were held in different months- January, February, March, April, May, June, July and August but not necessarily in the same order.</p>\n<p>L was held four months after E which was not held in a month of having less than 30 days. J was held immediately before L. Three camps were held between J and H. As many camps held after H is same as before G. I was held before G but after F which was not held in a month of having 31 days.</p><br><p><strong>How many camps were held between I and L?</strong></p>", "options": ["<p>Same as camps held between H and G</p>", "<p>Three</p>", "<p>Five</p>", "<p>Same as camps held after E</p>", "<p>Same as camps held before F</p>"], "correctIndex": 0, "solution": "<p><strong>Final arrangement</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165574294465.png\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>L was held four months after E which was not held in a month of having less than 30 days.</li>\n<li>J was held immediately before L.</li>\n</ul>\n<p>From the above condition, there are three possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165574296655.png\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>Three camps were held between J and H.</li>\n<li>As many camps held after H is same as before G.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165574298335.png\"/></p>\n<p>From the above condition, case-1 and case-2 get eliminated.</p>\n<p>Again we have,</p>\n<ul>\n<li>I was held before G but after F which was not held in a month of having 31 days.</li>\n</ul>\n<p>Hence Case-3 shows the final arrangement</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165574300176.png\"/></p>\n<p><strong>Answer: A (Two)</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Ten photos are painted on two parallel walls facing towards each other in the museum. J, K, L, M and N are painted on wall 1, which faces towards the south while V, W, X, Y and Z are painted on wall 2, which faces towards the north.</p>\n<p>J is painted second to the right of K, which is facing Y. Only one photo is painted between Y and X. N is facing the photo which is painted exactly between X and Y. V is facing the photo which is painted second to the left of L. Neither Z nor X is facing M. Z is painted to the left of W.</p><br><p><strong>How many photos are painted between J and the photo which is facing W?</strong></p>", "options": ["<p>&nbsp;Three</p>", "<p>None</p>", "<p>Two</p>", "<p>One</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Final Arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165123669485.png\" title=\"120.PNG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>J is painted second to the right of K, which is facing Y.</li>\n<li>Only one photo is painted between Y and X.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165123674258.png\" title=\"121.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>N is facing the photo which is painted exactly between X and Y.</li>\n<li>V is facing the photo which is painted second to the left of L.</li>\n<li>Neither Z nor X is facing M.</li>\n<li>Z is painted to the left of W.</li>\n</ul>\n<p>Hence, case I gets eliminated.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165123678257.png\" title=\"122.PNG\"/></p>\n<p><strong>Answer: C</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Ten photos are painted on two parallel walls facing towards each other in the museum. J, K, L, M and N are painted on wall 1, which faces towards the south while V, W, X, Y and Z are painted on wall 2, which faces towards the north.</p>\n<p>J is painted second to the right of K, which is facing Y. Only one photo is painted between Y and X. N is facing the photo which is painted exactly between X and Y. V is facing the photo which is painted second to the left of L. Neither Z nor X is facing M. Z is painted to the left of W.</p><br><p><strong>Which of the following photo is painted third to the left of Y?</strong></p>", "options": ["<p>X</p>", "<p>The photo which is facing L</p>", "<p>The photo which is painted second to the left of X</p>", "<p>V</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Final Arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165123669485.png\" title=\"120.PNG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>J is painted second to the right of K, which is facing Y.</li>\n<li>Only one photo is painted between Y and X.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165123674258.png\" title=\"121.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>N is facing the photo which is painted exactly between X and Y.</li>\n<li>V is facing the photo which is painted second to the left of L.</li>\n<li>Neither Z nor X is facing M.</li>\n<li>Z is painted to the left of W.</li>\n</ul>\n<p>Hence, case I gets eliminated.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165123678257.png\" title=\"122.PNG\"/></p>\n<p><strong>Answer: B</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Ten photos are painted on two parallel walls facing towards each other in the museum. J, K, L, M and N are painted on wall 1, which faces towards the south while V, W, X, Y and Z are painted on wall 2, which faces towards the north.</p>\n<p>J is painted second to the right of K, which is facing Y. Only one photo is painted between Y and X. N is facing the photo which is painted exactly between X and Y. V is facing the photo which is painted second to the left of L. Neither Z nor X is facing M. Z is painted to the left of W.</p><br><p><strong>Which of the following pair of photos are painted at the corners of the walls?</strong></p>\n<p><strong>I. </strong>MX</p>\n<p><strong>II. </strong>LW</p>\n<p><strong>III. </strong>ZW</p>", "options": ["<p>&nbsp;Only I</p>", "<p>Only II</p>", "<p>Both II and III</p>", "<p>Both I and III</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Final Arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165123669485.png\" title=\"120.PNG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>J is painted second to the right of K, which is facing Y.</li>\n<li>Only one photo is painted between Y and X.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165123674258.png\" title=\"121.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>N is facing the photo which is painted exactly between X and Y.</li>\n<li>V is facing the photo which is painted second to the left of L.</li>\n<li>Neither Z nor X is facing M.</li>\n<li>Z is painted to the left of W.</li>\n</ul>\n<p>Hence, case I gets eliminated.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165123678257.png\" title=\"122.PNG\"/></p>\n<p><strong>Answer: C  </strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Ten photos are painted on two parallel walls facing towards each other in the museum. J, K, L, M and N are painted on wall 1, which faces towards the south while V, W, X, Y and Z are painted on wall 2, which faces towards the north.</p>\n<p>J is painted second to the right of K, which is facing Y. Only one photo is painted between Y and X. N is facing the photo which is painted exactly between X and Y. V is facing the photo which is painted second to the left of L. Neither Z nor X is facing M. Z is painted to the left of W.</p><br><p><strong>Four of the five among the following are similar in such a way to form a group, which one of the following doesn’t belong to that group?</strong></p>", "options": ["<p>LZ</p>", "<p>MW</p>", "<p>NY</p>", "<p>&nbsp;JX</p>", "<p>KY</p>"], "correctIndex": 2, "solution": "<p><strong>Final Arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165123669485.png\" title=\"120.PNG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>J is painted second to the right of K, which is facing Y.</li>\n<li>Only one photo is painted between Y and X.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165123674258.png\" title=\"121.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>N is facing the photo which is painted exactly between X and Y.</li>\n<li>V is facing the photo which is painted second to the left of L.</li>\n<li>Neither Z nor X is facing M.</li>\n<li>Z is painted to the left of W.</li>\n</ul>\n<p>Hence, case I gets eliminated.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165123678257.png\" title=\"122.PNG\"/></p>\n<p><strong>Answer: C  </strong>(All photos are painted facing each other, except option C)</p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Ten photos are painted on two parallel walls facing towards each other in the museum. J, K, L, M and N are painted on wall 1, which faces towards the south while V, W, X, Y and Z are painted on wall 2, which faces towards the north.</p>\n<p>J is painted second to the right of K, which is facing Y. Only one photo is painted between Y and X. N is facing the photo which is painted exactly between X and Y. V is facing the photo which is painted second to the left of L. Neither Z nor X is facing M. Z is painted to the left of W.</p><br><p><strong> Which of the following photo is facing V?</strong></p>", "options": ["<p>L</p>", "<p>The photo which is painted third to the right of J</p>", "<p>The photo which is painted exactly between L and M</p>", "<p>K</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Final Arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165123669485.png\" title=\"120.PNG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>J is painted second to the right of K, which is facing Y.</li>\n<li>Only one photo is painted between Y and X.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165123674258.png\" title=\"121.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>N is facing the photo which is painted exactly between X and Y.</li>\n<li>V is facing the photo which is painted second to the left of L.</li>\n<li>Neither Z nor X is facing M.</li>\n<li>Z is painted to the left of W.</li>\n</ul>\n<p>Hence, case I gets eliminated.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165123678257.png\" title=\"122.PNG\"/></p>\n<p><strong>Answer: C  </strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Eight persons - P, Q, R, S, T, U, V, and W are living in an eight-storey building, but not necessarily in the same order. The lower-most floor is numbered as one and the floor immediately above is numbered as two and so on.</p>\n<p>U lives on an odd numbered floor but above third floor.<strong> </strong>Only two persons live between T and V. The number of persons living between U and V is one less than the number of persons living between V and T.<strong> </strong>S lives three floors above P, who lives immediately below T.<strong> </strong>R lives below Q and above W.<strong> </strong>As many persons live between R and W is same as persons live above R.</p><br><p><strong>On which of the following floor does W live?</strong></p>", "options": ["<p>The floor which is immediately below V</p>", "<p>The floor which is immediately above T</p>", "<p>The floor which is immediately below R</p>", "<p>The floor which is immediately below S</p>", "<p>Both b &amp; d</p>"], "correctIndex": 4, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583262573.png\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>U lives on an odd numbered floor but above the third floor.</li>\n<li>Only two persons live between T and V.</li>\n<li>The number of persons living between U and V is one less than the number of persons living between V and T.</li>\n<li>S lives three floors above P, who lives immediately below T.</li>\n</ul>\n<p>From the above conditions, there are two possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583263950.png\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>R lives below Q and above W.</li>\n<li>As many persons between R and W as above R.</li>\n</ul>\n<p>From the above conditions, Case 1 gets eliminated. Hence, Case 2 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583265325.png\"/></p>\n<p><strong>Answer: E</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Eight persons - P, Q, R, S, T, U, V, and W are living in an eight-storey building, but not necessarily in the same order. The lower-most floor is numbered as one and the floor immediately above is numbered as two and so on.</p>\n<p>U lives on an odd numbered floor but above third floor.<strong> </strong>Only two persons live between T and V. The number of persons living between U and V is one less than the number of persons living between V and T.<strong> </strong>S lives three floors above P, who lives immediately below T.<strong> </strong>R lives below Q and above W.<strong> </strong>As many persons live between R and W is same as persons live above R.</p><br><p><strong>How many persons live between the one who lives on seventh floor and T? </strong></p>", "options": ["<p>One</p>", "<p>Two</p>", "<p>Three</p>", "<p>Four</p>", "<p>More than four</p>"], "correctIndex": 3, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583262573.png\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>U lives on an odd numbered floor but above the third floor.</li>\n<li>Only two persons live between T and V.</li>\n<li>The number of persons living between U and V is one less than the number of persons living between V and T.</li>\n<li>S lives three floors above P, who lives immediately below T.</li>\n</ul>\n<p>From the above conditions, there are two possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583263950.png\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>R lives below Q and above W.</li>\n<li>As many persons between R and W as above R.</li>\n</ul>\n<p>From the above conditions, Case 1 gets eliminated. Hence, Case 2 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583265325.png\"/></p>\n<p><strong>Answer: D</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Eight persons - P, Q, R, S, T, U, V, and W are living in an eight-storey building, but not necessarily in the same order. The lower-most floor is numbered as one and the floor immediately above is numbered as two and so on.</p>\n<p>U lives on an odd numbered floor but above third floor.<strong> </strong>Only two persons live between T and V. The number of persons living between U and V is one less than the number of persons living between V and T.<strong> </strong>S lives three floors above P, who lives immediately below T.<strong> </strong>R lives below Q and above W.<strong> </strong>As many persons live between R and W is same as persons live above R.</p><br><p><strong>Who among the following person lives three floors below Q?</strong></p>", "options": ["<p>The one who lives immediately above T</p>", "<p>P</p>", "<p>The one who lives two floors below S</p>", "<p>R</p>", "<p>The one who lives on fifth floor</p>"], "correctIndex": 4, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583262573.png\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>U lives on an odd numbered floor but above the third floor.</li>\n<li>Only two persons live between T and V.</li>\n<li>The number of persons living between U and V is one less than the number of persons living between V and T.</li>\n<li>S lives three floors above P, who lives immediately below T.</li>\n</ul>\n<p>From the above conditions, there are two possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583263950.png\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>R lives below Q and above W.</li>\n<li>As many persons between R and W as above R.</li>\n</ul>\n<p>From the above conditions, Case 1 gets eliminated. Hence, Case 2 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583265325.png\"/></p>\n<p><strong>Answer: E</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Eight persons - P, Q, R, S, T, U, V, and W are living in an eight-storey building, but not necessarily in the same order. The lower-most floor is numbered as one and the floor immediately above is numbered as two and so on.</p>\n<p>U lives on an odd numbered floor but above third floor.<strong> </strong>Only two persons live between T and V. The number of persons living between U and V is one less than the number of persons living between V and T.<strong> </strong>S lives three floors above P, who lives immediately below T.<strong> </strong>R lives below Q and above W.<strong> </strong>As many persons live between R and W is same as persons live above R.</p><br><p><strong>Four of the following five are alike in a certain way as per the given arrangement and hence form a group. Find the one who does not belong to that group.</strong></p>", "options": ["<p>P</p>", "<p>W</p>", "<p>V</p>", "<p>U</p>", "<p>Q</p>"], "correctIndex": 4, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583262573.png\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>U lives on an odd numbered floor but above the third floor.</li>\n<li>Only two persons live between T and V.</li>\n<li>The number of persons living between U and V is one less than the number of persons living between V and T.</li>\n<li>S lives three floors above P, who lives immediately below T.</li>\n</ul>\n<p>From the above conditions, there are two possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583263950.png\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>R lives below Q and above W.</li>\n<li>As many persons between R and W as above R.</li>\n</ul>\n<p>From the above conditions, Case 1 gets eliminated. Hence, Case 2 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583265325.png\"/></p>\n<p><strong>Answer: E (All the persons live on an odd-numbered floor, except option E)</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Eight persons - P, Q, R, S, T, U, V, and W are living in an eight-storey building, but not necessarily in the same order. The lower-most floor is numbered as one and the floor immediately above is numbered as two and so on.</p>\n<p>U lives on an odd numbered floor but above third floor.<strong> </strong>Only two persons live between T and V. The number of persons living between U and V is one less than the number of persons living between V and T.<strong> </strong>S lives three floors above P, who lives immediately below T.<strong> </strong>R lives below Q and above W.<strong> </strong>As many persons live between R and W is same as persons live above R.</p><br><p><strong>Which of the following statement(s) is/are not true with respect to the final arrangement?</strong></p>", "options": ["<p>Only one person lives below T</p>", "<p>Q lives on the top-most floor</p>", "<p>Only two persons live between V and W</p>", "<p>Both T and R live on an odd-numbered floor</p>", "<p>Both c &amp; d</p>"], "correctIndex": 4, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583262573.png\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>U lives on an odd numbered floor but above the third floor.</li>\n<li>Only two persons live between T and V.</li>\n<li>The number of persons living between U and V is one less than the number of persons living between V and T.</li>\n<li>S lives three floors above P, who lives immediately below T.</li>\n</ul>\n<p>From the above conditions, there are two possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583263950.png\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>R lives below Q and above W.</li>\n<li>As many persons between R and W as above R.</li>\n</ul>\n<p>From the above conditions, Case 1 gets eliminated. Hence, Case 2 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583265325.png\"/></p>\n<p><strong>Answer: E</strong></p>"}] ,
+    hi: [{"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p><strong>      </strong>छह व्यक्ति - M, N, O, P, Q, और R एक षट्कोणीय मेज़ के चारों ओर केंद्र की ओर मुख करके इस प्रकार बैठे हैं जैसे कि एक व्यक्ति मेज़ के प्रत्येक कोने में बैठता है, लेकिन जरूरी नहीं कि इसी क्रम में हो।</p>\n<p>M और N के मध्य एक व्यक्ति बैठा है। O न तो M का और न ही N का तत्काल पड़ोसी है। R, Q के बाएं से दूसरे स्थान पर बैठा है, जो O का तत्काल पड़ोसी है। Q, N का तत्काल पड़ोसी नहीं है। P, O के दायें से तीसरे स्थान पर बैठा है।</p><br><p><strong>R के दायें से गिनने पर R और Q के बीच कितने व्यक्ति बैठे हैं?</strong></p>", "options": ["<p>एक</p>", "<p>दो</p>", "<p>तीन</p>", "<p>चार</p>", "<p>इनमें से कोई नहीं</p>"], "correctIndex": 0, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165389413548.png\" title=\"86.PNG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>M और N के मध्य एक व्यक्ति बैठा है।</li>\n<li>O न तो M का और न ही N का तत्काल पड़ोसी है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165389419227.png\" title=\"87.PNG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>R, Q के बाएं से दूसरे स्थान पर बैठा है, जो O का तत्काल पड़ोसी है।</li>\n<li>Q, N का तत्काल पड़ोसी नहीं है।</li>\n<li>P, O के दायें से तीसरे स्थान पर बैठा है।</li>\n</ul>\n<p>इसलिए, केस 1 समाप्त हो जाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165389431745.png\" title=\"88.PNG\"/></p>\n<p><strong>उत्तर: A</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p><strong>      </strong>छह व्यक्ति - M, N, O, P, Q, और R एक षट्कोणीय मेज़ के चारों ओर केंद्र की ओर मुख करके इस प्रकार बैठे हैं जैसे कि एक व्यक्ति मेज़ के प्रत्येक कोने में बैठता है, लेकिन जरूरी नहीं कि इसी क्रम में हो।</p>\n<p>M और N के मध्य एक व्यक्ति बैठा है। O न तो M का और न ही N का तत्काल पड़ोसी है। R, Q के बाएं से दूसरे स्थान पर बैठा है, जो O का तत्काल पड़ोसी है। Q, N का तत्काल पड़ोसी नहीं है। P, O के दायें से तीसरे स्थान पर बैठा है।</p><br><p><strong>O का मुख निम्नलिखित में से किस व्यक्ति की ओर है?</strong></p>", "options": ["<p>Q</p>", "<p>वह व्यक्ति जो M के तत्काल दायें बैठा है</p>", "<p>R</p>", "<p>वह व्यक्ति जो Q के तत्काल दायें बैठा है</p>", "<p>इनमें से कोई नहीं</p>"], "correctIndex": 1, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165389413548.png\" title=\"86.PNG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>M और N के मध्य एक व्यक्ति बैठा है।</li>\n<li>O न तो M का और न ही N का तत्काल पड़ोसी है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165389419227.png\" title=\"87.PNG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>R, Q के बाएं से दूसरे स्थान पर बैठा है, जो O का तत्काल पड़ोसी है।</li>\n<li>Q, N का तत्काल पड़ोसी नहीं है।</li>\n<li>P, O के दायें से तीसरे स्थान पर बैठा है।</li>\n</ul>\n<p>इसलिए, केस 1 समाप्त हो जाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165389431745.png\" title=\"88.PNG\"/></p>\n<p><strong>उत्तर: B</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p><strong>      </strong>छह व्यक्ति - M, N, O, P, Q, और R एक षट्कोणीय मेज़ के चारों ओर केंद्र की ओर मुख करके इस प्रकार बैठे हैं जैसे कि एक व्यक्ति मेज़ के प्रत्येक कोने में बैठता है, लेकिन जरूरी नहीं कि इसी क्रम में हो।</p>\n<p>M और N के मध्य एक व्यक्ति बैठा है। O न तो M का और न ही N का तत्काल पड़ोसी है। R, Q के बाएं से दूसरे स्थान पर बैठा है, जो O का तत्काल पड़ोसी है। Q, N का तत्काल पड़ोसी नहीं है। P, O के दायें से तीसरे स्थान पर बैठा है।</p><br><p><strong>N और Q के बीच कितने व्यक्ति बैठे हैं?</strong></p>", "options": ["<p>एक</p>", "<p>जितने व्यक्ति P और O के बीच बैठे हैं</p>", "<p>जितने व्यक्ति R और M के बीच बैठे हैं</p>", "<p>तीन</p>", "<p>b और c दोनों</p>"], "correctIndex": 4, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165389413548.png\" title=\"86.PNG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>M और N के मध्य एक व्यक्ति बैठा है।</li>\n<li>O न तो M का और न ही N का तत्काल पड़ोसी है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165389419227.png\" title=\"87.PNG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>R, Q के बाएं से दूसरे स्थान पर बैठा है, जो O का तत्काल पड़ोसी है।</li>\n<li>Q, N का तत्काल पड़ोसी नहीं है।</li>\n<li>P, O के दायें से तीसरे स्थान पर बैठा है।</li>\n</ul>\n<p>इसलिए, केस 1 समाप्त हो जाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165389431745.png\" title=\"88.PNG\"/></p>\n<p><strong>उत्तर: E</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p><strong>      </strong>छह व्यक्ति - M, N, O, P, Q, और R एक षट्कोणीय मेज़ के चारों ओर केंद्र की ओर मुख करके इस प्रकार बैठे हैं जैसे कि एक व्यक्ति मेज़ के प्रत्येक कोने में बैठता है, लेकिन जरूरी नहीं कि इसी क्रम में हो।</p>\n<p>M और N के मध्य एक व्यक्ति बैठा है। O न तो M का और न ही N का तत्काल पड़ोसी है। R, Q के बाएं से दूसरे स्थान पर बैठा है, जो O का तत्काल पड़ोसी है। Q, N का तत्काल पड़ोसी नहीं है। P, O के दायें से तीसरे स्थान पर बैठा है।</p><br><p><strong>P के सन्दर्भ में R का स्थान क्या है?</strong></p>", "options": ["<p>तत्काल बाएं</p>", "<p>तत्काल दायें</p>", "<p>दायें से दूसरा</p>", "<p>बाएं से चौथा</p>", "<p>c और d दोनों</p>"], "correctIndex": 4, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165389413548.png\" title=\"86.PNG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>M और N के मध्य एक व्यक्ति बैठा है।</li>\n<li>O न तो M का और न ही N का तत्काल पड़ोसी है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165389419227.png\" title=\"87.PNG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>R, Q के बाएं से दूसरे स्थान पर बैठा है, जो O का तत्काल पड़ोसी है।</li>\n<li>Q, N का तत्काल पड़ोसी नहीं है।</li>\n<li>P, O के दायें से तीसरे स्थान पर बैठा है।</li>\n</ul>\n<p>इसलिए, केस 1 समाप्त हो जाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165389431745.png\" title=\"88.PNG\"/></p>\n<p><strong>उत्तर: E</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p><strong>      </strong>छह व्यक्ति - M, N, O, P, Q, और R एक षट्कोणीय मेज़ के चारों ओर केंद्र की ओर मुख करके इस प्रकार बैठे हैं जैसे कि एक व्यक्ति मेज़ के प्रत्येक कोने में बैठता है, लेकिन जरूरी नहीं कि इसी क्रम में हो।</p>\n<p>M और N के मध्य एक व्यक्ति बैठा है। O न तो M का और न ही N का तत्काल पड़ोसी है। R, Q के बाएं से दूसरे स्थान पर बैठा है, जो O का तत्काल पड़ोसी है। Q, N का तत्काल पड़ोसी नहीं है। P, O के दायें से तीसरे स्थान पर बैठा है।</p><br><p><strong>यदि सभी व्यक्तियों को M से वर्णमाला के क्रम में वामावर्त दिशा में बैठाया जाता है, तो कितने व्यक्ति अपनी स्थिति में अपरिवर्तित रहते हैं (M को छोड़कर)?</strong></p>", "options": ["<p>एक</p>", "<p>दो</p>", "<p>तीन</p>", "<p>चार</p>", "<p>कोई नहीं</p>"], "correctIndex": 4, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165389413548.png\" title=\"86.PNG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>M और N के मध्य एक व्यक्ति बैठा है।</li>\n<li>O न तो M का और न ही N का तत्काल पड़ोसी है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165389419227.png\" title=\"87.PNG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>R, Q के बाएं से दूसरे स्थान पर बैठा है, जो O का तत्काल पड़ोसी है।</li>\n<li>Q, N का तत्काल पड़ोसी नहीं है।</li>\n<li>P, O के दायें से तीसरे स्थान पर बैठा है।</li>\n</ul>\n<p>इसलिए, केस 1 समाप्त हो जाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165389431745.png\" title=\"88.PNG\"/></p>\n<p><strong>उत्तर: E</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें:</strong></p>\n<p>आठ अलग-अलग रक्त शिविर- E, F, G, H, I, J, K और L अलग-अलग महीनों - जनवरी, फरवरी, मार्च, अप्रैल, मई, जून, जुलाई और अगस्त में आयोजित किए गए लेकिन जरूरी नहीं कि इसी क्रम में हों।</p>\n<p>L को E के चार महीने बाद आयोजित किया गया था जो कि 30 दिनों से कम वाले महीने में आयोजित नहीं किया गया था। J को L के तत्काल पहले आयोजित किया गया था। J और H के बीच तीन शिविर आयोजित किए गए थे। जितने शिविर H के बाद आयोजित किए गए थे, उतने ही G के पहले आयोजित किए गए थे। I को G से पहले लेकिन F के बाद आयोजित किया गया था जो 31 दिनों के महीने में आयोजित नहीं किया गया था।</p><br><p><strong>विषम का पता लगाएं?</strong></p>", "options": ["<p>वह शिविर जो I से दो महीने पहले आयोजित किया गया था</p>", "<p>J</p>", "<p>G</p>", "<p>K</p>", "<p>वह शिविर जो E के तत्काल बाद आयोजित किया गया था</p>"], "correctIndex": 2, "solution": "<p><strong>अंतिम व्यवस्था</strong></p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165597971960.jpg\" title=\"10.jpg\"/></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>L को E के चार महीने बाद आयोजित किया गया था जो कि 30 दिनों से कम वाले महीने में आयोजित नहीं किया गया था।</li>\n<li>J को L के तत्काल पहले आयोजित किया गया था।</li>\n</ul>\n<p>उपरोक्त स्थिति से, तीन संभावनाएं हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165597972891.jpg\" title=\"11.jpg\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>J और H के बीच तीन शिविर आयोजित किए गए थे।</li>\n<li>जितने शिविर H के बाद आयोजित किए गए थे, उतने ही G के पहले आयोजित किए गए थे।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165598025550.jpg\" title=\"14.jpg\"/></p>\n<p>उपरोक्त शर्त से केस-1 और केस-2 समाप्त हो जाते हैं।</p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>I को G से पहले लेकिन F के बाद आयोजित किया गया था जो 31 दिनों के महीने में आयोजित नहीं किया गया था।</li>\n</ul>\n<p>इसलिए केस -3 अंतिम व्यवस्था दिखाता है</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165597991744.jpg\" title=\"13.jpg\"/></p>\n<p><strong>उत्तर: C (विकल्प c को छोड़कर सभी शिविर विषम दिनों वाले महीने में आयोजित किए गए थे)</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें:</strong></p>\n<p>आठ अलग-अलग रक्त शिविर- E, F, G, H, I, J, K और L अलग-अलग महीनों - जनवरी, फरवरी, मार्च, अप्रैल, मई, जून, जुलाई और अगस्त में आयोजित किए गए लेकिन जरूरी नहीं कि इसी क्रम में हों।</p>\n<p>L को E के चार महीने बाद आयोजित किया गया था जो कि 30 दिनों से कम वाले महीने में आयोजित नहीं किया गया था। J को L के तत्काल पहले आयोजित किया गया था। J और H के बीच तीन शिविर आयोजित किए गए थे। जितने शिविर H के बाद आयोजित किए गए थे, उतने ही G के पहले आयोजित किए गए थे। I को G से पहले लेकिन F के बाद आयोजित किया गया था जो 31 दिनों के महीने में आयोजित नहीं किया गया था।</p><br><p><strong>अंतिम व्यवस्था के संबंध में निम्नलिखित में से कौन सा संयोजन सत्य है/हैं?</strong></p>", "options": ["<p>I-अप्रैल</p>", "<p>J- जुलाई</p>", "<p>K-जून</p>", "<p>L-जनवरी</p>", "<p>G-मई</p>"], "correctIndex": 1, "solution": "<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165597971960.jpg\" title=\"10.jpg\"/></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>L को E के चार महीने बाद आयोजित किया गया था जो कि 30 दिनों से कम वाले महीने में आयोजित नहीं किया गया था।</li>\n<li>J को L के तत्काल पहले आयोजित किया गया था।</li>\n</ul>\n<p>उपरोक्त स्थिति से, तीन संभावनाएं हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165597972891.jpg\" title=\"11.jpg\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>J और H के बीच तीन शिविर आयोजित किए गए थे।</li>\n<li>जितने शिविर H के बाद आयोजित किए गए थे, उतने ही G के पहले आयोजित किए गए थे।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165598027317.jpg\" title=\"14.jpg\"/></p>\n<p>उपरोक्त शर्त से केस-1 और केस-2 समाप्त हो जाते हैं।</p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>I को G से पहले लेकिन F के बाद आयोजित किया गया था जो 31 दिनों के महीने में आयोजित नहीं किया गया था।</li>\n</ul>\n<p>इसलिए केस -3 अंतिम व्यवस्था दिखाता है</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165597991744.jpg\" title=\"13.jpg\"/></p>\n<p><strong>उत्तर: B</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें:</strong></p>\n<p>आठ अलग-अलग रक्त शिविर- E, F, G, H, I, J, K और L अलग-अलग महीनों - जनवरी, फरवरी, मार्च, अप्रैल, मई, जून, जुलाई और अगस्त में आयोजित किए गए लेकिन जरूरी नहीं कि इसी क्रम में हों।</p>\n<p>L को E के चार महीने बाद आयोजित किया गया था जो कि 30 दिनों से कम वाले महीने में आयोजित नहीं किया गया था। J को L के तत्काल पहले आयोजित किया गया था। J और H के बीच तीन शिविर आयोजित किए गए थे। जितने शिविर H के बाद आयोजित किए गए थे, उतने ही G के पहले आयोजित किए गए थे। I को G से पहले लेकिन F के बाद आयोजित किया गया था जो 31 दिनों के महीने में आयोजित नहीं किया गया था।</p><br><p><strong>निम्नलिखित में से कौन सा शिविर H के तीन महीने बाद आयोजित किया गया था ?</strong></p>", "options": ["<p>शिविर G</p>", "<p>शिविर J</p>", "<p>शिविर K</p>", "<p>शिविर I</p>", "<p>शिविर F</p>"], "correctIndex": 0, "solution": "<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165597971960.jpg\" title=\"10.jpg\"/></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>L को E के चार महीने बाद आयोजित किया गया था जो कि 30 दिनों से कम वाले महीने में आयोजित नहीं किया गया था।</li>\n<li>J को L के तत्काल पहले आयोजित किया गया था।</li>\n</ul>\n<p>उपरोक्त स्थिति से, तीन संभावनाएं हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165597972891.jpg\" title=\"11.jpg\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>J और H के बीच तीन शिविर आयोजित किए गए थे।</li>\n<li>जितने शिविर H के बाद आयोजित किए गए थे, उतने ही G के पहले आयोजित किए गए थे।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165598029766.jpg\" title=\"14.jpg\"/></p>\n<p>उपरोक्त शर्त से केस-1 और केस-2 समाप्त हो जाते हैं।</p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>I को G से पहले लेकिन F के बाद आयोजित किया गया था जो 31 दिनों के महीने में आयोजित नहीं किया गया था।</li>\n</ul>\n<p>इसलिए केस -3 अंतिम व्यवस्था दिखाता है</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165597991744.jpg\" title=\"13.jpg\"/></p>\n<p><strong>उत्तर: A</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें:</strong></p>\n<p>आठ अलग-अलग रक्त शिविर- E, F, G, H, I, J, K और L अलग-अलग महीनों - जनवरी, फरवरी, मार्च, अप्रैल, मई, जून, जुलाई और अगस्त में आयोजित किए गए लेकिन जरूरी नहीं कि इसी क्रम में हों।</p>\n<p>L को E के चार महीने बाद आयोजित किया गया था जो कि 30 दिनों से कम वाले महीने में आयोजित नहीं किया गया था। J को L के तत्काल पहले आयोजित किया गया था। J और H के बीच तीन शिविर आयोजित किए गए थे। जितने शिविर H के बाद आयोजित किए गए थे, उतने ही G के पहले आयोजित किए गए थे। I को G से पहले लेकिन F के बाद आयोजित किया गया था जो 31 दिनों के महीने में आयोजित नहीं किया गया था।</p><br><p><strong>निम्नलिखित में से कौन सा शिविर F के तत्काल पहले आयोजित किया गया था?</strong></p>", "options": ["<p>वह शिविर जो फरवरी में आयोजित किया गया था</p>", "<p>H</p>", "<p>वह शिविर जो E के दो महीने बाद आयोजित किया गया था</p>", "<p>वह शिविर जो जनवरी में आयोजित किया गया था</p>", "<p>J</p>"], "correctIndex": 3, "solution": "<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165597971960.jpg\" title=\"10.jpg\"/></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>L को E के चार महीने बाद आयोजित किया गया था जो कि 30 दिनों से कम वाले महीने में आयोजित नहीं किया गया था।</li>\n<li>J को L के तत्काल पहले आयोजित किया गया था।</li>\n</ul>\n<p>उपरोक्त स्थिति से, तीन संभावनाएं हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165597972891.jpg\" title=\"11.jpg\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>J और H के बीच तीन शिविर आयोजित किए गए थे।</li>\n<li>जितने शिविर H के बाद आयोजित किए गए थे, उतने ही G के पहले आयोजित किए गए थे।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165598031156.jpg\" title=\"14.jpg\"/></p>\n<p>उपरोक्त शर्त से केस-1 और केस-2 समाप्त हो जाते हैं।</p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>I को G से पहले लेकिन F के बाद आयोजित किया गया था जो 31 दिनों के महीने में आयोजित नहीं किया गया था।</li>\n</ul>\n<p>इसलिए केस -3 अंतिम व्यवस्था दिखाता है</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165597991744.jpg\" title=\"13.jpg\"/></p>\n<p><strong>उत्तर: D (शिविर K)</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें:</strong></p>\n<p>आठ अलग-अलग रक्त शिविर- E, F, G, H, I, J, K और L अलग-अलग महीनों - जनवरी, फरवरी, मार्च, अप्रैल, मई, जून, जुलाई और अगस्त में आयोजित किए गए लेकिन जरूरी नहीं कि इसी क्रम में हों।</p>\n<p>L को E के चार महीने बाद आयोजित किया गया था जो कि 30 दिनों से कम वाले महीने में आयोजित नहीं किया गया था। J को L के तत्काल पहले आयोजित किया गया था। J और H के बीच तीन शिविर आयोजित किए गए थे। जितने शिविर H के बाद आयोजित किए गए थे, उतने ही G के पहले आयोजित किए गए थे। I को G से पहले लेकिन F के बाद आयोजित किया गया था जो 31 दिनों के महीने में आयोजित नहीं किया गया था।</p><br><p><strong>I और L के बीच कितने शिविर आयोजित किए गए?</strong></p>", "options": ["<p>H और G के बीच आयोजित शिविरों के समान</p>", "<p>तीन</p>", "<p>पांच</p>", "<p>E के बाद आयोजित शिविरों के समान</p>", "<p>F से पहले आयोजित शिविरों के समान</p>"], "correctIndex": 0, "solution": "<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165597971960.jpg\" title=\"10.jpg\"/></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>L को E के चार महीने बाद आयोजित किया गया था जो कि 30 दिनों से कम वाले महीने में आयोजित नहीं किया गया था।</li>\n<li>J को L के तत्काल पहले आयोजित किया गया था।</li>\n</ul>\n<p>उपरोक्त स्थिति से, तीन संभावनाएं हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165597972891.jpg\" title=\"11.jpg\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>J और H के बीच तीन शिविर आयोजित किए गए थे।</li>\n<li>जितने शिविर H के बाद आयोजित किए गए थे, उतने ही G के पहले आयोजित किए गए थे।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165598021996.jpg\" title=\"14.jpg\"/></p>\n<p>उपरोक्त शर्त से केस-1 और केस-2 समाप्त हो जाते हैं।</p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>I को G से पहले लेकिन F के बाद आयोजित किया गया था जो 31 दिनों के महीने में आयोजित नहीं किया गया था।</li>\n</ul>\n<p>इसलिए केस -3 अंतिम व्यवस्था दिखाता है</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165597991744.jpg\" title=\"13.jpg\"/></p>\n<p><strong>उत्तर: A (दो)</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>संग्रहालय में दो समानांतर दीवारों पर एक-दूसरे की ओर मुख करके दस तस्वीरें चित्रित की गई हैं। J, K, L, M और N को दीवार 1 पर चित्रित किया गया है, जिसका मुख दक्षिण की ओर है जबकि V, W, X, Y और Z को दीवार 2 पर चित्रित किया गया है, जिसका मुख उत्तर की ओर है।</p>\n<p>J को K के दायें से दूसरे स्थान पर चित्रित किया गया है, जिसका मुख Y की ओर है। Y और X के बीच केवल एक तस्वीर चित्रित है। N का मुख उस तस्वीर की ओर है जो X और Y के ठीक बीच में चित्रित है। V का मुख उस तस्वीर की ओर है जिसे L के बायें से दूसरे स्थान पर चित्रित किया गया है। न तो Z और न ही X का मुख M की ओर है। Z को W के बाईं ओर चित्रित किया गया है।</p><br><p><strong>J और W की ओर मुख करने वाले तस्वीर के बीच कितनी तस्वीरें चित्रित की</strong> <strong>गई हैं?</strong></p>", "options": ["<p>तीन</p>", "<p>कोई नहीं</p>", "<p>दो</p>", "<p>एक</p>", "<p>इनमें से कोई नहीं</p>"], "correctIndex": 2, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165146935753.jpg\" title=\"1.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>J को K के दायें से दूसरे स्थान पर चित्रित किया गया है, जिसका मुख Y की ओर है।</li>\n<li>Y और X के बीच केवल एक तस्वीर चित्रित है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165146938826.jpg\" title=\"2.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>N का मुख उस तस्वीर की ओर है जो X और Y के ठीक बीच में चित्रित है।</li>\n<li>V का मुख उस तस्वीर की ओर है जिसे L के बायें से दूसरे स्थान पर चित्रित किया गया है।</li>\n<li>न तो Z और न ही X का मुख M की ओर है।</li>\n<li>Z को W के बाईं ओर चित्रित किया गया है।</li>\n</ul>\n<p>इसलिए, केस I हटा दिया जाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165146940510.jpg\" title=\"3.JPG\"/></p>\n<p><strong>उत्तर: C</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>संग्रहालय में दो समानांतर दीवारों पर एक-दूसरे की ओर मुख करके दस तस्वीरें चित्रित की गई हैं। J, K, L, M और N को दीवार 1 पर चित्रित किया गया है, जिसका मुख दक्षिण की ओर है जबकि V, W, X, Y और Z को दीवार 2 पर चित्रित किया गया है, जिसका मुख उत्तर की ओर है।</p>\n<p>J को K के दायें से दूसरे स्थान पर चित्रित किया गया है, जिसका मुख Y की ओर है। Y और X के बीच केवल एक तस्वीर चित्रित है। N का मुख उस तस्वीर की ओर है जो X और Y के ठीक बीच में चित्रित है। V का मुख उस तस्वीर की ओर है जिसे L के बायें से दूसरे स्थान पर चित्रित किया गया है। न तो Z और न ही X का मुख M की ओर है। Z को W के बाईं ओर चित्रित किया गया है।</p><br><p><strong>निम्नलिखित में से कौन सी तस्वीर Y के बायें से तीसरे स्थान पर चित्रित की</strong> <strong>हुई है?</strong></p>", "options": ["<p>X</p>", "<p>वह तस्वीर जिसका मुख L की ओर है</p>", "<p>वह तस्वीर जो X<strong> </strong>के बाएँ से दूसरे स्थान पर चित्रित है</p>", "<p>V</p>", "<p>इनमें से कोई नहीं</p>"], "correctIndex": 1, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165146935753.jpg\" title=\"1.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>J को K के दायें से दूसरे स्थान पर चित्रित किया गया है, जिसका मुख Y की ओर है।</li>\n<li>Y और X के बीच केवल एक तस्वीर चित्रित है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165146938826.jpg\" title=\"2.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>N का मुख उस तस्वीर की ओर है जो X और Y के ठीक बीच में चित्रित है।</li>\n<li>V का मुख उस तस्वीर की ओर है जिसे L के बायें से दूसरे स्थान पर चित्रित किया गया है।</li>\n<li>न तो Z और न ही X का मुख M की ओर है।</li>\n<li>Z को W के बाईं ओर चित्रित किया गया है।</li>\n</ul>\n<p>इसलिए, केस I हटा दिया जाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165146940510.jpg\" title=\"3.JPG\"/></p>\n<p><strong> <strong>उत्तर: B</strong></strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>संग्रहालय में दो समानांतर दीवारों पर एक-दूसरे की ओर मुख करके दस तस्वीरें चित्रित की गई हैं। J, K, L, M और N को दीवार 1 पर चित्रित किया गया है, जिसका मुख दक्षिण की ओर है जबकि V, W, X, Y और Z को दीवार 2 पर चित्रित किया गया है, जिसका मुख उत्तर की ओर है।</p>\n<p>J को K के दायें से दूसरे स्थान पर चित्रित किया गया है, जिसका मुख Y की ओर है। Y और X के बीच केवल एक तस्वीर चित्रित है। N का मुख उस तस्वीर की ओर है जो X और Y के ठीक बीच में चित्रित है। V का मुख उस तस्वीर की ओर है जिसे L के बायें से दूसरे स्थान पर चित्रित किया गया है। न तो Z और न ही X का मुख M की ओर है। Z को W के बाईं ओर चित्रित किया गया है।</p><br><p><strong>निम्नलिखित में से कौन-</strong><strong>सी</strong><strong> </strong><strong>तस्वी</strong><strong>रों</strong><strong> </strong><strong>की जोड़ी को </strong><strong>दीवारों के कोनों पर चित्रित किया गया है</strong><strong>?</strong></p>\n<p><strong>I. </strong>MX</p>\n<p><strong>II.</strong> LW</p>\n<p><strong>III.</strong> ZW</p>", "options": ["<p>केवल I</p>", "<p>केवल II</p>", "<p>II और III दोनों</p>", "<p>I और III दोनों</p>", "<p>इनमें से कोई नहीं</p>"], "correctIndex": 2, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165146935753.jpg\" title=\"1.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>J को K के दायें से दूसरे स्थान पर चित्रित किया गया है, जिसका मुख Y की ओर है।</li>\n<li>Y और X के बीच केवल एक तस्वीर चित्रित है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165146938826.jpg\" title=\"2.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>N का मुख उस तस्वीर की ओर है जो X और Y के ठीक बीच में चित्रित है।</li>\n<li>V का मुख उस तस्वीर की ओर है जिसे L के बायें से दूसरे स्थान पर चित्रित किया गया है।</li>\n<li>न तो Z और न ही X का मुख M की ओर है।</li>\n<li>Z को W के बाईं ओर चित्रित किया गया है।</li>\n</ul>\n<p>इसलिए, केस I हटा दिया जाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165146940510.jpg\" title=\"3.JPG\"/></p>\n<p><strong>उत्तर: C</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>संग्रहालय में दो समानांतर दीवारों पर एक-दूसरे की ओर मुख करके दस तस्वीरें चित्रित की गई हैं। J, K, L, M और N को दीवार 1 पर चित्रित किया गया है, जिसका मुख दक्षिण की ओर है जबकि V, W, X, Y और Z को दीवार 2 पर चित्रित किया गया है, जिसका मुख उत्तर की ओर है।</p>\n<p>J को K के दायें से दूसरे स्थान पर चित्रित किया गया है, जिसका मुख Y की ओर है। Y और X के बीच केवल एक तस्वीर चित्रित है। N का मुख उस तस्वीर की ओर है जो X और Y के ठीक बीच में चित्रित है। V का मुख उस तस्वीर की ओर है जिसे L के बायें से दूसरे स्थान पर चित्रित किया गया है। न तो Z और न ही X का मुख M की ओर है। Z को W के बाईं ओर चित्रित किया गया है।</p><br><p><strong>निम्नलिखित पांच में से चार एक समूह बनाने के लिए समान हैं, निम्नलिखित में से कौन सा उस समूह से संबंधित नहीं है?</strong></p>", "options": ["<p>LZ</p>", "<p>MW</p>", "<p>NY</p>", "<p>JX</p>", "<p>KY</p>"], "correctIndex": 2, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165146935753.jpg\" title=\"1.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>J को K के दायें से दूसरे स्थान पर चित्रित किया गया है, जिसका मुख Y की ओर है।</li>\n<li>Y और X के बीच केवल एक तस्वीर चित्रित है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165146938826.jpg\" title=\"2.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>N का मुख उस तस्वीर की ओर है जो X और Y के ठीक बीच में चित्रित है।</li>\n<li>V का मुख उस तस्वीर की ओर है जिसे L के बायें से दूसरे स्थान पर चित्रित किया गया है।</li>\n<li>न तो Z और न ही X का मुख M की ओर है।</li>\n<li>Z को W के बाईं ओर चित्रित किया गया है।</li>\n</ul>\n<p>इसलिए, केस I हटा दिया जाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165146940510.jpg\" title=\"3.JPG\"/></p>\n<p><strong> <strong>उत्तर: C</strong></strong></p>\n<p>(विकल्प C को छोड़कर सभी तस्वीरें एक दूसरे के सामने चित्रित हैं)</p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>संग्रहालय में दो समानांतर दीवारों पर एक-दूसरे की ओर मुख करके दस तस्वीरें चित्रित की गई हैं। J, K, L, M और N को दीवार 1 पर चित्रित किया गया है, जिसका मुख दक्षिण की ओर है जबकि V, W, X, Y और Z को दीवार 2 पर चित्रित किया गया है, जिसका मुख उत्तर की ओर है।</p>\n<p>J को K के दायें से दूसरे स्थान पर चित्रित किया गया है, जिसका मुख Y की ओर है। Y और X के बीच केवल एक तस्वीर चित्रित है। N का मुख उस तस्वीर की ओर है जो X और Y के ठीक बीच में चित्रित है। V का मुख उस तस्वीर की ओर है जिसे L के बायें से दूसरे स्थान पर चित्रित किया गया है। न तो Z और न ही X का मुख M की ओर है। Z को W के बाईं ओर चित्रित किया गया है।</p><br><p><strong>निम्नलिखित में से कौन सी तस्वीर का मुख V की ओर है?</strong></p>", "options": ["<p>L</p>", "<p>वह तस्वीर जिसे J के दायें से तीसरे स्थान पर चित्रित किया गया है</p>", "<p>वह तस्वीर जिसे L और M के ठीक बीच में चित्रित किया गया है</p>", "<p>K</p>", "<p>इनमें से कोई नहीं</p>"], "correctIndex": 2, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165146935753.jpg\" title=\"1.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>J को K के दायें से दूसरे स्थान पर चित्रित किया गया है, जिसका मुख Y की ओर है।</li>\n<li>Y और X के बीच केवल एक तस्वीर चित्रित है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165146938826.jpg\" title=\"2.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>N का मुख उस तस्वीर की ओर है जो X और Y के ठीक बीच में चित्रित है।</li>\n<li>V का मुख उस तस्वीर की ओर है जिसे L के बायें से दूसरे स्थान पर चित्रित किया गया है।</li>\n<li>न तो Z और न ही X का मुख M की ओर है।</li>\n<li>Z को W के बाईं ओर चित्रित किया गया है।</li>\n</ul>\n<p>इसलिए, केस I हटा दिया जाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165146940510.jpg\" title=\"3.JPG\"/></p>\n<p><strong> <strong>उत्तर: C</strong></strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Eight persons - P, Q, R, S, T, U, V, and W are living in an eight-storey building, but not necessarily in the same order. The lower-most floor is numbered as one and the floor immediately above is numbered as two and so on.</p>\n<p>U lives on an odd numbered floor but above third floor.<strong> </strong>Only two persons live between T and V. The number of persons living between U and V is one less than the number of persons living between V and T.<strong> </strong>S lives three floors above P, who lives immediately below T.<strong> </strong>R lives below Q and above W.<strong> </strong>As many persons live between R and W is same as persons live above R.</p><br><p><strong>On which of the following floor does W live?</strong></p>", "options": ["<p>The floor which is immediately below V</p>", "<p>The floor which is immediately above T</p>", "<p>The floor which is immediately below R</p>", "<p>The floor which is immediately below S</p>", "<p>Both b &amp; d</p>"], "correctIndex": 4, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583262573.png\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>U lives on an odd numbered floor but above the third floor.</li>\n<li>Only two persons live between T and V.</li>\n<li>The number of persons living between U and V is one less than the number of persons living between V and T.</li>\n<li>S lives three floors above P, who lives immediately below T.</li>\n</ul>\n<p>From the above conditions, there are two possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583263950.png\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>R lives below Q and above W.</li>\n<li>As many persons between R and W as above R.</li>\n</ul>\n<p>From the above conditions, Case 1 gets eliminated. Hence, Case 2 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583265325.png\"/></p>\n<p><strong>Answer: E</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Eight persons - P, Q, R, S, T, U, V, and W are living in an eight-storey building, but not necessarily in the same order. The lower-most floor is numbered as one and the floor immediately above is numbered as two and so on.</p>\n<p>U lives on an odd numbered floor but above third floor.<strong> </strong>Only two persons live between T and V. The number of persons living between U and V is one less than the number of persons living between V and T.<strong> </strong>S lives three floors above P, who lives immediately below T.<strong> </strong>R lives below Q and above W.<strong> </strong>As many persons live between R and W is same as persons live above R.</p><br><p><strong>How many persons live between the one who lives on seventh floor and T? </strong></p>", "options": ["<p>One</p>", "<p>Two</p>", "<p>Three</p>", "<p>Four</p>", "<p>More than four</p>"], "correctIndex": 3, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583262573.png\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>U lives on an odd numbered floor but above the third floor.</li>\n<li>Only two persons live between T and V.</li>\n<li>The number of persons living between U and V is one less than the number of persons living between V and T.</li>\n<li>S lives three floors above P, who lives immediately below T.</li>\n</ul>\n<p>From the above conditions, there are two possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583263950.png\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>R lives below Q and above W.</li>\n<li>As many persons between R and W as above R.</li>\n</ul>\n<p>From the above conditions, Case 1 gets eliminated. Hence, Case 2 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583265325.png\"/></p>\n<p><strong>Answer: D</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Eight persons - P, Q, R, S, T, U, V, and W are living in an eight-storey building, but not necessarily in the same order. The lower-most floor is numbered as one and the floor immediately above is numbered as two and so on.</p>\n<p>U lives on an odd numbered floor but above third floor.<strong> </strong>Only two persons live between T and V. The number of persons living between U and V is one less than the number of persons living between V and T.<strong> </strong>S lives three floors above P, who lives immediately below T.<strong> </strong>R lives below Q and above W.<strong> </strong>As many persons live between R and W is same as persons live above R.</p><br><p><strong>Who among the following person lives three floors below Q?</strong></p>", "options": ["<p>The one who lives immediately above T</p>", "<p>P</p>", "<p>The one who lives two floors below S</p>", "<p>R</p>", "<p>The one who lives on fifth floor</p>"], "correctIndex": 4, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583262573.png\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>U lives on an odd numbered floor but above the third floor.</li>\n<li>Only two persons live between T and V.</li>\n<li>The number of persons living between U and V is one less than the number of persons living between V and T.</li>\n<li>S lives three floors above P, who lives immediately below T.</li>\n</ul>\n<p>From the above conditions, there are two possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583263950.png\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>R lives below Q and above W.</li>\n<li>As many persons between R and W as above R.</li>\n</ul>\n<p>From the above conditions, Case 1 gets eliminated. Hence, Case 2 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583265325.png\"/></p>\n<p><strong>Answer: E</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Eight persons - P, Q, R, S, T, U, V, and W are living in an eight-storey building, but not necessarily in the same order. The lower-most floor is numbered as one and the floor immediately above is numbered as two and so on.</p>\n<p>U lives on an odd numbered floor but above third floor.<strong> </strong>Only two persons live between T and V. The number of persons living between U and V is one less than the number of persons living between V and T.<strong> </strong>S lives three floors above P, who lives immediately below T.<strong> </strong>R lives below Q and above W.<strong> </strong>As many persons live between R and W is same as persons live above R.</p><br><p><strong>Four of the following five are alike in a certain way as per the given arrangement and hence form a group. Find the one who does not belong to that group.</strong></p>", "options": ["<p>P</p>", "<p>W</p>", "<p>V</p>", "<p>U</p>", "<p>Q</p>"], "correctIndex": 4, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583262573.png\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>U lives on an odd numbered floor but above the third floor.</li>\n<li>Only two persons live between T and V.</li>\n<li>The number of persons living between U and V is one less than the number of persons living between V and T.</li>\n<li>S lives three floors above P, who lives immediately below T.</li>\n</ul>\n<p>From the above conditions, there are two possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583263950.png\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>R lives below Q and above W.</li>\n<li>As many persons between R and W as above R.</li>\n</ul>\n<p>From the above conditions, Case 1 gets eliminated. Hence, Case 2 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583265325.png\"/></p>\n<p><strong>Answer: E (All the persons live on an odd-numbered floor, except option E)</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Eight persons - P, Q, R, S, T, U, V, and W are living in an eight-storey building, but not necessarily in the same order. The lower-most floor is numbered as one and the floor immediately above is numbered as two and so on.</p>\n<p>U lives on an odd numbered floor but above third floor.<strong> </strong>Only two persons live between T and V. The number of persons living between U and V is one less than the number of persons living between V and T.<strong> </strong>S lives three floors above P, who lives immediately below T.<strong> </strong>R lives below Q and above W.<strong> </strong>As many persons live between R and W is same as persons live above R.</p><br><p><strong>Which of the following statement(s) is/are not true with respect to the final arrangement?</strong></p>", "options": ["<p>Only one person lives below T</p>", "<p>Q lives on the top-most floor</p>", "<p>Only two persons live between V and W</p>", "<p>Both T and R live on an odd-numbered floor</p>", "<p>Both c &amp; d</p>"], "correctIndex": 4, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583262573.png\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>U lives on an odd numbered floor but above the third floor.</li>\n<li>Only two persons live between T and V.</li>\n<li>The number of persons living between U and V is one less than the number of persons living between V and T.</li>\n<li>S lives three floors above P, who lives immediately below T.</li>\n</ul>\n<p>From the above conditions, there are two possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583263950.png\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>R lives below Q and above W.</li>\n<li>As many persons between R and W as above R.</li>\n</ul>\n<p>From the above conditions, Case 1 gets eliminated. Hence, Case 2 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583265325.png\"/></p>\n<p><strong>Answer: E</strong></p>"}] 
+};
+        const rawTitle = "Prelims Mastery Quiz 2025 Reasoning (Day-35)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Prelims Mastery Quiz 2025 Reasoning (Day-35)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

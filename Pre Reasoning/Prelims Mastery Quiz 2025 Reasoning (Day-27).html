@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Prelims Mastery Quiz 2025 Reasoning (Day-27)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>Study the following information carefully and answer the given questions.</strong></p>\n<p>Eight persons - A, B, C, D, E, F, G and H are living in three different cities viz Chennai, Bangalore and Mumbai. At least two persons and not more than three persons live in the same department.</p>\n<p>H and A are living in different cities but none of them live in Mumbai. E lives in the same city as A. Only one person lives in the same city as B, who does not live in Chennai. Both C and F are living in the same city. D neither lives in Bangalore nor lives in the same city as E. G does not live in Chennai.</p><br><p><strong>Who among the following person lives in the same city as A?</strong></p>", "options": ["<p>D</p>", "<p>C</p>", "<p>B</p>", "<p>G</p>", "<p>F</p>"], "correctIndex": 3, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309111126.jpg\" title=\"9.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>H and A are living in different cities but none of them live in Mumbai.</li>\n<li>E lives in the same city as A.</li>\n</ul>\n<p>From the above conditions, we have two possibilities,</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309115020.jpg\" title=\"10.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>Only one person lives in the same city as B, who does not live in Chennai.</li>\n<li>Both C and F are living in the same city.</li>\n</ul>\n<p>From the above conditions, we have three possibilities,</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309119013.jpg\" title=\"11.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>D neither lives in Bangalore nor lives in the same city as E.</li>\n<li>G does not live in Chennai.</li>\n</ul>\n<p>From the above conditions, case 1 and case 1a get eliminated because we cannot place G. Hence Case 2 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309125435.jpg\" title=\"12.JPG\"/></p>\n<p><strong>Answer: D</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the given questions.</strong></p>\n<p>Eight persons - A, B, C, D, E, F, G and H are living in three different cities viz Chennai, Bangalore and Mumbai. At least two persons and not more than three persons live in the same department.</p>\n<p>H and A are living in different cities but none of them live in Mumbai. E lives in the same city as A. Only one person lives in the same city as B, who does not live in Chennai. Both C and F are living in the same city. D neither lives in Bangalore nor lives in the same city as E. G does not live in Chennai.</p><br><p><strong>Who among the following person lives in Mumbai?</strong></p>", "options": ["<p>A</p>", "<p>The person who lives with D</p>", "<p>E</p>", "<p>G</p>", "<p>The person who lives with C</p>"], "correctIndex": 1, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309111126.jpg\" title=\"9.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>H and A are living in different cities but none of them live in Mumbai.</li>\n<li>E lives in the same city as A.</li>\n</ul>\n<p>From the above conditions, we have two possibilities,</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309115020.jpg\" title=\"10.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>Only one person lives in the same city as B, who does not live in Chennai.</li>\n<li>Both C and F are living in the same city.</li>\n</ul>\n<p>From the above conditions, we have three possibilities,</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309119013.jpg\" title=\"11.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>D neither lives in Bangalore nor lives in the same city as E.</li>\n<li>G does not live in Chennai.</li>\n</ul>\n<p>From the above conditions, case 1 and case 1a get eliminated because we cannot place G. Hence Case 2 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309125435.jpg\" title=\"12.JPG\"/></p>\n<p><strong>Answer: B</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the given questions.</strong></p>\n<p>Eight persons - A, B, C, D, E, F, G and H are living in three different cities viz Chennai, Bangalore and Mumbai. At least two persons and not more than three persons live in the same department.</p>\n<p>H and A are living in different cities but none of them live in Mumbai. E lives in the same city as A. Only one person lives in the same city as B, who does not live in Chennai. Both C and F are living in the same city. D neither lives in Bangalore nor lives in the same city as E. G does not live in Chennai.</p><br><p><strong>Four of the following five are alike in a certain way based on the given arrangement and thus form a group. Which one of the following does not belong to the group?</strong></p>", "options": ["<p>HA</p>", "<p>EB</p>", "<p>DF</p>", "<p>GH</p>", "<p>AE</p>"], "correctIndex": 4, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309111126.jpg\" title=\"9.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>H and A are living in different cities but none of them live in Mumbai.</li>\n<li>E lives in the same city as A.</li>\n</ul>\n<p>From the above conditions, we have two possibilities,</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309115020.jpg\" title=\"10.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>Only one person lives in the same city as B, who does not live in Chennai.</li>\n<li>Both C and F are living in the same city.</li>\n</ul>\n<p>From the above conditions, we have three possibilities,</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309119013.jpg\" title=\"11.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>D neither lives in Bangalore nor lives in the same city as E.</li>\n<li>G does not live in Chennai.</li>\n</ul>\n<p>From the above conditions, case 1 and case 1a get eliminated because we cannot place G. Hence Case 2 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309125435.jpg\" title=\"12.JPG\"/></p>\n<p><strong>Answer: E </strong>(Only A and E live in the same city)</p>"}, {"question": "<p><strong>Study the following information carefully and answer the given questions.</strong></p>\n<p>Eight persons - A, B, C, D, E, F, G and H are living in three different cities viz Chennai, Bangalore and Mumbai. At least two persons and not more than three persons live in the same department.</p>\n<p>H and A are living in different cities but none of them live in Mumbai. E lives in the same city as A. Only one person lives in the same city as B, who does not live in Chennai. Both C and F are living in the same city. D neither lives in Bangalore nor lives in the same city as E. G does not live in Chennai.</p><br><p><strong>Which of the following statement(s) is/are true as per the given arrangement?</strong></p>\n<p><strong>i).</strong> Both C and H are living in Chennai</p>\n<p><strong>ii).</strong> Only two persons are living in Mumbai</p>\n<p><strong>iii).</strong> Same number of persons are living in both Mumbai and Bangalore</p>", "options": ["<p>Only i</p>", "<p>Only ii</p>", "<p>Only iii</p>", "<p>Only i and ii</p>", "<p>Only ii and iii</p>"], "correctIndex": 3, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309111126.jpg\" title=\"9.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>H and A are living in different cities but none of them live in Mumbai.</li>\n<li>E lives in the same city as A.</li>\n</ul>\n<p>From the above conditions, we have two possibilities,</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309115020.jpg\" title=\"10.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>Only one person lives in the same city as B, who does not live in Chennai.</li>\n<li>Both C and F are living in the same city.</li>\n</ul>\n<p>From the above conditions, we have three possibilities,</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309119013.jpg\" title=\"11.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>D neither lives in Bangalore nor lives in the same city as E.</li>\n<li>G does not live in Chennai.</li>\n</ul>\n<p>From the above conditions, case 1 and case 1a get eliminated because we cannot place G. Hence Case 2 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309125435.jpg\" title=\"12.JPG\"/></p>\n<p><strong>Answer: D</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the given questions.</strong></p>\n<p>Eight persons - A, B, C, D, E, F, G and H are living in three different cities viz Chennai, Bangalore and Mumbai. At least two persons and not more than three persons live in the same department.</p>\n<p>H and A are living in different cities but none of them live in Mumbai. E lives in the same city as A. Only one person lives in the same city as B, who does not live in Chennai. Both C and F are living in the same city. D neither lives in Bangalore nor lives in the same city as E. G does not live in Chennai.</p><br><p><strong>Which of the following pair is correctly matched?</strong></p>", "options": ["<p>C - Mumbai</p>", "<p>D - Chennai</p>", "<p>F - Chennai</p>", "<p>B - Bangalore</p>", "<p>E - Mumbai</p>"], "correctIndex": 2, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309111126.jpg\" title=\"9.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>H and A are living in different cities but none of them live in Mumbai.</li>\n<li>E lives in the same city as A.</li>\n</ul>\n<p>From the above conditions, we have two possibilities,</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309115020.jpg\" title=\"10.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>Only one person lives in the same city as B, who does not live in Chennai.</li>\n<li>Both C and F are living in the same city.</li>\n</ul>\n<p>From the above conditions, we have three possibilities,</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309119013.jpg\" title=\"11.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>D neither lives in Bangalore nor lives in the same city as E.</li>\n<li>G does not live in Chennai.</li>\n</ul>\n<p>From the above conditions, case 1 and case 1a get eliminated because we cannot place G. Hence Case 2 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309125435.jpg\" title=\"12.JPG\"/></p>\n<p><strong>Answer: C</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the given questions. </strong></p>\n<p>Eight persons - P, Q, R, S, T, U, V and W are sitting around a rectangular table in such a way that four of them are sitting at the corners while four of them are sitting in the middle of the sides. All of them are facing the centre.</p>\n<p>U sits third to the left of T, who sits at the corner of the table. Only one person sits between T and Q (either from left or right). Q and W are immediate neighbours. V sits second to the left of P but none of them sits adjacent to U. As many persons sit between P and R as between R and V. More than one person sits between W and R, when counted from the right of W.</p><br><p><strong>If the persons sitting at the corner of the table are facing the opposite direction with respect to their original direction, then who among the following person sits third to the right of R?</strong></p>", "options": ["<p>S</p>", "<p>P</p>", "<p>W</p>", "<p>U</p>", "<p>V</p>"], "correctIndex": 2, "solution": "<p><strong>Final Arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915821768.jpg\" title=\"44.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>U sits third to the left of T, who sits at the corner of the table.</li>\n<li>Only one person sits between T and Q(either from left or right).</li>\n<li>Q and W are immediate neighbours.</li>\n</ul>\n<p>From the above conditions, there are three possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915824919.jpg\" title=\"45.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>V sits second to the left of P but none of them sits adjacent to U.</li>\n</ul>\n<p>From the above condition, Case-2 gets eliminated.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915827964.jpg\" title=\"46.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>As many persons sit between P and R as between R and V.</li>\n<li>More than one person sits between W and R when counted from the right of W.</li>\n</ul>\n<p>From the above condition, Case-2a get eliminated because W and R are immediate neighbours. Hence Case-1 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915830839.jpg\" title=\"47.JPG\"/></p>\n<p><strong>Answer: C</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the given questions. </strong></p>\n<p>Eight persons - P, Q, R, S, T, U, V and W are sitting around a rectangular table in such a way that four of them are sitting at the corners while four of them are sitting in the middle of the sides. All of them are facing the centre.</p>\n<p>U sits third to the left of T, who sits at the corner of the table. Only one person sits between T and Q (either from left or right). Q and W are immediate neighbours. V sits second to the left of P but none of them sits adjacent to U. As many persons sit between P and R as between R and V. More than one person sits between W and R, when counted from the right of W.</p><br><p><strong>What is the position of U with respect to the one who sits immediate right of R?</strong></p>", "options": ["<p>Third to the right</p>", "<p>Second to the right</p>", "<p>Second to the left</p>", "<p>Immediate right</p>", "<p>Immediate left</p>"], "correctIndex": 1, "solution": "<p><strong>Final Arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915821768.jpg\" title=\"44.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>U sits third to the left of T, who sits at the corner of the table.</li>\n<li>Only one person sits between T and Q(either from left or right).</li>\n<li>Q and W are immediate neighbours.</li>\n</ul>\n<p>From the above conditions, there are three possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915824919.jpg\" title=\"45.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>V sits second to the left of P but none of them sits adjacent to U.</li>\n</ul>\n<p>From the above condition, Case-2 gets eliminated.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915827964.jpg\" title=\"46.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>As many persons sit between P and R as between R and V.</li>\n<li>More than one person sits between W and R when counted from the right of W.</li>\n</ul>\n<p>From the above condition, Case-2a get eliminated because W and R are immediate neighbours. Hence Case-1 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915830839.jpg\" title=\"47.JPG\"/></p>\n<p><strong>Answer: B</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the given questions. </strong></p>\n<p>Eight persons - P, Q, R, S, T, U, V and W are sitting around a rectangular table in such a way that four of them are sitting at the corners while four of them are sitting in the middle of the sides. All of them are facing the centre.</p>\n<p>U sits third to the left of T, who sits at the corner of the table. Only one person sits between T and Q (either from left or right). Q and W are immediate neighbours. V sits second to the left of P but none of them sits adjacent to U. As many persons sit between P and R as between R and V. More than one person sits between W and R, when counted from the right of W.</p><br><p><strong>Who among the following person is not sitting in the middle of the sides of the table?</strong></p>", "options": ["<p>P</p>", "<p>The one who sits opposite to S</p>", "<p>U</p>", "<p>W</p>", "<p>The one who sits immediate right of T</p>"], "correctIndex": 1, "solution": "<p><strong>Final Arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915821768.jpg\" title=\"44.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>U sits third to the left of T, who sits at the corner of the table.</li>\n<li>Only one person sits between T and Q(either from left or right).</li>\n<li>Q and W are immediate neighbours.</li>\n</ul>\n<p>From the above conditions, there are three possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915824919.jpg\" title=\"45.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>V sits second to the left of P but none of them sits adjacent to U.</li>\n</ul>\n<p>From the above condition, Case-2 gets eliminated.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915827964.jpg\" title=\"46.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>As many persons sit between P and R as between R and V.</li>\n<li>More than one person sits between W and R when counted from the right of W.</li>\n</ul>\n<p>From the above condition, Case-2a get eliminated because W and R are immediate neighbours. Hence Case-1 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915830839.jpg\" title=\"47.JPG\"/></p>\n<p><strong>Answer: B</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the given questions. </strong></p>\n<p>Eight persons - P, Q, R, S, T, U, V and W are sitting around a rectangular table in such a way that four of them are sitting at the corners while four of them are sitting in the middle of the sides. All of them are facing the centre.</p>\n<p>U sits third to the left of T, who sits at the corner of the table. Only one person sits between T and Q (either from left or right). Q and W are immediate neighbours. V sits second to the left of P but none of them sits adjacent to U. As many persons sit between P and R as between R and V. More than one person sits between W and R, when counted from the right of W.</p><br><p><strong>Which of the following statements is/are TRUE as per the given arrangement?</strong></p>", "options": ["<p>S sits immediate right of P</p>", "<p>Only two persons sit between P and U</p>", "<p>No one sits between U and W</p>", "<p>Q and S are sitting opposite to each other</p>", "<p>All the statements are true</p>"], "correctIndex": 0, "solution": "<p><strong>Final Arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915821768.jpg\" title=\"44.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>U sits third to the left of T, who sits at the corner of the table.</li>\n<li>Only one person sits between T and Q(either from left or right).</li>\n<li>Q and W are immediate neighbours.</li>\n</ul>\n<p>From the above conditions, there are three possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915824919.jpg\" title=\"45.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>V sits second to the left of P but none of them sits adjacent to U.</li>\n</ul>\n<p>From the above condition, Case-2 gets eliminated.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915827964.jpg\" title=\"46.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>As many persons sit between P and R as between R and V.</li>\n<li>More than one person sits between W and R when counted from the right of W.</li>\n</ul>\n<p>From the above condition, Case-2a get eliminated because W and R are immediate neighbours. Hence Case-1 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915830839.jpg\" title=\"47.JPG\"/></p>\n<p><strong>Answer: A</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the given questions. </strong></p>\n<p>Eight persons - P, Q, R, S, T, U, V and W are sitting around a rectangular table in such a way that four of them are sitting at the corners while four of them are sitting in the middle of the sides. All of them are facing the centre.</p>\n<p>U sits third to the left of T, who sits at the corner of the table. Only one person sits between T and Q (either from left or right). Q and W are immediate neighbours. V sits second to the left of P but none of them sits adjacent to U. As many persons sit between P and R as between R and V. More than one person sits between W and R, when counted from the right of W.</p><br><p><strong>How many persons sit between S and V, when counted from the left of S?</strong></p>", "options": ["<p>None</p>", "<p>Four</p>", "<p>Three</p>", "<p>Two</p>", "<p>One</p>"], "correctIndex": 3, "solution": "<p><strong>Final Arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915821768.jpg\" title=\"44.JPG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>U sits third to the left of T, who sits at the corner of the table.</li>\n<li>Only one person sits between T and Q(either from left or right).</li>\n<li>Q and W are immediate neighbours.</li>\n</ul>\n<p>From the above conditions, there are three possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915824919.jpg\" title=\"45.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>V sits second to the left of P but none of them sits adjacent to U.</li>\n</ul>\n<p>From the above condition, Case-2 gets eliminated.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915827964.jpg\" title=\"46.JPG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>As many persons sit between P and R as between R and V.</li>\n<li>More than one person sits between W and R when counted from the right of W.</li>\n</ul>\n<p>From the above condition, Case-2a get eliminated because W and R are immediate neighbours. Hence Case-1 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915830839.jpg\" title=\"47.JPG\"/></p>\n<p><strong>Answer: D</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Nine persons - P, Q, R, S, T, U, V, W, and X are of different ages i.e. 75, 58, 52, 43, 36, 27, 23, 16, and 8, but not necessarily in the same order.</p>\n<p>The age of T is a prime number. The age of P is twice the age of W.<strong> </strong>The sum of the ages of P and U is the same as the age of S, whose age is not a prime number. The age of neither Q nor X is a perfect cube. The difference between the ages of R and X is 4. Q is younger than V.</p><br><p><strong>What is the sum of the ages of P and S? </strong></p>", "options": ["<p>53</p>", "<p>68</p>", "<p>40</p>", "<p>62</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583328288.png\"/></p>\n<p>We have,</p>\n<ul>\n<li>The age of T is a prime number.</li>\n<li>The age of P is twice the age of W.</li>\n</ul>\n<p>From the above condition, there are two possibilities</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583330730.png\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>The sum of the ages of P and U is the same as the age of S, whose age is not a prime number.</li>\n<li>The age of neither Q nor X is a perfect cube.</li>\n<li>The difference between the ages of R and X is 4.</li>\n<li>Q is younger than V.</li>\n</ul>\n<p>From the above condition, Case 2 gets eliminated. Hence, Case 1 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583332394.png\"/></p>\n<p><strong>Answer: B</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Nine persons - P, Q, R, S, T, U, V, W, and X are of different ages i.e. 75, 58, 52, 43, 36, 27, 23, 16, and 8, but not necessarily in the same order.</p>\n<p>The age of T is a prime number. The age of P is twice the age of W.<strong> </strong>The sum of the ages of P and U is the same as the age of S, whose age is not a prime number. The age of neither Q nor X is a perfect cube. The difference between the ages of R and X is 4. Q is younger than V.</p><br><p><strong>Which of the following statement(s) is/are true with respect to the final arrangement? </strong></p>", "options": ["<p>P is the eldest person</p>", "<p>The difference between the ages of S and X is 29</p>", "<p>The sum of the ages of V and W is 31</p>", "<p>All the given statements are true</p>", "<p>All the given statements are false</p>"], "correctIndex": 1, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583328288.png\"/></p>\n<p>We have,</p>\n<ul>\n<li>The age of T is a prime number.</li>\n<li>The age of P is twice the age of W.</li>\n</ul>\n<p>From the above condition, there are two possibilities</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583330730.png\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>The sum of the ages of P and U is the same as the age of S, whose age is not a prime number.</li>\n<li>The age of neither Q nor X is a perfect cube.</li>\n<li>The difference between the ages of R and X is 4.</li>\n<li>Q is younger than V.</li>\n</ul>\n<p>From the above condition, Case 2 gets eliminated. Hence, Case 1 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583332394.png\"/></p>\n<p><strong>Answer: B</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Nine persons - P, Q, R, S, T, U, V, W, and X are of different ages i.e. 75, 58, 52, 43, 36, 27, 23, 16, and 8, but not necessarily in the same order.</p>\n<p>The age of T is a prime number. The age of P is twice the age of W.<strong> </strong>The sum of the ages of P and U is the same as the age of S, whose age is not a prime number. The age of neither Q nor X is a perfect cube. The difference between the ages of R and X is 4. Q is younger than V.</p><br><p><strong>Who among the following person’s age is 58 years? </strong></p>", "options": ["<p>Q</p>", "<p>S</p>", "<p>T</p>", "<p>U</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583328288.png\"/></p>\n<p>We have,</p>\n<ul>\n<li>The age of T is a prime number.</li>\n<li>The age of P is twice the age of W.</li>\n</ul>\n<p>From the above condition, there are two possibilities</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583330730.png\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>The sum of the ages of P and U is the same as the age of S, whose age is not a prime number.</li>\n<li>The age of neither Q nor X is a perfect cube.</li>\n<li>The difference between the ages of R and X is 4.</li>\n<li>Q is younger than V.</li>\n</ul>\n<p>From the above condition, Case 2 gets eliminated. Hence, Case 1 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583332394.png\"/></p>\n<p><strong>Answer: A</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Nine persons - P, Q, R, S, T, U, V, W, and X are of different ages i.e. 75, 58, 52, 43, 36, 27, 23, 16, and 8, but not necessarily in the same order.</p>\n<p>The age of T is a prime number. The age of P is twice the age of W.<strong> </strong>The sum of the ages of P and U is the same as the age of S, whose age is not a prime number. The age of neither Q nor X is a perfect cube. The difference between the ages of R and X is 4. Q is younger than V.</p><br><p><strong>How many persons are elder than U?</strong></p>", "options": ["<p>Three</p>", "<p>More than four</p>", "<p>One</p>", "<p>Two</p>", "<p>Four</p>"], "correctIndex": 4, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583328288.png\"/></p>\n<p>We have,</p>\n<ul>\n<li>The age of T is a prime number.</li>\n<li>The age of P is twice the age of W.</li>\n</ul>\n<p>From the above condition, there are two possibilities</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583330730.png\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>The sum of the ages of P and U is the same as the age of S, whose age is not a prime number.</li>\n<li>The age of neither Q nor X is a perfect cube.</li>\n<li>The difference between the ages of R and X is 4.</li>\n<li>Q is younger than V.</li>\n</ul>\n<p>From the above condition, Case 2 gets eliminated. Hence, Case 1 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583332394.png\"/></p>\n<p><strong>Answer: E</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Nine persons - P, Q, R, S, T, U, V, W, and X are of different ages i.e. 75, 58, 52, 43, 36, 27, 23, 16, and 8, but not necessarily in the same order.</p>\n<p>The age of T is a prime number. The age of P is twice the age of W.<strong> </strong>The sum of the ages of P and U is the same as the age of S, whose age is not a prime number. The age of neither Q nor X is a perfect cube. The difference between the ages of R and X is 4. Q is younger than V.</p><br><p><strong>Four of the following five are alike in a certain way </strong><strong>as per the given arrangement and hence form a group. Find the one who does not belong to that group.</strong></p>", "options": ["<p>P</p>", "<p>R</p>", "<p>U</p>", "<p>W</p>", "<p>S</p>"], "correctIndex": 1, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583328288.png\"/></p>\n<p>We have,</p>\n<ul>\n<li>The age of T is a prime number.</li>\n<li>The age of P is twice the age of W.</li>\n</ul>\n<p>From the above condition, there are two possibilities</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583330730.png\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>The sum of the ages of P and U is the same as the age of S, whose age is not a prime number.</li>\n<li>The age of neither Q nor X is a perfect cube.</li>\n<li>The difference between the ages of R and X is 4.</li>\n<li>Q is younger than V.</li>\n</ul>\n<p>From the above condition, Case 2 gets eliminated. Hence, Case 1 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165583332394.png\"/></p>\n<p><strong>Answer: B (The ages of all the persons are an even number, except option B)</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the question given below:</strong></p>\n<p>A certain number of persons are sitting in a linear row facing north.</p>\n<p>Only four persons sit between P and S. M sits immediate left of S. Q sits third to the right of M. J sits five places away from P. R sits second to the right of J. R sits fourth from one of the ends. P sits exactly in the middle of the row.</p><br><p><strong>How many persons are sitting in the row?</strong></p>", "options": ["<p>21</p>", "<p>23</p>", "<p>29</p>", "<p>25</p>", "<p>27</p>"], "correctIndex": 0, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002539716.png\" title=\"1.PNG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>Only four persons sit between P and S.</li>\n<li>M sits immediate left of S.</li>\n<li>Q sits third to the right of M.</li>\n</ul>\n<p>From the above statement, there are two possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002544860.png\" title=\"2.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>J sits five places away from P.</li>\n<li>R sits second to the right of J.</li>\n<li>R sits fourth from one of the ends.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002550434.png\" title=\"3.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>P sits exactly in the middle of the row.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002555034.png\" title=\"4.PNG\"/></p>\n<p>From the above condition, case-2 gets eliminated.</p>\n<p><strong>Answer: A</strong></p>\n<p> </p>"}, {"question": "<p><strong>Study the following information carefully and answer the question given below:</strong></p>\n<p>A certain number of persons are sitting in a linear row facing north.</p>\n<p>Only four persons sit between P and S. M sits immediate left of S. Q sits third to the right of M. J sits five places away from P. R sits second to the right of J. R sits fourth from one of the ends. P sits exactly in the middle of the row.</p><br><p><strong>If T sits exactly in the middle of Q and S, then the number of persons sitting to the left of T is the same as the number of persons sitting to the right of ____?</strong></p>", "options": ["<p>J</p>", "<p>P</p>", "<p>M</p>", "<p>The one who sits immediate left of J</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002539716.png\" title=\"1.PNG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>Only four persons sit between P and S.</li>\n<li>M sits immediate left of S.</li>\n<li>Q sits third to the right of M.</li>\n</ul>\n<p>From the above statement, there are two possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002544860.png\" title=\"2.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>J sits five places away from P.</li>\n<li>R sits second to the right of J.</li>\n<li>R sits fourth from one of the ends.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002550434.png\" title=\"3.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>P sits exactly in the middle of the row.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002555034.png\" title=\"4.PNG\"/></p>\n<p>From the above condition, case-2 gets eliminated.</p>\n<p><strong>Answer: D</strong></p>\n<p> </p>"}, {"question": "<p><strong>Study the following information carefully and answer the question given below:</strong></p>\n<p>A certain number of persons are sitting in a linear row facing north.</p>\n<p>Only four persons sit between P and S. M sits immediate left of S. Q sits third to the right of M. J sits five places away from P. R sits second to the right of J. R sits fourth from one of the ends. P sits exactly in the middle of the row.</p><br><p><strong>What is the position of J from the right end of the row?</strong></p>", "options": ["<p>Sixth</p>", "<p>Fifth</p>", "<p>Third</p>", "<p>Seventh</p>", "<p>Fourth</p>"], "correctIndex": 0, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002539716.png\" title=\"1.PNG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>Only four persons sit between P and S.</li>\n<li>M sits immediate left of S.</li>\n<li>Q sits third to the right of M.</li>\n</ul>\n<p>From the above statement, there are two possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002544860.png\" title=\"2.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>J sits five places away from P.</li>\n<li>R sits second to the right of J.</li>\n<li>R sits fourth from one of the ends.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002550434.png\" title=\"3.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>P sits exactly in the middle of the row.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002555034.png\" title=\"4.PNG\"/></p>\n<p>From the above condition, case-2 gets eliminated.</p>\n<p><strong>Answer: A</strong></p>\n<p> </p>"}, {"question": "<p><strong>Study the following information carefully and answer the question given below:</strong></p>\n<p>A certain number of persons are sitting in a linear row facing north.</p>\n<p>Only four persons sit between P and S. M sits immediate left of S. Q sits third to the right of M. J sits five places away from P. R sits second to the right of J. R sits fourth from one of the ends. P sits exactly in the middle of the row.</p><br><p><strong>Who among the following person sits third to the left of M?</strong></p>", "options": ["<p>R</p>", "<p>S</p>", "<p>P</p>", "<p>Unknown</p>", "<p>Q</p>"], "correctIndex": 3, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002539716.png\" title=\"1.PNG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>Only four persons sit between P and S.</li>\n<li>M sits immediate left of S.</li>\n<li>Q sits third to the right of M.</li>\n</ul>\n<p>From the above statement, there are two possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002544860.png\" title=\"2.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>J sits five places away from P.</li>\n<li>R sits second to the right of J.</li>\n<li>R sits fourth from one of the ends.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002550434.png\" title=\"3.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>P sits exactly in the middle of the row.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002555034.png\" title=\"4.PNG\"/></p>\n<p>From the above condition, case-2 gets eliminated.</p>\n<p><strong>Answer: D</strong></p>\n<p> </p>"}, {"question": "<p><strong>Study the following information carefully and answer the question given below:</strong></p>\n<p>A certain number of persons are sitting in a linear row facing north.</p>\n<p>Only four persons sit between P and S. M sits immediate left of S. Q sits third to the right of M. J sits five places away from P. R sits second to the right of J. R sits fourth from one of the ends. P sits exactly in the middle of the row.</p><br><p><strong>Who among the following person sits seventh to the left of R?</strong></p>", "options": ["<p>M</p>", "<p>P</p>", "<p>The one who sits third to the right of P</p>", "<p>The one who sits fourth to the left of J</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002539716.png\" title=\"1.PNG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>Only four persons sit between P and S.</li>\n<li>M sits immediate left of S.</li>\n<li>Q sits third to the right of M.</li>\n</ul>\n<p>From the above statement, there are two possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002544860.png\" title=\"2.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>J sits five places away from P.</li>\n<li>R sits second to the right of J.</li>\n<li>R sits fourth from one of the ends.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002550434.png\" title=\"3.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>P sits exactly in the middle of the row.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002555034.png\" title=\"4.PNG\"/></p>\n<p>From the above condition, case-2 gets eliminated.</p>\n<p><strong>Answer: B</strong></p>\n<p> </p>"}] ,
+    hi: [{"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>आठ व्यक्ति - A, B, C, D, E, F, G और H तीन अलग-अलग शहरों अर्थात चेन्नई, बैंगलोर और मुंबई में रह रहे हैं। कम से कम दो व्यक्ति और तीन से अधिक व्यक्ति समान विभाग में नहीं रहते हैं।</p>\n<p>H और A अलग-अलग शहरों में रह रहे हैं लेकिन उनमें से कोई भी मुंबई में नहीं रहता है। E, A के समान शहर में रहता है। केवल एक व्यक्ति B के समान शहर में रहता है, जो चेन्नई में नहीं रहता है। C और F दोनों समान शहर में रहते हैं। D न तो बैंगलोर में रहता है और न ही E के समान शहर में रहता है। G चेन्नई में नहीं रहता है।</p><br><p><strong>निम्नलिखित में से कौन सा व्यक्ति A के समान शहर में रहता है?</strong></p>", "options": ["<p>D</p>", "<p>C</p>", "<p>B</p>", "<p>G</p>", "<p>F</p>"], "correctIndex": 3, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309652162.jpg\" title=\"234.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>H और A अलग-अलग शहरों में रह रहे हैं लेकिन उनमें से कोई भी मुंबई में नहीं रहता है।</li>\n<li>E, A के समान शहर में रहता है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, हमारे पास दो संभावनाएँ हैं,</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309658963.jpg\" title=\"235.JPG\"/></p>\n<p>फिर से हमारे पास है,</p>\n<ul>\n<li>केवल एक व्यक्ति B के समान शहर में रहता है, जो चेन्नई में नहीं रहता है।</li>\n<li>C और F दोनों समान शहर में रहते हैं।</li>\n</ul>\n<p>उपरोक्त शर्तों से, हमारे पास तीन संभावनाएँ हैं,</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309664867.jpg\" title=\"236.JPG\"/></p>\n<p>फिर से हमारे पास है,</p>\n<ul>\n<li>D न तो बैंगलोर में रहता है और न ही E के समान शहर में रहता है।</li>\n<li>G चेन्नई में नहीं रहता है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, केस 1 और केस 1a समाप्त हो जाते हैं क्योंकि हम G को नहीं रख सकते हैं। इसलिए केस 2 अंतिम व्यवस्था को दर्शाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309673961.jpg\" title=\"237.JPG\"/></p>\n<p><strong>उत्तर: D</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>आठ व्यक्ति - A, B, C, D, E, F, G और H तीन अलग-अलग शहरों अर्थात चेन्नई, बैंगलोर और मुंबई में रह रहे हैं। कम से कम दो व्यक्ति और तीन से अधिक व्यक्ति समान विभाग में नहीं रहते हैं।</p>\n<p>H और A अलग-अलग शहरों में रह रहे हैं लेकिन उनमें से कोई भी मुंबई में नहीं रहता है। E, A के समान शहर में रहता है। केवल एक व्यक्ति B के समान शहर में रहता है, जो चेन्नई में नहीं रहता है। C और F दोनों समान शहर में रहते हैं। D न तो बैंगलोर में रहता है और न ही E के समान शहर में रहता है। G चेन्नई में नहीं रहता है।</p><br><p><strong>निम्नलिखित में से कौन सा व्यक्ति मुंबई में रहता है?</strong></p>", "options": ["<p>A</p>", "<p>वह व्यक्ति जो D के साथ रहता है</p>", "<p>E</p>", "<p>G</p>", "<p>वह व्यक्ति जो C के साथ रहता है</p>"], "correctIndex": 1, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309652162.jpg\" title=\"234.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>H और A अलग-अलग शहरों में रह रहे हैं लेकिन उनमें से कोई भी मुंबई में नहीं रहता है।</li>\n<li>E, A के समान शहर में रहता है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, हमारे पास दो संभावनाएँ हैं,</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309658963.jpg\" title=\"235.JPG\"/></p>\n<p>फिर से हमारे पास है,</p>\n<ul>\n<li>केवल एक व्यक्ति B के समान शहर में रहता है, जो चेन्नई में नहीं रहता है।</li>\n<li>C और F दोनों समान शहर में रहते हैं।</li>\n</ul>\n<p>उपरोक्त शर्तों से, हमारे पास तीन संभावनाएँ हैं,</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309664867.jpg\" title=\"236.JPG\"/></p>\n<p>फिर से हमारे पास है,</p>\n<ul>\n<li>D न तो बैंगलोर में रहता है और न ही E के समान शहर में रहता है।</li>\n<li>G चेन्नई में नहीं रहता है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, केस 1 और केस 1a समाप्त हो जाते हैं क्योंकि हम G को नहीं रख सकते हैं। इसलिए केस 2 अंतिम व्यवस्था को दर्शाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309673961.jpg\" title=\"237.JPG\"/></p>\n<p><strong>उत्तर: B</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>आठ व्यक्ति - A, B, C, D, E, F, G और H तीन अलग-अलग शहरों अर्थात चेन्नई, बैंगलोर और मुंबई में रह रहे हैं। कम से कम दो व्यक्ति और तीन से अधिक व्यक्ति समान विभाग में नहीं रहते हैं।</p>\n<p>H और A अलग-अलग शहरों में रह रहे हैं लेकिन उनमें से कोई भी मुंबई में नहीं रहता है। E, A के समान शहर में रहता है। केवल एक व्यक्ति B के समान शहर में रहता है, जो चेन्नई में नहीं रहता है। C और F दोनों समान शहर में रहते हैं। D न तो बैंगलोर में रहता है और न ही E के समान शहर में रहता है। G चेन्नई में नहीं रहता है।</p><br><p><strong>दी गई व्यवस्था के आधार पर निम्नलिखित पांच में से चार एक निश्चित तरीके से समान हैं और इस प्रकार एक समूह बनाते हैं। निम्नलिखित में से कौन सा एक समूह से संबंधित नहीं है?</strong></p>", "options": ["<p>HA</p>", "<p>EB</p>", "<p>DF</p>", "<p>GH</p>", "<p>AE</p>"], "correctIndex": 4, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309652162.jpg\" title=\"234.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>H और A अलग-अलग शहरों में रह रहे हैं लेकिन उनमें से कोई भी मुंबई में नहीं रहता है।</li>\n<li>E, A के समान शहर में रहता है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, हमारे पास दो संभावनाएँ हैं,</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309658963.jpg\" title=\"235.JPG\"/></p>\n<p>फिर से हमारे पास है,</p>\n<ul>\n<li>केवल एक व्यक्ति B के समान शहर में रहता है, जो चेन्नई में नहीं रहता है।</li>\n<li>C और F दोनों समान शहर में रहते हैं।</li>\n</ul>\n<p>उपरोक्त शर्तों से, हमारे पास तीन संभावनाएँ हैं,</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309664867.jpg\" title=\"236.JPG\"/></p>\n<p>फिर से हमारे पास है,</p>\n<ul>\n<li>D न तो बैंगलोर में रहता है और न ही E के समान शहर में रहता है।</li>\n<li>G चेन्नई में नहीं रहता है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, केस 1 और केस 1a समाप्त हो जाते हैं क्योंकि हम G को नहीं रख सकते हैं। इसलिए केस 2 अंतिम व्यवस्था को दर्शाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309673961.jpg\" title=\"237.JPG\"/></p>\n<p><strong>उत्तर: E </strong>(केवल A और E समान शहर में रहते हैं)</p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>आठ व्यक्ति - A, B, C, D, E, F, G और H तीन अलग-अलग शहरों अर्थात चेन्नई, बैंगलोर और मुंबई में रह रहे हैं। कम से कम दो व्यक्ति और तीन से अधिक व्यक्ति समान विभाग में नहीं रहते हैं।</p>\n<p>H और A अलग-अलग शहरों में रह रहे हैं लेकिन उनमें से कोई भी मुंबई में नहीं रहता है। E, A के समान शहर में रहता है। केवल एक व्यक्ति B के समान शहर में रहता है, जो चेन्नई में नहीं रहता है। C और F दोनों समान शहर में रहते हैं। D न तो बैंगलोर में रहता है और न ही E के समान शहर में रहता है। G चेन्नई में नहीं रहता है।</p><br><p><strong>दी गई व्यवस्था के अनुसार निम्नलिखित में से कौन सा/से कथन सत्य है/हैं</strong><strong>?</strong></p>\n<p><strong>i). </strong>C और H दोनों चेन्नई में रह रहे हैं</p>\n<p><strong>ii).</strong> केवल दो व्यक्ति मुंबई में रह रहे हैं</p>\n<p><strong>iii).</strong> समान संख्या में व्यक्ति मुंबई और बैंगलोर दोनों में रह रहे हैं</p>", "options": ["<p>केवल i</p>", "<p>केवल ii</p>", "<p>केवल iii</p>", "<p>केवल i और ii</p>", "<p>केवल ii और iii</p>"], "correctIndex": 3, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309652162.jpg\" title=\"234.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>H और A अलग-अलग शहरों में रह रहे हैं लेकिन उनमें से कोई भी मुंबई में नहीं रहता है।</li>\n<li>E, A के समान शहर में रहता है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, हमारे पास दो संभावनाएँ हैं,</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309658963.jpg\" title=\"235.JPG\"/></p>\n<p>फिर से हमारे पास है,</p>\n<ul>\n<li>केवल एक व्यक्ति B के समान शहर में रहता है, जो चेन्नई में नहीं रहता है।</li>\n<li>C और F दोनों समान शहर में रहते हैं।</li>\n</ul>\n<p>उपरोक्त शर्तों से, हमारे पास तीन संभावनाएँ हैं,</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309664867.jpg\" title=\"236.JPG\"/></p>\n<p>फिर से हमारे पास है,</p>\n<ul>\n<li>D न तो बैंगलोर में रहता है और न ही E के समान शहर में रहता है।</li>\n<li>G चेन्नई में नहीं रहता है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, केस 1 और केस 1a समाप्त हो जाते हैं क्योंकि हम G को नहीं रख सकते हैं। इसलिए केस 2 अंतिम व्यवस्था को दर्शाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309673961.jpg\" title=\"237.JPG\"/></p>\n<p><strong>उत्तर: D</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>आठ व्यक्ति - A, B, C, D, E, F, G और H तीन अलग-अलग शहरों अर्थात चेन्नई, बैंगलोर और मुंबई में रह रहे हैं। कम से कम दो व्यक्ति और तीन से अधिक व्यक्ति समान विभाग में नहीं रहते हैं।</p>\n<p>H और A अलग-अलग शहरों में रह रहे हैं लेकिन उनमें से कोई भी मुंबई में नहीं रहता है। E, A के समान शहर में रहता है। केवल एक व्यक्ति B के समान शहर में रहता है, जो चेन्नई में नहीं रहता है। C और F दोनों समान शहर में रहते हैं। D न तो बैंगलोर में रहता है और न ही E के समान शहर में रहता है। G चेन्नई में नहीं रहता है।</p><br><p><strong>निम्नलिखित में से कौन सा जोड़ा सही सुमेलित है?</strong></p>", "options": ["<p>C - मुंबई</p>", "<p>D - चेन्नई</p>", "<p>F - चेन्नई</p>", "<p>B - बैंगलोर</p>", "<p>E - मुंबई</p>"], "correctIndex": 2, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309652162.jpg\" title=\"234.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>H और A अलग-अलग शहरों में रह रहे हैं लेकिन उनमें से कोई भी मुंबई में नहीं रहता है।</li>\n<li>E, A के समान शहर में रहता है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, हमारे पास दो संभावनाएँ हैं,</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309658963.jpg\" title=\"235.JPG\"/></p>\n<p>फिर से हमारे पास है,</p>\n<ul>\n<li>केवल एक व्यक्ति B के समान शहर में रहता है, जो चेन्नई में नहीं रहता है।</li>\n<li>C और F दोनों समान शहर में रहते हैं।</li>\n</ul>\n<p>उपरोक्त शर्तों से, हमारे पास तीन संभावनाएँ हैं,</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309664867.jpg\" title=\"236.JPG\"/></p>\n<p>फिर से हमारे पास है,</p>\n<ul>\n<li>D न तो बैंगलोर में रहता है और न ही E के समान शहर में रहता है।</li>\n<li>G चेन्नई में नहीं रहता है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, केस 1 और केस 1a समाप्त हो जाते हैं क्योंकि हम G को नहीं रख सकते हैं। इसलिए केस 2 अंतिम व्यवस्था को दर्शाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168309673961.jpg\" title=\"237.JPG\"/></p>\n<p><strong>उत्तर: C</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>आठ व्यक्ति - P, Q, R, S, T, U, V और W एक आयताकार मेज़ के चारों ओर इस तरह बैठे हैं कि उनमें से चार कोनों पर बैठे हैं जबकि चार भुजाओं के बीच में बैठे हैं। वे सभी केंद्र की ओर उन्मुख हैं।</p>\n<p>U, T के बाएं से तीसरे स्थान पर बैठा है, जो मेज़ के कोने पर बैठा है। T और Q के बीच केवल एक व्यक्ति बैठा है (या तो बाएं या दाएं से)। Q और W तत्काल पड़ोसी हैं। V, P के बायीं ओर से दूसरे स्थान पर बैठा है लेकिन उनमें से कोई भी U के आसन्न नहीं बैठा है। जितने व्यक्ति P और R के बीच बैठे हैं उतने ही व्यक्ति R और V के बीच बैठे हैं। W के दाईं ओर से गिनने पर W और R के बीच एक से अधिक व्यक्ति बैठे हैं।</p><br><p><strong>यदि मेज़ के कोने पर बैठे व्यक्ति अपनी मूल दिशा के संबंध में विपरीत दिशा का सामना कर रहे हैं, तो निम्नलिखित में से कौन सा व्यक्ति R के दाईं ओर से तीसरे स्थान पर बैठा है?</strong></p>", "options": ["<p>S</p>", "<p>P</p>", "<p>W</p>", "<p>U</p>", "<p>V</p>"], "correctIndex": 2, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915821768.jpg\" title=\"44.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>U, T के बाएं से तीसरे स्थान पर बैठा है, जो मेज़ के कोने पर बैठा है।</li>\n<li>T और Q के बीच केवल एक व्यक्ति बैठा है (या तो बाएं या दाएं से)।</li>\n<li>Q और W तत्काल पड़ोसी हैं।</li>\n</ul>\n<p>उपरोक्त शर्तों से, तीन संभावनाएँ हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915824919.jpg\" title=\"45.JPG\"/></p>\n<p>फिर से हमारे पास है,</p>\n<ul>\n<li>V, P के बायीं ओर से दूसरे स्थान पर बैठा है लेकिन उनमें से कोई भी U के आसन्न नहीं बैठा है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, केस-2 समाप्त हो जाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915827964.jpg\" title=\"46.JPG\"/></p>\n<p>फिर से हमारे पास है,</p>\n<ul>\n<li>जितने व्यक्ति P और R के बीच बैठे हैं उतने ही व्यक्ति R और V के बीच बैठे हैं।</li>\n<li>W के दाईं ओर से गिनने पर W और R के बीच एक से अधिक व्यक्ति बैठे हैं।</li>\n</ul>\n<p>उपरोक्त शर्तों से, केस-2a समाप्त हो जाता है क्योंकि W और R तत्काल पड़ोसी हैं। इसलिए केस-1 अंतिम व्यवस्था दिखाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915830839.jpg\" title=\"47.JPG\"/></p>\n<p><strong>उत्तर: C</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>आठ व्यक्ति - P, Q, R, S, T, U, V और W एक आयताकार मेज़ के चारों ओर इस तरह बैठे हैं कि उनमें से चार कोनों पर बैठे हैं जबकि चार भुजाओं के बीच में बैठे हैं। वे सभी केंद्र की ओर उन्मुख हैं।</p>\n<p>U, T के बाएं से तीसरे स्थान पर बैठा है, जो मेज़ के कोने पर बैठा है। T और Q के बीच केवल एक व्यक्ति बैठा है (या तो बाएं या दाएं से)। Q और W तत्काल पड़ोसी हैं। V, P के बायीं ओर से दूसरे स्थान पर बैठा है लेकिन उनमें से कोई भी U के आसन्न नहीं बैठा है। जितने व्यक्ति P और R के बीच बैठे हैं उतने ही व्यक्ति R और V के बीच बैठे हैं। W के दाईं ओर से गिनने पर W और R के बीच एक से अधिक व्यक्ति बैठे हैं।</p><br><p><strong>R के तत्काल दाएँ बैठे व्यक्ति के सन्दर्भ में U का स्थान क्या है?</strong></p>", "options": ["<p>दायें से तीसरा</p>", "<p>दायें से दूसरा</p>", "<p>बाएं से दूसरा</p>", "<p>तत्काल दायें</p>", "<p>तत्काल बाएं</p>"], "correctIndex": 1, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915821768.jpg\" title=\"44.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>U, T के बाएं से तीसरे स्थान पर बैठा है, जो मेज़ के कोने पर बैठा है।</li>\n<li>T और Q के बीच केवल एक व्यक्ति बैठा है (या तो बाएं या दाएं से)।</li>\n<li>Q और W तत्काल पड़ोसी हैं।</li>\n</ul>\n<p>उपरोक्त शर्तों से, तीन संभावनाएँ हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915824919.jpg\" title=\"45.JPG\"/></p>\n<p>फिर से हमारे पास है,</p>\n<ul>\n<li>V, P के बायीं ओर से दूसरे स्थान पर बैठा है लेकिन उनमें से कोई भी U के आसन्न नहीं बैठा है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, केस-2 समाप्त हो जाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915827964.jpg\" title=\"46.JPG\"/></p>\n<p>फिर से हमारे पास है,</p>\n<ul>\n<li>जितने व्यक्ति P और R के बीच बैठे हैं उतने ही व्यक्ति R और V के बीच बैठे हैं।</li>\n<li>W के दाईं ओर से गिनने पर W और R के बीच एक से अधिक व्यक्ति बैठे हैं।</li>\n</ul>\n<p>उपरोक्त शर्तों से, केस-2a समाप्त हो जाता है क्योंकि W और R तत्काल पड़ोसी हैं। इसलिए केस-1 अंतिम व्यवस्था दिखाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915830839.jpg\" title=\"47.JPG\"/></p>\n<p><strong>उत्तर: B</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>आठ व्यक्ति - P, Q, R, S, T, U, V और W एक आयताकार मेज़ के चारों ओर इस तरह बैठे हैं कि उनमें से चार कोनों पर बैठे हैं जबकि चार भुजाओं के बीच में बैठे हैं। वे सभी केंद्र की ओर उन्मुख हैं।</p>\n<p>U, T के बाएं से तीसरे स्थान पर बैठा है, जो मेज़ के कोने पर बैठा है। T और Q के बीच केवल एक व्यक्ति बैठा है (या तो बाएं या दाएं से)। Q और W तत्काल पड़ोसी हैं। V, P के बायीं ओर से दूसरे स्थान पर बैठा है लेकिन उनमें से कोई भी U के आसन्न नहीं बैठा है। जितने व्यक्ति P और R के बीच बैठे हैं उतने ही व्यक्ति R और V के बीच बैठे हैं। W के दाईं ओर से गिनने पर W और R के बीच एक से अधिक व्यक्ति बैठे हैं।</p><br><p><strong>निम्नलिखित में से कौन सा व्यक्ति मेज़ की भुजाओं के मध्य में नहीं बैठा है?</strong></p>", "options": ["<p>P</p>", "<p>वह व्यक्ति जो S के विपरीत बैठा है</p>", "<p>U</p>", "<p>W</p>", "<p>वह व्यक्ति<strong> </strong>जो T के तत्काल दाएं बैठा है</p>"], "correctIndex": 1, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915821768.jpg\" title=\"44.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>U, T के बाएं से तीसरे स्थान पर बैठा है, जो मेज़ के कोने पर बैठा है।</li>\n<li>T और Q के बीच केवल एक व्यक्ति बैठा है (या तो बाएं या दाएं से)।</li>\n<li>Q और W तत्काल पड़ोसी हैं।</li>\n</ul>\n<p>उपरोक्त शर्तों से, तीन संभावनाएँ हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915824919.jpg\" title=\"45.JPG\"/></p>\n<p>फिर से हमारे पास है,</p>\n<ul>\n<li>V, P के बायीं ओर से दूसरे स्थान पर बैठा है लेकिन उनमें से कोई भी U के आसन्न नहीं बैठा है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, केस-2 समाप्त हो जाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915827964.jpg\" title=\"46.JPG\"/></p>\n<p>फिर से हमारे पास है,</p>\n<ul>\n<li>जितने व्यक्ति P और R के बीच बैठे हैं उतने ही व्यक्ति R और V के बीच बैठे हैं।</li>\n<li>W के दाईं ओर से गिनने पर W और R के बीच एक से अधिक व्यक्ति बैठे हैं।</li>\n</ul>\n<p>उपरोक्त शर्तों से, केस-2a समाप्त हो जाता है क्योंकि W और R तत्काल पड़ोसी हैं। इसलिए केस-1 अंतिम व्यवस्था दिखाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915830839.jpg\" title=\"47.JPG\"/></p>\n<p><strong>उत्तर: B</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>आठ व्यक्ति - P, Q, R, S, T, U, V और W एक आयताकार मेज़ के चारों ओर इस तरह बैठे हैं कि उनमें से चार कोनों पर बैठे हैं जबकि चार भुजाओं के बीच में बैठे हैं। वे सभी केंद्र की ओर उन्मुख हैं।</p>\n<p>U, T के बाएं से तीसरे स्थान पर बैठा है, जो मेज़ के कोने पर बैठा है। T और Q के बीच केवल एक व्यक्ति बैठा है (या तो बाएं या दाएं से)। Q और W तत्काल पड़ोसी हैं। V, P के बायीं ओर से दूसरे स्थान पर बैठा है लेकिन उनमें से कोई भी U के आसन्न नहीं बैठा है। जितने व्यक्ति P और R के बीच बैठे हैं उतने ही व्यक्ति R और V के बीच बैठे हैं। W के दाईं ओर से गिनने पर W और R के बीच एक से अधिक व्यक्ति बैठे हैं।</p><br><p><strong>दी गई व्यवस्था के अनुसार निम्नलिखित में से कौन सा कथन सत्य है/हैं?</strong></p>", "options": ["<p>S, P के तत्काल दायें बैठा है</p>", "<p>P और U के बीच केवल दो व्यक्ति बैठे हैं</p>", "<p>U और W के बीच कोई नहीं बैठा है</p>", "<p>Q और S एक दूसरे के विपरीत बैठे हैं</p>", "<p>सभी कथन सत्य हैं</p>"], "correctIndex": 0, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915821768.jpg\" title=\"44.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>U, T के बाएं से तीसरे स्थान पर बैठा है, जो मेज़ के कोने पर बैठा है।</li>\n<li>T और Q के बीच केवल एक व्यक्ति बैठा है (या तो बाएं या दाएं से)।</li>\n<li>Q और W तत्काल पड़ोसी हैं।</li>\n</ul>\n<p>उपरोक्त शर्तों से, तीन संभावनाएँ हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915824919.jpg\" title=\"45.JPG\"/></p>\n<p>फिर से हमारे पास है,</p>\n<ul>\n<li>V, P के बायीं ओर से दूसरे स्थान पर बैठा है लेकिन उनमें से कोई भी U के आसन्न नहीं बैठा है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, केस-2 समाप्त हो जाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915827964.jpg\" title=\"46.JPG\"/></p>\n<p>फिर से हमारे पास है,</p>\n<ul>\n<li>जितने व्यक्ति P और R के बीच बैठे हैं उतने ही व्यक्ति R और V के बीच बैठे हैं।</li>\n<li>W के दाईं ओर से गिनने पर W और R के बीच एक से अधिक व्यक्ति बैठे हैं।</li>\n</ul>\n<p>उपरोक्त शर्तों से, केस-2a समाप्त हो जाता है क्योंकि W और R तत्काल पड़ोसी हैं। इसलिए केस-1 अंतिम व्यवस्था दिखाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915830839.jpg\" title=\"47.JPG\"/></p>\n<p><strong>उत्तर: A</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>आठ व्यक्ति - P, Q, R, S, T, U, V और W एक आयताकार मेज़ के चारों ओर इस तरह बैठे हैं कि उनमें से चार कोनों पर बैठे हैं जबकि चार भुजाओं के बीच में बैठे हैं। वे सभी केंद्र की ओर उन्मुख हैं।</p>\n<p>U, T के बाएं से तीसरे स्थान पर बैठा है, जो मेज़ के कोने पर बैठा है। T और Q के बीच केवल एक व्यक्ति बैठा है (या तो बाएं या दाएं से)। Q और W तत्काल पड़ोसी हैं। V, P के बायीं ओर से दूसरे स्थान पर बैठा है लेकिन उनमें से कोई भी U के आसन्न नहीं बैठा है। जितने व्यक्ति P और R के बीच बैठे हैं उतने ही व्यक्ति R और V के बीच बैठे हैं। W के दाईं ओर से गिनने पर W और R के बीच एक से अधिक व्यक्ति बैठे हैं।</p><br><p><strong>S के बाईं ओर से गिनने पर S और V के बीच कितने व्यक्ति बैठे हैं?</strong></p>", "options": ["<p>कोई नहीं</p>", "<p>चार</p>", "<p>तीन</p>", "<p>दो</p>", "<p>एक</p>"], "correctIndex": 3, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915821768.jpg\" title=\"44.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>U, T के बाएं से तीसरे स्थान पर बैठा है, जो मेज़ के कोने पर बैठा है।</li>\n<li>T और Q के बीच केवल एक व्यक्ति बैठा है (या तो बाएं या दाएं से)।</li>\n<li>Q और W तत्काल पड़ोसी हैं।</li>\n</ul>\n<p>उपरोक्त शर्तों से, तीन संभावनाएँ हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915824919.jpg\" title=\"45.JPG\"/></p>\n<p>फिर से हमारे पास है,</p>\n<ul>\n<li>V, P के बायीं ओर से दूसरे स्थान पर बैठा है लेकिन उनमें से कोई भी U के आसन्न नहीं बैठा है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, केस-2 समाप्त हो जाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915827964.jpg\" title=\"46.JPG\"/></p>\n<p>फिर से हमारे पास है,</p>\n<ul>\n<li>जितने व्यक्ति P और R के बीच बैठे हैं उतने ही व्यक्ति R और V के बीच बैठे हैं।</li>\n<li>W के दाईं ओर से गिनने पर W और R के बीच एक से अधिक व्यक्ति बैठे हैं।</li>\n</ul>\n<p>उपरोक्त शर्तों से, केस-2a समाप्त हो जाता है क्योंकि W और R तत्काल पड़ोसी हैं। इसलिए केस-1 अंतिम व्यवस्था दिखाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168915830839.jpg\" title=\"47.JPG\"/></p>\n<p><strong>उत्तर: D</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>नौ व्यक्ति - P, Q, R, S, T, U, V, W, और X अलग-अलग आयु यानी 75, 58, 52, 43, 36, 27, 23, 16, और 8 के हैं, लेकिन जरूरी नहीं कि इसी क्रम में हो।</p>\n<p>T की आयु एक अभाज्य संख्या है। P की आयु W की आयु की दोगुनी है। P और U की आयु का योग S की आयु के समान है, जिसकी आयु एक अभाज्य संख्या नहीं है। न तो Q और न ही X की आयु एक पूर्ण घन है। R और X की आयु के बीच का अंतर 4 है। Q, V से छोटा है।</p><br><p><strong>P और S की आयु का योग क्या है?</strong></p>", "options": ["<p>53</p>", "<p>68</p>", "<p>40</p>", "<p>62</p>", "<p>इनमें से कोई नहीं</p>"], "correctIndex": 1, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165606282132.jpg\" title=\"1.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>T की आयु एक अभाज्य संख्या है।</li>\n<li>P की आयु W की आयु की दोगुनी है।</li>\n</ul>\n<p>उपरोक्त स्थिति से, दो संभावनाएं हैं</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165606284558.jpg\" title=\"2.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>P और U की आयु का योग S की आयु के समान है, जिसकी आयु एक अभाज्य संख्या नहीं है।</li>\n<li>न तो Q और न ही X की आयु एक पूर्ण घन है।</li>\n<li>R और X की आयु के बीच का अंतर 4 है।</li>\n<li>Q, V से छोटा है।</li>\n</ul>\n<p>उपरोक्त स्थिति से, केस 2 समाप्त हो जाता है। इसलिए, केस 1 अंतिम व्यवस्था दिखाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165606285863.jpg\" title=\"3.JPG\"/></p>\n<p><strong>उत्तर: B</strong></p>\n<p> </p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>नौ व्यक्ति - P, Q, R, S, T, U, V, W, और X अलग-अलग आयु यानी 75, 58, 52, 43, 36, 27, 23, 16, और 8 के हैं, लेकिन जरूरी नहीं कि इसी क्रम में हो।</p>\n<p>T की आयु एक अभाज्य संख्या है। P की आयु W की आयु की दोगुनी है। P और U की आयु का योग S की आयु के समान है, जिसकी आयु एक अभाज्य संख्या नहीं है। न तो Q और न ही X की आयु एक पूर्ण घन है। R और X की आयु के बीच का अंतर 4 है। Q, V से छोटा है।</p><br><p><strong>अंतिम व्यवस्था के संबंध में निम्नलिखित में से कौन सा/से कथन सत्य है/हैं?</strong></p>", "options": ["<p>P सबसे बड़ा व्यक्ति है</p>", "<p>S और X की आयु के बीच का अंतर 29 है</p>", "<p>V और W की आयु का योग 31 है</p>", "<p>दिए गए सभी कथन सत्य हैं</p>", "<p>दिए गए सभी कथन असत्य हैं</p>"], "correctIndex": 1, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165606282132.jpg\" title=\"1.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>T की आयु एक अभाज्य संख्या है।</li>\n<li>P की आयु W की आयु की दोगुनी है।</li>\n</ul>\n<p>उपरोक्त स्थिति से, दो संभावनाएं हैं</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165606284558.jpg\" title=\"2.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>P और U की आयु का योग S की आयु के समान है, जिसकी आयु एक अभाज्य संख्या नहीं है।</li>\n<li>न तो Q और न ही X की आयु एक पूर्ण घन है।</li>\n<li>R और X की आयु के बीच का अंतर 4 है।</li>\n<li>Q, V से छोटा है।</li>\n</ul>\n<p>उपरोक्त स्थिति से, केस 2 समाप्त हो जाता है। इसलिए, केस 1 अंतिम व्यवस्था दिखाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165606285863.jpg\" title=\"3.JPG\"/></p>\n<p><strong>उत्तर: B</strong></p>\n<p> </p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>नौ व्यक्ति - P, Q, R, S, T, U, V, W, और X अलग-अलग आयु यानी 75, 58, 52, 43, 36, 27, 23, 16, और 8 के हैं, लेकिन जरूरी नहीं कि इसी क्रम में हो।</p>\n<p>T की आयु एक अभाज्य संख्या है। P की आयु W की आयु की दोगुनी है। P और U की आयु का योग S की आयु के समान है, जिसकी आयु एक अभाज्य संख्या नहीं है। न तो Q और न ही X की आयु एक पूर्ण घन है। R और X की आयु के बीच का अंतर 4 है। Q, V से छोटा है।</p><br><p><strong>निम्नलिखित में से किस व्यक्ति की आयु 58 वर्ष है?</strong></p>", "options": ["<p>Q</p>", "<p>S</p>", "<p>T</p>", "<p>U</p>", "<p>इनमें से कोई नहीं</p>"], "correctIndex": 0, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165606282132.jpg\" title=\"1.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>T की आयु एक अभाज्य संख्या है।</li>\n<li>P की आयु W की आयु की दोगुनी है।</li>\n</ul>\n<p>उपरोक्त स्थिति से, दो संभावनाएं हैं</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165606284558.jpg\" title=\"2.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>P और U की आयु का योग S की आयु के समान है, जिसकी आयु एक अभाज्य संख्या नहीं है।</li>\n<li>न तो Q और न ही X की आयु एक पूर्ण घन है।</li>\n<li>R और X की आयु के बीच का अंतर 4 है।</li>\n<li>Q, V से छोटा है।</li>\n</ul>\n<p>उपरोक्त स्थिति से, केस 2 समाप्त हो जाता है। इसलिए, केस 1 अंतिम व्यवस्था दिखाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165606285863.jpg\" title=\"3.JPG\"/></p>\n<p><strong>उत्तर: A</strong></p>\n<p> </p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>नौ व्यक्ति - P, Q, R, S, T, U, V, W, और X अलग-अलग आयु यानी 75, 58, 52, 43, 36, 27, 23, 16, और 8 के हैं, लेकिन जरूरी नहीं कि इसी क्रम में हो।</p>\n<p>T की आयु एक अभाज्य संख्या है। P की आयु W की आयु की दोगुनी है। P और U की आयु का योग S की आयु के समान है, जिसकी आयु एक अभाज्य संख्या नहीं है। न तो Q और न ही X की आयु एक पूर्ण घन है। R और X की आयु के बीच का अंतर 4 है। Q, V से छोटा है।</p><br><p><strong>कितने व्यक्ति U से बड़े हैं?</strong></p>", "options": ["<p>तीन</p>", "<p>चार से अधिक</p>", "<p>एक</p>", "<p>दो</p>", "<p>चार</p>"], "correctIndex": 4, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165606282132.jpg\" title=\"1.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>T की आयु एक अभाज्य संख्या है।</li>\n<li>P की आयु W की आयु की दोगुनी है।</li>\n</ul>\n<p>उपरोक्त स्थिति से, दो संभावनाएं हैं</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165606284558.jpg\" title=\"2.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>P और U की आयु का योग S की आयु के समान है, जिसकी आयु एक अभाज्य संख्या नहीं है।</li>\n<li>न तो Q और न ही X की आयु एक पूर्ण घन है।</li>\n<li>R और X की आयु के बीच का अंतर 4 है।</li>\n<li>Q, V से छोटा है।</li>\n</ul>\n<p>उपरोक्त स्थिति से, केस 2 समाप्त हो जाता है। इसलिए, केस 1 अंतिम व्यवस्था दिखाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165606285863.jpg\" title=\"3.JPG\"/></p>\n<p><strong>उत्तर: E</strong></p>\n<p> </p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>नौ व्यक्ति - P, Q, R, S, T, U, V, W, और X अलग-अलग आयु यानी 75, 58, 52, 43, 36, 27, 23, 16, और 8 के हैं, लेकिन जरूरी नहीं कि इसी क्रम में हो।</p>\n<p>T की आयु एक अभाज्य संख्या है। P की आयु W की आयु की दोगुनी है। P और U की आयु का योग S की आयु के समान है, जिसकी आयु एक अभाज्य संख्या नहीं है। न तो Q और न ही X की आयु एक पूर्ण घन है। R और X की आयु के बीच का अंतर 4 है। Q, V से छोटा है।</p><br><p><strong>दी गई व्यवस्था के अनुसार निम्नलिखित पांच में से चार एक निश्चित तरीके से समान हैं और इसलिए एक समूह बनाते हैं। वह खोजें जो उस समूह से संबंधित नहीं है।</strong></p>", "options": ["<p>P</p>", "<p>R</p>", "<p>U</p>", "<p>W</p>", "<p>S</p>"], "correctIndex": 1, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165606282132.jpg\" title=\"1.JPG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>T की आयु एक अभाज्य संख्या है।</li>\n<li>P की आयु W की आयु की दोगुनी है।</li>\n</ul>\n<p>उपरोक्त स्थिति से, दो संभावनाएं हैं</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165606284558.jpg\" title=\"2.JPG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>P और U की आयु का योग S की आयु के समान है, जिसकी आयु एक अभाज्य संख्या नहीं है।</li>\n<li>न तो Q और न ही X की आयु एक पूर्ण घन है।</li>\n<li>R और X की आयु के बीच का अंतर 4 है।</li>\n<li>Q, V से छोटा है।</li>\n</ul>\n<p>उपरोक्त स्थिति से, केस 2 समाप्त हो जाता है। इसलिए, केस 1 अंतिम व्यवस्था दिखाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165606285863.jpg\" title=\"3.JPG\"/></p>\n<p><strong>उत्तर: B</strong></p>\n<p><strong> </strong>(विकल्प B को छोड़कर सभी व्यक्तियों की आयु एक सम संख्या है)</p>\n<p> </p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्न का उत्तर दें:</strong></p>\n<p>एक निश्चित संख्या में व्यक्ति एक रैखिक पंक्ति में उत्तर की ओर मुख करके बैठे हैं।</p>\n<p>P और S के मध्य केवल चार व्यक्ति बैठे हैं। M, S के तत्काल बायें बैठा है। Q, M के दायें से तीसरे स्थान पर बैठा है। J, P से पांच स्थान दूर बैठा है। R, J के दायें से दूसरे स्थान पर बैठा है। R किसी एक छोर से चौथे स्थान पर बैठा है। P पंक्ति के ठीक मध्य में बैठा है।</p><br><p><strong>पंक्ति में कितने व्यक्ति बैठे हैं?</strong></p>", "options": ["<p>21</p>", "<p>23</p>", "<p>29</p>", "<p>25</p>", "<p>27</p>"], "correctIndex": 0, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002539716.png\" title=\"1.PNG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>P और S के मध्य केवल चार व्यक्ति बैठे हैं।</li>\n<li>M, S के तत्काल बायें बैठा है।</li>\n<li>Q, M के दायें से तीसरे स्थान पर बैठा है।</li>\n</ul>\n<p>उपरोक्त कथन से, दो संभावनाएँ हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002544860.png\" title=\"2.PNG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>J, P से पांच स्थान दूर बैठा है।</li>\n<li>R, J के दायें से दूसरे स्थान पर बैठा है।</li>\n<li>R किसी एक छोर से चौथे स्थान पर बैठा है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002550434.png\" title=\"3.PNG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>P पंक्ति के ठीक मध्य में बैठा है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002555034.png\" title=\"4.PNG\"/></p>\n<p>उपरोक्त स्थिति से केस-2 समाप्त हो जाता है।</p>\n<p><strong>उत्तर: </strong><strong>A </strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्न का उत्तर दें:</strong></p>\n<p>एक निश्चित संख्या में व्यक्ति एक रैखिक पंक्ति में उत्तर की ओर मुख करके बैठे हैं।</p>\n<p>P और S के मध्य केवल चार व्यक्ति बैठे हैं। M, S के तत्काल बायें बैठा है। Q, M के दायें से तीसरे स्थान पर बैठा है। J, P से पांच स्थान दूर बैठा है। R, J के दायें से दूसरे स्थान पर बैठा है। R किसी एक छोर से चौथे स्थान पर बैठा है। P पंक्ति के ठीक मध्य में बैठा है।</p><br><p><strong>यदि T, Q और S के ठीक मध्य में बैठा है, तो T के बाईं ओर बैठे व्यक्तियों की संख्या ____ के दाईं ओर बैठे व्यक्तियों की संख्या के समान है?</strong></p>", "options": ["<p>J</p>", "<p>P</p>", "<p>M</p>", "<p>वह व्यक्ति जो J के तत्काल बायें बैठा है</p>", "<p>इनमें से कोई नहीं</p>"], "correctIndex": 3, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002539716.png\" title=\"1.PNG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>P और S के मध्य केवल चार व्यक्ति बैठे हैं।</li>\n<li>M, S के तत्काल बायें बैठा है।</li>\n<li>Q, M के दायें से तीसरे स्थान पर बैठा है।</li>\n</ul>\n<p>उपरोक्त कथन से, दो संभावनाएँ हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002544860.png\" title=\"2.PNG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>J, P से पांच स्थान दूर बैठा है।</li>\n<li>R, J के दायें से दूसरे स्थान पर बैठा है।</li>\n<li>R किसी एक छोर से चौथे स्थान पर बैठा है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002550434.png\" title=\"3.PNG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>P पंक्ति के ठीक मध्य में बैठा है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002555034.png\" title=\"4.PNG\"/></p>\n<p>उपरोक्त स्थिति से केस-2 समाप्त हो जाता है।</p>\n<p><strong>उत्तर: D</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्न का उत्तर दें:</strong></p>\n<p>एक निश्चित संख्या में व्यक्ति एक रैखिक पंक्ति में उत्तर की ओर मुख करके बैठे हैं।</p>\n<p>P और S के मध्य केवल चार व्यक्ति बैठे हैं। M, S के तत्काल बायें बैठा है। Q, M के दायें से तीसरे स्थान पर बैठा है। J, P से पांच स्थान दूर बैठा है। R, J के दायें से दूसरे स्थान पर बैठा है। R किसी एक छोर से चौथे स्थान पर बैठा है। P पंक्ति के ठीक मध्य में बैठा है।</p><br><p><strong>पंक्ति के दायें छोर से J का स्थान क्या है?</strong></p>", "options": ["<p>छठा</p>", "<p>पांचवां</p>", "<p>तीसरा</p>", "<p>सातवां</p>", "<p>चौथा</p>"], "correctIndex": 0, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002539716.png\" title=\"1.PNG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>P और S के मध्य केवल चार व्यक्ति बैठे हैं।</li>\n<li>M, S के तत्काल बायें बैठा है।</li>\n<li>Q, M के दायें से तीसरे स्थान पर बैठा है।</li>\n</ul>\n<p>उपरोक्त कथन से, दो संभावनाएँ हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002544860.png\" title=\"2.PNG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>J, P से पांच स्थान दूर बैठा है।</li>\n<li>R, J के दायें से दूसरे स्थान पर बैठा है।</li>\n<li>R किसी एक छोर से चौथे स्थान पर बैठा है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002550434.png\" title=\"3.PNG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>P पंक्ति के ठीक मध्य में बैठा है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002555034.png\" title=\"4.PNG\"/></p>\n<p>उपरोक्त स्थिति से केस-2 समाप्त हो जाता है।</p>\n<p><strong>उत्तर: A</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्न का उत्तर दें:</strong></p>\n<p>एक निश्चित संख्या में व्यक्ति एक रैखिक पंक्ति में उत्तर की ओर मुख करके बैठे हैं।</p>\n<p>P और S के मध्य केवल चार व्यक्ति बैठे हैं। M, S के तत्काल बायें बैठा है। Q, M के दायें से तीसरे स्थान पर बैठा है। J, P से पांच स्थान दूर बैठा है। R, J के दायें से दूसरे स्थान पर बैठा है। R किसी एक छोर से चौथे स्थान पर बैठा है। P पंक्ति के ठीक मध्य में बैठा है।</p><br><p><strong>निम्नलिखित में से कौन </strong><strong>सा व्यक्ति </strong><strong>M के बाएं से तीसरे स्थान पर बैठा है?</strong></p>", "options": ["<p>R</p>", "<p>S</p>", "<p>P</p>", "<p>अज्ञात</p>", "<p>Q</p>"], "correctIndex": 3, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002539716.png\" title=\"1.PNG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>P और S के मध्य केवल चार व्यक्ति बैठे हैं।</li>\n<li>M, S के तत्काल बायें बैठा है।</li>\n<li>Q, M के दायें से तीसरे स्थान पर बैठा है।</li>\n</ul>\n<p>उपरोक्त कथन से, दो संभावनाएँ हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002544860.png\" title=\"2.PNG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>J, P से पांच स्थान दूर बैठा है।</li>\n<li>R, J के दायें से दूसरे स्थान पर बैठा है।</li>\n<li>R किसी एक छोर से चौथे स्थान पर बैठा है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002550434.png\" title=\"3.PNG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>P पंक्ति के ठीक मध्य में बैठा है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002555034.png\" title=\"4.PNG\"/></p>\n<p>उपरोक्त स्थिति से केस-2 समाप्त हो जाता है।</p>\n<p><strong>उत्तर: D</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्न का उत्तर दें:</strong></p>\n<p>एक निश्चित संख्या में व्यक्ति एक रैखिक पंक्ति में उत्तर की ओर मुख करके बैठे हैं।</p>\n<p>P और S के मध्य केवल चार व्यक्ति बैठे हैं। M, S के तत्काल बायें बैठा है। Q, M के दायें से तीसरे स्थान पर बैठा है। J, P से पांच स्थान दूर बैठा है। R, J के दायें से दूसरे स्थान पर बैठा है। R किसी एक छोर से चौथे स्थान पर बैठा है। P पंक्ति के ठीक मध्य में बैठा है।</p><br><p><strong>निम्नलिखित में से कौन </strong><strong>सा व्यक्ति </strong><strong>R के बाएं से सातवें स्थान पर बैठा है?</strong></p>", "options": ["<p>M</p>", "<p>P</p>", "<p>वह व्यक्ति जो P के दायें से तीसरे स्थान पर बैठा है</p>", "<p>वह व्यक्ति जो J के बायें से चौथे स्थान पर बैठा है</p>", "<p>इनमें से कोई नहीं</p>"], "correctIndex": 1, "solution": "<p><strong>अंतिम व्यवस्था:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002539716.png\" title=\"1.PNG\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>P और S के मध्य केवल चार व्यक्ति बैठे हैं।</li>\n<li>M, S के तत्काल बायें बैठा है।</li>\n<li>Q, M के दायें से तीसरे स्थान पर बैठा है।</li>\n</ul>\n<p>उपरोक्त कथन से, दो संभावनाएँ हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002544860.png\" title=\"2.PNG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>J, P से पांच स्थान दूर बैठा है।</li>\n<li>R, J के दायें से दूसरे स्थान पर बैठा है।</li>\n<li>R किसी एक छोर से चौथे स्थान पर बैठा है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002550434.png\" title=\"3.PNG\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>P पंक्ति के ठीक मध्य में बैठा है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165002555034.png\" title=\"4.PNG\"/></p>\n<p>उपरोक्त स्थिति से केस-2 समाप्त हो जाता है।</p>\n<p><strong>उत्तर: B</strong></p>"}] 
+};
+        const rawTitle = "Prelims Mastery Quiz 2025 Reasoning (Day-27)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Prelims Mastery Quiz 2025 Reasoning (Day-27)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

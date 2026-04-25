@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Prelims Mastery Quiz 2025 Reasoning (Day-25)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>Study the following information carefully and answer the given questions. </strong></p>\n<p>Eight persons– M, N, O, P, Q, R, S and T are living on different floors of the four storey building where the lowermost floor is numbered as one and the floor immediately above it is numbered as two and so on.</p>\n<p><strong>Note-I: </strong>Each floor has two type of flats viz., Flat-A and Flat-B, where Flat A is to the west of Flat B.</p>\n<p><strong>Note-II: </strong>Flat B of floor 2 is immediately above Flat B of floor 1 and immediately below Flat B of floor 3 and so on. Similarly, Flat A of floor 2 is immediately above Flat A of floor 1 and immediately below Flat A of floor 3 and so on.</p>\n<p><strong>Note-III: </strong>The area of each flat is same.</p>\n<p><strong>Note-IV:</strong> Only two persons live on each floor and only one person lives in each flat.</p>\n<p>N lives two floors above P, who doesn’t live on an even numbered floor. R lives to the west of N. M lives immediately above P.  M lives in the same type of flat as Q. Q lives to the north of S. O lives above T. T doesn’t live in the same type of flat as R.</p><br><p><strong>Which of the following pair of persons live on the same floor?</strong></p>", "options": ["<p>N, Q</p>", "<p>P, T</p>", "<p>S, M</p>", "<p>O, P</p>", "<p>M, T</p>"], "correctIndex": 4, "solution": "<p><strong>Final arrangement</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168456459733.png\" title=\"1.PNG\"/></strong></p>\n<p>We have</p>\n<ul>\n<li>N lives two floors above P, who doesn’t live on an even numbered floor.</li>\n<li>R lives to the west of N.</li>\n</ul>\n<p>From the above condition, there are two possibilities</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168456470021.png\" title=\"2.PNG\"/></p>\n<p>Again, we have</p>\n<ul>\n<li>M lives immediately above P.</li>\n<li>M lives in the same type of flat as Q.</li>\n<li>Q lives to the north of S.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168456476270.png\" title=\"3.PNG\"/></p>\n<p>Again, we have</p>\n<ul>\n<li>O lives above T.</li>\n<li>T doesn’t live in the same type of flat as R.</li>\n</ul>\n<p>After applying the above condition, case 2 gets eliminated because T lives in the same type of flat as R, hence case-1 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168456485359.png\" title=\"4.PNG\"/></p>\n<p><strong>Answer: E</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the given questions. </strong></p>\n<p>Eight persons– M, N, O, P, Q, R, S and T are living on different floors of the four storey building where the lowermost floor is numbered as one and the floor immediately above it is numbered as two and so on.</p>\n<p><strong>Note-I: </strong>Each floor has two type of flats viz., Flat-A and Flat-B, where Flat A is to the west of Flat B.</p>\n<p><strong>Note-II: </strong>Flat B of floor 2 is immediately above Flat B of floor 1 and immediately below Flat B of floor 3 and so on. Similarly, Flat A of floor 2 is immediately above Flat A of floor 1 and immediately below Flat A of floor 3 and so on.</p>\n<p><strong>Note-III: </strong>The area of each flat is same.</p>\n<p><strong>Note-IV:</strong> Only two persons live on each floor and only one person lives in each flat.</p>\n<p>N lives two floors above P, who doesn’t live on an even numbered floor. R lives to the west of N. M lives immediately above P.  M lives in the same type of flat as Q. Q lives to the north of S. O lives above T. T doesn’t live in the same type of flat as R.</p><br><p><strong>Who among the following person lives in flat B?</strong></p>\n<p><strong>I). </strong>The one who lives to the west of T</p>\n<p><strong>II). </strong>N</p>\n<p><strong>III). </strong>The one who lives on the same floor as S</p>", "options": ["<p>Only I</p>", "<p>Only II</p>", "<p>Both II and III</p>", "<p>Only III</p>", "<p>Both I and III</p>"], "correctIndex": 2, "solution": "<p><strong>Final arrangement</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168456459733.png\" title=\"1.PNG\"/></strong></p>\n<p>We have</p>\n<ul>\n<li>N lives two floors above P, who doesn’t live on an even numbered floor.</li>\n<li>R lives to the west of N.</li>\n</ul>\n<p>From the above condition, there are two possibilities</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168456470021.png\" title=\"2.PNG\"/></p>\n<p>Again, we have</p>\n<ul>\n<li>M lives immediately above P.</li>\n<li>M lives in the same type of flat as Q.</li>\n<li>Q lives to the north of S.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168456476270.png\" title=\"3.PNG\"/></p>\n<p>Again, we have</p>\n<ul>\n<li>O lives above T.</li>\n<li>T doesn’t live in the same type of flat as R.</li>\n</ul>\n<p>After applying the above condition, case 2 gets eliminated because T lives in the same type of flat as R, hence case-1 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168456485359.png\" title=\"4.PNG\"/></p>\n<p><strong>Answer: C</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the given questions. </strong></p>\n<p>Eight persons– M, N, O, P, Q, R, S and T are living on different floors of the four storey building where the lowermost floor is numbered as one and the floor immediately above it is numbered as two and so on.</p>\n<p><strong>Note-I: </strong>Each floor has two type of flats viz., Flat-A and Flat-B, where Flat A is to the west of Flat B.</p>\n<p><strong>Note-II: </strong>Flat B of floor 2 is immediately above Flat B of floor 1 and immediately below Flat B of floor 3 and so on. Similarly, Flat A of floor 2 is immediately above Flat A of floor 1 and immediately below Flat A of floor 3 and so on.</p>\n<p><strong>Note-III: </strong>The area of each flat is same.</p>\n<p><strong>Note-IV:</strong> Only two persons live on each floor and only one person lives in each flat.</p>\n<p>N lives two floors above P, who doesn’t live on an even numbered floor. R lives to the west of N. M lives immediately above P.  M lives in the same type of flat as Q. Q lives to the north of S. O lives above T. T doesn’t live in the same type of flat as R.</p><br><p><strong>How many floors are above the one who lives on the same floor as O?</strong></p>", "options": ["<p>None</p>", "<p>One</p>", "<p>Two</p>", "<p>Three</p>", "<p>Either b or c</p>"], "correctIndex": 0, "solution": "<p><strong>Final arrangement</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168456459733.png\" title=\"1.PNG\"/></strong></p>\n<p>We have</p>\n<ul>\n<li>N lives two floors above P, who doesn’t live on an even numbered floor.</li>\n<li>R lives to the west of N.</li>\n</ul>\n<p>From the above condition, there are two possibilities</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168456470021.png\" title=\"2.PNG\"/></p>\n<p>Again, we have</p>\n<ul>\n<li>M lives immediately above P.</li>\n<li>M lives in the same type of flat as Q.</li>\n<li>Q lives to the north of S.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168456476270.png\" title=\"3.PNG\"/></p>\n<p>Again, we have</p>\n<ul>\n<li>O lives above T.</li>\n<li>T doesn’t live in the same type of flat as R.</li>\n</ul>\n<p>After applying the above condition, case 2 gets eliminated because T lives in the same type of flat as R, hence case-1 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168456485359.png\" title=\"4.PNG\"/></p>\n<p><strong>Answer: A</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the given questions. </strong></p>\n<p>Eight persons– M, N, O, P, Q, R, S and T are living on different floors of the four storey building where the lowermost floor is numbered as one and the floor immediately above it is numbered as two and so on.</p>\n<p><strong>Note-I: </strong>Each floor has two type of flats viz., Flat-A and Flat-B, where Flat A is to the west of Flat B.</p>\n<p><strong>Note-II: </strong>Flat B of floor 2 is immediately above Flat B of floor 1 and immediately below Flat B of floor 3 and so on. Similarly, Flat A of floor 2 is immediately above Flat A of floor 1 and immediately below Flat A of floor 3 and so on.</p>\n<p><strong>Note-III: </strong>The area of each flat is same.</p>\n<p><strong>Note-IV:</strong> Only two persons live on each floor and only one person lives in each flat.</p>\n<p>N lives two floors above P, who doesn’t live on an even numbered floor. R lives to the west of N. M lives immediately above P.  M lives in the same type of flat as Q. Q lives to the north of S. O lives above T. T doesn’t live in the same type of flat as R.</p><br><p><strong>Q lives on ___ floor in flat___.</strong></p>", "options": ["<p>4<sup>th</sup>, A</p>", "<p>2<sup>nd</sup>, A</p>", "<p>4<sup>th</sup>, B</p>", "<p>3<sup>rd</sup>, B</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Final arrangement</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168456459733.png\" title=\"1.PNG\"/></strong></p>\n<p>We have</p>\n<ul>\n<li>N lives two floors above P, who doesn’t live on an even numbered floor.</li>\n<li>R lives to the west of N.</li>\n</ul>\n<p>From the above condition, there are two possibilities</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168456470021.png\" title=\"2.PNG\"/></p>\n<p>Again, we have</p>\n<ul>\n<li>M lives immediately above P.</li>\n<li>M lives in the same type of flat as Q.</li>\n<li>Q lives to the north of S.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168456476270.png\" title=\"3.PNG\"/></p>\n<p>Again, we have</p>\n<ul>\n<li>O lives above T.</li>\n<li>T doesn’t live in the same type of flat as R.</li>\n</ul>\n<p>After applying the above condition, case 2 gets eliminated because T lives in the same type of flat as R, hence case-1 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168456485359.png\" title=\"4.PNG\"/></p>\n<p><strong>Answer: A</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the given questions. </strong></p>\n<p>Eight persons– M, N, O, P, Q, R, S and T are living on different floors of the four storey building where the lowermost floor is numbered as one and the floor immediately above it is numbered as two and so on.</p>\n<p><strong>Note-I: </strong>Each floor has two type of flats viz., Flat-A and Flat-B, where Flat A is to the west of Flat B.</p>\n<p><strong>Note-II: </strong>Flat B of floor 2 is immediately above Flat B of floor 1 and immediately below Flat B of floor 3 and so on. Similarly, Flat A of floor 2 is immediately above Flat A of floor 1 and immediately below Flat A of floor 3 and so on.</p>\n<p><strong>Note-III: </strong>The area of each flat is same.</p>\n<p><strong>Note-IV:</strong> Only two persons live on each floor and only one person lives in each flat.</p>\n<p>N lives two floors above P, who doesn’t live on an even numbered floor. R lives to the west of N. M lives immediately above P.  M lives in the same type of flat as Q. Q lives to the north of S. O lives above T. T doesn’t live in the same type of flat as R.</p><br><p><strong>Who among the following person lives to the south of N?</strong></p>", "options": ["<p>Q</p>", "<p>T</p>", "<p>P</p>", "<p>Both a and c</p>", "<p>Both b and c</p>"], "correctIndex": 4, "solution": "<p><strong>Final arrangement</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168456459733.png\" title=\"1.PNG\"/></strong></p>\n<p>We have</p>\n<ul>\n<li>N lives two floors above P, who doesn’t live on an even numbered floor.</li>\n<li>R lives to the west of N.</li>\n</ul>\n<p>From the above condition, there are two possibilities</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168456470021.png\" title=\"2.PNG\"/></p>\n<p>Again, we have</p>\n<ul>\n<li>M lives immediately above P.</li>\n<li>M lives in the same type of flat as Q.</li>\n<li>Q lives to the north of S.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168456476270.png\" title=\"3.PNG\"/></p>\n<p>Again, we have</p>\n<ul>\n<li>O lives above T.</li>\n<li>T doesn’t live in the same type of flat as R.</li>\n</ul>\n<p>After applying the above condition, case 2 gets eliminated because T lives in the same type of flat as R, hence case-1 shows the final arrangement.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168456485359.png\" title=\"4.PNG\"/></p>\n<p><strong>Answer: E</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the question given below:</strong></p>\n<p>Eight persons- J, K, L, M, N, O, P and Q are sitting around a circular table facing the center but not necessarily in the same order.</p>\n<p>Only two persons sit between N and O (either from left or right). J sits immediate right of O. The one who sits third to the left of J faces Q. Two persons sit between Q and P. P does not face N. M does not sit adjacent to P. One person sits between M and L.</p><br><p><strong>Who among the following person sits immediate left of M?</strong></p>", "options": ["<p>The one who faces O</p>", "<p>Q</p>", "<p>N</p>", "<p>The one who sits third left of L</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976089531.jpg\" title=\"10.jpg\"/></p>\n<p>We have,</p>\n<ul>\n<li>Only two persons sit between N and O (either from left or right).</li>\n<li>J sits immediate right of O.</li>\n</ul>\n<p>From the above condition, there are two possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976090035.jpg\" title=\"11.jpg\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>The one who sits third to the left of J faces Q.</li>\n<li>Two persons sit between Q and P.</li>\n<li>P does not face N.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976090657.jpg\" title=\"12.jpg\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>M does not sit adjacent to P.</li>\n<li>One person sits between M and L.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976091077.jpg\" title=\"13.jpg\"/></p>\n<p>From the above condition, case-1 gets eliminated.</p>\n<p><strong>Answer: D</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the question given below:</strong></p>\n<p>Eight persons- J, K, L, M, N, O, P and Q are sitting around a circular table facing the center but not necessarily in the same order.</p>\n<p>Only two persons sit between N and O (either from left or right). J sits immediate right of O. The one who sits third to the left of J faces Q. Two persons sit between Q and P. P does not face N. M does not sit adjacent to P. One person sits between M and L.</p><br><p><strong>How many persons sit between O and L when counted from the left of L?</strong></p>", "options": ["<p>Three</p>", "<p>Five</p>", "<p>Four</p>", "<p>Two</p>", "<p>Six</p>"], "correctIndex": 1, "solution": "<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976089531.jpg\" title=\"10.jpg\"/></p>\n<p>We have,</p>\n<ul>\n<li>Only two persons sit between N and O (either from left or right).</li>\n<li>J sits immediate right of O.</li>\n</ul>\n<p>From the above condition, there are two possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976090035.jpg\" title=\"11.jpg\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>The one who sits third to the left of J faces Q.</li>\n<li>Two persons sit between Q and P.</li>\n<li>P does not face N.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976090657.jpg\" title=\"12.jpg\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>M does not sit adjacent to P.</li>\n<li>One person sits between M and L.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976091077.jpg\" title=\"13.jpg\"/></p>\n<p>From the above condition, case-1 gets eliminated.</p>\n<p><strong>Answer: B</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the question given below:</strong></p>\n<p>Eight persons- J, K, L, M, N, O, P and Q are sitting around a circular table facing the center but not necessarily in the same order.</p>\n<p>Only two persons sit between N and O (either from left or right). J sits immediate right of O. The one who sits third to the left of J faces Q. Two persons sit between Q and P. P does not face N. M does not sit adjacent to P. One person sits between M and L.</p><br><p><strong>____ sits second to the right of N.</strong></p>", "options": ["<p>P</p>", "<p>N</p>", "<p>M</p>", "<p>O</p>", "<p>K</p>"], "correctIndex": 0, "solution": "<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976089531.jpg\" title=\"10.jpg\"/></p>\n<p>We have,</p>\n<ul>\n<li>Only two persons sit between N and O (either from left or right).</li>\n<li>J sits immediate right of O.</li>\n</ul>\n<p>From the above condition, there are two possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976090035.jpg\" title=\"11.jpg\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>The one who sits third to the left of J faces Q.</li>\n<li>Two persons sit between Q and P.</li>\n<li>P does not face N.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976090657.jpg\" title=\"12.jpg\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>M does not sit adjacent to P.</li>\n<li>One person sits between M and L.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976091077.jpg\" title=\"13.jpg\"/></p>\n<p>From the above condition, case-1 gets eliminated.</p>\n<p><strong>Answer: A</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the question given below:</strong></p>\n<p>Eight persons- J, K, L, M, N, O, P and Q are sitting around a circular table facing the center but not necessarily in the same order.</p>\n<p>Only two persons sit between N and O (either from left or right). J sits immediate right of O. The one who sits third to the left of J faces Q. Two persons sit between Q and P. P does not face N. M does not sit adjacent to P. One person sits between M and L.</p><br><p><strong>Which of the following statement(s) is/are true?</strong></p>", "options": ["<p>J sits adjacent to M</p>", "<p>O faces K</p>", "<p>L sits immediate right of N</p>", "<p>P does not sit adjacent to O</p>", "<p>Q does not face L</p>"], "correctIndex": 2, "solution": "<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976089531.jpg\" title=\"10.jpg\"/></p>\n<p>We have,</p>\n<ul>\n<li>Only two persons sit between N and O (either from left or right).</li>\n<li>J sits immediate right of O.</li>\n</ul>\n<p>From the above condition, there are two possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976090035.jpg\" title=\"11.jpg\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>The one who sits third to the left of J faces Q.</li>\n<li>Two persons sit between Q and P.</li>\n<li>P does not face N.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976090657.jpg\" title=\"12.jpg\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>M does not sit adjacent to P.</li>\n<li>One person sits between M and L.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976091077.jpg\" title=\"13.jpg\"/></p>\n<p>From the above condition, case-1 gets eliminated.</p>\n<p><strong>Answer: C</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the question given below:</strong></p>\n<p>Eight persons- J, K, L, M, N, O, P and Q are sitting around a circular table facing the center but not necessarily in the same order.</p>\n<p>Only two persons sit between N and O (either from left or right). J sits immediate right of O. The one who sits third to the left of J faces Q. Two persons sit between Q and P. P does not face N. M does not sit adjacent to P. One person sits between M and L.</p><br><p><strong>What is the position of P with respect to Q?</strong></p>", "options": ["<p>Second to the right</p>", "<p>Third to the left</p>", "<p>Immediate left</p>", "<p>Third to the right</p>", "<p>Immediate right</p>"], "correctIndex": 1, "solution": "<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976089531.jpg\" title=\"10.jpg\"/></p>\n<p>We have,</p>\n<ul>\n<li>Only two persons sit between N and O (either from left or right).</li>\n<li>J sits immediate right of O.</li>\n</ul>\n<p>From the above condition, there are two possibilities.</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976090035.jpg\" title=\"11.jpg\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>The one who sits third to the left of J faces Q.</li>\n<li>Two persons sit between Q and P.</li>\n<li>P does not face N.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976090657.jpg\" title=\"12.jpg\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>M does not sit adjacent to P.</li>\n<li>One person sits between M and L.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976091077.jpg\" title=\"13.jpg\"/></p>\n<p>From the above condition, case-1 gets eliminated.</p>\n<p><strong>Answer: B</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Eight persons- J, K, L, M, N, O, P and Q were born in different years viz., 1969, 1976,1979, 1981, 1988, 1997, 2002 and 2007 but not necessarily in the same order. Their ages are calculated based on the year 2021.</p>\n<p>Two persons were born between N and L. The age of either N or L is a prime number. The difference between the ages of N and K is five years. K is elder than N. O was born in an odd-numbered year but is neither the youngest nor the eldest person. The age of Q is an odd number but born after O. The difference between the ages of Q and P is a prime number. The number of persons born after P is one less than the number of persons born before J.</p><br><p><strong>Who among the following person was born in 1976?</strong></p>", "options": ["<p>The person who was born five years after J</p>", "<p>Q</p>", "<p>P</p>", "<p>The person who was born three years before O</p>", "<p>None of the above</p>"], "correctIndex": 3, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165512962588.png\" title=\"59.PNG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>Two persons were born between N and L.</li>\n<li>The age of either N or L is a prime number.</li>\n<li>The difference between the ages of N and K is five years.</li>\n<li>K is elder than N.</li>\n</ul>\n<p>From this condition, there are two possibilities</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165512984942.png\" title=\"60.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>O was born in an odd-numbered year but is neither the youngest nor the eldest person.</li>\n<li>The age of Q is an odd number and born after O.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165512994291.png\" title=\"61.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>The difference between the ages of Q and P is a prime number.</li>\n<li>The number of persons born after P is one less than the number of persons born before J.</li>\n</ul>\n<p>From this condition, Case2 gets eliminated. Case1 shows the final arrangement</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165513000813.png\" title=\"62.PNG\"/></p>\n<p><strong>Answer: D</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Eight persons- J, K, L, M, N, O, P and Q were born in different years viz., 1969, 1976,1979, 1981, 1988, 1997, 2002 and 2007 but not necessarily in the same order. Their ages are calculated based on the year 2021.</p>\n<p>Two persons were born between N and L. The age of either N or L is a prime number. The difference between the ages of N and K is five years. K is elder than N. O was born in an odd-numbered year but is neither the youngest nor the eldest person. The age of Q is an odd number but born after O. The difference between the ages of Q and P is a prime number. The number of persons born after P is one less than the number of persons born before J.</p><br><p><strong>How many persons were born between O and N?</strong></p>", "options": ["<p>Two</p>", "<p>Three</p>", "<p>One</p>", "<p>Four</p>", "<p>Five</p>"], "correctIndex": 1, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165512962588.png\" title=\"59.PNG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>Two persons were born between N and L.</li>\n<li>The age of either N or L is a prime number.</li>\n<li>The difference between the ages of N and K is five years.</li>\n<li>K is elder than N.</li>\n</ul>\n<p>From this condition, there are two possibilities</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165512984942.png\" title=\"60.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>O was born in an odd-numbered year but is neither the youngest nor the eldest person.</li>\n<li>The age of Q is an odd number and born after O.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165512994291.png\" title=\"61.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>The difference between the ages of Q and P is a prime number.</li>\n<li>The number of persons born after P is one less than the number of persons born before J.</li>\n</ul>\n<p>From this condition, Case2 gets eliminated. Case1 shows the final arrangement</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165513000813.png\" title=\"62.PNG\"/></p>\n<p><strong>Answer: B</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Eight persons- J, K, L, M, N, O, P and Q were born in different years viz., 1969, 1976,1979, 1981, 1988, 1997, 2002 and 2007 but not necessarily in the same order. Their ages are calculated based on the year 2021.</p>\n<p>Two persons were born between N and L. The age of either N or L is a prime number. The difference between the ages of N and K is five years. K is elder than N. O was born in an odd-numbered year but is neither the youngest nor the eldest person. The age of Q is an odd number but born after O. The difference between the ages of Q and P is a prime number. The number of persons born after P is one less than the number of persons born before J.</p><br><p><strong>Who among the following person was born immediately after Q?</strong></p>", "options": ["<p>The one who was born immediately before P</p>", "<p>J</p>", "<p>The one who was born in 1997</p>", "<p>L</p>", "<p>None of the above</p>"], "correctIndex": 2, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165512962588.png\" title=\"59.PNG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>Two persons were born between N and L.</li>\n<li>The age of either N or L is a prime number.</li>\n<li>The difference between the ages of N and K is five years.</li>\n<li>K is elder than N.</li>\n</ul>\n<p>From this condition, there are two possibilities</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165512984942.png\" title=\"60.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>O was born in an odd-numbered year but is neither the youngest nor the eldest person.</li>\n<li>The age of Q is an odd number and born after O.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165512994291.png\" title=\"61.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>The difference between the ages of Q and P is a prime number.</li>\n<li>The number of persons born after P is one less than the number of persons born before J.</li>\n</ul>\n<p>From this condition, Case2 gets eliminated. Case1 shows the final arrangement</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165513000813.png\" title=\"62.PNG\"/></p>\n<p><strong>Answer: C</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Eight persons- J, K, L, M, N, O, P and Q were born in different years viz., 1969, 1976,1979, 1981, 1988, 1997, 2002 and 2007 but not necessarily in the same order. Their ages are calculated based on the year 2021.</p>\n<p>Two persons were born between N and L. The age of either N or L is a prime number. The difference between the ages of N and K is five years. K is elder than N. O was born in an odd-numbered year but is neither the youngest nor the eldest person. The age of Q is an odd number but born after O. The difference between the ages of Q and P is a prime number. The number of persons born after P is one less than the number of persons born before J.</p><br><p><strong>What is the sum of the ages of P and M?</strong></p>", "options": ["<p>66</p>", "<p>70</p>", "<p>86</p>", "<p>56</p>", "<p>74</p>"], "correctIndex": 0, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165512962588.png\" title=\"59.PNG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>Two persons were born between N and L.</li>\n<li>The age of either N or L is a prime number.</li>\n<li>The difference between the ages of N and K is five years.</li>\n<li>K is elder than N.</li>\n</ul>\n<p>From this condition, there are two possibilities</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165512984942.png\" title=\"60.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>O was born in an odd-numbered year but is neither the youngest nor the eldest person.</li>\n<li>The age of Q is an odd number and born after O.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165512994291.png\" title=\"61.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>The difference between the ages of Q and P is a prime number.</li>\n<li>The number of persons born after P is one less than the number of persons born before J.</li>\n</ul>\n<p>From this condition, Case2 gets eliminated. Case1 shows the final arrangement</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165513000813.png\" title=\"62.PNG\"/></p>\n<p><strong>Answer: A</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the questions given below.</strong></p>\n<p>Eight persons- J, K, L, M, N, O, P and Q were born in different years viz., 1969, 1976,1979, 1981, 1988, 1997, 2002 and 2007 but not necessarily in the same order. Their ages are calculated based on the year 2021.</p>\n<p>Two persons were born between N and L. The age of either N or L is a prime number. The difference between the ages of N and K is five years. K is elder than N. O was born in an odd-numbered year but is neither the youngest nor the eldest person. The age of Q is an odd number but born after O. The difference between the ages of Q and P is a prime number. The number of persons born after P is one less than the number of persons born before J.</p><br><p><strong>Who among the following person was born in a leap year?</strong></p>", "options": ["<p>J</p>", "<p>The person who was born five years before K</p>", "<p>The person who was born seven years after L</p>", "<p>P</p>", "<p>Both A and C</p>"], "correctIndex": 4, "solution": "<p><strong>Final arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165512962588.png\" title=\"59.PNG\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>Two persons were born between N and L.</li>\n<li>The age of either N or L is a prime number.</li>\n<li>The difference between the ages of N and K is five years.</li>\n<li>K is elder than N.</li>\n</ul>\n<p>From this condition, there are two possibilities</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165512984942.png\" title=\"60.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>O was born in an odd-numbered year but is neither the youngest nor the eldest person.</li>\n<li>The age of Q is an odd number and born after O.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165512994291.png\" title=\"61.PNG\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>The difference between the ages of Q and P is a prime number.</li>\n<li>The number of persons born after P is one less than the number of persons born before J.</li>\n</ul>\n<p>From this condition, Case2 gets eliminated. Case1 shows the final arrangement</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165513000813.png\" title=\"62.PNG\"/></p>\n<p><strong>Answer: E</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the below questions</strong></p>\n<p>Nine letters are arranged from left to right in such a manner to form a meaningful word. All letters are different. R is placed second from the right end. Only three letters are placed between R and N. As many letters to the right of N as to the left of T. Only two letters are placed between T and Y. O is placed second to the left of Y. A is placed third to the right of I. S is placed to the left of  G.</p><br><p><strong>Which of the following letter is placed third from the left end?</strong></p>", "options": ["<p>A</p>", "<p>Y</p>", "<p>N</p>", "<p>G</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Final Arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165010837579.png\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>R is placed second from the right end.</li>\n<li>Only three letters are placed between R and N.</li>\n<li>As many letters to the right of N as to the left of T.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165010843114.png\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>Only two letters are placed between T and Y. O is placed second to the left of Y.</li>\n<li>A is placed third to the right of I. S is placed to the left of G.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165010850955.png\"/></p>\n<p><strong>Answer: D</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the below questions</strong></p>\n<p>Nine letters are arranged from left to right in such a manner to form a meaningful word. All letters are different. R is placed second from the right end. Only three letters are placed between R and N. As many letters to the right of N as to the left of T. Only two letters are placed between T and Y. O is placed second to the left of Y. A is placed third to the right of I. S is placed to the left of  G.</p><br><p><strong>How many letters are placed between I and the letter which is placed fourth from the right end?</strong></p>", "options": ["<p>Three</p>", "<p>None</p>", "<p>Two</p>", "<p>One</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Final Arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165010837579.png\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>R is placed second from the right end.</li>\n<li>Only three letters are placed between R and N.</li>\n<li>As many letters to the right of N as to the left of T.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165010843114.png\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>Only two letters are placed between T and Y. O is placed second to the left of Y.</li>\n<li>A is placed third to the right of I. S is placed to the left of G.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165010850955.png\"/></p>\n<p><strong>Answer: A</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the below questions</strong></p>\n<p>Nine letters are arranged from left to right in such a manner to form a meaningful word. All letters are different. R is placed second from the right end. Only three letters are placed between R and N. As many letters to the right of N as to the left of T. Only two letters are placed between T and Y. O is placed second to the left of Y. A is placed third to the right of I. S is placed to the left of  G.</p><br><p><strong>As many letters between G and S as between Y and ____.</strong></p>", "options": ["<p>The letter which is placed second to the right of &nbsp;S</p>", "<p>I</p>", "<p>T</p>", "<p>The letter which is placed second to the right of A</p>", "<p>None of the above</p>"], "correctIndex": 3, "solution": "<p><strong>Final Arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165010837579.png\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>R is placed second from the right end.</li>\n<li>Only three letters are placed between R and N.</li>\n<li>As many letters to the right of N as to the left of T.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165010843114.png\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>Only two letters are placed between T and Y. O is placed second to the left of Y.</li>\n<li>A is placed third to the right of I. S is placed to the left of G.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165010850955.png\"/></p>\n<p><strong>Answer: D</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the below questions</strong></p>\n<p>Nine letters are arranged from left to right in such a manner to form a meaningful word. All letters are different. R is placed second from the right end. Only three letters are placed between R and N. As many letters to the right of N as to the left of T. Only two letters are placed between T and Y. O is placed second to the left of Y. A is placed third to the right of I. S is placed to the left of  G.</p><br><p><strong>Which of the following letter is exactly between N and R?</strong></p>", "options": ["<p>Y</p>", "<p>O</p>", "<p>T</p>", "<p>I</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Final Arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165010837579.png\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>R is placed second from the right end.</li>\n<li>Only three letters are placed between R and N.</li>\n<li>As many letters to the right of N as to the left of T.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165010843114.png\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>Only two letters are placed between T and Y. O is placed second to the left of Y.</li>\n<li>A is placed third to the right of I. S is placed to the left of G.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165010850955.png\"/></p>\n<p><strong>Answer: C</strong></p>"}, {"question": "<p><strong>Study the following information carefully and answer the below questions</strong></p>\n<p>Nine letters are arranged from left to right in such a manner to form a meaningful word. All letters are different. R is placed second from the right end. Only three letters are placed between R and N. As many letters to the right of N as to the left of T. Only two letters are placed between T and Y. O is placed second to the left of Y. A is placed third to the right of I. S is placed to the left of  G.</p><br><p><strong>Which of the following statement(s) is/are false?</strong></p>\n<p><strong>I. </strong>Only two letters are placed between G and T.</p>\n<p><strong>II. </strong>Only three letters are placed to the right of A</p>\n<p><strong>III. </strong>N is placed third to the left of R</p>", "options": ["<p>Only I</p>", "<p>Only I and III</p>", "<p>Only III</p>", "<p>Only II and III</p>", "<p>All are true</p>"], "correctIndex": 3, "solution": "<p><strong>Final Arrangement:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165010837579.png\"/></strong></p>\n<p>We have,</p>\n<ul>\n<li>R is placed second from the right end.</li>\n<li>Only three letters are placed between R and N.</li>\n<li>As many letters to the right of N as to the left of T.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165010843114.png\"/></p>\n<p>Again we have,</p>\n<ul>\n<li>Only two letters are placed between T and Y. O is placed second to the left of Y.</li>\n<li>A is placed third to the right of I. S is placed to the left of G.</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165010850955.png\"/></p>\n<p><strong>Answer: D</strong></p>"}] ,
+    hi: [{"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और दिए गए प्रश्नों के उत्तर दें। </strong></p>\n<p>आठ व्यक्ति- M, N, O, P, Q, R, S और T एक चार मंजिला इमारत के अलग-अलग मंजिलों पर रहते हैं, जहां सबसे निचली मंजिल की संख्या एक है और तत्काल ऊपर की मंजिल की संख्या दो है और इसी तरह आगे।</p>\n<p><strong>नोट-I:</strong> प्रत्येक मंजिल में दो प्रकार के फ्लैट हैं, फ्लैट-A और फ्लैट-B, जहां फ्लैट A, फ्लैट B के पश्चिम में है।</p>\n<p><strong>नोट-II:</strong> मंजिल 2 का फ्लैट B, मंजिल 1 के फ्लैट B के तत्काल ऊपर है और मंजिल 3 के फ्लैट B के तत्काल नीचे है और इसी तरह आगे। इसी तरह, मंजिल 2 का फ्लैट A, मंजिल 1 के फ्लैट A के तत्काल ऊपर और मंजिल 3 के फ्लैट A के तत्काल नीचे है और इसी तरह आगे।</p>\n<p><strong>नोट-III:</strong> प्रत्येक फ्लैट का क्षेत्रफल समान है।</p>\n<p><strong>नोट-IV:</strong> प्रत्येक मंजिल पर केवल दो व्यक्ति रहते हैं और प्रत्येक फ्लैट में केवल एक व्यक्ति रहता है।</p>\n<p>N, P से दो मंजिल ऊपर रहता है, जो एक सम संख्या वाली मंजिल पर नहीं रहता है। R, N के पश्चिम में रहता है। M, P के तत्काल ऊपर रहता है। M, Q के समान फ्लैट में रहता है। Q, S के उत्तर में रहता है। O, T के ऊपर रहता है। T, R के समान फ्लैट में नहीं रहता है।</p><br><p><strong>निम्नलिखित में से कौन सा व्यक्तियों का जोड़ा एक ही मंजिल पर रहता है?</strong></p>", "options": ["<p>N, Q</p>", "<p>P, T</p>", "<p>S, M</p>", "<p>O, P</p>", "<p>M, T</p>"], "correctIndex": 4, "solution": "<p><strong>अंतिम व्यवस्था</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168545131578.png\" title=\"43.PNG\"/></strong></p>\n<p>हमारे पास है</p>\n<ul>\n<li>N, P से दो मंजिल ऊपर रहता है, जो एक सम संख्या वाली मंजिल पर नहीं रहता है।</li>\n<li>R, N के पश्चिम में रहता है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, दो संभावनाएँ हैं</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168545137051.png\" title=\"44.PNG\"/></p>\n<p>फिर से, हमारे पास है</p>\n<ul>\n<li>M, P के तत्काल ऊपर रहता है।</li>\n<li>M, Q के समान फ्लैट में रहता है।</li>\n<li>Q, S के उत्तर में रहता है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168545144733.png\" title=\"45.PNG\"/></p>\n<p>फिर से, हमारे पास है</p>\n<ul>\n<li>O, T के ऊपर रहता है।</li>\n<li>T, R के समान फ्लैट में नहीं रहता है।</li>\n</ul>\n<p>उपरोक्त शर्त को लागू करने के बाद, केस 2 समाप्त हो जाता है क्योंकि T उसी प्रकार के फ्लैट में रहता है जिसमें R रहता है, इसलिए केस -1 अंतिम व्यवस्था को दर्शाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168545150668.png\" title=\"46.PNG\"/></p>\n<p><strong>उत्तर: E</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और दिए गए प्रश्नों के उत्तर दें। </strong></p>\n<p>आठ व्यक्ति- M, N, O, P, Q, R, S और T एक चार मंजिला इमारत के अलग-अलग मंजिलों पर रहते हैं, जहां सबसे निचली मंजिल की संख्या एक है और तत्काल ऊपर की मंजिल की संख्या दो है और इसी तरह आगे।</p>\n<p><strong>नोट-I:</strong> प्रत्येक मंजिल में दो प्रकार के फ्लैट हैं, फ्लैट-A और फ्लैट-B, जहां फ्लैट A, फ्लैट B के पश्चिम में है।</p>\n<p><strong>नोट-II:</strong> मंजिल 2 का फ्लैट B, मंजिल 1 के फ्लैट B के तत्काल ऊपर है और मंजिल 3 के फ्लैट B के तत्काल नीचे है और इसी तरह आगे। इसी तरह, मंजिल 2 का फ्लैट A, मंजिल 1 के फ्लैट A के तत्काल ऊपर और मंजिल 3 के फ्लैट A के तत्काल नीचे है और इसी तरह आगे।</p>\n<p><strong>नोट-III:</strong> प्रत्येक फ्लैट का क्षेत्रफल समान है।</p>\n<p><strong>नोट-IV:</strong> प्रत्येक मंजिल पर केवल दो व्यक्ति रहते हैं और प्रत्येक फ्लैट में केवल एक व्यक्ति रहता है।</p>\n<p>N, P से दो मंजिल ऊपर रहता है, जो एक सम संख्या वाली मंजिल पर नहीं रहता है। R, N के पश्चिम में रहता है। M, P के तत्काल ऊपर रहता है। M, Q के समान फ्लैट में रहता है। Q, S के उत्तर में रहता है। O, T के ऊपर रहता है। T, R के समान फ्लैट में नहीं रहता है।</p><br><p><strong>निम्नलिखित में से कौन सा व्यक्ति फ्लैट B में रहता है?</strong></p>\n<p><strong>I</strong><strong>)</strong><strong>. </strong>वह व्यक्ति जो T के पश्चिम में रहता है</p>\n<p><strong>II</strong><strong>)</strong><strong>. </strong>N</p>\n<p><strong>III). </strong>वह व्यक्ति जो S के समान मंजिल पर रहता है</p>", "options": ["<p>केवल I</p>", "<p>केवल II</p>", "<p>II और III दोनों</p>", "<p>केवल III</p>", "<p>I और III दोनों</p>"], "correctIndex": 2, "solution": "<p><strong>अंतिम व्यवस्था</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168545131578.png\" title=\"43.PNG\"/></strong></p>\n<p>हमारे पास है</p>\n<ul>\n<li>N, P से दो मंजिल ऊपर रहता है, जो एक सम संख्या वाली मंजिल पर नहीं रहता है।</li>\n<li>R, N के पश्चिम में रहता है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, दो संभावनाएँ हैं</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168545137051.png\" title=\"44.PNG\"/></p>\n<p>फिर से, हमारे पास है</p>\n<ul>\n<li>M, P के तत्काल ऊपर रहता है।</li>\n<li>M, Q के समान फ्लैट में रहता है।</li>\n<li>Q, S के उत्तर में रहता है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168545144733.png\" title=\"45.PNG\"/></p>\n<p>फिर से, हमारे पास है</p>\n<ul>\n<li>O, T के ऊपर रहता है।</li>\n<li>T, R के समान फ्लैट में नहीं रहता है।</li>\n</ul>\n<p>उपरोक्त शर्त को लागू करने के बाद, केस 2 समाप्त हो जाता है क्योंकि T उसी प्रकार के फ्लैट में रहता है जिसमें R रहता है, इसलिए केस -1 अंतिम व्यवस्था को दर्शाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168545150668.png\" title=\"46.PNG\"/></p>\n<p><strong>उत्तर: C</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और दिए गए प्रश्नों के उत्तर दें। </strong></p>\n<p>आठ व्यक्ति- M, N, O, P, Q, R, S और T एक चार मंजिला इमारत के अलग-अलग मंजिलों पर रहते हैं, जहां सबसे निचली मंजिल की संख्या एक है और तत्काल ऊपर की मंजिल की संख्या दो है और इसी तरह आगे।</p>\n<p><strong>नोट-I:</strong> प्रत्येक मंजिल में दो प्रकार के फ्लैट हैं, फ्लैट-A और फ्लैट-B, जहां फ्लैट A, फ्लैट B के पश्चिम में है।</p>\n<p><strong>नोट-II:</strong> मंजिल 2 का फ्लैट B, मंजिल 1 के फ्लैट B के तत्काल ऊपर है और मंजिल 3 के फ्लैट B के तत्काल नीचे है और इसी तरह आगे। इसी तरह, मंजिल 2 का फ्लैट A, मंजिल 1 के फ्लैट A के तत्काल ऊपर और मंजिल 3 के फ्लैट A के तत्काल नीचे है और इसी तरह आगे।</p>\n<p><strong>नोट-III:</strong> प्रत्येक फ्लैट का क्षेत्रफल समान है।</p>\n<p><strong>नोट-IV:</strong> प्रत्येक मंजिल पर केवल दो व्यक्ति रहते हैं और प्रत्येक फ्लैट में केवल एक व्यक्ति रहता है।</p>\n<p>N, P से दो मंजिल ऊपर रहता है, जो एक सम संख्या वाली मंजिल पर नहीं रहता है। R, N के पश्चिम में रहता है। M, P के तत्काल ऊपर रहता है। M, Q के समान फ्लैट में रहता है। Q, S के उत्तर में रहता है। O, T के ऊपर रहता है। T, R के समान फ्लैट में नहीं रहता है।</p><br><p><strong>O के समान मंजिल पर रहने वाले व्यक्ति के ऊपर कितनी मंजिलें हैं?</strong></p>", "options": ["<p>कोई नहीं</p>", "<p>एक</p>", "<p>दो</p>", "<p>तीन</p>", "<p>या तो b या c</p>"], "correctIndex": 0, "solution": "<p><strong>अंतिम व्यवस्था</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168545131578.png\" title=\"43.PNG\"/></strong></p>\n<p>हमारे पास है</p>\n<ul>\n<li>N, P से दो मंजिल ऊपर रहता है, जो एक सम संख्या वाली मंजिल पर नहीं रहता है।</li>\n<li>R, N के पश्चिम में रहता है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, दो संभावनाएँ हैं</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168545137051.png\" title=\"44.PNG\"/></p>\n<p>फिर से, हमारे पास है</p>\n<ul>\n<li>M, P के तत्काल ऊपर रहता है।</li>\n<li>M, Q के समान फ्लैट में रहता है।</li>\n<li>Q, S के उत्तर में रहता है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168545144733.png\" title=\"45.PNG\"/></p>\n<p>फिर से, हमारे पास है</p>\n<ul>\n<li>O, T के ऊपर रहता है।</li>\n<li>T, R के समान फ्लैट में नहीं रहता है।</li>\n</ul>\n<p>उपरोक्त शर्त को लागू करने के बाद, केस 2 समाप्त हो जाता है क्योंकि T उसी प्रकार के फ्लैट में रहता है जिसमें R रहता है, इसलिए केस -1 अंतिम व्यवस्था को दर्शाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168545150668.png\" title=\"46.PNG\"/></p>\n<p><strong>उत्तर: A</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और दिए गए प्रश्नों के उत्तर दें। </strong></p>\n<p>आठ व्यक्ति- M, N, O, P, Q, R, S और T एक चार मंजिला इमारत के अलग-अलग मंजिलों पर रहते हैं, जहां सबसे निचली मंजिल की संख्या एक है और तत्काल ऊपर की मंजिल की संख्या दो है और इसी तरह आगे।</p>\n<p><strong>नोट-I:</strong> प्रत्येक मंजिल में दो प्रकार के फ्लैट हैं, फ्लैट-A और फ्लैट-B, जहां फ्लैट A, फ्लैट B के पश्चिम में है।</p>\n<p><strong>नोट-II:</strong> मंजिल 2 का फ्लैट B, मंजिल 1 के फ्लैट B के तत्काल ऊपर है और मंजिल 3 के फ्लैट B के तत्काल नीचे है और इसी तरह आगे। इसी तरह, मंजिल 2 का फ्लैट A, मंजिल 1 के फ्लैट A के तत्काल ऊपर और मंजिल 3 के फ्लैट A के तत्काल नीचे है और इसी तरह आगे।</p>\n<p><strong>नोट-III:</strong> प्रत्येक फ्लैट का क्षेत्रफल समान है।</p>\n<p><strong>नोट-IV:</strong> प्रत्येक मंजिल पर केवल दो व्यक्ति रहते हैं और प्रत्येक फ्लैट में केवल एक व्यक्ति रहता है।</p>\n<p>N, P से दो मंजिल ऊपर रहता है, जो एक सम संख्या वाली मंजिल पर नहीं रहता है। R, N के पश्चिम में रहता है। M, P के तत्काल ऊपर रहता है। M, Q के समान फ्लैट में रहता है। Q, S के उत्तर में रहता है। O, T के ऊपर रहता है। T, R के समान फ्लैट में नहीं रहता है।</p><br><p><strong>Q फ्लैट___ में ___मंजिल पर रहता है।</strong></p>", "options": ["<p>A<strong>, </strong>चौथी</p>", "<p>A, दूसरी</p>", "<p>B, चौथी</p>", "<p>B, तीसरी</p>", "<p>इनमें से कोई नहीं</p>"], "correctIndex": 0, "solution": "<p><strong>अंतिम व्यवस्था</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168545131578.png\" title=\"43.PNG\"/></strong></p>\n<p>हमारे पास है</p>\n<ul>\n<li>N, P से दो मंजिल ऊपर रहता है, जो एक सम संख्या वाली मंजिल पर नहीं रहता है।</li>\n<li>R, N के पश्चिम में रहता है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, दो संभावनाएँ हैं</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168545137051.png\" title=\"44.PNG\"/></p>\n<p>फिर से, हमारे पास है</p>\n<ul>\n<li>M, P के तत्काल ऊपर रहता है।</li>\n<li>M, Q के समान फ्लैट में रहता है।</li>\n<li>Q, S के उत्तर में रहता है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168545144733.png\" title=\"45.PNG\"/></p>\n<p>फिर से, हमारे पास है</p>\n<ul>\n<li>O, T के ऊपर रहता है।</li>\n<li>T, R के समान फ्लैट में नहीं रहता है।</li>\n</ul>\n<p>उपरोक्त शर्त को लागू करने के बाद, केस 2 समाप्त हो जाता है क्योंकि T उसी प्रकार के फ्लैट में रहता है जिसमें R रहता है, इसलिए केस -1 अंतिम व्यवस्था को दर्शाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168545150668.png\" title=\"46.PNG\"/></p>\n<p><strong>उत्तर: A</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और दिए गए प्रश्नों के उत्तर दें। </strong></p>\n<p>आठ व्यक्ति- M, N, O, P, Q, R, S और T एक चार मंजिला इमारत के अलग-अलग मंजिलों पर रहते हैं, जहां सबसे निचली मंजिल की संख्या एक है और तत्काल ऊपर की मंजिल की संख्या दो है और इसी तरह आगे।</p>\n<p><strong>नोट-I:</strong> प्रत्येक मंजिल में दो प्रकार के फ्लैट हैं, फ्लैट-A और फ्लैट-B, जहां फ्लैट A, फ्लैट B के पश्चिम में है।</p>\n<p><strong>नोट-II:</strong> मंजिल 2 का फ्लैट B, मंजिल 1 के फ्लैट B के तत्काल ऊपर है और मंजिल 3 के फ्लैट B के तत्काल नीचे है और इसी तरह आगे। इसी तरह, मंजिल 2 का फ्लैट A, मंजिल 1 के फ्लैट A के तत्काल ऊपर और मंजिल 3 के फ्लैट A के तत्काल नीचे है और इसी तरह आगे।</p>\n<p><strong>नोट-III:</strong> प्रत्येक फ्लैट का क्षेत्रफल समान है।</p>\n<p><strong>नोट-IV:</strong> प्रत्येक मंजिल पर केवल दो व्यक्ति रहते हैं और प्रत्येक फ्लैट में केवल एक व्यक्ति रहता है।</p>\n<p>N, P से दो मंजिल ऊपर रहता है, जो एक सम संख्या वाली मंजिल पर नहीं रहता है। R, N के पश्चिम में रहता है। M, P के तत्काल ऊपर रहता है। M, Q के समान फ्लैट में रहता है। Q, S के उत्तर में रहता है। O, T के ऊपर रहता है। T, R के समान फ्लैट में नहीं रहता है।</p><br><p><strong>निम्नलिखित में से कौन सा व्यक्ति N के दक्षिण में रहता है?</strong></p>", "options": ["<p>Q</p>", "<p>T</p>", "<p>P</p>", "<p>a और c<strong> </strong>दोनों</p>", "<p>b और c दोनों</p>"], "correctIndex": 4, "solution": "<p><strong>अंतिम व्यवस्था</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168545131578.png\" title=\"43.PNG\"/></strong></p>\n<p>हमारे पास है</p>\n<ul>\n<li>N, P से दो मंजिल ऊपर रहता है, जो एक सम संख्या वाली मंजिल पर नहीं रहता है।</li>\n<li>R, N के पश्चिम में रहता है।</li>\n</ul>\n<p>उपरोक्त शर्तों से, दो संभावनाएँ हैं</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168545137051.png\" title=\"44.PNG\"/></p>\n<p>फिर से, हमारे पास है</p>\n<ul>\n<li>M, P के तत्काल ऊपर रहता है।</li>\n<li>M, Q के समान फ्लैट में रहता है।</li>\n<li>Q, S के उत्तर में रहता है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168545144733.png\" title=\"45.PNG\"/></p>\n<p>फिर से, हमारे पास है</p>\n<ul>\n<li>O, T के ऊपर रहता है।</li>\n<li>T, R के समान फ्लैट में नहीं रहता है।</li>\n</ul>\n<p>उपरोक्त शर्त को लागू करने के बाद, केस 2 समाप्त हो जाता है क्योंकि T उसी प्रकार के फ्लैट में रहता है जिसमें R रहता है, इसलिए केस -1 अंतिम व्यवस्था को दर्शाता है।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/168545150668.png\" title=\"46.PNG\"/></p>\n<p><strong>उत्तर: E</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्न का उत्तर दें:</strong></p>\n<p>आठ व्यक्ति- J, K, L, M, N, O, P और Q एक वृताकार मेज़ के चारों ओर केंद्र की ओर मुख करके बैठे हैं लेकिन आवश्यक नहीं इसी क्रम में हो।</p>\n<p>N और O के बीच केवल दो व्यक्ति बैठे हैं (या तो बाएं या दाएं से)। J, O के तत्काल दायें बैठा है। वह व्यक्ति जो J के बायें से तीसरे स्थान पर बैठा है, Q की ओर मुख करता है। Q और P के मध्य दो व्यक्ति बैठे हैं। P का मुख N की ओर नहीं है। M, P के आसन्न नहीं बैठा है। M और L के मध्य एक व्यक्ति बैठा है।</p><br><p><strong>निम्नलिखित में से कौन सा व्यक्ति M के तत्काल बायें बैठा है?</strong></p>", "options": ["<p>वह व्यक्ति जो O की ओर मुख करता है</p>", "<p>Q</p>", "<p>N</p>", "<p>वह व्यक्ति जो L के बायें से तीसरे स्थान पर बैठा है</p>", "<p>इनमें से कोई नहीं</p>"], "correctIndex": 3, "solution": "<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976670152.jpg\" title=\"10.jpg\"/></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>N और O के बीच केवल दो व्यक्ति बैठे हैं (या तो बाएं या दाएं से)।</li>\n<li>J, O के तत्काल दायें बैठा है।</li>\n</ul>\n<p>उपरोक्त स्थिति से, दो संभावनाएं हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976670668.jpg\" title=\"11.jpg\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>वह व्यक्ति जो J के बायें से तीसरे स्थान पर बैठा है, Q की ओर मुख करता है।</li>\n<li>Q और P के मध्य दो व्यक्ति बैठे हैं।</li>\n<li>P का मुख N की ओर नहीं है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976671114.jpg\" title=\"12.jpg\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>M, P के आसन्न नहीं बैठा है।</li>\n<li>M और L के मध्य एक व्यक्ति बैठा है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976681818.jpg\" title=\"13.jpg\"/></p>\n<p>उपरोक्त शर्त से केस-1 समाप्त हो जाता है।</p>\n<p><strong>उत्तर: D</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्न का उत्तर दें:</strong></p>\n<p>आठ व्यक्ति- J, K, L, M, N, O, P और Q एक वृताकार मेज़ के चारों ओर केंद्र की ओर मुख करके बैठे हैं लेकिन आवश्यक नहीं इसी क्रम में हो।</p>\n<p>N और O के बीच केवल दो व्यक्ति बैठे हैं (या तो बाएं या दाएं से)। J, O के तत्काल दायें बैठा है। वह व्यक्ति जो J के बायें से तीसरे स्थान पर बैठा है, Q की ओर मुख करता है। Q और P के मध्य दो व्यक्ति बैठे हैं। P का मुख N की ओर नहीं है। M, P के आसन्न नहीं बैठा है। M और L के मध्य एक व्यक्ति बैठा है।</p><br><p><strong>L के बाईं ओर से गिनने पर O और L के बीच कितने व्यक्ति बैठे हैं?</strong></p>", "options": ["<p>तीन</p>", "<p>पांच</p>", "<p>चार</p>", "<p>दो</p>", "<p>छह</p>"], "correctIndex": 1, "solution": "<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976670152.jpg\" title=\"10.jpg\"/></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>N और O के बीच केवल दो व्यक्ति बैठे हैं (या तो बाएं या दाएं से)।</li>\n<li>J, O के तत्काल दायें बैठा है।</li>\n</ul>\n<p>उपरोक्त स्थिति से, दो संभावनाएं हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976670668.jpg\" title=\"11.jpg\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>वह व्यक्ति जो J के बायें से तीसरे स्थान पर बैठा है, Q की ओर मुख करता है।</li>\n<li>Q और P के मध्य दो व्यक्ति बैठे हैं।</li>\n<li>P का मुख N की ओर नहीं है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976671114.jpg\" title=\"12.jpg\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>M, P के आसन्न नहीं बैठा है।</li>\n<li>M और L के मध्य एक व्यक्ति बैठा है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976681818.jpg\" title=\"13.jpg\"/></p>\n<p>उपरोक्त शर्त से केस-1 समाप्त हो जाता है।</p>\n<p><strong>उत्तर: B</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्न का उत्तर दें:</strong></p>\n<p>आठ व्यक्ति- J, K, L, M, N, O, P और Q एक वृताकार मेज़ के चारों ओर केंद्र की ओर मुख करके बैठे हैं लेकिन आवश्यक नहीं इसी क्रम में हो।</p>\n<p>N और O के बीच केवल दो व्यक्ति बैठे हैं (या तो बाएं या दाएं से)। J, O के तत्काल दायें बैठा है। वह व्यक्ति जो J के बायें से तीसरे स्थान पर बैठा है, Q की ओर मुख करता है। Q और P के मध्य दो व्यक्ति बैठे हैं। P का मुख N की ओर नहीं है। M, P के आसन्न नहीं बैठा है। M और L के मध्य एक व्यक्ति बैठा है।</p><br><p><strong>____ N के दायें से दूसरे स्थान पर बैठा है।</strong></p>", "options": ["<p>P</p>", "<p>N</p>", "<p>M</p>", "<p>O</p>", "<p>K</p>"], "correctIndex": 0, "solution": "<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976670152.jpg\" title=\"10.jpg\"/></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>N और O के बीच केवल दो व्यक्ति बैठे हैं (या तो बाएं या दाएं से)।</li>\n<li>J, O के तत्काल दायें बैठा है।</li>\n</ul>\n<p>उपरोक्त स्थिति से, दो संभावनाएं हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976670668.jpg\" title=\"11.jpg\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>वह व्यक्ति जो J के बायें से तीसरे स्थान पर बैठा है, Q की ओर मुख करता है।</li>\n<li>Q और P के मध्य दो व्यक्ति बैठे हैं।</li>\n<li>P का मुख N की ओर नहीं है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976671114.jpg\" title=\"12.jpg\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>M, P के आसन्न नहीं बैठा है।</li>\n<li>M और L के मध्य एक व्यक्ति बैठा है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976681818.jpg\" title=\"13.jpg\"/></p>\n<p>उपरोक्त शर्त से केस-1 समाप्त हो जाता है।</p>\n<p><strong>उत्तर: A</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्न का उत्तर दें:</strong></p>\n<p>आठ व्यक्ति- J, K, L, M, N, O, P और Q एक वृताकार मेज़ के चारों ओर केंद्र की ओर मुख करके बैठे हैं लेकिन आवश्यक नहीं इसी क्रम में हो।</p>\n<p>N और O के बीच केवल दो व्यक्ति बैठे हैं (या तो बाएं या दाएं से)। J, O के तत्काल दायें बैठा है। वह व्यक्ति जो J के बायें से तीसरे स्थान पर बैठा है, Q की ओर मुख करता है। Q और P के मध्य दो व्यक्ति बैठे हैं। P का मुख N की ओर नहीं है। M, P के आसन्न नहीं बैठा है। M और L के मध्य एक व्यक्ति बैठा है।</p><br><p><strong>निम्नलिखित में से कौन सा/से कथन सत्य है/हैं?</strong></p>", "options": ["<p>J, M के आसन्न बैठा है</p>", "<p>O का मुख K की ओर है</p>", "<p>L, N के तत्काल दायें बैठा है</p>", "<p>P, O के आसन्न नहीं बैठा है</p>", "<p>Q का मुख L की ओर नहीं है</p>"], "correctIndex": 2, "solution": "<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976670152.jpg\" title=\"10.jpg\"/></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>N और O के बीच केवल दो व्यक्ति बैठे हैं (या तो बाएं या दाएं से)।</li>\n<li>J, O के तत्काल दायें बैठा है।</li>\n</ul>\n<p>उपरोक्त स्थिति से, दो संभावनाएं हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976670668.jpg\" title=\"11.jpg\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>वह व्यक्ति जो J के बायें से तीसरे स्थान पर बैठा है, Q की ओर मुख करता है।</li>\n<li>Q और P के मध्य दो व्यक्ति बैठे हैं।</li>\n<li>P का मुख N की ओर नहीं है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976671114.jpg\" title=\"12.jpg\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>M, P के आसन्न नहीं बैठा है।</li>\n<li>M और L के मध्य एक व्यक्ति बैठा है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976681818.jpg\" title=\"13.jpg\"/></p>\n<p>उपरोक्त शर्त से केस-1 समाप्त हो जाता है।</p>\n<p><strong>उत्तर: C</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्न का उत्तर दें:</strong></p>\n<p>आठ व्यक्ति- J, K, L, M, N, O, P और Q एक वृताकार मेज़ के चारों ओर केंद्र की ओर मुख करके बैठे हैं लेकिन आवश्यक नहीं इसी क्रम में हो।</p>\n<p>N और O के बीच केवल दो व्यक्ति बैठे हैं (या तो बाएं या दाएं से)। J, O के तत्काल दायें बैठा है। वह व्यक्ति जो J के बायें से तीसरे स्थान पर बैठा है, Q की ओर मुख करता है। Q और P के मध्य दो व्यक्ति बैठे हैं। P का मुख N की ओर नहीं है। M, P के आसन्न नहीं बैठा है। M और L के मध्य एक व्यक्ति बैठा है।</p><br><p><strong>Q के सन्दर्भ में P का स्थान क्या है?</strong></p>", "options": ["<p>दायें से दूसरा</p>", "<p>बायें से तीसरा</p>", "<p>तत्काल बाएं</p>", "<p>दायें से तीसरा</p>", "<p>तत्काल दायें</p>"], "correctIndex": 1, "solution": "<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976670152.jpg\" title=\"10.jpg\"/></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>N और O के बीच केवल दो व्यक्ति बैठे हैं (या तो बाएं या दाएं से)।</li>\n<li>J, O के तत्काल दायें बैठा है।</li>\n</ul>\n<p>उपरोक्त स्थिति से, दो संभावनाएं हैं।</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976670668.jpg\" title=\"11.jpg\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>वह व्यक्ति जो J के बायें से तीसरे स्थान पर बैठा है, Q की ओर मुख करता है।</li>\n<li>Q और P के मध्य दो व्यक्ति बैठे हैं।</li>\n<li>P का मुख N की ओर नहीं है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976671114.jpg\" title=\"12.jpg\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>M, P के आसन्न नहीं बैठा है।</li>\n<li>M और L के मध्य एक व्यक्ति बैठा है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/164976681818.jpg\" title=\"13.jpg\"/></p>\n<p>उपरोक्त शर्त से केस-1 समाप्त हो जाता है।</p>\n<p><strong>उत्तर: B</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>आठ व्यक्ति- J, K, L, M, N, O, P और Q का जन्म अलग-अलग वर्षों अर्थात 1969, 1976,1979, 1981, 1988, 1997, 2002 और 2007 में हुआ था, लेकिन जरूरी नहीं कि इसी क्रम में हो। इनकी आयु की गणना वर्ष 2021 के आधार पर की जाती है।</p>\n<p>N और L के मध्य दो व्यक्तियों का जन्म हुआ। या तो N या L की आयु एक अभाज्य संख्या है। N और K की आयु के बीच का अंतर पांच वर्ष है। K, N से बड़ा है। O का जन्म विषम संख्या वाले वर्ष में हुआ था लेकिन वह न तो सबसे छोटा और न ही सबसे बड़ा व्यक्ति है। Q की आयु एक विषम संख्या है लेकिन O के बाद पैदा हुआ है। Q और P की आयु के बीच का अंतर एक अभाज्य संख्या है। P के बाद पैदा हुए व्यक्तियों की संख्या J से पहले पैदा हुए व्यक्तियों की संख्या से एक कम है।</p><br><p><strong>निम्नलिखित में से किस व्यक्ति का जन्म 1976 में हुआ था?</strong></p>", "options": ["<p>वह व्यक्ति जो J के पांच साल बाद पैदा हुआ था</p>", "<p>Q</p>", "<p>P</p>", "<p>वह व्यक्ति जो O से तीन साल पहले पैदा हुआ था</p>", "<p>उपरोक्त में से कोई नहीं</p>"], "correctIndex": 3, "solution": "<p><strong>अंतिम व्यवस्था</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165519666994.jpg\" title=\"7.jpg\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>N और L के मध्य दो व्यक्तियों का जन्म हुआ।</li>\n<li>या तो N या L की आयु एक अभाज्य संख्या है।</li>\n<li>N और K की आयु के बीच का अंतर पांच वर्ष है।</li>\n<li>K, N से बड़ा है।</li>\n</ul>\n<p>इस स्थिति से, दो संभावनाएं हैं</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165519668291.jpg\" title=\"8.jpg\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>O का जन्म विषम संख्या वाले वर्ष में हुआ था लेकिन वह न तो सबसे छोटा और न ही सबसे बड़ा व्यक्ति है।</li>\n<li>Q की आयु एक विषम संख्या है लेकिन O के बाद पैदा हुआ है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165519669342.jpg\" title=\"9.jpg\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>Q और P की आयु के बीच का अंतर एक अभाज्य संख्या है।</li>\n<li>P के बाद पैदा हुए व्यक्तियों की संख्या J से पहले पैदा हुए व्यक्तियों की संख्या से एक कम है।</li>\n</ul>\n<p>इस स्थिति से, केस 2 समाप्त हो जाता है। केस 1 अंतिम व्यवस्था दिखाता है</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165519670881.jpg\" title=\"10.jpg\"/></p>\n<p><strong>उत्तर: D</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>आठ व्यक्ति- J, K, L, M, N, O, P और Q का जन्म अलग-अलग वर्षों अर्थात 1969, 1976,1979, 1981, 1988, 1997, 2002 और 2007 में हुआ था, लेकिन जरूरी नहीं कि इसी क्रम में हो। इनकी आयु की गणना वर्ष 2021 के आधार पर की जाती है।</p>\n<p>N और L के मध्य दो व्यक्तियों का जन्म हुआ। या तो N या L की आयु एक अभाज्य संख्या है। N और K की आयु के बीच का अंतर पांच वर्ष है। K, N से बड़ा है। O का जन्म विषम संख्या वाले वर्ष में हुआ था लेकिन वह न तो सबसे छोटा और न ही सबसे बड़ा व्यक्ति है। Q की आयु एक विषम संख्या है लेकिन O के बाद पैदा हुआ है। Q और P की आयु के बीच का अंतर एक अभाज्य संख्या है। P के बाद पैदा हुए व्यक्तियों की संख्या J से पहले पैदा हुए व्यक्तियों की संख्या से एक कम है।</p><br><p><strong>O और N के बीच कितने व्यक्ति पैदा हुए थे?</strong></p>", "options": ["<p>दो</p>", "<p>तीन</p>", "<p>एक</p>", "<p>चार</p>", "<p>पांच</p>"], "correctIndex": 1, "solution": "<p><strong>अंतिम व्यवस्था</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165519666994.jpg\" title=\"7.jpg\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>N और L के मध्य दो व्यक्तियों का जन्म हुआ।</li>\n<li>या तो N या L की आयु एक अभाज्य संख्या है।</li>\n<li>N और K की आयु के बीच का अंतर पांच वर्ष है।</li>\n<li>K, N से बड़ा है।</li>\n</ul>\n<p>इस स्थिति से, दो संभावनाएं हैं</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165519668291.jpg\" title=\"8.jpg\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>O का जन्म विषम संख्या वाले वर्ष में हुआ था लेकिन वह न तो सबसे छोटा और न ही सबसे बड़ा व्यक्ति है।</li>\n<li>Q की आयु एक विषम संख्या है लेकिन O के बाद पैदा हुआ है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165519669342.jpg\" title=\"9.jpg\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>Q और P की आयु के बीच का अंतर एक अभाज्य संख्या है।</li>\n<li>P के बाद पैदा हुए व्यक्तियों की संख्या J से पहले पैदा हुए व्यक्तियों की संख्या से एक कम है।</li>\n</ul>\n<p>इस स्थिति से, केस 2 समाप्त हो जाता है। केस 1 अंतिम व्यवस्था दिखाता है</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165519670881.jpg\" title=\"10.jpg\"/></p>\n<p><strong>उत्तर: B</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>आठ व्यक्ति- J, K, L, M, N, O, P और Q का जन्म अलग-अलग वर्षों अर्थात 1969, 1976,1979, 1981, 1988, 1997, 2002 और 2007 में हुआ था, लेकिन जरूरी नहीं कि इसी क्रम में हो। इनकी आयु की गणना वर्ष 2021 के आधार पर की जाती है।</p>\n<p>N और L के मध्य दो व्यक्तियों का जन्म हुआ। या तो N या L की आयु एक अभाज्य संख्या है। N और K की आयु के बीच का अंतर पांच वर्ष है। K, N से बड़ा है। O का जन्म विषम संख्या वाले वर्ष में हुआ था लेकिन वह न तो सबसे छोटा और न ही सबसे बड़ा व्यक्ति है। Q की आयु एक विषम संख्या है लेकिन O के बाद पैदा हुआ है। Q और P की आयु के बीच का अंतर एक अभाज्य संख्या है। P के बाद पैदा हुए व्यक्तियों की संख्या J से पहले पैदा हुए व्यक्तियों की संख्या से एक कम है।</p><br><p><strong>निम्नलिखित में से कौन सा व्यक्ति Q के तत्काल बाद पैदा हुआ था?</strong></p>", "options": ["<p>वह व्यक्ति<strong> </strong>जो P के तत्काल पहले पैदा हुआ था</p>", "<p>J</p>", "<p>वह व्यक्ति जो 1997 में पैदा हुआ था</p>", "<p>L</p>", "<p>उपरोक्त में से कोई नहीं</p>"], "correctIndex": 2, "solution": "<p><strong>अंतिम व्यवस्था</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165519666994.jpg\" title=\"7.jpg\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>N और L के मध्य दो व्यक्तियों का जन्म हुआ।</li>\n<li>या तो N या L की आयु एक अभाज्य संख्या है।</li>\n<li>N और K की आयु के बीच का अंतर पांच वर्ष है।</li>\n<li>K, N से बड़ा है।</li>\n</ul>\n<p>इस स्थिति से, दो संभावनाएं हैं</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165519668291.jpg\" title=\"8.jpg\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>O का जन्म विषम संख्या वाले वर्ष में हुआ था लेकिन वह न तो सबसे छोटा और न ही सबसे बड़ा व्यक्ति है।</li>\n<li>Q की आयु एक विषम संख्या है लेकिन O के बाद पैदा हुआ है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165519669342.jpg\" title=\"9.jpg\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>Q और P की आयु के बीच का अंतर एक अभाज्य संख्या है।</li>\n<li>P के बाद पैदा हुए व्यक्तियों की संख्या J से पहले पैदा हुए व्यक्तियों की संख्या से एक कम है।</li>\n</ul>\n<p>इस स्थिति से, केस 2 समाप्त हो जाता है। केस 1 अंतिम व्यवस्था दिखाता है</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165519670881.jpg\" title=\"10.jpg\"/></p>\n<p><strong>उत्तर: C</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>आठ व्यक्ति- J, K, L, M, N, O, P और Q का जन्म अलग-अलग वर्षों अर्थात 1969, 1976,1979, 1981, 1988, 1997, 2002 और 2007 में हुआ था, लेकिन जरूरी नहीं कि इसी क्रम में हो। इनकी आयु की गणना वर्ष 2021 के आधार पर की जाती है।</p>\n<p>N और L के मध्य दो व्यक्तियों का जन्म हुआ। या तो N या L की आयु एक अभाज्य संख्या है। N और K की आयु के बीच का अंतर पांच वर्ष है। K, N से बड़ा है। O का जन्म विषम संख्या वाले वर्ष में हुआ था लेकिन वह न तो सबसे छोटा और न ही सबसे बड़ा व्यक्ति है। Q की आयु एक विषम संख्या है लेकिन O के बाद पैदा हुआ है। Q और P की आयु के बीच का अंतर एक अभाज्य संख्या है। P के बाद पैदा हुए व्यक्तियों की संख्या J से पहले पैदा हुए व्यक्तियों की संख्या से एक कम है।</p><br><p><strong>P और M की आयु का योग क्या है?</strong></p>", "options": ["<p>66</p>", "<p>70</p>", "<p>86</p>", "<p>56</p>", "<p>74</p>"], "correctIndex": 0, "solution": "<p><strong>अंतिम व्यवस्था</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165519666994.jpg\" title=\"7.jpg\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>N और L के मध्य दो व्यक्तियों का जन्म हुआ।</li>\n<li>या तो N या L की आयु एक अभाज्य संख्या है।</li>\n<li>N और K की आयु के बीच का अंतर पांच वर्ष है।</li>\n<li>K, N से बड़ा है।</li>\n</ul>\n<p>इस स्थिति से, दो संभावनाएं हैं</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165519668291.jpg\" title=\"8.jpg\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>O का जन्म विषम संख्या वाले वर्ष में हुआ था लेकिन वह न तो सबसे छोटा और न ही सबसे बड़ा व्यक्ति है।</li>\n<li>Q की आयु एक विषम संख्या है लेकिन O के बाद पैदा हुआ है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165519669342.jpg\" title=\"9.jpg\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>Q और P की आयु के बीच का अंतर एक अभाज्य संख्या है।</li>\n<li>P के बाद पैदा हुए व्यक्तियों की संख्या J से पहले पैदा हुए व्यक्तियों की संख्या से एक कम है।</li>\n</ul>\n<p>इस स्थिति से, केस 2 समाप्त हो जाता है। केस 1 अंतिम व्यवस्था दिखाता है</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165519670881.jpg\" title=\"10.jpg\"/></p>\n<p><strong>उत्तर: A</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।</strong></p>\n<p>आठ व्यक्ति- J, K, L, M, N, O, P और Q का जन्म अलग-अलग वर्षों अर्थात 1969, 1976,1979, 1981, 1988, 1997, 2002 और 2007 में हुआ था, लेकिन जरूरी नहीं कि इसी क्रम में हो। इनकी आयु की गणना वर्ष 2021 के आधार पर की जाती है।</p>\n<p>N और L के मध्य दो व्यक्तियों का जन्म हुआ। या तो N या L की आयु एक अभाज्य संख्या है। N और K की आयु के बीच का अंतर पांच वर्ष है। K, N से बड़ा है। O का जन्म विषम संख्या वाले वर्ष में हुआ था लेकिन वह न तो सबसे छोटा और न ही सबसे बड़ा व्यक्ति है। Q की आयु एक विषम संख्या है लेकिन O के बाद पैदा हुआ है। Q और P की आयु के बीच का अंतर एक अभाज्य संख्या है। P के बाद पैदा हुए व्यक्तियों की संख्या J से पहले पैदा हुए व्यक्तियों की संख्या से एक कम है।</p><br><p><strong>निम्नलिखित में से कौन सा व्यक्ति एक लीप वर्ष में पैदा हुआ था?</strong></p>", "options": ["<p>J</p>", "<p>वह व्यक्ति जो K से पांच साल पहले पैदा हुआ था</p>", "<p>वह व्यक्ति जो L के सात साल बाद पैदा हुआ था</p>", "<p>P</p>", "<p>a और c दोनों</p>"], "correctIndex": 4, "solution": "<p><strong>अंतिम व्यवस्था</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165519666994.jpg\" title=\"7.jpg\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>N और L के मध्य दो व्यक्तियों का जन्म हुआ।</li>\n<li>या तो N या L की आयु एक अभाज्य संख्या है।</li>\n<li>N और K की आयु के बीच का अंतर पांच वर्ष है।</li>\n<li>K, N से बड़ा है।</li>\n</ul>\n<p>इस स्थिति से, दो संभावनाएं हैं</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165519668291.jpg\" title=\"8.jpg\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>O का जन्म विषम संख्या वाले वर्ष में हुआ था लेकिन वह न तो सबसे छोटा और न ही सबसे बड़ा व्यक्ति है।</li>\n<li>Q की आयु एक विषम संख्या है लेकिन O के बाद पैदा हुआ है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165519669342.jpg\" title=\"9.jpg\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>Q और P की आयु के बीच का अंतर एक अभाज्य संख्या है।</li>\n<li>P के बाद पैदा हुए व्यक्तियों की संख्या J से पहले पैदा हुए व्यक्तियों की संख्या से एक कम है।</li>\n</ul>\n<p>इस स्थिति से, केस 2 समाप्त हो जाता है। केस 1 अंतिम व्यवस्था दिखाता है</p>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165519670881.jpg\" title=\"10.jpg\"/></p>\n<p><strong>उत्तर: E</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें</strong></p>\n<p>एक अर्थपूर्ण शब्द बनाने के लिए नौ अक्षरों को बाएं से दाएं व्यवस्थित किया जाता है। सभी अक्षर अलग हैं। R को दायें छोर से दूसरे स्थान पर रखा गया है। R और N के बीच केवल तीन अक्षर रखे गए हैं। जितने अक्षर N के दायीं ओर रखे गए हैं उतने ही अक्षर T के बायीं ओर रखे गए हैं। T और Y के बीच केवल दो अक्षर रखे गए हैं। O को Y के बाएं से दूसरे स्थान पर रखा गया है। A को I के दायें से तीसरे स्थान पर रखा गया है। S को G के बाईं ओर रखा गया है।</p><br><p><strong>निम्नलिखित में से कौन सा अक्षर बाएं छोर से तीसरे स्थान पर है</strong><strong>?</strong></p>", "options": ["<p>A</p>", "<p>Y</p>", "<p>N</p>", "<p>G</p>", "<p>इनमें से कोई नहीं</p>"], "correctIndex": 3, "solution": "<p><strong>अंतिम</strong><strong> </strong><strong>व्यवस्था</strong><strong>:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165010837579.png\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>R को दायें छोर से दूसरे स्थान पर रखा गया है।</li>\n<li>R और N के बीच केवल तीन अक्षर रखे गए हैं।</li>\n<li>जितने अक्षर N के दायीं ओर रखे गए हैं उतने ही अक्षर T के बायीं ओर रखे गए हैं।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165010843114.png\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>T और Y के बीच केवल दो अक्षर रखे गए हैं। O को Y के बाएं से दूसरे स्थान पर रखा गया है।</li>\n<li>A को I के दायें से तीसरे स्थान पर रखा गया है। S को G के बाईं ओर रखा गया है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165010850955.png\"/></p>\n<p><strong>उत्तर</strong><strong>: </strong><strong>D</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें</strong></p>\n<p>एक अर्थपूर्ण शब्द बनाने के लिए नौ अक्षरों को बाएं से दाएं व्यवस्थित किया जाता है। सभी अक्षर अलग हैं। R को दायें छोर से दूसरे स्थान पर रखा गया है। R और N के बीच केवल तीन अक्षर रखे गए हैं। जितने अक्षर N के दायीं ओर रखे गए हैं उतने ही अक्षर T के बायीं ओर रखे गए हैं। T और Y के बीच केवल दो अक्षर रखे गए हैं। O को Y के बाएं से दूसरे स्थान पर रखा गया है। A को I के दायें से तीसरे स्थान पर रखा गया है। S को G के बाईं ओर रखा गया है।</p><br><p><strong>I और दायें छोर से चौथे स्थान पर रखे गए अक्षर के बीच कितने अक्षर रखे गए हैं?</strong></p>", "options": ["<p>तीन</p>", "<p>कोई नहीं</p>", "<p>दो</p>", "<p>एक</p>", "<p>इनमें से कोई नहीं</p>"], "correctIndex": 0, "solution": "<p><strong>अंतिम</strong><strong> </strong><strong>व्यवस्था</strong><strong>:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165010837579.png\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>R को दायें छोर से दूसरे स्थान पर रखा गया है।</li>\n<li>R और N के बीच केवल तीन अक्षर रखे गए हैं।</li>\n<li>जितने अक्षर N के दायीं ओर रखे गए हैं उतने ही अक्षर T के बायीं ओर रखे गए हैं।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165010843114.png\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>T और Y के बीच केवल दो अक्षर रखे गए हैं। O को Y के बाएं से दूसरे स्थान पर रखा गया है।</li>\n<li>A को I के दायें से तीसरे स्थान पर रखा गया है। S को G के बाईं ओर रखा गया है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165010850955.png\"/></p>\n<p><strong>उत्तर</strong><strong>: A</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें</strong></p>\n<p>एक अर्थपूर्ण शब्द बनाने के लिए नौ अक्षरों को बाएं से दाएं व्यवस्थित किया जाता है। सभी अक्षर अलग हैं। R को दायें छोर से दूसरे स्थान पर रखा गया है। R और N के बीच केवल तीन अक्षर रखे गए हैं। जितने अक्षर N के दायीं ओर रखे गए हैं उतने ही अक्षर T के बायीं ओर रखे गए हैं। T और Y के बीच केवल दो अक्षर रखे गए हैं। O को Y के बाएं से दूसरे स्थान पर रखा गया है। A को I के दायें से तीसरे स्थान पर रखा गया है। S को G के बाईं ओर रखा गया है।</p><br><p><strong>जितने अक्षर </strong><strong>G </strong><strong>और </strong><strong>S </strong><strong>के बीच </strong><strong>हैं उतने ही </strong><strong>अक्षर </strong><strong>Y </strong><strong>और </strong><strong>____ </strong><strong>के बीच हैं।</strong></p>", "options": ["<p>वह अक्षर जो S के दायें से दूसरे स्थान पर रखा गया है</p>", "<p>I</p>", "<p>T</p>", "<p>वह अक्षर जो A के दायें से दूसरे स्थान पर रखा गया है</p>", "<p>उपरोक्त में से कोई नहीं</p>"], "correctIndex": 3, "solution": "<p><strong>अंतिम</strong><strong> </strong><strong>व्यवस्था</strong><strong>:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165010837579.png\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>R को दायें छोर से दूसरे स्थान पर रखा गया है।</li>\n<li>R और N के बीच केवल तीन अक्षर रखे गए हैं।</li>\n<li>जितने अक्षर N के दायीं ओर रखे गए हैं उतने ही अक्षर T के बायीं ओर रखे गए हैं।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165010843114.png\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>T और Y के बीच केवल दो अक्षर रखे गए हैं। O को Y के बाएं से दूसरे स्थान पर रखा गया है।</li>\n<li>A को I के दायें से तीसरे स्थान पर रखा गया है। S को G के बाईं ओर रखा गया है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165010850955.png\"/></p>\n<p><strong>उत्तर</strong><strong>: D</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें</strong></p>\n<p>एक अर्थपूर्ण शब्द बनाने के लिए नौ अक्षरों को बाएं से दाएं व्यवस्थित किया जाता है। सभी अक्षर अलग हैं। R को दायें छोर से दूसरे स्थान पर रखा गया है। R और N के बीच केवल तीन अक्षर रखे गए हैं। जितने अक्षर N के दायीं ओर रखे गए हैं उतने ही अक्षर T के बायीं ओर रखे गए हैं। T और Y के बीच केवल दो अक्षर रखे गए हैं। O को Y के बाएं से दूसरे स्थान पर रखा गया है। A को I के दायें से तीसरे स्थान पर रखा गया है। S को G के बाईं ओर रखा गया है।</p><br><p><strong>निम्नलिखित में से कौन सा अक्षर </strong><strong>N </strong><strong>और </strong><strong>R </strong><strong>के ठीक बीच में है</strong><strong>?</strong></p>", "options": ["<p>Y</p>", "<p>O</p>", "<p>T</p>", "<p>I</p>", "<p>इनमें से कोई नहीं</p>"], "correctIndex": 2, "solution": "<p><strong>अंतिम</strong><strong> </strong><strong>व्यवस्था</strong><strong>:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165010837579.png\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>R को दायें छोर से दूसरे स्थान पर रखा गया है।</li>\n<li>R और N के बीच केवल तीन अक्षर रखे गए हैं।</li>\n<li>जितने अक्षर N के दायीं ओर रखे गए हैं उतने ही अक्षर T के बायीं ओर रखे गए हैं।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165010843114.png\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>T और Y के बीच केवल दो अक्षर रखे गए हैं। O को Y के बाएं से दूसरे स्थान पर रखा गया है।</li>\n<li>A को I के दायें से तीसरे स्थान पर रखा गया है। S को G के बाईं ओर रखा गया है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165010850955.png\"/></p>\n<p><strong>उत्तर</strong><strong>: C</strong></p>"}, {"question": "<p><strong>निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें</strong></p>\n<p>एक अर्थपूर्ण शब्द बनाने के लिए नौ अक्षरों को बाएं से दाएं व्यवस्थित किया जाता है। सभी अक्षर अलग हैं। R को दायें छोर से दूसरे स्थान पर रखा गया है। R और N के बीच केवल तीन अक्षर रखे गए हैं। जितने अक्षर N के दायीं ओर रखे गए हैं उतने ही अक्षर T के बायीं ओर रखे गए हैं। T और Y के बीच केवल दो अक्षर रखे गए हैं। O को Y के बाएं से दूसरे स्थान पर रखा गया है। A को I के दायें से तीसरे स्थान पर रखा गया है। S को G के बाईं ओर रखा गया है।</p><br><p><strong>निम्नलिखित में से कौन सा/से कथन असत्य है/हैं</strong><strong>?</strong></p>\n<p><strong>I</strong><strong>. </strong>G और T के बीच केवल दो अक्षर रखे गए हैं।</p>\n<p><strong>II</strong><strong>. </strong>A के दायीं ओर केवल तीन अक्षर रखे गए हैं</p>\n<p><strong>III. </strong>N, R के बायें से तीसरे स्थान पर है</p>", "options": ["<p>केवल I</p>", "<p>केवल I और III</p>", "<p>केवल III</p>", "<p>केवल II और III</p>", "<p>सभी सच हैं</p>"], "correctIndex": 3, "solution": "<p><strong>अंतिम</strong><strong> </strong><strong>व्यवस्था</strong><strong>:</strong></p>\n<p><strong><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165010837579.png\"/></strong></p>\n<p>हमारे पास है,</p>\n<ul>\n<li>R को दायें छोर से दूसरे स्थान पर रखा गया है।</li>\n<li>R और N के बीच केवल तीन अक्षर रखे गए हैं।</li>\n<li>जितने अक्षर N के दायीं ओर रखे गए हैं उतने ही अक्षर T के बायीं ओर रखे गए हैं।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165010843114.png\"/></p>\n<p>हमारे पास फिर से है,</p>\n<ul>\n<li>T और Y के बीच केवल दो अक्षर रखे गए हैं। O को Y के बाएं से दूसरे स्थान पर रखा गया है।</li>\n<li>A को I के दायें से तीसरे स्थान पर रखा गया है। S को G के बाईं ओर रखा गया है।</li>\n</ul>\n<p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/165010850955.png\"/></p>\n<p><strong>उत्तर</strong><strong>: D</strong></p>"}] 
+};
+        const rawTitle = "Prelims Mastery Quiz 2025 Reasoning (Day-25)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Prelims Mastery Quiz 2025 Reasoning (Day-25)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
