@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Prelims Mastery Quiz 2025 English (Day-40)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>Read the following passage carefully and answer the questions.</strong></p>\n<p>Photosynthesis is a fundamental biological process that supports life on Earth by transforming light energy from the sun into chemical energy stored in glucose. This process occurs in green plants, algae, and certain bacteria, making it the <strong>cornerstone </strong>of most food chains. By producing oxygen as a byproduct, photosynthesis not only sustains plant life but also provides the breathable air <strong>essential </strong>for animals and humans.</p>\n<p>The process begins in the chloroplasts, where the green pigment chlorophyll absorbs sunlight. This energy drives the first stage of photosynthesis, known as the light-dependent reaction. During this stage, water molecules (H<sub>2</sub>O) are split into oxygen (O<sub>2</sub>), protons, and electrons. This reaction generates ATP and NADPH, the energy carriers that power the subsequent steps.</p>\n<p>In the second stage, called the Calvin Cycle or light-independent reaction, <strong>(a)</strong> the plant uses carbon dioxide (CO<sub>2</sub>) from the atmosphere<strong>(b).</strong> This stage occurred in the stroma of the chloroplast<strong>(c),</strong> where enzymes combine CO<sub>2</sub> with other molecules to produce glucose<strong>(d).</strong> This sugar serves as an energy source for the plant and, indirectly, for other organisms that consume the plant<strong>(e).</strong></p>\n<p>Photosynthesis not only powers ecosystems but also plays a critical role in maintaining Earth’s atmosphere. By absorbing carbon dioxide and releasing oxygen, it helps regulate greenhouse gases and sustain a livable climate. This natural carbon capture system highlights its importance in addressing environmental challenges like global warming.</p>\n<p>_______________, photosynthesis inspires scientific innovation. Researchers are exploring artificial photosynthesis to create sustainable energy solutions by mimicking the process to produce fuels from sunlight. This groundbreaking field could revolutionize how humanity harnesses energy, showcasing the transformative potential of understanding and replicating nature’s ingenuity.</p><br><p><strong>What is one innovative application of photosynthesis being explored in modern science?</strong></p>", "options": ["<p>The development of artificial irrigation systems that mimic how plants absorb water</p>", "<p>The creation of artificial photosynthesis, which aims to replicate the natural process to produce fuels and clean energy from sunlight</p>", "<p>The invention of solar-powered vehicles that convert sunlight into chemical energy using chloroplast technology</p>", "<p>The enhancement of greenhouse technology to artificially increase the production of glucose in plants</p>", "<p>The modification of plant genetics to enable them to absorb more sunlight and produce higher energy yields</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>Artificial photosynthesis seeks to replicate the natural process to produce fuels and clean energy from sunlight. This innovation has the potential to address energy challenges by creating sustainable, carbon-neutral energy sources. Other options, like irrigation systems or genetic modification, are unrelated or less central to photosynthesis research.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions.</strong></p>\n<p>Photosynthesis is a fundamental biological process that supports life on Earth by transforming light energy from the sun into chemical energy stored in glucose. This process occurs in green plants, algae, and certain bacteria, making it the <strong>cornerstone </strong>of most food chains. By producing oxygen as a byproduct, photosynthesis not only sustains plant life but also provides the breathable air <strong>essential </strong>for animals and humans.</p>\n<p>The process begins in the chloroplasts, where the green pigment chlorophyll absorbs sunlight. This energy drives the first stage of photosynthesis, known as the light-dependent reaction. During this stage, water molecules (H<sub>2</sub>O) are split into oxygen (O<sub>2</sub>), protons, and electrons. This reaction generates ATP and NADPH, the energy carriers that power the subsequent steps.</p>\n<p>In the second stage, called the Calvin Cycle or light-independent reaction, <strong>(a)</strong> the plant uses carbon dioxide (CO<sub>2</sub>) from the atmosphere<strong>(b).</strong> This stage occurred in the stroma of the chloroplast<strong>(c),</strong> where enzymes combine CO<sub>2</sub> with other molecules to produce glucose<strong>(d).</strong> This sugar serves as an energy source for the plant and, indirectly, for other organisms that consume the plant<strong>(e).</strong></p>\n<p>Photosynthesis not only powers ecosystems but also plays a critical role in maintaining Earth’s atmosphere. By absorbing carbon dioxide and releasing oxygen, it helps regulate greenhouse gases and sustain a livable climate. This natural carbon capture system highlights its importance in addressing environmental challenges like global warming.</p>\n<p>_______________, photosynthesis inspires scientific innovation. Researchers are exploring artificial photosynthesis to create sustainable energy solutions by mimicking the process to produce fuels from sunlight. This groundbreaking field could revolutionize how humanity harnesses energy, showcasing the transformative potential of understanding and replicating nature’s ingenuity.</p><br><p><strong>According to the passage, how does photosynthesis impact Earth’s atmosphere and climate?</strong></p>\n<p><strong>I).</strong> By absorbing carbon dioxide from the atmosphere.</p>\n<p><strong>II). </strong>By releasing oxygen into the atmosphere.</p>\n<p><strong>III).</strong> By helping to regulate greenhouse gases</p>", "options": ["<p>Only I</p>", "<p>Only II</p>", "<p>Both I and II</p>", "<p>Both II and III</p>", "<p>All are correct</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>Photosynthesis absorbs carbon dioxide (a greenhouse gas) and releases oxygen, helping to regulate the atmosphere’s composition. This process plays a key role in regulating climate by balancing greenhouse gases. The production of glucose and the reduction of water vapor are not directly related to climate regulation.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions.</strong></p>\n<p>Photosynthesis is a fundamental biological process that supports life on Earth by transforming light energy from the sun into chemical energy stored in glucose. This process occurs in green plants, algae, and certain bacteria, making it the <strong>cornerstone </strong>of most food chains. By producing oxygen as a byproduct, photosynthesis not only sustains plant life but also provides the breathable air <strong>essential </strong>for animals and humans.</p>\n<p>The process begins in the chloroplasts, where the green pigment chlorophyll absorbs sunlight. This energy drives the first stage of photosynthesis, known as the light-dependent reaction. During this stage, water molecules (H<sub>2</sub>O) are split into oxygen (O<sub>2</sub>), protons, and electrons. This reaction generates ATP and NADPH, the energy carriers that power the subsequent steps.</p>\n<p>In the second stage, called the Calvin Cycle or light-independent reaction, <strong>(a)</strong> the plant uses carbon dioxide (CO<sub>2</sub>) from the atmosphere<strong>(b).</strong> This stage occurred in the stroma of the chloroplast<strong>(c),</strong> where enzymes combine CO<sub>2</sub> with other molecules to produce glucose<strong>(d).</strong> This sugar serves as an energy source for the plant and, indirectly, for other organisms that consume the plant<strong>(e).</strong></p>\n<p>Photosynthesis not only powers ecosystems but also plays a critical role in maintaining Earth’s atmosphere. By absorbing carbon dioxide and releasing oxygen, it helps regulate greenhouse gases and sustain a livable climate. This natural carbon capture system highlights its importance in addressing environmental challenges like global warming.</p>\n<p>_______________, photosynthesis inspires scientific innovation. Researchers are exploring artificial photosynthesis to create sustainable energy solutions by mimicking the process to produce fuels from sunlight. This groundbreaking field could revolutionize how humanity harnesses energy, showcasing the transformative potential of understanding and replicating nature’s ingenuity.</p><br><p><strong>How does photosynthesis contribute to regulating Earth’s climate and environment?</strong></p>", "options": ["<p>By producing glucose, which is consumed by other organisms, balancing energy levels in the ecosystem</p>", "<p>By absorbing large amounts of oxygen from the atmosphere to reduce global temperatures</p>", "<p>By acting as a natural carbon capture system that absorbs carbon dioxide and releases oxygen, helping to regulate greenhouse gases</p>", "<p>By releasing water vapor into the atmosphere, which cools the planet&rsquo;s surface temperature</p>", "<p>By generating ATP and NADPH, which are directly used by plants to reduce air pollution</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Photosynthesis acts as a natural carbon capture system, absorbing carbon dioxide (a greenhouse gas) and releasing oxygen into the atmosphere. This helps regulate greenhouse gas levels, maintaining a stable climate. Other options, such as producing glucose or releasing water vapor, do not directly impact climate regulation.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions.</strong></p>\n<p>Photosynthesis is a fundamental biological process that supports life on Earth by transforming light energy from the sun into chemical energy stored in glucose. This process occurs in green plants, algae, and certain bacteria, making it the <strong>cornerstone </strong>of most food chains. By producing oxygen as a byproduct, photosynthesis not only sustains plant life but also provides the breathable air <strong>essential </strong>for animals and humans.</p>\n<p>The process begins in the chloroplasts, where the green pigment chlorophyll absorbs sunlight. This energy drives the first stage of photosynthesis, known as the light-dependent reaction. During this stage, water molecules (H<sub>2</sub>O) are split into oxygen (O<sub>2</sub>), protons, and electrons. This reaction generates ATP and NADPH, the energy carriers that power the subsequent steps.</p>\n<p>In the second stage, called the Calvin Cycle or light-independent reaction, <strong>(a)</strong> the plant uses carbon dioxide (CO<sub>2</sub>) from the atmosphere<strong>(b).</strong> This stage occurred in the stroma of the chloroplast<strong>(c),</strong> where enzymes combine CO<sub>2</sub> with other molecules to produce glucose<strong>(d).</strong> This sugar serves as an energy source for the plant and, indirectly, for other organisms that consume the plant<strong>(e).</strong></p>\n<p>Photosynthesis not only powers ecosystems but also plays a critical role in maintaining Earth’s atmosphere. By absorbing carbon dioxide and releasing oxygen, it helps regulate greenhouse gases and sustain a livable climate. This natural carbon capture system highlights its importance in addressing environmental challenges like global warming.</p>\n<p>_______________, photosynthesis inspires scientific innovation. Researchers are exploring artificial photosynthesis to create sustainable energy solutions by mimicking the process to produce fuels from sunlight. This groundbreaking field could revolutionize how humanity harnesses energy, showcasing the transformative potential of understanding and replicating nature’s ingenuity.</p><br><p><strong>A blank is given in the passage. Which of the following can fill the blank grammatically and contextually correct?</strong></p>", "options": ["<p>Despite its detrimental effects on nature</p>", "<p>Contrary to its environmental importance</p>", "<p>In disregard of its ecological contributions</p>", "<p>Regardless of its harmful consequences</p>", "<p>Beyond its ecological impact</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>“Beyond its ecological impact” fits perfectly, as it implies photosynthesis also inspires scientific innovation in areas like energy solutions, beyond its role in the environment, while the other four introduce negative, irrelevant, or grammatically awkward ideas that don't align with the passage's focus on the positive role of photosynthesis in scientific advancement.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions.</strong></p>\n<p>Photosynthesis is a fundamental biological process that supports life on Earth by transforming light energy from the sun into chemical energy stored in glucose. This process occurs in green plants, algae, and certain bacteria, making it the <strong>cornerstone </strong>of most food chains. By producing oxygen as a byproduct, photosynthesis not only sustains plant life but also provides the breathable air <strong>essential </strong>for animals and humans.</p>\n<p>The process begins in the chloroplasts, where the green pigment chlorophyll absorbs sunlight. This energy drives the first stage of photosynthesis, known as the light-dependent reaction. During this stage, water molecules (H<sub>2</sub>O) are split into oxygen (O<sub>2</sub>), protons, and electrons. This reaction generates ATP and NADPH, the energy carriers that power the subsequent steps.</p>\n<p>In the second stage, called the Calvin Cycle or light-independent reaction, <strong>(a)</strong> the plant uses carbon dioxide (CO<sub>2</sub>) from the atmosphere<strong>(b).</strong> This stage occurred in the stroma of the chloroplast<strong>(c),</strong> where enzymes combine CO<sub>2</sub> with other molecules to produce glucose<strong>(d).</strong> This sugar serves as an energy source for the plant and, indirectly, for other organisms that consume the plant<strong>(e).</strong></p>\n<p>Photosynthesis not only powers ecosystems but also plays a critical role in maintaining Earth’s atmosphere. By absorbing carbon dioxide and releasing oxygen, it helps regulate greenhouse gases and sustain a livable climate. This natural carbon capture system highlights its importance in addressing environmental challenges like global warming.</p>\n<p>_______________, photosynthesis inspires scientific innovation. Researchers are exploring artificial photosynthesis to create sustainable energy solutions by mimicking the process to produce fuels from sunlight. This groundbreaking field could revolutionize how humanity harnesses energy, showcasing the transformative potential of understanding and replicating nature’s ingenuity.</p><br><p><strong>The following sentence is divided into five parts. Identify which part contains the error.</strong></p>", "options": ["<p>In the second stage, called the Calvin Cycle or light-independent reaction</p>", "<p>The plant uses carbon dioxide (CO₂) from the atmosphere</p>", "<p>This stage occurred in the stroma of the chloroplast</p>", "<p>Where enzymes combine CO₂ with other molecules to produce glucose</p>", "<p>This sugar serves as an energy source for the plant and, indirectly, for other organisms that consume the plant</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The error is in part c where it says “This stage occurred in the stroma of the chloroplast.” The correct verb tense should be “occurs” instead of “occurred,” as the sentence is describing a general process that happens in the present, not a past event.</p>\n<p>Corrected sentence:</p>\n<p>“This stage occurs in the stroma of the chloroplast.”</p>"}, {"question": "<p><strong>Given below are three sentences, each containing a highlighted word. Identify the sentence(s) where the highlighted word is used correctly and mark it as your answer.</strong></p><br><p><strong>TANGIBLE</strong><br/><strong>A). </strong>The company is committed to <strong>tangible</strong> practices, ensuring minimal environmental impact in its operations.<br/><strong>B).</strong> Although the project was ambitious, the funding allowed for <strong>tangible</strong> outcomes within a short time.<br/><strong>C).</strong> In business, <strong>tangible</strong> assets like property and equipment significantly impact a company's overall valuation.</p>", "options": ["<p>Only A</p>", "<p>Both B and C</p>", "<p>Only B</p>", "<p>Both C and A</p>", "<p>Only C</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>To answer this question, let's first understand the meaning of the highlighted word:</strong></p>\n<p><strong>Tangible:</strong> something that can be touched or perceived by touch; clear and definite; real.</p>\n<p><strong>Now, let's examine the given sentences:</strong></p>\n<p><strong>Sentence A:</strong> The company is committed to <strong>tangible</strong> practices, ensuring minimal environmental impact in its operations.</p>\n<p><u>This sentence uses the word \"tangible\" incorrectly</u>. The intended word here seems to be \"sustainable,\" which refers to practices that do not deplete resources or harm the environment.</p>\n<p><strong>Sentence B:</strong> Although the project was ambitious, the funding allowed for <strong>tangible</strong> outcomes within a short time.</p>\n<p><u>This sentence uses the word \"tangible\" correctly</u>. It refers to real, measurable outcomes that were made possible due to the funding.</p>\n<p><strong>Sentence C:</strong> In business, <strong>tangible</strong> assets like property and equipment significantly impact a company's overall valuation.</p>\n<p><u>This sentence also uses the word \"tangible\" correctly</u>, as tangible assets are physical, measurable assets like property and equipment.</p>\n<p><u>So, out of the three given sentences, both B and C use the word \"tangible\" correctly</u>.</p>\n<p><strong>Therefore, the correct answer is \"Both B and C.\"</strong></p>"}, {"question": "<p><strong>Given below are three sentences, each containing a highlighted word. Identify the sentence(s) where the highlighted word is used correctly and mark it as your answer.</strong></p><br><p><strong>IMMINENT</strong><br/><strong>A). </strong>The CEO announced that layoffs were <strong>imminent</strong> due to the company's declining profits.<br/><strong>B).</strong> The novel explores the <strong>imminent</strong> struggles of humanity in the face of existential challenges.<br/><strong>C).</strong> The university is known for its <strong>imminent</strong> faculty, attracting students from all over the world.</p>", "options": ["<p>Only A</p>", "<p>Only B</p>", "<p>Only C</p>", "<p>Both A and B</p>", "<p>All A, B, and C</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>To answer this question, let's first understand the meaning of the highlighted word:</strong></p>\n<p><strong>Imminent: </strong>something that is about to happen or is likely to occur very soon.</p>\n<p><strong>Now, let's examine the given sentences:</strong></p>\n<p><strong>Sentence A:</strong> The CEO announced that layoffs were <strong>imminent</strong> due to the company's declining profits.</p>\n<p><u>This sentence uses the word \"imminent\" correctly</u>. It refers to layoffs that are about to happen very soon due to declining profits.</p>\n<p><strong>Sentence B:</strong> The novel explores the <strong>imminent</strong> struggles of humanity in the face of existential challenges.</p>\n<p><u>This sentence uses the word \"imminent\" incorrectly</u>. The correct word here should be \"immanent,\" which means inherent or existing within.</p>\n<p><strong>Sentence C:</strong> The university is known for its <strong>imminent</strong> faculty, attracting students from all over the world.</p>\n<p><u>This sentence uses the word \"imminent\" incorrectly</u>. The correct word here should be \"eminent,\" which means famous and respected within a particular profession.</p>\n<p><u>So, out of the three given sentences, only A uses the word \"imminent\" correctly</u>.</p>\n<p><strong>Therefore, the correct answer is \"Only A.\"</strong></p>"}, {"question": "<p><strong>Given below are three sentences, each containing a highlighted word. Identify the sentence(s) where the highlighted word is used correctly and mark it as your answer.</strong></p><br><p><strong>CANDID</strong><br/><strong>A). </strong>During the interview, he was <strong>candid</strong> about his challenges and future aspirations.<br/><strong>B).</strong> The recent court ruling reinforced the <strong>candid</strong> for equal pay across all job positions.<br/><strong>C).</strong> His <strong>candid</strong> approach to teaching made learning more engaging for the students.</p>", "options": ["<p>Both A and B</p>", "<p>Both B and C</p>", "<p>Both C and A</p>", "<p>All A, B, and C</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>To answer this question, let's first understand the meaning of the highlighted word:</strong></p>\n<p><strong>Candid:</strong> being open, honest, and straightforward in expression; truthful without hiding one's feelings.</p>\n<p><strong>Now, let's examine the given sentences:</strong></p>\n<p><strong>Sentence A:</strong> During the interview, he was <strong>candid</strong> about his challenges and future aspirations.</p>\n<p><u>This sentence uses the word \"candid\" correctly</u>. It indicates that the person was honest and open about his challenges and aspirations.</p>\n<p><strong>Sentence B:</strong> The recent court ruling reinforced the <strong>candid</strong> for equal pay across all job positions.</p>\n<p><u>This sentence uses the word \"candid\" incorrectly</u>. The intended word here seems to be \"mandate,\" which refers to an official order or requirement.</p>\n<p><strong>Sentence C:</strong> His <strong>candid</strong> approach to teaching made learning more engaging for the students.</p>\n<p><u>This sentence uses the word \"candid\" correctly</u>. It suggests that the teacher was open and straightforward, which made the learning process more engaging.</p>\n<p><u>So, out of the three given sentences, both A and C use the word \"candid\" correctly</u>.</p>\n<p><strong>Therefore, the correct answer is \"Both C and A.\"</strong></p>"}, {"question": "<p><strong>Given below are three sentences, each containing a highlighted word. Identify the sentence(s) where the highlighted word is used correctly and mark it as your answer.</strong></p><br><p><strong>ENDORSE</strong><br/><strong>A). </strong>It is crucial to <strong>endorse</strong> safety regulations in construction sites to prevent accidents.<br/><strong>B).</strong> She used data and statistics to <strong>endorse</strong> her argument during the presentation.<br/><strong>C).</strong> The celebrity was chosen to <strong>endorse</strong> the new line of eco-friendly beauty products.</p>", "options": ["<p>Both A and B</p>", "<p>Only A</p>", "<p>Both B and C</p>", "<p>Only B</p>", "<p>None of these</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p><strong>To answer this question, let's first understand the meaning of the highlighted word:</strong></p>\n<p><strong>Endorse:</strong> to publicly or officially support or approve of something or someone.</p>\n<p><strong>Now, let's examine the given sentences:</strong></p>\n<p><strong>Sentence A:</strong> It is crucial to <strong>endorse</strong> safety regulations in construction sites to prevent accidents.</p>\n<p><u>This sentence uses the word \"endorse\" incorrectly</u>. The intended word here seems to be \"enforce,\" which means to ensure compliance with rules or regulations.</p>\n<p><strong>Sentence B:</strong> She used data and statistics to <strong>endorse</strong> her argument during the presentation.</p>\n<p><u>This sentence also uses the word \"endorse\" incorrectly</u>. The correct word here is likely \"reinforce,\" which means to strengthen or support an argument.</p>\n<p><strong>Sentence C:</strong> The celebrity was chosen to <strong>endorse</strong> the new line of eco-friendly beauty products.</p>\n<p><u>This sentence uses the word \"endorse\" correctly</u>. It refers to the celebrity publicly supporting or promoting the products.</p>\n<p><u>So, out of the three given sentences, only C uses the word \"endorse\" correctly</u>.</p>\n<p><strong>Therefore, the correct answer is \"None of these.\"</strong></p>"}, {"question": "<p><strong>Given below are three sentences, each containing a highlighted word. Identify the sentence(s) where the highlighted word is used correctly and mark it as your answer.</strong></p><br><p><strong>SCRUTINY</strong><br/><strong>A). </strong>The new policy was met with intense <strong>scrutiny</strong> from both the public and media.<br/><strong>B).</strong> As she meditated by the lake, a feeling of <strong>scrutiny</strong> washed over her completely.<br/><strong>C).Scrutiny</strong> has become a lifestyle choice, resisting the pressure to keep up with trends.</p>", "options": ["<p>Only A</p>", "<p>Only B</p>", "<p>Both A and B</p>", "<p>Both B and C</p>", "<p>Both C and A</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>To answer this question, let's first understand the meaning of the highlighted word:</strong></p>\n<p><strong>Scrutiny:</strong> close and critical observation or examination.</p>\n<p><strong>Now, let's examine the given sentences:</strong></p>\n<p><strong>Sentence A:</strong> The new policy was met with intense <strong>scrutiny</strong> from both the public and media.</p>\n<p><u>This sentence uses the word \"scrutiny\" correctly</u>, as it refers to a close and critical examination of the new policy by the public and media.</p>\n<p><strong>Sentence B:</strong> As she meditated by the lake, a feeling of <strong>scrutiny</strong> washed over her completely.</p>\n<p><u>This sentence uses the word \"scrutiny\" incorrectly</u>. The intended word here seems to be \"serenity,\" which refers to a state of calm and peacefulness, not critical observation.</p>\n<p><strong>Sentence C:Scrutiny</strong> has become a lifestyle choice, resisting the pressure to keep up with trends.</p>\n<p><u>This sentence also uses the word \"scrutiny\" incorrectly</u>. The intended word here seems to be \"frugality,\" which refers to a lifestyle choice of being economical or avoiding excess.</p>\n<p><u>So, out of the three given sentences, only A uses the word \"scrutiny\" correctly</u>.</p>\n<p><strong>Therefore, the correct answer is \"Only A.\"</strong></p>"}, {"question": "<p><strong>Find the erroneous part (if any).</strong></p><br><p>One of the things the joint <strong>(A)/</strong>taskforce will investigate are <strong>(B)/</strong>whether adequate safeguards had been <strong>(C)/</strong>put in place to protect such data <strong>(D)/ </strong>No error <strong>(E)</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>No error</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>\"One of the things\" is a singular subject, so the verb \"are\" should be replaced with the singular form \"is\" to maintain subject-verb agreement.</p>\n<p>One of the things the joint taskforce will investigate<strong> is</strong> whether adequate safeguards had been put in place to protect such data.</p>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>Find the erroneous part (if any).</strong></p><br><p>In terms of corporate governance, <strong>(A)/</strong>Honeywell have implemented leadership <strong>(B)/</strong>changes within its Audit Committee and Corporate <strong>(C)/</strong>Governance and Responsibility Committee<strong> (D)/</strong> No error <strong>(E)</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>No error</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>\"Honeywell\" is a singular noun, so the verb should be \"has\" instead of \"have\" to ensure correct subject-verb agreement.</p>\n<p>In terms of corporate governance, Honeywell <strong>has implemented</strong> leadership changes within its Audit Committee and Corporate Governance and Responsibility Committee.</p>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>Find the erroneous part (if any).</strong></p><br><p>The momentum is growing for a new <strong>(A)/</strong>generation of aircraft flying faster than <strong>(B)/</strong>the speed of sound and passengers dashing <strong>(C)/</strong>from Brussels to Sydney in just three hours <strong>(D)/</strong> No error <strong>(E)</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>No error</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>The sentence is grammatically correct. Therefore, option E is the correct answer.</p>"}, {"question": "<p><strong>Find the erroneous part (if any).</strong></p><br><p>In this orbital mechanics trick, <strong>(A)/</strong>a spacecraft uses the sun's gravity well<strong> (B)/</strong>to slingshot itself at high speeds <strong>(C)/</strong>in the direction it aim <strong>(D)/</strong> No error <strong>(E)</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>No error</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>In part <strong>D</strong>: \"It\" is a singular pronoun and needs a singular verb \"aims\" to be grammatically correct.</p>\n<p>In this orbital mechanics trick, a spacecraft uses the sun's gravity well to slingshot itself at high speeds in the direction it <strong>aims</strong>.</p>\n<p>Therefore, option D is the correct answer.</p>"}, {"question": "<p><strong>Find the erroneous part (if any).</strong></p><br><p>The memory of Heera mandi hasn't <strong>(A)/</strong>even faded yet, and Netflix has released <strong>(B)/</strong>another period drama with a <strong>(C)/</strong>fabulously flawed idea of feminism <strong>(D)/ </strong>No error <strong>(E)</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>No error</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>The sentence is grammatically correct. Therefore, option E is the correct answer.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Prelims Mastery Quiz 2025 English (Day-40)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Prelims Mastery Quiz 2025 English (Day-40)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

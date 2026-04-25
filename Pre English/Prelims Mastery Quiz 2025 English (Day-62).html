@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Prelims Mastery Quiz 2025 English (Day-62)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>Read the following passage carefully and answer the questions.</strong></p>\n<p>The Emergency in India, declared by Prime Minister Indira Gandhi on June 25, 1975, remains one of the most contentious and transformative periods in the nation’s history. The proclamation of emergency granted the government extraordinary powers, suspending civil liberties and curtailing political freedoms in the name of national stability. This drastic measure was justified by the government as necessary to maintain order and protect the sovereignty of the state in the face of mounting internal and external pressures. However, the aftermath of the Emergency left a lasting impact on the political and social fabric of the country, raising profound questions about the balance between governance and personal freedoms.</p>\n<p>At the core of the Emergency lay the government’s struggle with opposition forces, particularly in the face of civil unrest, economic difficulties, and judicial challenges to its authority. The arrest of political leaders, the suppression of dissent, and the censorship of the press marked a significant departure from democratic norms. During this period, the state assumed a level of control over the individual that was unprecedented in the modern Indian republic. The fundamental rights enshrined in the Constitution were suspended, and the country faced a situation where the ruling party’s actions were largely unchecked by the legal and political institutions that ordinarily functioned as safeguards.</p>\n<p>The rationale provided by the Indira Gandhi-led government for imposing the Emergency was __________ that the nation was under threat from both within and outside. The growing opposition movement, which had garnered significant momentum in the years preceding the Emergency, was seen as a destabilizing force, capable of undermining the political structure of the country. Additionally, external challenges, such as tensions with neighbouring countries, further compounded the perceived threat. The government’s move to centralize power under these circumstances was framed as a response to the exigencies of the moment, yet critics viewed it as a thinly <strong>veiled </strong>attempt to consolidate authority and suppress dissent.</p>\n<p>In the years following the lifting of the Emergency in 1977, India underwent a period of introspection, with citizens and policymakers alike reflecting on the consequences of such authoritarian measures. The subsequent defeat of Indira Gandhi in the 1977 general elections was seen as a repudiation of her government’s excesses, and it underscored the resilience of India’s democratic institutions. The experience of the Emergency led to significant constitutional reforms, including the introduction of safeguards to prevent the recurrence of such a situation. Despite these reforms, the legacy of the Emergency continues to shape political discourse in India, serving as a reminder of the fragile nature of democratic freedoms.</p>\n<p>The Emergency Era in India serves as a <strong>potent </strong>cautionary tale, illustrating the dangers of unchecked governmental power and the vulnerability of democratic institutions under authoritarian rule. It remains a subject of debate and reflection, particularly regarding the implications it had on the principles of justice, liberty, and human rights. While the period was marked by political repression, it also ignited a broader discussion about the limits of power and the resilience of democracy in the face of challenges. The Emergency is a historical chapter that continues to resonate in India’s collective memory, shaping the nation’s political consciousness for generations to come.</p><br><p><strong>How did the Emergency affect the constitutional and institutional safeguards of democratic freedoms in India?</strong></p>", "options": ["<p>Fundamental rights were suspended, but the judiciary retained the power to challenge decisions made by the government, maintaining a degree of checks and balances</p>", "<p>Political institutions were temporarily weakened, but the press and civil society were able to function independently, though with restrictions</p>", "<p>Fundamental rights were rendered ineffective, and institutions meant to check government power were largely subdued, allowing the ruling party to operate without significant oversight</p>", "<p>While censorship of the press and suppression of dissent occurred, democratic processes like elections and parliamentary sessions continued without interruption</p>", "<p>The judiciary was coerced into supporting the government, but civil society movements gained momentum, counterbalancing the authoritarian actions</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong><br/>During the Emergency, the suspension of fundamental rights and the weakening of institutions allowed the government to act without oversight. Press censorship, arrests, and suppression of dissent exemplified the unchecked power of the ruling party.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions.</strong></p>\n<p>The Emergency in India, declared by Prime Minister Indira Gandhi on June 25, 1975, remains one of the most contentious and transformative periods in the nation’s history. The proclamation of emergency granted the government extraordinary powers, suspending civil liberties and curtailing political freedoms in the name of national stability. This drastic measure was justified by the government as necessary to maintain order and protect the sovereignty of the state in the face of mounting internal and external pressures. However, the aftermath of the Emergency left a lasting impact on the political and social fabric of the country, raising profound questions about the balance between governance and personal freedoms.</p>\n<p>At the core of the Emergency lay the government’s struggle with opposition forces, particularly in the face of civil unrest, economic difficulties, and judicial challenges to its authority. The arrest of political leaders, the suppression of dissent, and the censorship of the press marked a significant departure from democratic norms. During this period, the state assumed a level of control over the individual that was unprecedented in the modern Indian republic. The fundamental rights enshrined in the Constitution were suspended, and the country faced a situation where the ruling party’s actions were largely unchecked by the legal and political institutions that ordinarily functioned as safeguards.</p>\n<p>The rationale provided by the Indira Gandhi-led government for imposing the Emergency was __________ that the nation was under threat from both within and outside. The growing opposition movement, which had garnered significant momentum in the years preceding the Emergency, was seen as a destabilizing force, capable of undermining the political structure of the country. Additionally, external challenges, such as tensions with neighbouring countries, further compounded the perceived threat. The government’s move to centralize power under these circumstances was framed as a response to the exigencies of the moment, yet critics viewed it as a thinly <strong>veiled </strong>attempt to consolidate authority and suppress dissent.</p>\n<p>In the years following the lifting of the Emergency in 1977, India underwent a period of introspection, with citizens and policymakers alike reflecting on the consequences of such authoritarian measures. The subsequent defeat of Indira Gandhi in the 1977 general elections was seen as a repudiation of her government’s excesses, and it underscored the resilience of India’s democratic institutions. The experience of the Emergency led to significant constitutional reforms, including the introduction of safeguards to prevent the recurrence of such a situation. Despite these reforms, the legacy of the Emergency continues to shape political discourse in India, serving as a reminder of the fragile nature of democratic freedoms.</p>\n<p>The Emergency Era in India serves as a <strong>potent </strong>cautionary tale, illustrating the dangers of unchecked governmental power and the vulnerability of democratic institutions under authoritarian rule. It remains a subject of debate and reflection, particularly regarding the implications it had on the principles of justice, liberty, and human rights. While the period was marked by political repression, it also ignited a broader discussion about the limits of power and the resilience of democracy in the face of challenges. The Emergency is a historical chapter that continues to resonate in India’s collective memory, shaping the nation’s political consciousness for generations to come.</p><br><p><strong>Which of the following can be inferred from the passage about the Emergency period in India?</strong></p>\n<p><strong>I). </strong>The Emergency highlighted the potential vulnerability of democratic institutions when extraordinary powers are concentrated in the hands of a single authority.</p>\n<p><strong>II).</strong> Indira Gandhi’s justification for imposing the Emergency reflected a dual concern for national stability and political self-preservation.</p>\n<p><strong>III).</strong> The public’s response in the 1977 elections signalled a strong rejection of authoritarianism and a preference for democratic principles.</p>", "options": ["<p>Only I</p>", "<p>Only II</p>", "<p>Both I and II</p>", "<p>Both II and III</p>", "<p>All of the above</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p><strong>I:</strong> The passage repeatedly emphasizes how democratic institutions and freedoms were curtailed, showcasing their vulnerability when excessive power was centralized. This inference ties directly to the passage’s cautionary tone.</p>\n<p><strong>II:</strong> The rationale for the Emergency is presented as addressing threats to stability while also consolidating power, indicating a mix of national interest and self-preservation.</p>\n<p><strong>III: </strong>The defeat of Indira Gandhi in the 1977 elections is explicitly mentioned as a public repudiation of her government’s actions, demonstrating support for democratic principles.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions.</strong></p>\n<p>The Emergency in India, declared by Prime Minister Indira Gandhi on June 25, 1975, remains one of the most contentious and transformative periods in the nation’s history. The proclamation of emergency granted the government extraordinary powers, suspending civil liberties and curtailing political freedoms in the name of national stability. This drastic measure was justified by the government as necessary to maintain order and protect the sovereignty of the state in the face of mounting internal and external pressures. However, the aftermath of the Emergency left a lasting impact on the political and social fabric of the country, raising profound questions about the balance between governance and personal freedoms.</p>\n<p>At the core of the Emergency lay the government’s struggle with opposition forces, particularly in the face of civil unrest, economic difficulties, and judicial challenges to its authority. The arrest of political leaders, the suppression of dissent, and the censorship of the press marked a significant departure from democratic norms. During this period, the state assumed a level of control over the individual that was unprecedented in the modern Indian republic. The fundamental rights enshrined in the Constitution were suspended, and the country faced a situation where the ruling party’s actions were largely unchecked by the legal and political institutions that ordinarily functioned as safeguards.</p>\n<p>The rationale provided by the Indira Gandhi-led government for imposing the Emergency was __________ that the nation was under threat from both within and outside. The growing opposition movement, which had garnered significant momentum in the years preceding the Emergency, was seen as a destabilizing force, capable of undermining the political structure of the country. Additionally, external challenges, such as tensions with neighbouring countries, further compounded the perceived threat. The government’s move to centralize power under these circumstances was framed as a response to the exigencies of the moment, yet critics viewed it as a thinly <strong>veiled </strong>attempt to consolidate authority and suppress dissent.</p>\n<p>In the years following the lifting of the Emergency in 1977, India underwent a period of introspection, with citizens and policymakers alike reflecting on the consequences of such authoritarian measures. The subsequent defeat of Indira Gandhi in the 1977 general elections was seen as a repudiation of her government’s excesses, and it underscored the resilience of India’s democratic institutions. The experience of the Emergency led to significant constitutional reforms, including the introduction of safeguards to prevent the recurrence of such a situation. Despite these reforms, the legacy of the Emergency continues to shape political discourse in India, serving as a reminder of the fragile nature of democratic freedoms.</p>\n<p>The Emergency Era in India serves as a <strong>potent </strong>cautionary tale, illustrating the dangers of unchecked governmental power and the vulnerability of democratic institutions under authoritarian rule. It remains a subject of debate and reflection, particularly regarding the implications it had on the principles of justice, liberty, and human rights. While the period was marked by political repression, it also ignited a broader discussion about the limits of power and the resilience of democracy in the face of challenges. The Emergency is a historical chapter that continues to resonate in India’s collective memory, shaping the nation’s political consciousness for generations to come.</p><br><p><strong>Which of the following inferences is/are incorrect according to the passage?</strong></p>\n<p><strong>I). </strong>The imposition of the Emergency was justified by the government solely on the grounds of preserving its political power.</p>\n<p><strong>II). </strong>The Emergency marked a significant deviation from democratic norms, including the suspension of basic civil liberties and media censorship.</p>\n<p><strong>III).</strong> Indira Gandhi’s decision to impose the Emergency was primarily driven by her desire to address issues related to international relations.</p>", "options": ["<p>Only I</p>", "<p>Only II</p>", "<p>Both I and III</p>", "<p>Both II and III</p>", "<p>All of the above</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>I: </strong>This is incorrect because the government's justification for the Emergency was framed around the need for national stability and addressing internal and external threats, not merely to preserve political power.</p>\n<p><strong>II: </strong>The passage clearly states that the Emergency involved a significant departure from democratic norms, including the suspension of civil liberties and press censorship, making this inference correct.</p>\n<p><strong>III:</strong> This is incorrect because the passage suggests that the Emergency was justified primarily due to internal political instability and the threat posed by opposition movements, rather than international relations.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions.</strong></p>\n<p>The Emergency in India, declared by Prime Minister Indira Gandhi on June 25, 1975, remains one of the most contentious and transformative periods in the nation’s history. The proclamation of emergency granted the government extraordinary powers, suspending civil liberties and curtailing political freedoms in the name of national stability. This drastic measure was justified by the government as necessary to maintain order and protect the sovereignty of the state in the face of mounting internal and external pressures. However, the aftermath of the Emergency left a lasting impact on the political and social fabric of the country, raising profound questions about the balance between governance and personal freedoms.</p>\n<p>At the core of the Emergency lay the government’s struggle with opposition forces, particularly in the face of civil unrest, economic difficulties, and judicial challenges to its authority. The arrest of political leaders, the suppression of dissent, and the censorship of the press marked a significant departure from democratic norms. During this period, the state assumed a level of control over the individual that was unprecedented in the modern Indian republic. The fundamental rights enshrined in the Constitution were suspended, and the country faced a situation where the ruling party’s actions were largely unchecked by the legal and political institutions that ordinarily functioned as safeguards.</p>\n<p>The rationale provided by the Indira Gandhi-led government for imposing the Emergency was __________ that the nation was under threat from both within and outside. The growing opposition movement, which had garnered significant momentum in the years preceding the Emergency, was seen as a destabilizing force, capable of undermining the political structure of the country. Additionally, external challenges, such as tensions with neighbouring countries, further compounded the perceived threat. The government’s move to centralize power under these circumstances was framed as a response to the exigencies of the moment, yet critics viewed it as a thinly <strong>veiled </strong>attempt to consolidate authority and suppress dissent.</p>\n<p>In the years following the lifting of the Emergency in 1977, India underwent a period of introspection, with citizens and policymakers alike reflecting on the consequences of such authoritarian measures. The subsequent defeat of Indira Gandhi in the 1977 general elections was seen as a repudiation of her government’s excesses, and it underscored the resilience of India’s democratic institutions. The experience of the Emergency led to significant constitutional reforms, including the introduction of safeguards to prevent the recurrence of such a situation. Despite these reforms, the legacy of the Emergency continues to shape political discourse in India, serving as a reminder of the fragile nature of democratic freedoms.</p>\n<p>The Emergency Era in India serves as a <strong>potent </strong>cautionary tale, illustrating the dangers of unchecked governmental power and the vulnerability of democratic institutions under authoritarian rule. It remains a subject of debate and reflection, particularly regarding the implications it had on the principles of justice, liberty, and human rights. While the period was marked by political repression, it also ignited a broader discussion about the limits of power and the resilience of democracy in the face of challenges. The Emergency is a historical chapter that continues to resonate in India’s collective memory, shaping the nation’s political consciousness for generations to come.</p><br><p><strong>Which of the following can fill the blank given in the passage?</strong></p>", "options": ["<p>rooted in the idea</p>", "<p>centered around economic reforms</p>", "<p>driven by a desire for political stability through repression</p>", "<p>focused on expanding civil liberties</p>", "<p>motivated by the need for cultural revitalization</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>rooted in the idea: This is the correct answer, as the rationale provided by the government was rooted in the idea of facing internal and external threats, leading to the Emergency.</p>\n<p>Others options are being opposite or unrelated to the passage's content.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions.</strong></p>\n<p>The Emergency in India, declared by Prime Minister Indira Gandhi on June 25, 1975, remains one of the most contentious and transformative periods in the nation’s history. The proclamation of emergency granted the government extraordinary powers, suspending civil liberties and curtailing political freedoms in the name of national stability. This drastic measure was justified by the government as necessary to maintain order and protect the sovereignty of the state in the face of mounting internal and external pressures. However, the aftermath of the Emergency left a lasting impact on the political and social fabric of the country, raising profound questions about the balance between governance and personal freedoms.</p>\n<p>At the core of the Emergency lay the government’s struggle with opposition forces, particularly in the face of civil unrest, economic difficulties, and judicial challenges to its authority. The arrest of political leaders, the suppression of dissent, and the censorship of the press marked a significant departure from democratic norms. During this period, the state assumed a level of control over the individual that was unprecedented in the modern Indian republic. The fundamental rights enshrined in the Constitution were suspended, and the country faced a situation where the ruling party’s actions were largely unchecked by the legal and political institutions that ordinarily functioned as safeguards.</p>\n<p>The rationale provided by the Indira Gandhi-led government for imposing the Emergency was __________ that the nation was under threat from both within and outside. The growing opposition movement, which had garnered significant momentum in the years preceding the Emergency, was seen as a destabilizing force, capable of undermining the political structure of the country. Additionally, external challenges, such as tensions with neighbouring countries, further compounded the perceived threat. The government’s move to centralize power under these circumstances was framed as a response to the exigencies of the moment, yet critics viewed it as a thinly <strong>veiled </strong>attempt to consolidate authority and suppress dissent.</p>\n<p>In the years following the lifting of the Emergency in 1977, India underwent a period of introspection, with citizens and policymakers alike reflecting on the consequences of such authoritarian measures. The subsequent defeat of Indira Gandhi in the 1977 general elections was seen as a repudiation of her government’s excesses, and it underscored the resilience of India’s democratic institutions. The experience of the Emergency led to significant constitutional reforms, including the introduction of safeguards to prevent the recurrence of such a situation. Despite these reforms, the legacy of the Emergency continues to shape political discourse in India, serving as a reminder of the fragile nature of democratic freedoms.</p>\n<p>The Emergency Era in India serves as a <strong>potent </strong>cautionary tale, illustrating the dangers of unchecked governmental power and the vulnerability of democratic institutions under authoritarian rule. It remains a subject of debate and reflection, particularly regarding the implications it had on the principles of justice, liberty, and human rights. While the period was marked by political repression, it also ignited a broader discussion about the limits of power and the resilience of democracy in the face of challenges. The Emergency is a historical chapter that continues to resonate in India’s collective memory, shaping the nation’s political consciousness for generations to come.</p><br><p><strong>Which of the following statements is correct according to the author?</strong></p>", "options": ["<p>The Emergency was imposed with the intention of creating a one-party rule</p>", "<p>The government justified the Emergency primarily as a response to both internal and external threats</p>", "<p>The Emergency led to a strengthening of India's democratic institutions</p>", "<p>The lifting of the Emergency in 1977 was seen as a complete reversal of India's democratic decline</p>", "<p>Indira Gandhi imposed the Emergency to address economic issues rather than political ones</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage explicitly mentions that the government’s rationale was based on perceived internal and external threats.</p>"}, {"question": "<p><strong>In the following passage, some of the words have been highlighted in bold. Read the passage and try to understand what it wants to convey. Then replace the highlighted words with the correct option in order to make the sentence grammatically and contextually sound. In any case the highlighted word is given correctly, then mark ‘No Improvement required’ as the right answer choice.</strong></p>\n<p>In a landmark judgement the Supreme Court of India has upheld the constitutional validity of Section 6A of the Citizenship Act, 1955. In a 4:1 majority verdict, the bench led by Chief Justice of India D Y Chandrachud endorsed the provisions that grant citizenship to people who migrated from Bangladesh between January 1, 1966, and March 25, 1971. The decision comes amidst long-standing debates over immigration in Assam. Section 6A was introduced in 1985 as part of the Assam Accord, an agreement between the Indian government and Assam’s agitating groups to address the issues arising from illegal immigration. Those who arrived after March 25, 1971, are not eligible for citizenship and are considered illegal immigrants under Indian law. The Assam Accord aimed to balance the humanitarian concerns of migrants with the socio-economic and cultural interests of the <strong>indigenous</strong> <strong>(A)</strong> Assamese population. The cut-off date of March 25, 1971, corresponds to the beginning of ‘Operation Searchlight,’ a military crackdown by the Pakistani Army in then-East Pakistan (now Bangladesh), which triggered a significant <strong>deluge (B)</strong> of refugees into India. In the majority ruling, Chief Justice Chandrachud noted that Section 6A does not violate the fundamental rights guaranteed under Articles 6 and 7 of the Constitution, which pertain to the conferring of citizenship to migrants from East and West Pakistan at the commencement of the Constitution on January 26, 1950. The court held that the legislation sought to address specific historical and demographic realities in Assam, making the separate cut-off date for the state reasonable and justifiable. However, while upholding the constitutional validity of Section 6A, the Supreme Court expressed concerns over the inadequate implementation of immigration laws in Assam. Indeed, the <strong>impervious (C) </strong>borders and incomplete fencing have allowed a continuous influx of migrants, which <strong>assuages (D) </strong>demographic challenges. Besides, existing mechanisms, including the Foreigners’ Tribunals, are insufficient for effectively identifying and deporting illegal immigrants. The Supreme Court’s decision has far-reaching implications for the socio-political landscape in Assam. The ruling, while affirming the validity of Section 6A, also recognises the concerns of petitioners who argued that cultural and demographic tapestry of Assam has changed by mandating better enforcement of immigration laws. If the directives for stricter border controls and timely identification of illegal immigrants are implemented effectively, it could help address long-standing grievances regarding demographic changes in Assam. On the other hand, striking down Section 6A would have <strong>rendered</strong> <strong>(E)</strong> many residents, who have lived in Assam for decades, effectively stateless, leading to potential humanitarian crises. The court’s ruling ensures that such individuals retain their citizenship rights, thus preventing large-scale displacements and unrest.</p><br><p><strong>Which of the following words will replace the word in (A)?</strong></p>", "options": ["<p>native</p>", "<p>innate</p>", "<p>colonial</p>", "<p>nomadic</p>", "<p>No Improvement required</p>"], "correctIndex": 0, "solution": "<p><strong>Answer:</strong><strong> A</strong></p>\n<p>The word that will replace the word in (A) is: a) native</p>\n<p>The context of the sentence refers to the indigenous population of Assam, meaning those who are originally from that region, making \"native\" the most suitable option.</p>\n<p><strong>b).</strong> innate: \"Innate\" means something that is inherent or natural, referring to qualities or abilities that a person is born with. It does not relate to a group of people or a population. It’s not relevant in the context of describing the local people of a region.</p>\n<p><strong>c).</strong> colonial: \"Colonial\" refers to something related to a colony or colonialism, often involving foreign settlers or domination by another country. It would be inappropriate here because it implies a group of people who came to the region during colonial rule, rather than the indigenous population.</p>\n<p><strong>d).</strong> nomadic: \"Nomadic\" refers to people who move from one place to another rather than settling in one area permanently. This doesn't apply to the people of Assam, who are indigenous and settled in that region.</p>\n<p>Thus, \"native\" is the most appropriate term to describe the original or indigenous population of Assam.</p>"}, {"question": "<p><strong>In the following passage, some of the words have been highlighted in bold. Read the passage and try to understand what it wants to convey. Then replace the highlighted words with the correct option in order to make the sentence grammatically and contextually sound. In any case the highlighted word is given correctly, then mark ‘No Improvement required’ as the right answer choice.</strong></p>\n<p>In a landmark judgement the Supreme Court of India has upheld the constitutional validity of Section 6A of the Citizenship Act, 1955. In a 4:1 majority verdict, the bench led by Chief Justice of India D Y Chandrachud endorsed the provisions that grant citizenship to people who migrated from Bangladesh between January 1, 1966, and March 25, 1971. The decision comes amidst long-standing debates over immigration in Assam. Section 6A was introduced in 1985 as part of the Assam Accord, an agreement between the Indian government and Assam’s agitating groups to address the issues arising from illegal immigration. Those who arrived after March 25, 1971, are not eligible for citizenship and are considered illegal immigrants under Indian law. The Assam Accord aimed to balance the humanitarian concerns of migrants with the socio-economic and cultural interests of the <strong>indigenous</strong> <strong>(A)</strong> Assamese population. The cut-off date of March 25, 1971, corresponds to the beginning of ‘Operation Searchlight,’ a military crackdown by the Pakistani Army in then-East Pakistan (now Bangladesh), which triggered a significant <strong>deluge (B)</strong> of refugees into India. In the majority ruling, Chief Justice Chandrachud noted that Section 6A does not violate the fundamental rights guaranteed under Articles 6 and 7 of the Constitution, which pertain to the conferring of citizenship to migrants from East and West Pakistan at the commencement of the Constitution on January 26, 1950. The court held that the legislation sought to address specific historical and demographic realities in Assam, making the separate cut-off date for the state reasonable and justifiable. However, while upholding the constitutional validity of Section 6A, the Supreme Court expressed concerns over the inadequate implementation of immigration laws in Assam. Indeed, the <strong>impervious (C) </strong>borders and incomplete fencing have allowed a continuous influx of migrants, which <strong>assuages (D) </strong>demographic challenges. Besides, existing mechanisms, including the Foreigners’ Tribunals, are insufficient for effectively identifying and deporting illegal immigrants. The Supreme Court’s decision has far-reaching implications for the socio-political landscape in Assam. The ruling, while affirming the validity of Section 6A, also recognises the concerns of petitioners who argued that cultural and demographic tapestry of Assam has changed by mandating better enforcement of immigration laws. If the directives for stricter border controls and timely identification of illegal immigrants are implemented effectively, it could help address long-standing grievances regarding demographic changes in Assam. On the other hand, striking down Section 6A would have <strong>rendered</strong> <strong>(E)</strong> many residents, who have lived in Assam for decades, effectively stateless, leading to potential humanitarian crises. The court’s ruling ensures that such individuals retain their citizenship rights, thus preventing large-scale displacements and unrest.</p><br><p><strong>Which of the following words will replace the word in (B)?</strong></p>", "options": ["<p>influx</p>", "<p>incursion</p>", "<p>effluence</p>", "<p>emanation</p>", "<p>No Improvement required</p>"], "correctIndex": 0, "solution": "<p><strong>Answer:</strong><strong> A </strong></p>\n<p>The correct word to replace the word in (B) is: a) influx</p>\n<p>The word \"influx\" means the arrival of large numbers of people or things, which fits the context of refugees entering India from Bangladesh during the military crackdown in 1971. Other options like \"incursion,\" \"effluence,\" and \"emanation\" do not convey the same meaning of a large-scale entry of people.</p>\n<p>Incursion: This refers to a sudden or brief invasion or attack, typically by armed forces. While it could imply a forceful entry, it is more commonly used in military contexts and doesn't fit as well when describing a large movement of refugees, which is the focus in this context.</p>\n<p>Effluence: This word refers to something that flows out, especially liquid or gas, such as waste or pollution from a source. It carries a negative connotation related to outflow, not the arrival or inflow of people, so it's not suitable here.</p>\n<p>Emanation: This refers to something that comes out or originates from a source, such as light, heat, or gas. It's more abstract and isn't appropriate for describing the movement of people into a country.</p>\n<p>Thus, influx is the best word because it specifically conveys the idea of a large number of people entering a region.</p>"}, {"question": "<p><strong>In the following passage, some of the words have been highlighted in bold. Read the passage and try to understand what it wants to convey. Then replace the highlighted words with the correct option in order to make the sentence grammatically and contextually sound. In any case the highlighted word is given correctly, then mark ‘No Improvement required’ as the right answer choice.</strong></p>\n<p>In a landmark judgement the Supreme Court of India has upheld the constitutional validity of Section 6A of the Citizenship Act, 1955. In a 4:1 majority verdict, the bench led by Chief Justice of India D Y Chandrachud endorsed the provisions that grant citizenship to people who migrated from Bangladesh between January 1, 1966, and March 25, 1971. The decision comes amidst long-standing debates over immigration in Assam. Section 6A was introduced in 1985 as part of the Assam Accord, an agreement between the Indian government and Assam’s agitating groups to address the issues arising from illegal immigration. Those who arrived after March 25, 1971, are not eligible for citizenship and are considered illegal immigrants under Indian law. The Assam Accord aimed to balance the humanitarian concerns of migrants with the socio-economic and cultural interests of the <strong>indigenous</strong> <strong>(A)</strong> Assamese population. The cut-off date of March 25, 1971, corresponds to the beginning of ‘Operation Searchlight,’ a military crackdown by the Pakistani Army in then-East Pakistan (now Bangladesh), which triggered a significant <strong>deluge (B)</strong> of refugees into India. In the majority ruling, Chief Justice Chandrachud noted that Section 6A does not violate the fundamental rights guaranteed under Articles 6 and 7 of the Constitution, which pertain to the conferring of citizenship to migrants from East and West Pakistan at the commencement of the Constitution on January 26, 1950. The court held that the legislation sought to address specific historical and demographic realities in Assam, making the separate cut-off date for the state reasonable and justifiable. However, while upholding the constitutional validity of Section 6A, the Supreme Court expressed concerns over the inadequate implementation of immigration laws in Assam. Indeed, the <strong>impervious (C) </strong>borders and incomplete fencing have allowed a continuous influx of migrants, which <strong>assuages (D) </strong>demographic challenges. Besides, existing mechanisms, including the Foreigners’ Tribunals, are insufficient for effectively identifying and deporting illegal immigrants. The Supreme Court’s decision has far-reaching implications for the socio-political landscape in Assam. The ruling, while affirming the validity of Section 6A, also recognises the concerns of petitioners who argued that cultural and demographic tapestry of Assam has changed by mandating better enforcement of immigration laws. If the directives for stricter border controls and timely identification of illegal immigrants are implemented effectively, it could help address long-standing grievances regarding demographic changes in Assam. On the other hand, striking down Section 6A would have <strong>rendered</strong> <strong>(E)</strong> many residents, who have lived in Assam for decades, effectively stateless, leading to potential humanitarian crises. The court’s ruling ensures that such individuals retain their citizenship rights, thus preventing large-scale displacements and unrest.</p><br><p><strong>Which of the following words will replace the word in (C)?</strong></p>", "options": ["<p>permeable</p>", "<p>penetrable</p>", "<p>porous</p>", "<p>absorptive</p>", "<p>No Improvement required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer:</strong><strong> C</strong></p>\n<p>The word \"porous\" (option c) is the most appropriate replacement for the word in (C).</p>\n<p>Porous means allowing the passage of something, such as air or liquid, through small holes, and is often used metaphorically to describe borders that are not secure or allow people to cross easily, which fits the context of the sentence.</p>\n<p>Thus, the correct answer is: c) porous</p>\n<p><strong>a).</strong> Permeable: Meaning: Something that allows liquids or gases to pass through it.</p>\n<p>While \"permeable\" could be used in certain contexts to describe something that can be crossed or penetrated, it is more commonly used to refer to substances or surfaces that allow fluids to pass. In the context of borders, \"permeable\" is a bit less common and doesn't quite capture the metaphor as effectively as \"porous.\"</p>\n<p><strong>b).</strong> Penetrable: Meaning: Capable of being pierced or entered.</p>\n<p>\"Penetrable\" refers to something that can be broken into or entered, typically implying a forceful entry. While it does apply to borders in a literal sense, it doesn't quite fit as well as \"porous,\" which conveys the idea of borders that are easily crossed without forceful breach.</p>\n<p><strong>d).</strong> Absorptive: Meaning: Able to soak up or absorb liquids.</p>\n<p>\"Absorptive\" is a term mainly used for materials that can soak up liquids, and it doesn’t fit the context of borders or migration. It's unrelated to the metaphor of allowing entry, so it would be the least suitable choice.</p>\n<p>Therefore, \"porous\" works best as it captures the idea of borders that are not strictly enforced, allowing migrants to cross more easily, which matches the context of the passage.</p>"}, {"question": "<p><strong>In the following passage, some of the words have been highlighted in bold. Read the passage and try to understand what it wants to convey. Then replace the highlighted words with the correct option in order to make the sentence grammatically and contextually sound. In any case the highlighted word is given correctly, then mark ‘No Improvement required’ as the right answer choice.</strong></p>\n<p>In a landmark judgement the Supreme Court of India has upheld the constitutional validity of Section 6A of the Citizenship Act, 1955. In a 4:1 majority verdict, the bench led by Chief Justice of India D Y Chandrachud endorsed the provisions that grant citizenship to people who migrated from Bangladesh between January 1, 1966, and March 25, 1971. The decision comes amidst long-standing debates over immigration in Assam. Section 6A was introduced in 1985 as part of the Assam Accord, an agreement between the Indian government and Assam’s agitating groups to address the issues arising from illegal immigration. Those who arrived after March 25, 1971, are not eligible for citizenship and are considered illegal immigrants under Indian law. The Assam Accord aimed to balance the humanitarian concerns of migrants with the socio-economic and cultural interests of the <strong>indigenous</strong> <strong>(A)</strong> Assamese population. The cut-off date of March 25, 1971, corresponds to the beginning of ‘Operation Searchlight,’ a military crackdown by the Pakistani Army in then-East Pakistan (now Bangladesh), which triggered a significant <strong>deluge (B)</strong> of refugees into India. In the majority ruling, Chief Justice Chandrachud noted that Section 6A does not violate the fundamental rights guaranteed under Articles 6 and 7 of the Constitution, which pertain to the conferring of citizenship to migrants from East and West Pakistan at the commencement of the Constitution on January 26, 1950. The court held that the legislation sought to address specific historical and demographic realities in Assam, making the separate cut-off date for the state reasonable and justifiable. However, while upholding the constitutional validity of Section 6A, the Supreme Court expressed concerns over the inadequate implementation of immigration laws in Assam. Indeed, the <strong>impervious (C) </strong>borders and incomplete fencing have allowed a continuous influx of migrants, which <strong>assuages (D) </strong>demographic challenges. Besides, existing mechanisms, including the Foreigners’ Tribunals, are insufficient for effectively identifying and deporting illegal immigrants. The Supreme Court’s decision has far-reaching implications for the socio-political landscape in Assam. The ruling, while affirming the validity of Section 6A, also recognises the concerns of petitioners who argued that cultural and demographic tapestry of Assam has changed by mandating better enforcement of immigration laws. If the directives for stricter border controls and timely identification of illegal immigrants are implemented effectively, it could help address long-standing grievances regarding demographic changes in Assam. On the other hand, striking down Section 6A would have <strong>rendered</strong> <strong>(E)</strong> many residents, who have lived in Assam for decades, effectively stateless, leading to potential humanitarian crises. The court’s ruling ensures that such individuals retain their citizenship rights, thus preventing large-scale displacements and unrest.</p><br><p><strong>Which of the following words will replace the word in (D)?</strong></p>", "options": ["<p>alleviates</p>", "<p>placates</p>", "<p>reinforces</p>", "<p>exacerbates</p>", "<p>No Improvement required</p>"], "correctIndex": 3, "solution": "<p><strong>Answer:</strong><strong> D</strong></p>\n<p>The correct word to replace \"assuages\" in (D) should convey a sense of making the demographic challenges worse, as it refers to continuous migration. The best fit is: d) exacerbates</p>\n<p>This suggests that the demographic challenges are being worsened by the continuous influx of migrants.</p>\n<p><strong>a).</strong> Alleviates: Meaning: To reduce or relieve a problem or burden.</p>\n<p>Why it's incorrect: This word implies reducing the severity of demographic challenges, which is the opposite of what's happening. The context indicates that the influx of migrants is worsening the problem, not alleviating it.</p>\n<p><strong>b).</strong> Placates: Meaning: To calm or pacify someone, usually to stop them from being angry.</p>\n<p>Why it's incorrect: \"Placates\" refers to soothing or calming anger or dissatisfaction. Here, the issue is about demographic challenges worsening due to migration, so this word doesn’t apply to the situation.</p>\n<p><strong>c).</strong> Reinforces: Meaning: To strengthen or support something.</p>\n<p>Why it's incorrect: While \"reinforces\" means to strengthen, it doesn’t fit because the context describes how immigration worsens the demographic challenges, not necessarily strengthening or supporting them.</p>\n<p><strong>d).</strong> Exacerbates: Meaning: To make a situation worse.</p>\n<p>Why it's correct: This word aligns with the context of the sentence, where the continuous influx of migrants worsens the demographic challenges in Assam.</p>\n<p>In conclusion, \"exacerbates\" is the best choice because it indicates that the demographic challenges are being worsened by the continuous migration.</p>"}, {"question": "<p><strong>In the following passage, some of the words have been highlighted in bold. Read the passage and try to understand what it wants to convey. Then replace the highlighted words with the correct option in order to make the sentence grammatically and contextually sound. In any case the highlighted word is given correctly, then mark ‘No Improvement required’ as the right answer choice.</strong></p>\n<p>In a landmark judgement the Supreme Court of India has upheld the constitutional validity of Section 6A of the Citizenship Act, 1955. In a 4:1 majority verdict, the bench led by Chief Justice of India D Y Chandrachud endorsed the provisions that grant citizenship to people who migrated from Bangladesh between January 1, 1966, and March 25, 1971. The decision comes amidst long-standing debates over immigration in Assam. Section 6A was introduced in 1985 as part of the Assam Accord, an agreement between the Indian government and Assam’s agitating groups to address the issues arising from illegal immigration. Those who arrived after March 25, 1971, are not eligible for citizenship and are considered illegal immigrants under Indian law. The Assam Accord aimed to balance the humanitarian concerns of migrants with the socio-economic and cultural interests of the <strong>indigenous</strong> <strong>(A)</strong> Assamese population. The cut-off date of March 25, 1971, corresponds to the beginning of ‘Operation Searchlight,’ a military crackdown by the Pakistani Army in then-East Pakistan (now Bangladesh), which triggered a significant <strong>deluge (B)</strong> of refugees into India. In the majority ruling, Chief Justice Chandrachud noted that Section 6A does not violate the fundamental rights guaranteed under Articles 6 and 7 of the Constitution, which pertain to the conferring of citizenship to migrants from East and West Pakistan at the commencement of the Constitution on January 26, 1950. The court held that the legislation sought to address specific historical and demographic realities in Assam, making the separate cut-off date for the state reasonable and justifiable. However, while upholding the constitutional validity of Section 6A, the Supreme Court expressed concerns over the inadequate implementation of immigration laws in Assam. Indeed, the <strong>impervious (C) </strong>borders and incomplete fencing have allowed a continuous influx of migrants, which <strong>assuages (D) </strong>demographic challenges. Besides, existing mechanisms, including the Foreigners’ Tribunals, are insufficient for effectively identifying and deporting illegal immigrants. The Supreme Court’s decision has far-reaching implications for the socio-political landscape in Assam. The ruling, while affirming the validity of Section 6A, also recognises the concerns of petitioners who argued that cultural and demographic tapestry of Assam has changed by mandating better enforcement of immigration laws. If the directives for stricter border controls and timely identification of illegal immigrants are implemented effectively, it could help address long-standing grievances regarding demographic changes in Assam. On the other hand, striking down Section 6A would have <strong>rendered</strong> <strong>(E)</strong> many residents, who have lived in Assam for decades, effectively stateless, leading to potential humanitarian crises. The court’s ruling ensures that such individuals retain their citizenship rights, thus preventing large-scale displacements and unrest.</p><br><p><strong>Which of the following words will replace the word in (E)?</strong></p>", "options": ["<p>obscured</p>", "<p>refrained</p>", "<p>allotted</p>", "<p>depicted</p>", "<p>No Improvement required</p>"], "correctIndex": 4, "solution": "<p><strong>Answer:</strong><strong> E</strong></p>\n<p>The correct word to replace \"rendered\" in (E) is e) No Improvement required.</p>\n<p>In the sentence, \"rendered\" is correctly used to mean \"caused to become\" or \"made.\" It refers to the potential effect of striking down Section 6A, which would have caused many residents to become stateless. None of the other options—\"obscured,\" \"refrained,\" \"allotted,\" or \"depicted\"—fit the context as well as \"rendered.\"</p>\n<p><strong>a).</strong> Obscured: This means \"hidden\" or \"made unclear.\" If the sentence said, \"striking down Section 6A would have obscured many residents,\" it would imply that these individuals were somehow made invisible or unclear, which doesn’t fit the idea of them becoming stateless.</p>\n<p><strong>b).</strong> Refrained: This means \"held back\" or \"stopped from doing something.\" It would imply that striking down Section 6A would have \"held back\" or \"prevented\" residents, but that doesn’t make sense in the context of becoming stateless.</p>\n<p><strong>c).</strong> Allotted: This means \"given or distributed.\" Using this word would imply that residents would be \"given\" something, which is the opposite of what the sentence is saying. It talks about people losing their citizenship, not gaining or being distributed something.</p>\n<p><strong>d).</strong> Depicted: This means \"represented\" or \"described.\" Using this word would imply that residents were \"represented\" as stateless, which doesn’t make sense because the court’s ruling is about preventing them from becoming stateless, not just depicting them in some way.</p>\n<p>Thus, \"rendered\" is the most appropriate word because it means \"caused to become,\" which fits the idea that striking down Section 6A would have caused people to become stateless.</p>"}, {"question": "<p><strong>In each of the following questions, a sentence is given with four words highlighted in bold. One of these four words highlighted in bold may be either wrongly spelt or inappropriate in the context of the sentence.  If all the words printed in bold are correctly spelled and also appropriate in the context of the sentence, mark “All are correct” as your answer.</strong></p><br><p>Open and <strong>unclean</strong> landfills <strong>contaminate</strong> drinking water and can spread <strong>infection</strong> and <strong>diseases</strong>.</p>", "options": ["<p>unclean</p>", "<p>contaminate</p>", "<p>infection</p>", "<p>diseases</p>", "<p>All are correct</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>All the words highlighted in bold are spelled correctly and appropriate in the context.</p>\n<p>Hence, <strong>Option E</strong> is the correct answer.</p>"}, {"question": "<p><strong>In each of the following questions, a sentence is given with four words highlighted in bold. One of these four words highlighted in bold may be either wrongly spelt or inappropriate in the context of the sentence.  If all the words printed in bold are correctly spelled and also appropriate in the context of the sentence, mark “All are correct” as your answer.</strong></p><br><p><strong>Evoking</strong> the spirit of positivity and optimism by <strong>eliminating</strong> the <strong>unwanted</strong> negativity and <strong>pesimism</strong> completely from the mind.</p>", "options": ["<p>evoking</p>", "<p>eliminating</p>", "<p>unwanted</p>", "<p>pesimism</p>", "<p>All are correct</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D </strong></p>\n<p>The word \"pesimism\" is misspelled. The correct spelling of this word is \"pessimism.\"</p>\n<p>Pessimism refers to a tendency to see the worst aspect of things or believe that the worst will happen.</p>\n<p>The rest of the words in the sentence are spelled correctly and are appropriate in the context.</p>\n<p>Hence, <strong>Option D</strong> is the correct answer.</p>"}, {"question": "<p><strong>In each of the following questions, a sentence is given with four words highlighted in bold. One of these four words highlighted in bold may be either wrongly spelt or inappropriate in the context of the sentence.  If all the words printed in bold are correctly spelled and also appropriate in the context of the sentence, mark “All are correct” as your answer.</strong></p><br><p>The <strong>roots</strong> of beauty <strong>paegents</strong> in India can be <strong>traced</strong> back to the early 20<sup>th</sup> <strong>century</strong> when the first-ever Miss India pageant took place in 1947.</p>", "options": ["<p>roots</p>", "<p>paegents</p>", "<p>traced</p>", "<p>century</p>", "<p>All are correct</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The word \"paegents\" is misspelled. The correct spelling of this word is \"pageants.\"</p>\n<p>\"Pageants\" refer to events where contestants, usually women, participate in various competitions to showcase attributes like beauty, talent, and personality.</p>\n<p>The other words highlighted in the sentence are spelled correctly and are appropriate in the context of the sentence.</p>\n<p>Hence, <strong>Option B</strong> is the correct answer.</p>"}, {"question": "<p><strong>In each of the following questions, a sentence is given with four words highlighted in bold. One of these four words highlighted in bold may be either wrongly spelt or inappropriate in the context of the sentence.  If all the words printed in bold are correctly spelled and also appropriate in the context of the sentence, mark “All are correct” as your answer.</strong></p><br><p>Advancements in computer <strong>modelling</strong> and <strong>simulation</strong> are allowing engineers to <strong>virtualy</strong> replicate crash <strong>scenarios</strong> with even greater accuracy.</p>", "options": ["<p>modelling</p>", "<p>simulation</p>", "<p>virtualy</p>", "<p>scenarios</p>", "<p>All are correct</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The word \"virtualy\" is misspelled. The correct spelling should be \"virtually.\"</p>\n<p>\"Virtually\" is an adverb that means \"almost\" or \"nearly”. It indicates that something is very close to being true or accurate but may not be entirely so.</p>\n<p>\"virtually\" also indicate that something is done or experienced online or through digital means, rather than physically.</p>\n<p>The other words highlighted in the sentence are spelled correctly and are appropriate in the context of the sentence.</p>\n<p>Hence, <strong>Option C </strong>is the correct answer.</p>"}, {"question": "<p><strong>In each of the following questions, a sentence is given with four words highlighted in bold. One of these four words highlighted in bold may be either wrongly spelt or inappropriate in the context of the sentence.  If all the words printed in bold are correctly spelled and also appropriate in the context of the sentence, mark “All are correct” as your answer.</strong></p><br><p>The 2019 Amendment provides the <strong>mechanical</strong> for the applications to be processed <strong>through</strong> a <strong>committee</strong> which has been <strong>formulated</strong> in this respect.</p>", "options": ["<p>mechanical</p>", "<p>thorough</p>", "<p>committee</p>", "<p>formulated</p>", "<p>All are correct</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>In the given sentence, the word \"mechanical\" is used incorrectly. The correct word that should be used here is “mechanism”.</p>\n<p>\"Mechanical\" talks about machines or the physical parts of machinery.</p>\n<p>\"mechanism,\" refers to a system or process designed to achieve a particular goal or function. In this context, it is describing the structured way in which tasks or actions will be carried out according to the rules or guidelines laid out in the amendment.</p>\n<p>Hence, <strong>Option A </strong>is the correct answer.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Prelims Mastery Quiz 2025 English (Day-62)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Prelims Mastery Quiz 2025 English (Day-62)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

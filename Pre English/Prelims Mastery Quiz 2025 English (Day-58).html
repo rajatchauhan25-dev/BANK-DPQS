@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Prelims Mastery Quiz 2025 English (Day-58)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>A passage is given</strong><strong> with five blanks labelled (A-E). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>Climate change is one of the most pressing issues of our time. Scientists have provided ample evidence that human activities are contributing to global warming. One of the primary causes is the emission of greenhouse gases, which <strong>(A) ___________</strong> the Earth's atmosphere and trap heat. As a result, we are witnessing a significant <strong>(B) ___________</strong> in global temperatures, leading to extreme weather events, rising sea levels, and loss of biodiversity.</p>\n<p>To combat climate change, it is essential to <strong>(C) ___________</strong> our reliance on fossil fuels and transition to renewable energy sources. Governments, businesses, and individuals all have a role to play in reducing carbon footprints. Policies promoting energy efficiency, sustainable agriculture, and reforestation can significantly <strong>(D) ___________</strong> the impact of climate change. However, without global cooperation and commitment, efforts to address this crisis may not be <strong>(E) ___________.</strong></p><br><p><strong>Which word comes in the blank labelled A?</strong></p>", "options": ["<p>filter</p>", "<p>shield</p>", "<p>deplete</p>", "<p>pollute</p>", "<p>insulate</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>Greenhouse gases \"<strong>pollute</strong>\" the Earth's atmosphere by introducing harmful substances that trap heat, leading to global warming.</p>\n<p>Therefore, option D is the correct answer.</p>"}, {"question": "<p><strong>A passage is given</strong><strong> with five blanks labelled (A-E). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>Climate change is one of the most pressing issues of our time. Scientists have provided ample evidence that human activities are contributing to global warming. One of the primary causes is the emission of greenhouse gases, which <strong>(A) ___________</strong> the Earth's atmosphere and trap heat. As a result, we are witnessing a significant <strong>(B) ___________</strong> in global temperatures, leading to extreme weather events, rising sea levels, and loss of biodiversity.</p>\n<p>To combat climate change, it is essential to <strong>(C) ___________</strong> our reliance on fossil fuels and transition to renewable energy sources. Governments, businesses, and individuals all have a role to play in reducing carbon footprints. Policies promoting energy efficiency, sustainable agriculture, and reforestation can significantly <strong>(D) ___________</strong> the impact of climate change. However, without global cooperation and commitment, efforts to address this crisis may not be <strong>(E) ___________.</strong></p><br><p><strong>Which word comes in the blank labelled B?</strong></p>", "options": ["<p>decrease</p>", "<p>fluctuation</p>", "<p>decline</p>", "<p>rise</p>", "<p>stabilization</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>There is a significant \"<strong>rise</strong>\" in global temperatures due to the effects of climate change.</p>\n<p>Therefore, option D is the correct answer.</p>"}, {"question": "<p><strong>A passage is given</strong><strong> with five blanks labelled (A-E). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>Climate change is one of the most pressing issues of our time. Scientists have provided ample evidence that human activities are contributing to global warming. One of the primary causes is the emission of greenhouse gases, which <strong>(A) ___________</strong> the Earth's atmosphere and trap heat. As a result, we are witnessing a significant <strong>(B) ___________</strong> in global temperatures, leading to extreme weather events, rising sea levels, and loss of biodiversity.</p>\n<p>To combat climate change, it is essential to <strong>(C) ___________</strong> our reliance on fossil fuels and transition to renewable energy sources. Governments, businesses, and individuals all have a role to play in reducing carbon footprints. Policies promoting energy efficiency, sustainable agriculture, and reforestation can significantly <strong>(D) ___________</strong> the impact of climate change. However, without global cooperation and commitment, efforts to address this crisis may not be <strong>(E) ___________.</strong></p><br><p><strong>Which word comes in the blank labelled C?</strong></p>", "options": ["<p>maintain</p>", "<p>increase</p>", "<p>reduce</p>", "<p>ignore</p>", "<p>promote</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>To combat climate change, it is essential to \"<strong>reduce</strong>\" our reliance on fossil fuels and transition to renewable energy sources.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>A passage is given</strong><strong> with five blanks labelled (A-E). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>Climate change is one of the most pressing issues of our time. Scientists have provided ample evidence that human activities are contributing to global warming. One of the primary causes is the emission of greenhouse gases, which <strong>(A) ___________</strong> the Earth's atmosphere and trap heat. As a result, we are witnessing a significant <strong>(B) ___________</strong> in global temperatures, leading to extreme weather events, rising sea levels, and loss of biodiversity.</p>\n<p>To combat climate change, it is essential to <strong>(C) ___________</strong> our reliance on fossil fuels and transition to renewable energy sources. Governments, businesses, and individuals all have a role to play in reducing carbon footprints. Policies promoting energy efficiency, sustainable agriculture, and reforestation can significantly <strong>(D) ___________</strong> the impact of climate change. However, without global cooperation and commitment, efforts to address this crisis may not be <strong>(E) ___________.</strong></p><br><p><strong>Which word comes in the blank labelled D?</strong></p>", "options": ["<p>heighten</p>", "<p>mitigate</p>", "<p>exacerbate</p>", "<p>enlarge</p>", "<p>intensify</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>Policies that promote energy efficiency, sustainable agriculture, and reforestation can \"<strong>mitigate</strong>\" (lessen) the impact of climate change.</p>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>A passage is given</strong><strong> with five blanks labelled (A-E). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>Climate change is one of the most pressing issues of our time. Scientists have provided ample evidence that human activities are contributing to global warming. One of the primary causes is the emission of greenhouse gases, which <strong>(A) ___________</strong> the Earth's atmosphere and trap heat. As a result, we are witnessing a significant <strong>(B) ___________</strong> in global temperatures, leading to extreme weather events, rising sea levels, and loss of biodiversity.</p>\n<p>To combat climate change, it is essential to <strong>(C) ___________</strong> our reliance on fossil fuels and transition to renewable energy sources. Governments, businesses, and individuals all have a role to play in reducing carbon footprints. Policies promoting energy efficiency, sustainable agriculture, and reforestation can significantly <strong>(D) ___________</strong> the impact of climate change. However, without global cooperation and commitment, efforts to address this crisis may not be <strong>(E) ___________.</strong></p><br><p><strong>Which word comes in the blank labelled E?</strong></p>", "options": ["<p>effective</p>", "<p>irrelevant</p>", "<p>significant</p>", "<p>indifferent</p>", "<p>detrimental</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>Without global cooperation and commitment, efforts to address the climate crisis may not be \"<strong>effective</strong>\" (successful in producing the desired result).</p>\n<p>Therefore, option A is the correct answer.</p>"}, {"question": "<p><strong>Read each sentence to find out whether there is any grammatical error in it. The error if any, will be in one part of the sentence. Mark the number of the part with error as your answer. If there is no error, mark (E).</strong></p><br><p>The integration of quantum computing <strong>(a)/</strong>into financial analytics promise to enhance <strong>(b)/</strong>predictive accuracy, potentially revolutionizing <strong>(c)/</strong>investment strategies by providing <strong>(d)/</strong>deeper insights into market trends. <strong>(e)</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The subject \"The integration of quantum computing\" is singular, so the verb should be \"promises\" to agree with the singular subject.</p>\n<p><strong>The corrected sentence would be:</strong></p>\n<p>The integration of quantum computing into financial analytics promises to enhance predictive accuracy, potentially revolutionizing investment strategies by providing deeper insights into market trends.</p>"}, {"question": "<p><strong>Read each sentence to find out whether there is any grammatical error in it. The error if any, will be in one part of the sentence. Mark the number of the part with error as your answer. If there is no error, mark (E).</strong></p><br><p>The burgeoning field of neurotechnology raises <strong>(a)/</strong>significant ethical questions about <strong>(b)/</strong>cognitive enhancement and the potential for <strong>(c)/</strong>invasive brain interventions, demanding carefully <strong>(d)/</strong>consideration of privacy and autonomy. <strong>(e)</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The phrase \"demanding carefully\" is incorrect. The correct phrase should be \"demanding careful\" to properly modify \"consideration\" with the adjective \"careful.\"</p>\n<p><strong>The corrected sentence would be:</strong></p>\n<p>The burgeoning field of neurotechnology raises significant ethical questions about cognitive enhancement and the potential for invasive brain interventions, demanding careful consideration of privacy and autonomy.</p>"}, {"question": "<p><strong>Read each sentence to find out whether there is any grammatical error in it. The error if any, will be in one part of the sentence. Mark the number of the part with error as your answer. If there is no error, mark (E).</strong></p><br><p>As digital currencies gain mainstream acceptance, <strong>(a)/</strong>the need for robust regulatory frameworks <strong>(b)/</strong>becomes crucial to addressed issues <strong>(c)/</strong>related to financial security <strong>(d)/</strong>and market stability. <strong>(e)</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The phrase \"to addressed issues\" is incorrect. It should be \"to address issues\" to properly use the infinitive form of the verb \"address.\"</p>\n<p><strong>The corrected sentence would be:</strong></p>\n<p>As digital currencies gain mainstream acceptance, the need for robust regulatory frameworks becomes crucial to address issues related to financial security and market stability.</p>"}, {"question": "<p><strong>Read each sentence to find out whether there is any grammatical error in it. The error if any, will be in one part of the sentence. Mark the number of the part with error as your answer. If there is no error, mark (E).</strong></p><br><p>The arise of telemedicine offers unprecedented <strong>(a)/</strong>access to healthcare services but <strong>(b)/</strong>also necessitates a reevaluation of privacy <strong>(c)/</strong>protocols and the quality <strong>(d)/</strong>of remote patient care. <strong>(e)</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The phrase \"The arise\" is incorrect. It should be \"The rise\" to correctly refer to an increase or growth in telemedicine.</p>\n<p><strong>The corrected sentence would be:</strong></p>\n<p>The rise of telemedicine offers unprecedented access to healthcare services but also necessitates a reevaluation of privacy protocols and the quality of remote patient care.</p>"}, {"question": "<p><strong>Read each sentence to find out whether there is any grammatical error in it. The error if any, will be in one part of the sentence. Mark the number of the part with error as your answer. If there is no error, mark (E).</strong></p><br><p>The expansion of renewable energy sources is <strong>(a)/</strong>essential for reducing carbon emissions, <strong>(b)/</strong>yet it requires substantial investment in infrastructure <strong>(c)/</strong>and technological innovation to <strong>(d)/</strong>insure efficiency and reliability. <strong>(e)</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>The word \"insure\" is incorrect in this context. The correct word should be \"ensure,\" which means to make certain or guarantee something.</p>\n<p><strong>The corrected sentence would be:</strong></p>\n<p>The expansion of renewable energy sources is essential for reducing carbon emissions, yet it requires substantial investment in infrastructure and technological innovation to ensure efficiency and reliability.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>Unpaid care workers play a crucial yet often overlooked role in sustaining families and communities. These individuals, typically family members and predominantly women, take on essential caregiving and household tasks without formal salaries or wages. Their contributions range from managing daily domestic duties to supporting vulnerable family members and even volunteering in community-based activities. Despite the significant value they provide, their work remains largely unrecognised, unregulated, and uncompensated, often leaving them economically insecure and lacking social protections. This group includes several key roles. Household caregivers provide daily care for children, elderly relatives, or family members with disabilities, handling tasks like cooking, cleaning and offering emotional support. Childcare providers, especially in low-income families, often include mothers or grandmothers who look after young children, offering informal education and supervision. In some communities, individuals volunteer for communal care tasks such as organising child care or assisting with health-related services out of a sense of responsibility rather than financial motivation. Family health caregivers manage tasks such as administering medication, assisting with mobility, and caring for chronically ill relatives. In rural areas, unpaid care work often extends to agricultural labour, including farming, collecting water, and gathering firewood, which are essential for household survival but remain uncompensated. The economic contributions of unpaid care work are immense, supporting families and enabling formal economic activities by ensuring the wellbeing of individuals. However, the lack of formal recognition and compensation leaves these workers vulnerable to financial instability and limits access to social protections. A related but distinct category includes ‘Anganwadi’ workers, who occupy a middle ground between unpaid and paid care work. Employed under the Integrated Child Development Services (ICDS) programme, they receive a modest honorarium rather than a formal wage. This compensation is often irregular, lacks benefits like retirement or health insurance and fails to provide the stability of formal employment. Consequently, while Anganwadi workers are technically paid, their financial insecurity mirrors the challenges faced by unpaid care workers. Despite their critical contributions to the care economy, Anganwadi workers remain undervalued and under-compensated. Many are forced to take on additional jobs to make ends meet. Their situation highlights the broader societal neglect of care work, where contributions—paid or unpaid—are undervalued and often relegated to the margins of economic discourse. Addressing these issues requires recognising care work’s essential role in social and economic systems and implementing policies that ensure fair compensation and protection for all care workers.</p><br><p><strong>Who are the primary unpaid care workers mentioned in the passage?</strong></p>", "options": ["<p>Volunteers working in healthcare</p>", "<p>Family members, mostly women, who perform caregiving tasks</p>", "<p>Professional caregivers employed by government programs</p>", "<p>Health workers working on a contractual basis</p>", "<p>Workers involved in paid caregiving roles</p>"], "correctIndex": 1, "solution": "<p><strong>Answer:</strong><strong> B</strong></p>\n<p>The passage specifically states that unpaid care workers are typically family members, with a majority being women who take on caregiving responsibilities without formal salaries. The passage specifically identifies family members as the primary unpaid care workers, and it highlights that these individuals are predominantly women. These family members take on caregiving responsibilities such as managing domestic duties, supporting vulnerable family members, and volunteering in community-based activities without receiving formal wages or salaries. This group of unpaid care workers performs a range of essential tasks, from household chores to providing emotional support, which are crucial for the wellbeing of the family and community. The other options refer to workers in paid roles, while the passage focuses on unpaid family caregivers.</p>\n<p><strong>a).</strong> Volunteers working in healthcare: This option is incorrect because while the passage does mention volunteers who assist with care tasks (e.g., community-based activities), it specifically discusses unpaid care workers within families, particularly women. These volunteers may contribute to caregiving, but the main focus of the passage is on family members providing unpaid care, not healthcare volunteers.</p>\n<p><strong>c).</strong> Professional caregivers employed by government programs: This is not the correct answer because the passage makes a distinction between unpaid family caregivers and those employed in formal care roles. Anganwadi workers are mentioned as an example of workers under a government program, but they receive a modest honorarium (a form of payment), which is different from the unpaid care workers described in the passage.</p>\n<p><strong>d).</strong> Health workers working on a contractual basis: This option is incorrect because the passage does not mention health workers on a contractual basis. It focuses on unpaid care work within families and communities, particularly by women. While healthcare workers are important, the passage specifically addresses those providing unpaid care in the family context, not contracted health professionals.</p>\n<p><strong>e).</strong> Workers involved in paid caregiving roles: This option is incorrect because the passage highlights unpaid care work, which is not compensated. It contrasts this with paid caregiving roles, such as Anganwadi workers, but the focus of the passage is on unpaid family members, rather than those receiving payment for caregiving tasks.</p>\n<p>So, the correct answer is b) Family members, mostly women, who perform caregiving tasks because the passage primarily discusses family-based, unpaid caregiving work, particularly by women, which remains largely unrecognized and uncompensated.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>Unpaid care workers play a crucial yet often overlooked role in sustaining families and communities. These individuals, typically family members and predominantly women, take on essential caregiving and household tasks without formal salaries or wages. Their contributions range from managing daily domestic duties to supporting vulnerable family members and even volunteering in community-based activities. Despite the significant value they provide, their work remains largely unrecognised, unregulated, and uncompensated, often leaving them economically insecure and lacking social protections. This group includes several key roles. Household caregivers provide daily care for children, elderly relatives, or family members with disabilities, handling tasks like cooking, cleaning and offering emotional support. Childcare providers, especially in low-income families, often include mothers or grandmothers who look after young children, offering informal education and supervision. In some communities, individuals volunteer for communal care tasks such as organising child care or assisting with health-related services out of a sense of responsibility rather than financial motivation. Family health caregivers manage tasks such as administering medication, assisting with mobility, and caring for chronically ill relatives. In rural areas, unpaid care work often extends to agricultural labour, including farming, collecting water, and gathering firewood, which are essential for household survival but remain uncompensated. The economic contributions of unpaid care work are immense, supporting families and enabling formal economic activities by ensuring the wellbeing of individuals. However, the lack of formal recognition and compensation leaves these workers vulnerable to financial instability and limits access to social protections. A related but distinct category includes ‘Anganwadi’ workers, who occupy a middle ground between unpaid and paid care work. Employed under the Integrated Child Development Services (ICDS) programme, they receive a modest honorarium rather than a formal wage. This compensation is often irregular, lacks benefits like retirement or health insurance and fails to provide the stability of formal employment. Consequently, while Anganwadi workers are technically paid, their financial insecurity mirrors the challenges faced by unpaid care workers. Despite their critical contributions to the care economy, Anganwadi workers remain undervalued and under-compensated. Many are forced to take on additional jobs to make ends meet. Their situation highlights the broader societal neglect of care work, where contributions—paid or unpaid—are undervalued and often relegated to the margins of economic discourse. Addressing these issues requires recognising care work’s essential role in social and economic systems and implementing policies that ensure fair compensation and protection for all care workers.</p><br><p><strong>What is the primary difference between Anganwadi workers and unpaid care workers?</strong></p>", "options": ["<p>They receive formal salaries with health insurance</p>", "<p>They are unpaid, while other care workers receive wages</p>", "<p>They are paid a modest honorarium, but it lacks stability and benefits</p>", "<p>They perform only childcare tasks</p>", "<p>They are volunteers with no compensation</p>"], "correctIndex": 2, "solution": "<p><strong>Answer:</strong><strong> C</strong></p>\n<p>The passage explains that Anganwadi workers receive a modest honorarium, but it is irregular and lacks benefits such as retirement or health insurance, unlike other formal paid employment. The passage specifically mentions that Anganwadi workers receive a modest honorarium, which is a form of compensation, but this payment is irregular and lacks the stability and benefits associated with formal wages. These benefits might include things like health insurance or retirement plans, which are not provided to Anganwadi workers. This makes their financial situation similar to unpaid care workers, who also face economic insecurity despite their important roles in caregiving. The key difference highlighted in the passage is that Anganwadi workers technically receive some compensation (the honorarium), but it is insufficient and irregular, unlike the completely unpaid care workers who receive no financial compensation.</p>\n<p><strong>a).</strong> They receive formal salaries with health insurance: This option is incorrect because the passage explicitly states that Anganwadi workers do not receive formal salaries with health insurance. They receive an honorarium that is irregular and does not include typical benefits like health insurance or retirement plans.</p>\n<p><strong>b).</strong> They are unpaid, while other care workers receive wages: This is incorrect because Anganwadi workers do receive some form of payment (a modest honorarium), unlike completely unpaid care workers. The key distinction is that while their payment exists, it is not regular or stable, unlike wages received in formal employment.</p>\n<p><strong>d).</strong> They perform only childcare tasks: This is not accurate because while Anganwadi workers are involved in childcare, they do not perform only childcare tasks. They are also involved in broader responsibilities under the Integrated Child Development Services (ICDS) program, which may include other caregiving duties beyond just childcare, as the passage does not limit their role to childcare alone.</p>\n<p><strong>e).</strong> They are volunteers with no compensation: This option is incorrect because, as the passage states, Anganwadi workers do receive compensation in the form of an honorarium, even though it is modest and irregular. They are not volunteers in the true sense, as they are receiving some form of payment, unlike unpaid care workers.</p>\n<p>Therefore, c) They are paid a modest honorarium, but it lacks stability and benefits is the correct answer, reflecting the reality described in the passage that, despite being compensated, their payment is unstable and lacks the benefits that would typically come with formal employment.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>Unpaid care workers play a crucial yet often overlooked role in sustaining families and communities. These individuals, typically family members and predominantly women, take on essential caregiving and household tasks without formal salaries or wages. Their contributions range from managing daily domestic duties to supporting vulnerable family members and even volunteering in community-based activities. Despite the significant value they provide, their work remains largely unrecognised, unregulated, and uncompensated, often leaving them economically insecure and lacking social protections. This group includes several key roles. Household caregivers provide daily care for children, elderly relatives, or family members with disabilities, handling tasks like cooking, cleaning and offering emotional support. Childcare providers, especially in low-income families, often include mothers or grandmothers who look after young children, offering informal education and supervision. In some communities, individuals volunteer for communal care tasks such as organising child care or assisting with health-related services out of a sense of responsibility rather than financial motivation. Family health caregivers manage tasks such as administering medication, assisting with mobility, and caring for chronically ill relatives. In rural areas, unpaid care work often extends to agricultural labour, including farming, collecting water, and gathering firewood, which are essential for household survival but remain uncompensated. The economic contributions of unpaid care work are immense, supporting families and enabling formal economic activities by ensuring the wellbeing of individuals. However, the lack of formal recognition and compensation leaves these workers vulnerable to financial instability and limits access to social protections. A related but distinct category includes ‘Anganwadi’ workers, who occupy a middle ground between unpaid and paid care work. Employed under the Integrated Child Development Services (ICDS) programme, they receive a modest honorarium rather than a formal wage. This compensation is often irregular, lacks benefits like retirement or health insurance and fails to provide the stability of formal employment. Consequently, while Anganwadi workers are technically paid, their financial insecurity mirrors the challenges faced by unpaid care workers. Despite their critical contributions to the care economy, Anganwadi workers remain undervalued and under-compensated. Many are forced to take on additional jobs to make ends meet. Their situation highlights the broader societal neglect of care work, where contributions—paid or unpaid—are undervalued and often relegated to the margins of economic discourse. Addressing these issues requires recognising care work’s essential role in social and economic systems and implementing policies that ensure fair compensation and protection for all care workers.</p><br><p><strong>How are the contributions of unpaid care workers treated in society, according to the passage?</strong></p>", "options": ["<p>They are widely recognized and celebrated</p>", "<p>They are acknowledged in the formal employment sector</p>", "<p>They are largely unrecognised, unregulated, and uncompensated</p>", "<p>They are highly compensated but not valued</p>", "<p>They are mostly done by professional caregivers</p>"], "correctIndex": 2, "solution": "<p><strong>Answer:</strong><strong> C</strong></p>\n<p>The passage stresses that unpaid care workers’ contributions are unrecognized and unregulated, which leaves them vulnerable to financial instability and lacking social protections. The passage emphasizes that unpaid care workers, despite their significant contributions, are largely unrecognised, unregulated, and uncompensated. These workers, who often perform caregiving tasks within the family or community (primarily women), do not receive formal recognition or wages for their work. Their roles are critical in sustaining families and communities, yet society tends to overlook their contributions, leading to economic insecurity and lack of social protections. The passage clearly points out that the lack of recognition and regulation leaves these workers vulnerable.</p>\n<p><strong>a).</strong> They are widely recognized and celebrated: This option is incorrect because the passage explicitly states that unpaid care work is largely unrecognised. Despite its crucial role, this type of work is not celebrated or acknowledged as it should be, leaving the workers unappreciated in society.</p>\n<p><strong>b).</strong> They are acknowledged in the formal employment sector: This is incorrect because unpaid care workers are not acknowledged in the formal employment sector. The passage highlights that their contributions are overlooked and that they do not receive the same recognition or benefits as those in formal paid employment.</p>\n<p><strong>d).</strong> They are highly compensated but not valued: This option is incorrect because the passage explicitly mentions that unpaid care workers are not compensated for their work, making this option factually incorrect. They are not compensated at all, let alone highly compensated.</p>\n<p><strong>e).</strong> They are mostly done by professional caregivers: This option is incorrect because the passage focuses on family members, especially women, who perform unpaid caregiving tasks. While professional caregivers may be involved in paid care work, the passage specifically discusses unpaid care work, which is done by family members rather than professionals.</p>\n<p>Thus, the correct answer is c) They are largely unrecognised, unregulated, and uncompensated, as this reflects the main idea of the passage, where unpaid care workers' contributions are overlooked and remain without formal recognition or compensation.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>Unpaid care workers play a crucial yet often overlooked role in sustaining families and communities. These individuals, typically family members and predominantly women, take on essential caregiving and household tasks without formal salaries or wages. Their contributions range from managing daily domestic duties to supporting vulnerable family members and even volunteering in community-based activities. Despite the significant value they provide, their work remains largely unrecognised, unregulated, and uncompensated, often leaving them economically insecure and lacking social protections. This group includes several key roles. Household caregivers provide daily care for children, elderly relatives, or family members with disabilities, handling tasks like cooking, cleaning and offering emotional support. Childcare providers, especially in low-income families, often include mothers or grandmothers who look after young children, offering informal education and supervision. In some communities, individuals volunteer for communal care tasks such as organising child care or assisting with health-related services out of a sense of responsibility rather than financial motivation. Family health caregivers manage tasks such as administering medication, assisting with mobility, and caring for chronically ill relatives. In rural areas, unpaid care work often extends to agricultural labour, including farming, collecting water, and gathering firewood, which are essential for household survival but remain uncompensated. The economic contributions of unpaid care work are immense, supporting families and enabling formal economic activities by ensuring the wellbeing of individuals. However, the lack of formal recognition and compensation leaves these workers vulnerable to financial instability and limits access to social protections. A related but distinct category includes ‘Anganwadi’ workers, who occupy a middle ground between unpaid and paid care work. Employed under the Integrated Child Development Services (ICDS) programme, they receive a modest honorarium rather than a formal wage. This compensation is often irregular, lacks benefits like retirement or health insurance and fails to provide the stability of formal employment. Consequently, while Anganwadi workers are technically paid, their financial insecurity mirrors the challenges faced by unpaid care workers. Despite their critical contributions to the care economy, Anganwadi workers remain undervalued and under-compensated. Many are forced to take on additional jobs to make ends meet. Their situation highlights the broader societal neglect of care work, where contributions—paid or unpaid—are undervalued and often relegated to the margins of economic discourse. Addressing these issues requires recognising care work’s essential role in social and economic systems and implementing policies that ensure fair compensation and protection for all care workers.</p><br><p><strong>What is the main issue faced by unpaid care workers, as described in the passage?</strong></p>", "options": ["<p>Their work is highly compensated but lacks formal recognition</p>", "<p>They are not economically secure and lack social protections</p>", "<p>They receive regular salaries but lack job satisfaction</p>", "<p>They are formally recognized but undervalued</p>", "<p>They are not interested in receiving financial compensation</p>"], "correctIndex": 1, "solution": "<p><strong>Answer:</strong><strong> B </strong></p>\n<p>The passage highlights that unpaid care workers face economic insecurity and lack social protections, leaving them vulnerable. It emphasizes the challenges they face, including the lack of recognition and compensation. The primary issue faced by unpaid care workers, as described in the passage, is their economic insecurity and the fact that they lack social protections. The passage clearly highlights that unpaid care workers—who are often family members, particularly women—are uncompensated for their work. This lack of compensation, along with the absence of formal recognition and regulation, leaves them vulnerable to financial instability and without social protections like health insurance, retirement benefits, or job security. This makes their situation precarious, despite the crucial contributions they make to the family and community.</p>\n<p><strong>a).</strong> Their work is highly compensated but lacks formal recognition: This is incorrect because the passage states that unpaid care workers are not compensated for their work. The problem is not that they are highly compensated but unrecognized, but rather that they are uncompensated and unrecognized.</p>\n<p><strong>c).</strong> They receive regular salaries but lack job satisfaction: This is not the issue discussed in the passage. Unpaid care workers do not receive regular salaries at all. The passage focuses on the lack of compensation and recognition, not on dissatisfaction with jobs that are paid.</p>\n<p><strong>d).</strong> They are formally recognized but undervalued: This is incorrect because the passage makes it clear that unpaid care workers are not formally recognized in society. In fact, their work is largely unrecognized and uncompensated, making this option inaccurate.</p>\n<p><strong>e).</strong> They are not interested in receiving financial compensation: This is also incorrect because the passage emphasizes that unpaid care workers are in need of compensation and are facing economic insecurity due to the lack of formal payment for their work. It is not a matter of their lack of interest in compensation, but rather that they do not receive any.</p>\n<p>Therefore, the correct answer is b) They are not economically secure and lack social protections, as the passage clearly describes the economic challenges and vulnerability faced by unpaid care workers due to the lack of compensation and recognition.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>Unpaid care workers play a crucial yet often overlooked role in sustaining families and communities. These individuals, typically family members and predominantly women, take on essential caregiving and household tasks without formal salaries or wages. Their contributions range from managing daily domestic duties to supporting vulnerable family members and even volunteering in community-based activities. Despite the significant value they provide, their work remains largely unrecognised, unregulated, and uncompensated, often leaving them economically insecure and lacking social protections. This group includes several key roles. Household caregivers provide daily care for children, elderly relatives, or family members with disabilities, handling tasks like cooking, cleaning and offering emotional support. Childcare providers, especially in low-income families, often include mothers or grandmothers who look after young children, offering informal education and supervision. In some communities, individuals volunteer for communal care tasks such as organising child care or assisting with health-related services out of a sense of responsibility rather than financial motivation. Family health caregivers manage tasks such as administering medication, assisting with mobility, and caring for chronically ill relatives. In rural areas, unpaid care work often extends to agricultural labour, including farming, collecting water, and gathering firewood, which are essential for household survival but remain uncompensated. The economic contributions of unpaid care work are immense, supporting families and enabling formal economic activities by ensuring the wellbeing of individuals. However, the lack of formal recognition and compensation leaves these workers vulnerable to financial instability and limits access to social protections. A related but distinct category includes ‘Anganwadi’ workers, who occupy a middle ground between unpaid and paid care work. Employed under the Integrated Child Development Services (ICDS) programme, they receive a modest honorarium rather than a formal wage. This compensation is often irregular, lacks benefits like retirement or health insurance and fails to provide the stability of formal employment. Consequently, while Anganwadi workers are technically paid, their financial insecurity mirrors the challenges faced by unpaid care workers. Despite their critical contributions to the care economy, Anganwadi workers remain undervalued and under-compensated. Many are forced to take on additional jobs to make ends meet. Their situation highlights the broader societal neglect of care work, where contributions—paid or unpaid—are undervalued and often relegated to the margins of economic discourse. Addressing these issues requires recognising care work’s essential role in social and economic systems and implementing policies that ensure fair compensation and protection for all care workers.</p><br><p><strong>According to the passage, what type of work is often undertaken by unpaid care workers in rural areas?</strong></p>", "options": ["<p>Teaching and healthcare services</p>", "<p>Agricultural labour such as farming, collecting water, and gathering firewood</p>", "<p>Government administration and law enforcement duties</p>", "<p>Scientific research and technological development</p>", "<p>Office-based work and clerical duties</p>"], "correctIndex": 1, "solution": "<p><strong>Answer:</strong><strong> B</strong></p>\n<p>The passage mentions that in rural areas, unpaid care work extends to agricultural labour, such as farming, water collection, and gathering firewood, which are essential for household survival. According to the passage, in rural areas, unpaid care workers often take on agricultural labour, which includes essential tasks such as farming, collecting water, and gathering firewood. These activities are crucial for household survival but are uncompensated. The passage makes it clear that unpaid care work in rural areas extends beyond household duties to include labour-intensive tasks that are necessary for daily life, yet remain unpaid.</p>\n<p><strong>a).</strong> Teaching and healthcare services: This option is incorrect because the passage does not mention unpaid care workers in rural areas engaging in teaching or healthcare services as part of their work. While the passage discusses informal caregiving (like child care), it focuses more on domestic and agricultural labour in rural areas.</p>\n<p><strong>c).</strong> Government administration and law enforcement duties: This option is incorrect because the passage does not mention government administration or law enforcement duties being undertaken by unpaid care workers. The focus of the passage is on caregiving and labour tasks in families and communities, particularly in agriculture in rural areas.</p>\n<p><strong>d).</strong> Scientific research and technological development: This is incorrect because the passage does not mention unpaid care workers participating in scientific research or technological development. The tasks described in the passage are related to caregiving and agricultural labour, not academic or technological work.</p>\n<p><strong>e).</strong> Office-based work and clerical duties: This option is also incorrect because the passage makes no reference to office-based work or clerical duties being part of the work of unpaid care workers, especially in rural areas. The tasks discussed are practical and physical, such as farming and collecting water.</p>\n<p>Thus, the correct answer is b) Agricultural labour such as farming, collecting water, and gathering firewood, as the passage specifically describes these tasks as essential components of unpaid care work in rural areas.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Prelims Mastery Quiz 2025 English (Day-58)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Prelims Mastery Quiz 2025 English (Day-58)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

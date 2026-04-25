@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Prelims Mastery Quiz 2025 English (Day-93)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>Read the following passage carefully and answer the questions.</strong></p>\n<p>Space exploration stands as one of humanity’s most audacious and awe-inspiring endeavors, a relentless pursuit of knowledge that transcends terrestrial limitations. The quest to unlock the mysteries of the cosmos is not merely an intellectual pursuit; it is a manifestation of our existential yearning to comprehend our place within the vast expanse of the universe. Over the decades, technological advancements have transformed what was once the realm of science fiction into tangible reality, from the pioneering expeditions of the Apollo missions to the cutting-edge endeavors of private space enterprises. Yet, this journey remains fraught with peril and uncertainty, demanding both ingenuity and fortitude at every turn.</p>\n<p>The scientific impetus for space exploration is <strong>multifaceted</strong>. At its core, it seeks to answer fundamental questions about the origins of life, the nature of the universe, and the potential for extra-terrestrial existence. By studying celestial bodies such as Mars, Venus, and the gas giants, scientists hope to unravel the conditions necessary for life to thrive, both within our own solar system and on exoplanets in distant star systems. The search for bio signatures and the study of planetary atmospheres have illuminated the delicate interplay of factors that may allow life to arise, underscoring the fragility of existence and the exquisite precision required for life-supporting conditions.</p>\n<p>Technological innovation is the linchpin of space exploration, enabling humanity to reach the farthest reaches of the solar system and beyond. The development of propulsion systems capable of traversing interplanetary distances, the refinement of life-support technologies, and the advent of autonomous robotics have all contributed to the expanding horizon of what is possible. Nevertheless, the engineering challenges remain formidable. A single miscalculation in trajectory, the failure of a spacecraft’s shielding, or the <strong>malfunction </strong>of a critical life-sustaining system can mean the difference between success and catastrophe. The ability to anticipate and mitigate such risks is what separates successful missions from tragic failures.</p>\n<p>In recent years, the role of private industry in space exploration has become increasingly pronounced. Companies like SpaceX, Blue Origin, and others have revolutionized the industry by reducing the cost of space travel through reusability and innovative design. This commercialization of space has not only democratized access to space but has also spurred an unprecedented era of competition, fostering rapid technological evolution. With the ambition to establish a human presence on Mars and to build sustainable off-planet infrastructure, the private sector is positioning itself as a central player in the next phase of space exploration, perhaps leading the way in what could be the most consequential leap in human history.</p>\n<p>However, the ethical and philosophical implications of space exploration cannot be ignored. As we venture deeper into the cosmos, the question of stewardship becomes ever more pertinent. What are our responsibilities to the environments we explore? The discovery of microbial life on Mars or the potential contamination of pristine celestial bodies presents complex ethical dilemmas regarding our right to alter or exploit these worlds. Moreover, the prospect of colonizing other planets raises questions about the preservation of human dignity, the potential for exploitation, and the preservation of the very ideals that define humanity. Space exploration is not only a physical journey; it is also a moral and philosophical odyssey that challenges our values and vision for the future.</p>\n<p>Looking to the future, the expansion of humanity beyond Earth will likely be one of the defining challenges of the next century. As we approach the threshold of interstellar exploration, new technologies such as warp drives or advanced fusion propulsion may one day allow us to transcend the confines of our solar system, embarking on journeys that once seemed inconceivable. Yet, this bold future also requires a rethinking of our social, political, and economic systems to support long-term habitation on distant planets. Space exploration, in its most profound sense, is not just a technical achievement but a fundamental reimagining of human potential—an enduring testament to our unyielding drive to explore the unknown.</p><br><p><strong>The statement “space exploration is not only a physical journey; it is also a moral and philosophical odyssey” implies that:</strong></p>", "options": ["<p>Space exploration is purely a scientific endeavor without any ethical concerns</p>", "<p>The technological advancements of space exploration are irrelevant to human values</p>", "<p>The exploration of space raises important questions about human responsibility and ethics</p>", "<p>Space exploration is just about discovering new resources for humanity</p>", "<p>Moral concerns are secondary to technological achievements in space</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The author suggests that space exploration goes beyond technology and science and raises ethical questions, such as the responsibility humans have when exploring and potentially exploiting other worlds.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions.</strong></p>\n<p>Space exploration stands as one of humanity’s most audacious and awe-inspiring endeavors, a relentless pursuit of knowledge that transcends terrestrial limitations. The quest to unlock the mysteries of the cosmos is not merely an intellectual pursuit; it is a manifestation of our existential yearning to comprehend our place within the vast expanse of the universe. Over the decades, technological advancements have transformed what was once the realm of science fiction into tangible reality, from the pioneering expeditions of the Apollo missions to the cutting-edge endeavors of private space enterprises. Yet, this journey remains fraught with peril and uncertainty, demanding both ingenuity and fortitude at every turn.</p>\n<p>The scientific impetus for space exploration is <strong>multifaceted</strong>. At its core, it seeks to answer fundamental questions about the origins of life, the nature of the universe, and the potential for extra-terrestrial existence. By studying celestial bodies such as Mars, Venus, and the gas giants, scientists hope to unravel the conditions necessary for life to thrive, both within our own solar system and on exoplanets in distant star systems. The search for bio signatures and the study of planetary atmospheres have illuminated the delicate interplay of factors that may allow life to arise, underscoring the fragility of existence and the exquisite precision required for life-supporting conditions.</p>\n<p>Technological innovation is the linchpin of space exploration, enabling humanity to reach the farthest reaches of the solar system and beyond. The development of propulsion systems capable of traversing interplanetary distances, the refinement of life-support technologies, and the advent of autonomous robotics have all contributed to the expanding horizon of what is possible. Nevertheless, the engineering challenges remain formidable. A single miscalculation in trajectory, the failure of a spacecraft’s shielding, or the <strong>malfunction </strong>of a critical life-sustaining system can mean the difference between success and catastrophe. The ability to anticipate and mitigate such risks is what separates successful missions from tragic failures.</p>\n<p>In recent years, the role of private industry in space exploration has become increasingly pronounced. Companies like SpaceX, Blue Origin, and others have revolutionized the industry by reducing the cost of space travel through reusability and innovative design. This commercialization of space has not only democratized access to space but has also spurred an unprecedented era of competition, fostering rapid technological evolution. With the ambition to establish a human presence on Mars and to build sustainable off-planet infrastructure, the private sector is positioning itself as a central player in the next phase of space exploration, perhaps leading the way in what could be the most consequential leap in human history.</p>\n<p>However, the ethical and philosophical implications of space exploration cannot be ignored. As we venture deeper into the cosmos, the question of stewardship becomes ever more pertinent. What are our responsibilities to the environments we explore? The discovery of microbial life on Mars or the potential contamination of pristine celestial bodies presents complex ethical dilemmas regarding our right to alter or exploit these worlds. Moreover, the prospect of colonizing other planets raises questions about the preservation of human dignity, the potential for exploitation, and the preservation of the very ideals that define humanity. Space exploration is not only a physical journey; it is also a moral and philosophical odyssey that challenges our values and vision for the future.</p>\n<p>Looking to the future, the expansion of humanity beyond Earth will likely be one of the defining challenges of the next century. As we approach the threshold of interstellar exploration, new technologies such as warp drives or advanced fusion propulsion may one day allow us to transcend the confines of our solar system, embarking on journeys that once seemed inconceivable. Yet, this bold future also requires a rethinking of our social, political, and economic systems to support long-term habitation on distant planets. Space exploration, in its most profound sense, is not just a technical achievement but a fundamental reimagining of human potential—an enduring testament to our unyielding drive to explore the unknown.</p><br><p><strong>The author’s mention of “a fundamental reimagining of human potential” in the context of future space exploration most likely refers to:</strong></p>", "options": ["<p>The need for humans to rethink their political and economic systems in light of space exploration</p>", "<p>The limitations of human exploration due to technological constraints</p>", "<p>The prospect of humans achieving new feats of exploration and survival beyond Earth</p>", "<p>The ethical debates surrounding the militarization of space</p>", "<p>The inevitability of space travel becoming commonplace</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The phrase “fundamental reimagining of human potential” refers to the idea that space exploration could drastically change our understanding of what humanity can achieve, including the possibility of settling on other planets or traveling beyond our solar system.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions.</strong></p>\n<p>Space exploration stands as one of humanity’s most audacious and awe-inspiring endeavors, a relentless pursuit of knowledge that transcends terrestrial limitations. The quest to unlock the mysteries of the cosmos is not merely an intellectual pursuit; it is a manifestation of our existential yearning to comprehend our place within the vast expanse of the universe. Over the decades, technological advancements have transformed what was once the realm of science fiction into tangible reality, from the pioneering expeditions of the Apollo missions to the cutting-edge endeavors of private space enterprises. Yet, this journey remains fraught with peril and uncertainty, demanding both ingenuity and fortitude at every turn.</p>\n<p>The scientific impetus for space exploration is <strong>multifaceted</strong>. At its core, it seeks to answer fundamental questions about the origins of life, the nature of the universe, and the potential for extra-terrestrial existence. By studying celestial bodies such as Mars, Venus, and the gas giants, scientists hope to unravel the conditions necessary for life to thrive, both within our own solar system and on exoplanets in distant star systems. The search for bio signatures and the study of planetary atmospheres have illuminated the delicate interplay of factors that may allow life to arise, underscoring the fragility of existence and the exquisite precision required for life-supporting conditions.</p>\n<p>Technological innovation is the linchpin of space exploration, enabling humanity to reach the farthest reaches of the solar system and beyond. The development of propulsion systems capable of traversing interplanetary distances, the refinement of life-support technologies, and the advent of autonomous robotics have all contributed to the expanding horizon of what is possible. Nevertheless, the engineering challenges remain formidable. A single miscalculation in trajectory, the failure of a spacecraft’s shielding, or the <strong>malfunction </strong>of a critical life-sustaining system can mean the difference between success and catastrophe. The ability to anticipate and mitigate such risks is what separates successful missions from tragic failures.</p>\n<p>In recent years, the role of private industry in space exploration has become increasingly pronounced. Companies like SpaceX, Blue Origin, and others have revolutionized the industry by reducing the cost of space travel through reusability and innovative design. This commercialization of space has not only democratized access to space but has also spurred an unprecedented era of competition, fostering rapid technological evolution. With the ambition to establish a human presence on Mars and to build sustainable off-planet infrastructure, the private sector is positioning itself as a central player in the next phase of space exploration, perhaps leading the way in what could be the most consequential leap in human history.</p>\n<p>However, the ethical and philosophical implications of space exploration cannot be ignored. As we venture deeper into the cosmos, the question of stewardship becomes ever more pertinent. What are our responsibilities to the environments we explore? The discovery of microbial life on Mars or the potential contamination of pristine celestial bodies presents complex ethical dilemmas regarding our right to alter or exploit these worlds. Moreover, the prospect of colonizing other planets raises questions about the preservation of human dignity, the potential for exploitation, and the preservation of the very ideals that define humanity. Space exploration is not only a physical journey; it is also a moral and philosophical odyssey that challenges our values and vision for the future.</p>\n<p>Looking to the future, the expansion of humanity beyond Earth will likely be one of the defining challenges of the next century. As we approach the threshold of interstellar exploration, new technologies such as warp drives or advanced fusion propulsion may one day allow us to transcend the confines of our solar system, embarking on journeys that once seemed inconceivable. Yet, this bold future also requires a rethinking of our social, political, and economic systems to support long-term habitation on distant planets. Space exploration, in its most profound sense, is not just a technical achievement but a fundamental reimagining of human potential—an enduring testament to our unyielding drive to explore the unknown.</p><br><p><strong>Which of the following statements is incorrect according to the passage?</strong></p>", "options": ["<p>Space exploration is portrayed as a journey that involves both physical and ethical challenges</p>", "<p>The possibility of life beyond Earth is a primary focus of space exploration, especially in the search for bio signatures</p>", "<p>The passage suggests that the future of space exploration may involve humanity transcending the boundaries of the solar system</p>", "<p>The ethical dilemmas surrounding space exploration, such as potential contamination of other worlds, are largely ignored in the scientific community</p>", "<p>The expansion of human presence beyond Earth will require a rethinking of political, social, and economic structures</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The statement “The ethical dilemmas surrounding space exploration, such as potential contamination of other worlds, are largely ignored in the scientific community” is incorrect. The passage explicitly discusses the growing importance of ethical considerations in space exploration, especially regarding planetary contamination and the responsibilities humans have when exploring new environments.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions.</strong></p>\n<p>Space exploration stands as one of humanity’s most audacious and awe-inspiring endeavors, a relentless pursuit of knowledge that transcends terrestrial limitations. The quest to unlock the mysteries of the cosmos is not merely an intellectual pursuit; it is a manifestation of our existential yearning to comprehend our place within the vast expanse of the universe. Over the decades, technological advancements have transformed what was once the realm of science fiction into tangible reality, from the pioneering expeditions of the Apollo missions to the cutting-edge endeavors of private space enterprises. Yet, this journey remains fraught with peril and uncertainty, demanding both ingenuity and fortitude at every turn.</p>\n<p>The scientific impetus for space exploration is <strong>multifaceted</strong>. At its core, it seeks to answer fundamental questions about the origins of life, the nature of the universe, and the potential for extra-terrestrial existence. By studying celestial bodies such as Mars, Venus, and the gas giants, scientists hope to unravel the conditions necessary for life to thrive, both within our own solar system and on exoplanets in distant star systems. The search for bio signatures and the study of planetary atmospheres have illuminated the delicate interplay of factors that may allow life to arise, underscoring the fragility of existence and the exquisite precision required for life-supporting conditions.</p>\n<p>Technological innovation is the linchpin of space exploration, enabling humanity to reach the farthest reaches of the solar system and beyond. The development of propulsion systems capable of traversing interplanetary distances, the refinement of life-support technologies, and the advent of autonomous robotics have all contributed to the expanding horizon of what is possible. Nevertheless, the engineering challenges remain formidable. A single miscalculation in trajectory, the failure of a spacecraft’s shielding, or the <strong>malfunction </strong>of a critical life-sustaining system can mean the difference between success and catastrophe. The ability to anticipate and mitigate such risks is what separates successful missions from tragic failures.</p>\n<p>In recent years, the role of private industry in space exploration has become increasingly pronounced. Companies like SpaceX, Blue Origin, and others have revolutionized the industry by reducing the cost of space travel through reusability and innovative design. This commercialization of space has not only democratized access to space but has also spurred an unprecedented era of competition, fostering rapid technological evolution. With the ambition to establish a human presence on Mars and to build sustainable off-planet infrastructure, the private sector is positioning itself as a central player in the next phase of space exploration, perhaps leading the way in what could be the most consequential leap in human history.</p>\n<p>However, the ethical and philosophical implications of space exploration cannot be ignored. As we venture deeper into the cosmos, the question of stewardship becomes ever more pertinent. What are our responsibilities to the environments we explore? The discovery of microbial life on Mars or the potential contamination of pristine celestial bodies presents complex ethical dilemmas regarding our right to alter or exploit these worlds. Moreover, the prospect of colonizing other planets raises questions about the preservation of human dignity, the potential for exploitation, and the preservation of the very ideals that define humanity. Space exploration is not only a physical journey; it is also a moral and philosophical odyssey that challenges our values and vision for the future.</p>\n<p>Looking to the future, the expansion of humanity beyond Earth will likely be one of the defining challenges of the next century. As we approach the threshold of interstellar exploration, new technologies such as warp drives or advanced fusion propulsion may one day allow us to transcend the confines of our solar system, embarking on journeys that once seemed inconceivable. Yet, this bold future also requires a rethinking of our social, political, and economic systems to support long-term habitation on distant planets. Space exploration, in its most profound sense, is not just a technical achievement but a fundamental reimagining of human potential—an enduring testament to our unyielding drive to explore the unknown.</p><br><p><strong>Which of the following statements are correct according to the passage?</strong></p>\n<p><strong>I).</strong>  The commercialization of space has reduced the cost of space travel and has introduced competition in the space industry.</p>\n<p><strong>II). </strong>Space exploration involves solving significant engineering challenges, even with advances in technology.</p>\n<p><strong>III). </strong>The author believes that space exploration is a purely technical achievement with no broader implications for humanity.</p>", "options": ["<p>Only I</p>", "<p>Only II</p>", "<p>Only III</p>", "<p>Both I and II</p>", "<p>Both III and II</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The passage discusses how the commercialization of space, driven by private companies, has lowered costs and spurred competition, which is beneficial for technological progress.</p>\n<p>The passage mentions that, despite technological advancements, engineering challenges remain a significant aspect of space exploration.</p>\n<p>The passage highlights that space exploration involves both technical and moral challenges, so it is not purely a technical achievement.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions.</strong></p>\n<p>Space exploration stands as one of humanity’s most audacious and awe-inspiring endeavors, a relentless pursuit of knowledge that transcends terrestrial limitations. The quest to unlock the mysteries of the cosmos is not merely an intellectual pursuit; it is a manifestation of our existential yearning to comprehend our place within the vast expanse of the universe. Over the decades, technological advancements have transformed what was once the realm of science fiction into tangible reality, from the pioneering expeditions of the Apollo missions to the cutting-edge endeavors of private space enterprises. Yet, this journey remains fraught with peril and uncertainty, demanding both ingenuity and fortitude at every turn.</p>\n<p>The scientific impetus for space exploration is <strong>multifaceted</strong>. At its core, it seeks to answer fundamental questions about the origins of life, the nature of the universe, and the potential for extra-terrestrial existence. By studying celestial bodies such as Mars, Venus, and the gas giants, scientists hope to unravel the conditions necessary for life to thrive, both within our own solar system and on exoplanets in distant star systems. The search for bio signatures and the study of planetary atmospheres have illuminated the delicate interplay of factors that may allow life to arise, underscoring the fragility of existence and the exquisite precision required for life-supporting conditions.</p>\n<p>Technological innovation is the linchpin of space exploration, enabling humanity to reach the farthest reaches of the solar system and beyond. The development of propulsion systems capable of traversing interplanetary distances, the refinement of life-support technologies, and the advent of autonomous robotics have all contributed to the expanding horizon of what is possible. Nevertheless, the engineering challenges remain formidable. A single miscalculation in trajectory, the failure of a spacecraft’s shielding, or the <strong>malfunction </strong>of a critical life-sustaining system can mean the difference between success and catastrophe. The ability to anticipate and mitigate such risks is what separates successful missions from tragic failures.</p>\n<p>In recent years, the role of private industry in space exploration has become increasingly pronounced. Companies like SpaceX, Blue Origin, and others have revolutionized the industry by reducing the cost of space travel through reusability and innovative design. This commercialization of space has not only democratized access to space but has also spurred an unprecedented era of competition, fostering rapid technological evolution. With the ambition to establish a human presence on Mars and to build sustainable off-planet infrastructure, the private sector is positioning itself as a central player in the next phase of space exploration, perhaps leading the way in what could be the most consequential leap in human history.</p>\n<p>However, the ethical and philosophical implications of space exploration cannot be ignored. As we venture deeper into the cosmos, the question of stewardship becomes ever more pertinent. What are our responsibilities to the environments we explore? The discovery of microbial life on Mars or the potential contamination of pristine celestial bodies presents complex ethical dilemmas regarding our right to alter or exploit these worlds. Moreover, the prospect of colonizing other planets raises questions about the preservation of human dignity, the potential for exploitation, and the preservation of the very ideals that define humanity. Space exploration is not only a physical journey; it is also a moral and philosophical odyssey that challenges our values and vision for the future.</p>\n<p>Looking to the future, the expansion of humanity beyond Earth will likely be one of the defining challenges of the next century. As we approach the threshold of interstellar exploration, new technologies such as warp drives or advanced fusion propulsion may one day allow us to transcend the confines of our solar system, embarking on journeys that once seemed inconceivable. Yet, this bold future also requires a rethinking of our social, political, and economic systems to support long-term habitation on distant planets. Space exploration, in its most profound sense, is not just a technical achievement but a fundamental reimagining of human potential—an enduring testament to our unyielding drive to explore the unknown.</p><br><p><strong>What is the synonym of the highlighted word Malfunction as used in the passage?</strong></p>", "options": ["<p>Dysfunction</p>", "<p>Optimization</p>", "<p>Efficiency</p>", "<p>Restoration</p>", "<p>Amplification</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>In the context of space exploration, the word “malfunction” refers to a failure or problem in the operation of a system, such as a spacecraft or piece of equipment. The synonym “dysfunction” means a failure to operate normally, which matches the meaning of “malfunction”.</p>\n<p>Optimization: Refers to improving efficiency, which is the opposite of malfunction.</p>\n<p>Efficiency: Refers to effective and productive operation, the opposite of malfunction.</p>\n<p>Restoration: Refers to the process of returning something to its original state, not related to malfunction.</p>\n<p>Amplification: Refers to the increase or enhancement of something, not related to malfunction.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions.</strong></p>\n<p>Space exploration stands as one of humanity’s most audacious and awe-inspiring endeavors, a relentless pursuit of knowledge that transcends terrestrial limitations. The quest to unlock the mysteries of the cosmos is not merely an intellectual pursuit; it is a manifestation of our existential yearning to comprehend our place within the vast expanse of the universe. Over the decades, technological advancements have transformed what was once the realm of science fiction into tangible reality, from the pioneering expeditions of the Apollo missions to the cutting-edge endeavors of private space enterprises. Yet, this journey remains fraught with peril and uncertainty, demanding both ingenuity and fortitude at every turn.</p>\n<p>The scientific impetus for space exploration is <strong>multifaceted</strong>. At its core, it seeks to answer fundamental questions about the origins of life, the nature of the universe, and the potential for extra-terrestrial existence. By studying celestial bodies such as Mars, Venus, and the gas giants, scientists hope to unravel the conditions necessary for life to thrive, both within our own solar system and on exoplanets in distant star systems. The search for bio signatures and the study of planetary atmospheres have illuminated the delicate interplay of factors that may allow life to arise, underscoring the fragility of existence and the exquisite precision required for life-supporting conditions.</p>\n<p>Technological innovation is the linchpin of space exploration, enabling humanity to reach the farthest reaches of the solar system and beyond. The development of propulsion systems capable of traversing interplanetary distances, the refinement of life-support technologies, and the advent of autonomous robotics have all contributed to the expanding horizon of what is possible. Nevertheless, the engineering challenges remain formidable. A single miscalculation in trajectory, the failure of a spacecraft’s shielding, or the <strong>malfunction </strong>of a critical life-sustaining system can mean the difference between success and catastrophe. The ability to anticipate and mitigate such risks is what separates successful missions from tragic failures.</p>\n<p>In recent years, the role of private industry in space exploration has become increasingly pronounced. Companies like SpaceX, Blue Origin, and others have revolutionized the industry by reducing the cost of space travel through reusability and innovative design. This commercialization of space has not only democratized access to space but has also spurred an unprecedented era of competition, fostering rapid technological evolution. With the ambition to establish a human presence on Mars and to build sustainable off-planet infrastructure, the private sector is positioning itself as a central player in the next phase of space exploration, perhaps leading the way in what could be the most consequential leap in human history.</p>\n<p>However, the ethical and philosophical implications of space exploration cannot be ignored. As we venture deeper into the cosmos, the question of stewardship becomes ever more pertinent. What are our responsibilities to the environments we explore? The discovery of microbial life on Mars or the potential contamination of pristine celestial bodies presents complex ethical dilemmas regarding our right to alter or exploit these worlds. Moreover, the prospect of colonizing other planets raises questions about the preservation of human dignity, the potential for exploitation, and the preservation of the very ideals that define humanity. Space exploration is not only a physical journey; it is also a moral and philosophical odyssey that challenges our values and vision for the future.</p>\n<p>Looking to the future, the expansion of humanity beyond Earth will likely be one of the defining challenges of the next century. As we approach the threshold of interstellar exploration, new technologies such as warp drives or advanced fusion propulsion may one day allow us to transcend the confines of our solar system, embarking on journeys that once seemed inconceivable. Yet, this bold future also requires a rethinking of our social, political, and economic systems to support long-term habitation on distant planets. Space exploration, in its most profound sense, is not just a technical achievement but a fundamental reimagining of human potential—an enduring testament to our unyielding drive to explore the unknown.</p><br><p><strong>What is the antonym of the given highlighted word multifaceted?</strong></p>", "options": ["<p>Bland</p>", "<p>Amorphous</p>", "<p>Vast</p>", "<p>Multidimensional</p>", "<p>Monolithic</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>“Multifaceted” means having many aspects or features, often referring to something complex or diverse.</p>\n<p>“Monolithic” refers to something that is singular, unified, or lacking in diversity, making it the opposite of multifaceted.</p>\n<p>Bland: While “bland” refers to something lacking in distinctiveness or flavor, it doesn’t directly oppose “multifaceted.” “Bland” is about lack of flavor or interest, not complexity.</p>\n<p>Amorphous: Refers to something shapeless or without a clear form, which doesn’t necessarily imply singularity or lack of features, so it’s not a direct opposite.</p>\n<p>Vast: Refers to something large in size, which doesn’t relate directly to having multiple facets or aspects.</p>\n<p>Multidimensional: This is a synonym for “multifaceted,” meaning having multiple dimensions or aspects.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions.</strong></p>\n<p>Space exploration stands as one of humanity’s most audacious and awe-inspiring endeavors, a relentless pursuit of knowledge that transcends terrestrial limitations. The quest to unlock the mysteries of the cosmos is not merely an intellectual pursuit; it is a manifestation of our existential yearning to comprehend our place within the vast expanse of the universe. Over the decades, technological advancements have transformed what was once the realm of science fiction into tangible reality, from the pioneering expeditions of the Apollo missions to the cutting-edge endeavors of private space enterprises. Yet, this journey remains fraught with peril and uncertainty, demanding both ingenuity and fortitude at every turn.</p>\n<p>The scientific impetus for space exploration is <strong>multifaceted</strong>. At its core, it seeks to answer fundamental questions about the origins of life, the nature of the universe, and the potential for extra-terrestrial existence. By studying celestial bodies such as Mars, Venus, and the gas giants, scientists hope to unravel the conditions necessary for life to thrive, both within our own solar system and on exoplanets in distant star systems. The search for bio signatures and the study of planetary atmospheres have illuminated the delicate interplay of factors that may allow life to arise, underscoring the fragility of existence and the exquisite precision required for life-supporting conditions.</p>\n<p>Technological innovation is the linchpin of space exploration, enabling humanity to reach the farthest reaches of the solar system and beyond. The development of propulsion systems capable of traversing interplanetary distances, the refinement of life-support technologies, and the advent of autonomous robotics have all contributed to the expanding horizon of what is possible. Nevertheless, the engineering challenges remain formidable. A single miscalculation in trajectory, the failure of a spacecraft’s shielding, or the <strong>malfunction </strong>of a critical life-sustaining system can mean the difference between success and catastrophe. The ability to anticipate and mitigate such risks is what separates successful missions from tragic failures.</p>\n<p>In recent years, the role of private industry in space exploration has become increasingly pronounced. Companies like SpaceX, Blue Origin, and others have revolutionized the industry by reducing the cost of space travel through reusability and innovative design. This commercialization of space has not only democratized access to space but has also spurred an unprecedented era of competition, fostering rapid technological evolution. With the ambition to establish a human presence on Mars and to build sustainable off-planet infrastructure, the private sector is positioning itself as a central player in the next phase of space exploration, perhaps leading the way in what could be the most consequential leap in human history.</p>\n<p>However, the ethical and philosophical implications of space exploration cannot be ignored. As we venture deeper into the cosmos, the question of stewardship becomes ever more pertinent. What are our responsibilities to the environments we explore? The discovery of microbial life on Mars or the potential contamination of pristine celestial bodies presents complex ethical dilemmas regarding our right to alter or exploit these worlds. Moreover, the prospect of colonizing other planets raises questions about the preservation of human dignity, the potential for exploitation, and the preservation of the very ideals that define humanity. Space exploration is not only a physical journey; it is also a moral and philosophical odyssey that challenges our values and vision for the future.</p>\n<p>Looking to the future, the expansion of humanity beyond Earth will likely be one of the defining challenges of the next century. As we approach the threshold of interstellar exploration, new technologies such as warp drives or advanced fusion propulsion may one day allow us to transcend the confines of our solar system, embarking on journeys that once seemed inconceivable. Yet, this bold future also requires a rethinking of our social, political, and economic systems to support long-term habitation on distant planets. Space exploration, in its most profound sense, is not just a technical achievement but a fundamental reimagining of human potential—an enduring testament to our unyielding drive to explore the unknown.</p><br><p><strong>What is the tone of the passage?</strong></p>", "options": ["<p>Inquisitive</p>", "<p>Optimistic</p>", "<p>Reflective</p>", "<p>Inspirational</p>", "<p>Philosophical</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The tone of the passage is <strong>inspirational</strong> because it emphasizes human ambition, determination, and the profound possibilities of space exploration. The language used highlights the audacity and awe-inspiring nature of the endeavor, framing it as not just a technical challenge but a deeply meaningful pursuit.</p>"}, {"question": "<p><strong>Rearrange the following sentences in the proper sequence to form a meaningful paragraph and then answer the questions given below.</strong></p>\n<p><strong>A).</strong> Basic human needs also include a sense of belongingness, a feeling of control over one’s life.</p>\n<p><strong>B).</strong> Motivation and inspiration energize people into action.</p>\n<p><strong>C).</strong> Ability to live up to one’s ideals besides all these is also a fundamental need.</p>\n<p><strong>D).</strong> This is done not by pushing them in the right direction as control mechanism.</p>\n<p><strong>E).</strong> Such feelings touch us deeply and elicit powerful response.</p>\n<p><strong>F).</strong> But it is done by satisfying basic human needs for achievement.</p><br><p><strong>Which of the following statement will be the second statement after rearrangement?</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The final arrangement is<strong> BDFAEC.</strong></p>\n<p><strong>Sentence B</strong> introduces the concept of motivation and inspiration as catalysts for action. <strong>Sentence D</strong> clarifies that motivating people isn't achieved through forceful control mechanisms. <strong>Sentence F</strong> follows by explaining that achieving motivation is accomplished by satisfying basic human needs for achievement. <strong>Sentence A</strong> introduces additional fundamental human needs, including a sense of belongingness and control over one's life. <strong>Sentence E</strong> emphasizes the deep emotional impact of these needs. Finally, <strong>sentence C</strong> expands the idea by stating that living up to one's ideals is also a fundamental human need.</p>\n<p>Therefore, option D is the correct answer.</p>"}, {"question": "<p><strong>Rearrange the following sentences in the proper sequence to form a meaningful paragraph and then answer the questions given below.</strong></p>\n<p><strong>A).</strong> Basic human needs also include a sense of belongingness, a feeling of control over one’s life.</p>\n<p><strong>B).</strong> Motivation and inspiration energize people into action.</p>\n<p><strong>C).</strong> Ability to live up to one’s ideals besides all these is also a fundamental need.</p>\n<p><strong>D).</strong> This is done not by pushing them in the right direction as control mechanism.</p>\n<p><strong>E).</strong> Such feelings touch us deeply and elicit powerful response.</p>\n<p><strong>F).</strong> But it is done by satisfying basic human needs for achievement.</p><br><p><strong>Which of the following statement will be the last statement after rearrangement?</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>F</p>", "<p>E</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The final arrangement is<strong> BDFAEC.</strong></p>\n<p><strong>Sentence B</strong> introduces the concept of motivation and inspiration as catalysts for action. <strong>Sentence D</strong> clarifies that motivating people isn't achieved through forceful control mechanisms. <strong>Sentence F</strong> follows by explaining that achieving motivation is accomplished by satisfying basic human needs for achievement. <strong>Sentence A</strong> introduces additional fundamental human needs, including a sense of belongingness and control over one's life. <strong>Sentence E</strong> emphasizes the deep emotional impact of these needs. Finally, <strong>sentence C</strong> expands the idea by stating that living up to one's ideals is also a fundamental human need.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>Rearrange the following sentences in the proper sequence to form a meaningful paragraph and then answer the questions given below.</strong></p>\n<p><strong>A).</strong> Basic human needs also include a sense of belongingness, a feeling of control over one’s life.</p>\n<p><strong>B).</strong> Motivation and inspiration energize people into action.</p>\n<p><strong>C).</strong> Ability to live up to one’s ideals besides all these is also a fundamental need.</p>\n<p><strong>D).</strong> This is done not by pushing them in the right direction as control mechanism.</p>\n<p><strong>E).</strong> Such feelings touch us deeply and elicit powerful response.</p>\n<p><strong>F).</strong> But it is done by satisfying basic human needs for achievement.</p><br><p><strong>Which of the following statement will be the second last statement after rearrangement?</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>F</p>", "<p>E</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E </strong></p>\n<p>The final arrangement is<strong> BDFAEC.</strong></p>\n<p><strong>Sentence B</strong> introduces the concept of motivation and inspiration as catalysts for action. <strong>Sentence D</strong> clarifies that motivating people isn't achieved through forceful control mechanisms. <strong>Sentence F</strong> follows by explaining that achieving motivation is accomplished by satisfying basic human needs for achievement. <strong>Sentence A</strong> introduces additional fundamental human needs, including a sense of belongingness and control over one's life. <strong>Sentence E</strong> emphasizes the deep emotional impact of these needs. Finally, <strong>sentence C</strong> expands the idea by stating that living up to one's ideals is also a fundamental human need.</p>\n<p>Therefore, option E is the correct answer.</p>"}, {"question": "<p><strong>Rearrange the following sentences in the proper sequence to form a meaningful paragraph and then answer the questions given below.</strong></p>\n<p><strong>A).</strong> Basic human needs also include a sense of belongingness, a feeling of control over one’s life.</p>\n<p><strong>B).</strong> Motivation and inspiration energize people into action.</p>\n<p><strong>C).</strong> Ability to live up to one’s ideals besides all these is also a fundamental need.</p>\n<p><strong>D).</strong> This is done not by pushing them in the right direction as control mechanism.</p>\n<p><strong>E).</strong> Such feelings touch us deeply and elicit powerful response.</p>\n<p><strong>F).</strong> But it is done by satisfying basic human needs for achievement.</p><br><p><strong>Which of the following statement will be the third statement after rearrangement?</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>F</p>", "<p>E</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The final arrangement is<strong> BDFAEC.</strong></p>\n<p><strong>Sentence B</strong> introduces the concept of motivation and inspiration as catalysts for action. <strong>Sentence D</strong> clarifies that motivating people isn't achieved through forceful control mechanisms. <strong>Sentence F</strong> follows by explaining that achieving motivation is accomplished by satisfying basic human needs for achievement. <strong>Sentence A</strong> introduces additional fundamental human needs, including a sense of belongingness and control over one's life. <strong>Sentence E</strong> emphasizes the deep emotional impact of these needs. Finally, <strong>sentence C</strong> expands the idea by stating that living up to one's ideals is also a fundamental human need.</p>\n<p>Therefore, option D is the correct answer.</p>"}, {"question": "<p><strong>Rearrange the following sentences in the proper sequence to form a meaningful paragraph and then answer the questions given below.</strong></p>\n<p><strong>A).</strong> Basic human needs also include a sense of belongingness, a feeling of control over one’s life.</p>\n<p><strong>B).</strong> Motivation and inspiration energize people into action.</p>\n<p><strong>C).</strong> Ability to live up to one’s ideals besides all these is also a fundamental need.</p>\n<p><strong>D).</strong> This is done not by pushing them in the right direction as control mechanism.</p>\n<p><strong>E).</strong> Such feelings touch us deeply and elicit powerful response.</p>\n<p><strong>F).</strong> But it is done by satisfying basic human needs for achievement.</p><br><p><strong>Which of the following statement will be the first statement after rearrangement?</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>F</p>", "<p>E</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The final arrangement is<strong> BDFAEC.</strong></p>\n<p><strong>Sentence B</strong> introduces the concept of motivation and inspiration as catalysts for action. <strong>Sentence D</strong> clarifies that motivating people isn't achieved through forceful control mechanisms. <strong>Sentence F</strong> follows by explaining that achieving motivation is accomplished by satisfying basic human needs for achievement. <strong>Sentence A</strong> introduces additional fundamental human needs, including a sense of belongingness and control over one's life. <strong>Sentence E</strong> emphasizes the deep emotional impact of these needs. Finally, <strong>sentence C</strong> expands the idea by stating that living up to one's ideals is also a fundamental human need.</p>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, a sentence is given with two blanks in it and followed by multiple options. Choose the most appropriate words that fit correctly in the given blanks. If none of the combinations is correct, choose option E as your answer.</strong></p><br><p><strong>The government's plans to ________ the rural economy hinge on the successful ________ of the infrastructure projects.</strong></p>\n<p><strong>a). </strong>ameliorate</p>\n<p><strong>b). </strong>revitalize  </p>\n<p><strong>c). </strong>bolster</p>\n<p><strong>d). </strong>implementing</p>\n<p><strong>e). </strong>maintenance</p>\n<p><strong>f). </strong>implementation</p>", "options": ["<p>a and d</p>", "<p>b and f</p>", "<p>c and d</p>", "<p>c and e</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>\"<strong>Revitalize</strong>\" means to give new life or vigor to something, especially an area or activity that has become less active or successful. In this context, the government's plans aim to breathe new life into the rural economy.</p>\n<p>\"<strong>Implementation</strong>\" refers to the process of putting a plan or decision into effect. It's the action of carrying out or accomplishing something. In this case, the success of the government's plans depends on the effective execution of infrastructure projects in rural areas.</p>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, a sentence is given with two blanks in it and followed by multiple options. Choose the most appropriate words that fit correctly in the given blanks. If none of the combinations is correct, choose option E as your answer.</strong></p><br><p><strong>The candidate's _________ communication skills and integrity made him a formidable __________ for the position.</strong></p>\n<p><strong>a). </strong>impeccable </p>\n<p><strong>b). </strong>flawless</p>\n<p><strong>c). </strong>ambiguous</p>\n<p><strong>d). </strong>competitor </p>\n<p><strong>e). </strong>employer</p>\n<p><strong>f). </strong>employee</p>", "options": ["<p>b and e</p>", "<p>c and e</p>", "<p>c and f</p>", "<p>a and d</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>\"<strong>Impeccable</strong>\" means flawless or perfect, particularly in terms of behavior or performance. In this context, the candidate's flawless communication skills and integrity are highlighted.</p>\n<p>\"<strong>Competitor</strong>\" refers to someone who is competing for the same thing, such as a job position in this case.</p>\n<p>Therefore, option D is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, a sentence is given with two blanks in it and followed by multiple options. Choose the most appropriate words that fit correctly in the given blanks. If none of the combinations is correct, choose option E as your answer.</strong></p><br><p><strong>The committee __________ reviewed so many applications before __________ the most qualified candidates.</strong></p>\n<p><strong>a). </strong>thoroughly</p>\n<p><strong>b). </strong>occasionally</p>\n<p><strong>c). </strong>meticulously  </p>\n<p><strong>d). </strong>contending </p>\n<p><strong>e). </strong>shortlisting </p>\n<p><strong>f). </strong>dismissing</p>", "options": ["<p>a and d</p>", "<p>b and f</p>", "<p>c and e</p>", "<p>c and f</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>\"<strong>Meticulously</strong>\" means with great attention to detail or very carefully. In this context, it implies that the committee carefully and thoroughly reviewed many applications.</p>\n<p>\"<strong>Shortlisting</strong>\" refers to the process of selecting or identifying a smaller group of candidates from a larger pool, usually based on specific criteria. It indicates that the committee narrowed down the candidates to a shorter list of the most qualified ones.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, a sentence is given with two blanks in it and followed by multiple options. Choose the most appropriate words that fit correctly in the given blanks. If none of the combinations is correct, choose option E as your answer.</strong></p><br><p><strong>To bridge the widening digital divide, the government has _________ a program to ________ rural schools with computers and provide internet access. </strong></p>\n<p><strong>a). </strong>coupled</p>\n<p><strong>b). </strong>initiated  </p>\n<p><strong>c). </strong>strategized</p>\n<p><strong>d). </strong>equip </p>\n<p><strong>e). </strong>engaging</p>\n<p><strong>f). </strong>initiate</p>", "options": ["<p>a and f</p>", "<p>b and d</p>", "<p>a and d</p>", "<p>c and e</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>\"<strong>Initiated</strong>\" means to begin or start something, especially a process, plan, or program. </p>\n<p>\"<strong>Equip</strong>\" means to provide with necessary items or tools.</p>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, a sentence is given with two blanks in it and followed by multiple options. Choose the most appropriate words that fit correctly in the given blanks. If none of the combinations is correct, choose option E as your answer.</strong></p><br><p><strong>The company's ________ marketing strategy, coupled with a high-quality product, has propelled them to the _________ of the industry. </strong></p>\n<p><strong>a). </strong>innovative </p>\n<p><strong>b). </strong>leading</p>\n<p><strong>c). </strong>groundbreaking</p>\n<p><strong>d). </strong>successful</p>\n<p><strong>e). </strong>performance</p>\n<p><strong>f). </strong>forefront </p>", "options": ["<p>a and f</p>", "<p>b and e</p>", "<p>b and d</p>", "<p>c and d</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>\"<strong>Innovative</strong>\" describes something that introduces new ideas, methods, or products. In this context, it characterizes the company's marketing strategy as creative and original.</p>\n<p>\"<strong>Forefront</strong>\" refers to the leading or most important position or place.</p>\n<p>Therefore, option A is the correct answer.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Prelims Mastery Quiz 2025 English (Day-93)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Prelims Mastery Quiz 2025 English (Day-93)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

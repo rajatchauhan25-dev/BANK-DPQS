@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Prelims Mastery Quiz 2025 English (Day-37)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>In the question below, a sentence is divided into four parts out of which one part has an error in it. Find the part with error and mark that as your answer.</strong></p><br><p>The education system in India needs <strong>(A)/</strong> to be revamped so as to <strong>(B)/</strong> meet the changing demands by the <strong>(C)/</strong> job market and future technological advancements <strong>(D)</strong>.</p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>No error</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The error is in part C.</p>\n<p>The phrase \"meet the changing demands by the job market\" is incorrect. In this context, \"demands\" are caused by the job market, not done by the job market. So, the correct preposition is \"of\" instead of \"by.\"</p>\n<p>Hence, <strong>Option C</strong> is the correct answer.</p>"}, {"question": "<p><strong>In the question below, a sentence is divided into four parts out of which one part has an error in it. Find the part with error and mark that as your answer.</strong></p><br><p>The company's efforts to <strong>(A)/</strong> diversify its product line have been <strong>(B)/</strong> successful, helping it to maintain <strong>(C)/ </strong>a competitive edge in the market <strong>(D)</strong>.</p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>No error</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>The sentence is correct as it is. There is no mistake in any part of the sentence.</p>\n<p>Hence, <strong>Option E</strong> is the correct answer.</p>"}, {"question": "<p><strong>In the question below, a sentence is divided into four parts out of which one part has an error in it. Find the part with error and mark that as your answer.</strong></p><br><p>Environmental sustainability requires a <strong>(A)/</strong> balanced approach that not only <strong>(B)/ </strong>reduces emissions but <strong>(C)/</strong> addresses issues such as waste management and deforestation <strong>(D)</strong>.</p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>No error</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The error is in part C.</p>\n<p>The error is with the parallel structure in this sentence. When you start a sentence with \"not only,\" you need to follow it with \"but also\" for balance.</p>\n<p>Hence, <strong>Option C</strong> is the correct answer.</p>"}, {"question": "<p><strong>In the question below, a sentence is divided into four parts out of which one part has an error in it. Find the part with error and mark that as your answer.</strong></p><br><p>India have faced a <strong>(A)/ </strong>number of challenges in its <strong>(B)/ </strong>economic development, which include <strong>(C)/ </strong>rising unemployment, inflation, and a decline in productivity <strong>(D)</strong>.</p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>No error</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The error is in part A.</p>\n<p>\"India\" is a singular subject (it refers to a single country). When the subject is singular, the verb must also be singular. So, we should use \"has\" instead of \"have.\"</p>\n<p>Hence, <strong>Option A</strong> is the correct answer.</p>"}, {"question": "<p><strong>In the question below, a sentence is divided into four parts out of which one part has an error in it. Find the part with error and mark that as your answer.</strong></p><br><p>The novel is set in <strong>(A)/ </strong>a dystopian future where technology <strong>(B)/ </strong>has advanced so rapidly <strong>(C)/ </strong>that it has surpass human understanding <strong>(D)</strong>.</p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>No error</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The error is in part D.</p>\n<p>The verb \"surpass\" is used incorrectly. Since the sentence is using the phrase \"has\" (which means it's talking about something that happened in the past but still affects the present), the verb should be in its past participle form, which is \"surpassed\".</p>\n<p>Hence, <strong>Option D</strong> is the correct answer.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>Chennai, a city frequently besieged by floods, has seen its civic bodies ramp up efforts to address the dual challenges of flooding and environmental degradation. Recent initiatives by the Greater Chennai Corporation (GCC) aim to not only mitigate flood risks but also bolster the city’s green cover. At the heart of this strategy is the creation of “sponge parks,” which, along with an extensive tree plantation drive, promise a more sustainable urban future. Flooding has been a recurring problem in Chennai due to unplanned urban development, clogged waterways, and inadequate drainage systems. The devastating floods triggered by Cyclone Michaung in 2023, which claimed several lives, were a stark reminder of the city’s vulnerability to extreme weather events. With the looming threat of climate change, Chennai’s need for innovative flood management solutions has never been more urgent. Sponge parks offer a creative and practical approach to urban flood prevention. By transforming open spaces into water-retention zones, these parks absorb excess rainwater, prevent surface runoff, and help recharge groundwater levels. The concept is simple yet effective ~ pondlike structures are built in low-lying areas, directing flood water into these retention ponds instead of allowing it to overwhelm city streets. These parks are not only designed to mitigate flooding but also to enhance water management in a city where groundwater depletion is a growing concern. In addition to flood control, these parks serve a broader environmental purpose. Chennai, the hottest megacity in India, has been grappling with a shortage of green spaces. The GCC’s commitment to planting 2.5 lakh trees and developing sponge parks provides a much-needed boost to the city’s green cover, which currently lags behind international standards. More greenery means better air quality, reduced urban heat, and a healthier living environment for residents. The sponge parks initiative also aligns with the Tamil Nadu government’s broader objective of increasing the state’s green cover to 33 per cent by 2030. By working with agencies like the Chennai Metropolitan Development Authority, the GCC is turning otherwise unused or under-utilised urban spaces into productive green zones. This strategy not only addresses immediate concerns like flood prevention but also contributes to the long-term goal of creating a more climate-resilient city. However, while the sponge parks initiative is laudable, it must be seen as part of a larger, more integrated approach to urban planning. Addressing Chennai’s flood problems requires a multi-pronged strategy that includes restoring natural drainage systems, improving infrastructure, and enforcing zoning regulations. While the efforts to expand green cover are commendable, they need to be sustained and scaled up to have a meaningful impact. Chennai’s sponge parks initiative reflects a forward-thinking approach to urban challenges, combining flood mitigation with environmental enhancement. If executed well, it could serve as a model for other cities grappling with similar issues. Yet, this initiative must be supported by broader, systemic changes in urban planning and infrastructure development.</p><br><p><strong>What is a significant challenge that Chennai faces, as mentioned in the passage?</strong></p>", "options": ["<p>Excessive urban wildlife</p>", "<p>High population growth</p>", "<p>Groundwater depletion</p>", "<p>Low tourism rates</p>", "<p>Overpopulation in rural areas</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C </strong></p>\n<p>The passage discusses how Chennai is grappling with groundwater depletion, which is a growing concern alongside flooding and environmental degradation.</p>\n<p>The passage specifically highlights groundwater depletion as a significant challenge for Chennai. It states that \"these parks are not only designed to mitigate flooding but also to enhance water management in a city where groundwater depletion is a growing concern.\" This indicates that the city is experiencing a decrease in its groundwater resources, which is a critical issue for water supply and sustainability.</p>\n<p><strong>a).</strong> Excessive urban wildlife: While urban wildlife can be an issue in some cities, the passage does not mention this as a challenge facing Chennai. The focus is primarily on flooding and environmental degradation.</p>\n<p><strong>b).</strong> High population growth: Although population growth can contribute to urban challenges, the passage does not specifically identify it as a problem for Chennai. Instead, it emphasizes issues like flooding and green space shortage.</p>\n<p><strong>d).</strong> Low tourism rates: The passage does not address tourism rates or indicate that they are a challenge for Chennai. The focus remains on environmental issues and urban planning.</p>\n<p><strong>e).</strong> Overpopulation in rural areas: This option is not mentioned in the passage at all. The discussion revolves around urban issues in Chennai rather than rural overpopulation.</p>\n<p>Thus, groundwater depletion is the correct answer as it directly aligns with the concerns outlined in the passage regarding Chennai's environmental challenges.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>Chennai, a city frequently besieged by floods, has seen its civic bodies ramp up efforts to address the dual challenges of flooding and environmental degradation. Recent initiatives by the Greater Chennai Corporation (GCC) aim to not only mitigate flood risks but also bolster the city’s green cover. At the heart of this strategy is the creation of “sponge parks,” which, along with an extensive tree plantation drive, promise a more sustainable urban future. Flooding has been a recurring problem in Chennai due to unplanned urban development, clogged waterways, and inadequate drainage systems. The devastating floods triggered by Cyclone Michaung in 2023, which claimed several lives, were a stark reminder of the city’s vulnerability to extreme weather events. With the looming threat of climate change, Chennai’s need for innovative flood management solutions has never been more urgent. Sponge parks offer a creative and practical approach to urban flood prevention. By transforming open spaces into water-retention zones, these parks absorb excess rainwater, prevent surface runoff, and help recharge groundwater levels. The concept is simple yet effective ~ pondlike structures are built in low-lying areas, directing flood water into these retention ponds instead of allowing it to overwhelm city streets. These parks are not only designed to mitigate flooding but also to enhance water management in a city where groundwater depletion is a growing concern. In addition to flood control, these parks serve a broader environmental purpose. Chennai, the hottest megacity in India, has been grappling with a shortage of green spaces. The GCC’s commitment to planting 2.5 lakh trees and developing sponge parks provides a much-needed boost to the city’s green cover, which currently lags behind international standards. More greenery means better air quality, reduced urban heat, and a healthier living environment for residents. The sponge parks initiative also aligns with the Tamil Nadu government’s broader objective of increasing the state’s green cover to 33 per cent by 2030. By working with agencies like the Chennai Metropolitan Development Authority, the GCC is turning otherwise unused or under-utilised urban spaces into productive green zones. This strategy not only addresses immediate concerns like flood prevention but also contributes to the long-term goal of creating a more climate-resilient city. However, while the sponge parks initiative is laudable, it must be seen as part of a larger, more integrated approach to urban planning. Addressing Chennai’s flood problems requires a multi-pronged strategy that includes restoring natural drainage systems, improving infrastructure, and enforcing zoning regulations. While the efforts to expand green cover are commendable, they need to be sustained and scaled up to have a meaningful impact. Chennai’s sponge parks initiative reflects a forward-thinking approach to urban challenges, combining flood mitigation with environmental enhancement. If executed well, it could serve as a model for other cities grappling with similar issues. Yet, this initiative must be supported by broader, systemic changes in urban planning and infrastructure development.</p><br><p><strong>What broader objective does the Tamil Nadu government have regarding green cover?</strong></p>", "options": ["<p>To reduce green cover to 20 percent by 2030</p>", "<p>To increase green cover to 33 percent by 2030</p>", "<p>To eliminate urban parks</p>", "<p>To privatize all green spaces</p>", "<p>To focus solely on industrial development</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B </strong></p>\n<p>The passage mentions that the Tamil Nadu government aims to increase the state’s green cover to 33 percent by 2030, highlighting a commitment to environmental sustainability.</p>\n<p>The passage explicitly states that the Tamil Nadu government's objective is \"to increase the state’s green cover to 33 percent by 2030.\" This goal is highlighted as part of the larger context of environmental initiatives in Chennai, particularly in light of the challenges posed by flooding and urban development.</p>\n<p><strong>a).</strong> To reduce green cover to 20 percent by 2030: This option contradicts the information provided in the passage, as it aims to decrease green cover rather than increase it. The government's goal is to enhance, not diminish, the green cover.</p>\n<p><strong>c).</strong> To eliminate urban parks: The passage does not suggest any intention to eliminate urban parks. Instead, the creation of sponge parks and a commitment to increasing tree plantation indicate a focus on preserving and expanding green spaces.</p>\n<p><strong>d).</strong> To privatize all green spaces: The passage does not mention any plans to privatize green spaces. The emphasis is on developing and managing these areas for public benefit, particularly for flood mitigation and environmental enhancement.</p>\n<p><strong>e).</strong> To focus solely on industrial development: This option is also incorrect as the passage highlights environmental initiatives rather than prioritizing industrial development. The Tamil Nadu government is focused on increasing green cover, indicating a balanced approach to urban planning that includes environmental considerations.</p>\n<p>In summary, option b is the correct answer because it aligns directly with the information presented in the passage regarding the Tamil Nadu government's objective for green cover by 2030.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>Chennai, a city frequently besieged by floods, has seen its civic bodies ramp up efforts to address the dual challenges of flooding and environmental degradation. Recent initiatives by the Greater Chennai Corporation (GCC) aim to not only mitigate flood risks but also bolster the city’s green cover. At the heart of this strategy is the creation of “sponge parks,” which, along with an extensive tree plantation drive, promise a more sustainable urban future. Flooding has been a recurring problem in Chennai due to unplanned urban development, clogged waterways, and inadequate drainage systems. The devastating floods triggered by Cyclone Michaung in 2023, which claimed several lives, were a stark reminder of the city’s vulnerability to extreme weather events. With the looming threat of climate change, Chennai’s need for innovative flood management solutions has never been more urgent. Sponge parks offer a creative and practical approach to urban flood prevention. By transforming open spaces into water-retention zones, these parks absorb excess rainwater, prevent surface runoff, and help recharge groundwater levels. The concept is simple yet effective ~ pondlike structures are built in low-lying areas, directing flood water into these retention ponds instead of allowing it to overwhelm city streets. These parks are not only designed to mitigate flooding but also to enhance water management in a city where groundwater depletion is a growing concern. In addition to flood control, these parks serve a broader environmental purpose. Chennai, the hottest megacity in India, has been grappling with a shortage of green spaces. The GCC’s commitment to planting 2.5 lakh trees and developing sponge parks provides a much-needed boost to the city’s green cover, which currently lags behind international standards. More greenery means better air quality, reduced urban heat, and a healthier living environment for residents. The sponge parks initiative also aligns with the Tamil Nadu government’s broader objective of increasing the state’s green cover to 33 per cent by 2030. By working with agencies like the Chennai Metropolitan Development Authority, the GCC is turning otherwise unused or under-utilised urban spaces into productive green zones. This strategy not only addresses immediate concerns like flood prevention but also contributes to the long-term goal of creating a more climate-resilient city. However, while the sponge parks initiative is laudable, it must be seen as part of a larger, more integrated approach to urban planning. Addressing Chennai’s flood problems requires a multi-pronged strategy that includes restoring natural drainage systems, improving infrastructure, and enforcing zoning regulations. While the efforts to expand green cover are commendable, they need to be sustained and scaled up to have a meaningful impact. Chennai’s sponge parks initiative reflects a forward-thinking approach to urban challenges, combining flood mitigation with environmental enhancement. If executed well, it could serve as a model for other cities grappling with similar issues. Yet, this initiative must be supported by broader, systemic changes in urban planning and infrastructure development.</p><br><p><strong>What is the GCC's commitment regarding tree plantation in Chennai? </strong></p>", "options": ["<p>Planting 1 lakh trees</p>", "<p>Planting 5 lakh trees</p>", "<p>Planting 2.5 lakh trees</p>", "<p>Planting 10 lakh trees</p>", "<p>No specific commitment mentioned</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C </strong></p>\n<p>The passage states that the Greater Chennai Corporation has committed to planting 2.5 lakh trees, which is part of their effort to enhance the city’s green cover.</p>\n<p>The passage clearly states that the Greater Chennai Corporation (GCC) has committed to planting 2.5 lakh trees. This commitment is part of their broader efforts to enhance the city’s green cover and address environmental degradation while also tackling flooding issues.</p>\n<p><strong>a).</strong> Planting 1 lakh trees: This figure is lower than the commitment mentioned in the passage. The specific number of 2.5 lakh trees indicates a more ambitious goal.</p>\n<p><strong>b).</strong> Planting 5 lakh trees: This option exceeds the GCC's stated commitment in the passage. The number is explicitly given as 2.5 lakh trees, making this option incorrect.</p>\n<p><strong>d).</strong> Planting 10 lakh trees: Similar to option b, this figure is also much higher than what is stated in the passage. The commitment is to 2.5 lakh trees, not 10 lakh.</p>\n<p><strong>e).</strong> No specific commitment mentioned: This option is incorrect because the passage explicitly mentions the GCC’s commitment to planting 2.5 lakh trees.</p>\n<p>In summary, option c is the correct answer because it accurately reflects the commitment made by the Greater Chennai Corporation as detailed in the passage.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>Chennai, a city frequently besieged by floods, has seen its civic bodies ramp up efforts to address the dual challenges of flooding and environmental degradation. Recent initiatives by the Greater Chennai Corporation (GCC) aim to not only mitigate flood risks but also bolster the city’s green cover. At the heart of this strategy is the creation of “sponge parks,” which, along with an extensive tree plantation drive, promise a more sustainable urban future. Flooding has been a recurring problem in Chennai due to unplanned urban development, clogged waterways, and inadequate drainage systems. The devastating floods triggered by Cyclone Michaung in 2023, which claimed several lives, were a stark reminder of the city’s vulnerability to extreme weather events. With the looming threat of climate change, Chennai’s need for innovative flood management solutions has never been more urgent. Sponge parks offer a creative and practical approach to urban flood prevention. By transforming open spaces into water-retention zones, these parks absorb excess rainwater, prevent surface runoff, and help recharge groundwater levels. The concept is simple yet effective ~ pondlike structures are built in low-lying areas, directing flood water into these retention ponds instead of allowing it to overwhelm city streets. These parks are not only designed to mitigate flooding but also to enhance water management in a city where groundwater depletion is a growing concern. In addition to flood control, these parks serve a broader environmental purpose. Chennai, the hottest megacity in India, has been grappling with a shortage of green spaces. The GCC’s commitment to planting 2.5 lakh trees and developing sponge parks provides a much-needed boost to the city’s green cover, which currently lags behind international standards. More greenery means better air quality, reduced urban heat, and a healthier living environment for residents. The sponge parks initiative also aligns with the Tamil Nadu government’s broader objective of increasing the state’s green cover to 33 per cent by 2030. By working with agencies like the Chennai Metropolitan Development Authority, the GCC is turning otherwise unused or under-utilised urban spaces into productive green zones. This strategy not only addresses immediate concerns like flood prevention but also contributes to the long-term goal of creating a more climate-resilient city. However, while the sponge parks initiative is laudable, it must be seen as part of a larger, more integrated approach to urban planning. Addressing Chennai’s flood problems requires a multi-pronged strategy that includes restoring natural drainage systems, improving infrastructure, and enforcing zoning regulations. While the efforts to expand green cover are commendable, they need to be sustained and scaled up to have a meaningful impact. Chennai’s sponge parks initiative reflects a forward-thinking approach to urban challenges, combining flood mitigation with environmental enhancement. If executed well, it could serve as a model for other cities grappling with similar issues. Yet, this initiative must be supported by broader, systemic changes in urban planning and infrastructure development.</p><br><p><strong>What recent event highlighted Chennai's vulnerability to flooding?</strong></p>", "options": ["<p>A severe drought</p>", "<p>An earthquake</p>", "<p>Cyclone Michaung in 2023</p>", "<p>A landslide</p>", "<p>A heatwave</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C </strong></p>\n<p>The passage specifically mentions the floods triggered by Cyclone Michaung in 2023, indicating the city's ongoing struggles with extreme weather events and flooding.</p>\n<p>The passage explicitly mentions that Cyclone Michaung in 2023 was a significant event that triggered devastating floods in Chennai, underscoring the city’s vulnerability to extreme weather events. The passage states, \"The devastating floods triggered by Cyclone Michaung in 2023, which claimed several lives, were a stark reminder of the city’s vulnerability to extreme weather events.\" This indicates that the cyclone was not only recent but also impactful, bringing attention to the persistent issue of flooding in the city.</p>\n<p><strong>a).</strong> A severe drought: Drought is the opposite of flooding and does not highlight vulnerability to flooding. The passage focuses on flooding issues, so this option does not apply.</p>\n<p><strong>b).</strong> An earthquake: While earthquakes can cause significant damage, they are not directly related to flooding. The passage does not mention any recent earthquakes as a factor affecting Chennai.</p>\n<p><strong>d).</strong> A landslide: Similar to earthquakes, landslides may occur due to various factors but are not directly mentioned in the context of Chennai’s flooding issues. The focus remains on flooding specifically related to extreme weather events like cyclones.</p>\n<p><strong>e).</strong> A heatwave: Heatwaves are climatic events that affect temperature and do not highlight flooding vulnerability. The passage does not reference heatwaves in relation to flooding.</p>\n<p>In summary, option c is the correct answer because it directly corresponds to the event that was cited in the passage as a recent reminder of Chennai’s flooding vulnerability.</p>"}, {"question": "<p><strong>Read the following passage carefully and answer the questions that follow:</strong></p>\n<p>Chennai, a city frequently besieged by floods, has seen its civic bodies ramp up efforts to address the dual challenges of flooding and environmental degradation. Recent initiatives by the Greater Chennai Corporation (GCC) aim to not only mitigate flood risks but also bolster the city’s green cover. At the heart of this strategy is the creation of “sponge parks,” which, along with an extensive tree plantation drive, promise a more sustainable urban future. Flooding has been a recurring problem in Chennai due to unplanned urban development, clogged waterways, and inadequate drainage systems. The devastating floods triggered by Cyclone Michaung in 2023, which claimed several lives, were a stark reminder of the city’s vulnerability to extreme weather events. With the looming threat of climate change, Chennai’s need for innovative flood management solutions has never been more urgent. Sponge parks offer a creative and practical approach to urban flood prevention. By transforming open spaces into water-retention zones, these parks absorb excess rainwater, prevent surface runoff, and help recharge groundwater levels. The concept is simple yet effective ~ pondlike structures are built in low-lying areas, directing flood water into these retention ponds instead of allowing it to overwhelm city streets. These parks are not only designed to mitigate flooding but also to enhance water management in a city where groundwater depletion is a growing concern. In addition to flood control, these parks serve a broader environmental purpose. Chennai, the hottest megacity in India, has been grappling with a shortage of green spaces. The GCC’s commitment to planting 2.5 lakh trees and developing sponge parks provides a much-needed boost to the city’s green cover, which currently lags behind international standards. More greenery means better air quality, reduced urban heat, and a healthier living environment for residents. The sponge parks initiative also aligns with the Tamil Nadu government’s broader objective of increasing the state’s green cover to 33 per cent by 2030. By working with agencies like the Chennai Metropolitan Development Authority, the GCC is turning otherwise unused or under-utilised urban spaces into productive green zones. This strategy not only addresses immediate concerns like flood prevention but also contributes to the long-term goal of creating a more climate-resilient city. However, while the sponge parks initiative is laudable, it must be seen as part of a larger, more integrated approach to urban planning. Addressing Chennai’s flood problems requires a multi-pronged strategy that includes restoring natural drainage systems, improving infrastructure, and enforcing zoning regulations. While the efforts to expand green cover are commendable, they need to be sustained and scaled up to have a meaningful impact. Chennai’s sponge parks initiative reflects a forward-thinking approach to urban challenges, combining flood mitigation with environmental enhancement. If executed well, it could serve as a model for other cities grappling with similar issues. Yet, this initiative must be supported by broader, systemic changes in urban planning and infrastructure development.</p><br><p><strong>How do sponge parks contribute to groundwater management?</strong></p>", "options": ["<p>By preventing the construction of new buildings</p>", "<p>By directing floodwater into retention ponds</p>", "<p>By replacing existing parks with concrete structures</p>", "<p>By increasing the population of aquatic life</p>", "<p>By promoting industrial development</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B </strong></p>\n<p>The passage describes how sponge parks absorb excess rainwater and prevent surface runoff, which helps recharge groundwater levels through the pond-like structures built in low-lying areas.</p>\n<p>The passage states that sponge parks are designed to absorb excess rainwater and prevent surface runoff, which helps recharge groundwater levels. Specifically, it mentions that these parks transform open spaces into water-retention zones by \"directing flood water into these retention ponds instead of allowing it to overwhelm city streets.\" This process effectively manages stormwater, enhancing groundwater recharge and addressing flooding issues.</p>\n<p><strong>a).</strong> By preventing the construction of new buildings: While limiting construction can help preserve green spaces, the passage does not mention sponge parks as a means to prevent new buildings. Their primary function is related to water management.</p>\n<p><strong>c).</strong> By replacing existing parks with concrete structures: This option contradicts the purpose of sponge parks. Sponge parks are intended to create green spaces that manage water rather than replacing them with concrete structures, which would impede water absorption and negatively impact groundwater management.</p>\n<p><strong>d).</strong> By increasing the population of aquatic life: Although sponge parks may create habitats that support wildlife, the primary focus in the passage is on their role in managing floodwater and recharging groundwater. The contribution to aquatic life is not a central theme discussed.</p>\n<p><strong>e).</strong> By promoting industrial development: This option is not relevant to sponge parks, which are focused on environmental sustainability and flood mitigation. Promoting industrial development would typically conflict with the goals of enhancing green spaces and groundwater management.</p>\n<p>In summary, option b is the correct answer because it directly relates to how sponge parks function to manage groundwater by directing floodwater into retention ponds, thereby aiding in groundwater recharge and flood prevention.</p>"}, {"question": "<p><strong>In each of the questions given below, four words are given in bold. These four words may or may not be in their correct position. The sentence is then followed by options with the correct combination of words that should replace each other in order to make the sentence grammatically and contextually correct. Find the correct combination to interchange the words so as to make the sentence meaningful. If the sentence is correct as it is, select ‘E’ as your option.</strong></p><br><p>Climate scientists issue <strong>mitigate(A) </strong>warnings about the <strong>consequences(B) </strong>of unchecked carbon emissions, urging immediate action to <strong>dire(C) </strong>climate change and <strong>transition(D) </strong>to renewable energy sources.</p>", "options": ["<p>Only A-C</p>", "<p>Only B-D</p>", "<p>Both C-B and A-D</p>", "<p>Both A-B and C-D</p>", "<p>No interchange required</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>The correct combination is: Only A-C</strong></p>\n<ul>\n<li>Climate scientists issue <strong>dire(A) </strong>warnings about the <strong>consequences(B) </strong>of unchecked carbon emissions, urging immediate action to <strong>mitigate(C) </strong>climate change and <strong>transition(D) </strong>to renewable energy sources.</li>\n</ul>\n<p>Therefore, option A is the correct answer.</p>"}, {"question": "<p><strong>In each of the questions given below, four words are given in bold. These four words may or may not be in their correct position. The sentence is then followed by options with the correct combination of words that should replace each other in order to make the sentence grammatically and contextually correct. Find the correct combination to interchange the words so as to make the sentence meaningful. If the sentence is correct as it is, select ‘E’ as your option.</strong></p><br><p>Political analysts <strong>revitalize(A) </strong>the bipartisan infrastructure bill, <strong>implications(B) </strong>its efforts to <strong>scrutinize(C) </strong>crumbling infrastructure while scrutinizing funding allocations and long-term economic <strong>lauding(D)</strong>.</p>", "options": ["<p>Only A-C&nbsp;</p>", "<p>Only B-D</p>", "<p>Only A-D</p>", "<p>Both C-A and B-D</p>", "<p>No interchange required</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>The correct combination is: Both C-A and B-D</strong></p>\n<ul>\n<li>Political analysts <strong>scrutinize(A) </strong>the bipartisan infrastructure bill, <strong>lauding(B) </strong>its efforts to <strong>revitalize(C) </strong>crumbling infrastructure while scrutinizing funding allocations and long-term economic <strong>implications(D)</strong>.</li>\n</ul>\n<p>Therefore, option D is the correct answer.</p>"}, {"question": "<p><strong>In each of the questions given below, four words are given in bold. These four words may or may not be in their correct position. The sentence is then followed by options with the correct combination of words that should replace each other in order to make the sentence grammatically and contextually correct. Find the correct combination to interchange the words so as to make the sentence meaningful. If the sentence is correct as it is, select ‘E’ as your option.</strong></p><br><p>Advocates for education reform <strong>advocate(A) </strong>for <strong>equitable(B) </strong>access to quality education, calling for policy <strong>promote(C) </strong>to bridge the educational divide and <strong>overhauls(D) </strong>upward mobility.</p>", "options": ["<p>Only A-C&nbsp;</p>", "<p>Only A-B</p>", "<p>Only C-D</p>", "<p>Both A-D and C-B</p>", "<p>No interchange required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>The correct combination is: Only C-D</strong></p>\n<ul>\n<li>Advocates for education reform <strong>advocate(A) </strong>for <strong>equitable(B) </strong>access to quality education, calling for policy <strong>overhauls(C) </strong>to bridge the educational divide and <strong>promote(D) </strong>upward mobility.</li>\n</ul>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>In each of the questions given below, four words are given in bold. These four words may or may not be in their correct position. The sentence is then followed by options with the correct combination of words that should replace each other in order to make the sentence grammatically and contextually correct. Find the correct combination to interchange the words so as to make the sentence meaningful. If the sentence is correct as it is, select ‘E’ as your option.</strong></p><br><p>The entertainment industry <strong>mourns(A) </strong>the passing of a legendary actor whose <strong>consciousness(B) </strong>career left an <strong>indelible(C) </strong>mark on the world of cinema and cultural <strong>illustrious(D)</strong>.</p>", "options": ["<p>Only A-C&nbsp;</p>", "<p>Only B-D</p>", "<p>Only A-D</p>", "<p>Both C-B and A-D</p>", "<p>No interchange required</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>The correct combination is: Only B-D</strong></p>\n<ul>\n<li>The entertainment industry <strong>mourns(A) </strong>the passing of a legendary actor whose <strong>illustrious(B) </strong>career left an <strong>indelible(C) </strong>mark on the world of cinema and cultural <strong>consciousness(D)</strong>.</li>\n</ul>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>In each of the questions given below, four words are given in bold. These four words may or may not be in their correct position. The sentence is then followed by options with the correct combination of words that should replace each other in order to make the sentence grammatically and contextually correct. Find the correct combination to interchange the words so as to make the sentence meaningful. If the sentence is correct as it is, select ‘E’ as your option.</strong></p><br><p>Amid <strong>reaffirming(A) </strong>global tensions, diplomats from allied nations <strong>address(B) </strong>urgent talks to <strong>convene(C) </strong>humanitarian crises in conflict zones, <strong>escalating(D) </strong>their commitment to fostering peace and stability.</p>", "options": ["<p>Only C-A&nbsp;</p>", "<p>Only B-D</p>", "<p>Both A-D and B-C</p>", "<p>Both A-B and C-D</p>", "<p>No interchange required</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>The correct combination is: Both A-D and B-C</strong></p>\n<ul>\n<li>Amid <strong>escalating(A) </strong>global tensions, diplomats from allied nations <strong>convene(B) </strong>urgent talks to <strong>address(C) </strong>humanitarian crises in conflict zones, <strong>reaffirming(D) </strong>their commitment to fostering peace and stability.</li>\n</ul>\n<p>Therefore, option C is the correct answer.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Prelims Mastery Quiz 2025 English (Day-37)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Prelims Mastery Quiz 2025 English (Day-37)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

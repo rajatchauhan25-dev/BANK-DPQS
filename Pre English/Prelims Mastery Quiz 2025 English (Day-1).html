@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Prelims Mastery Quiz 2025 English (Day-1)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>Read the given passage carefully and answer the questions that follow. Some words may be highlighted to help you locate the same while answering. </strong></p>\n<p>The RBI’s Monetary Policy Committee (MPC) has opted to keep the benchmark policy repo rate unchanged at 6.5% for a seventh consecutive meeting citing food price pressures that are <strong>impeding </strong>its efforts to slow inflation to the 4% target on a durable basis. Explaining the rate decision and the MPC’s resolve to keep the policy stance focused on the withdrawal of accommodation, RBI Governor Shaktikanta Das remarked that the ‘elephant in the room – inflation’, which had hit a peak of 7.8% in April 2022, ‘appeared to be returning to the forest after having gone out for a walk’. “We would like the elephant to return to the forest and remain there on a durable basis,” he said, emphasising that in the best interest of the economy, it was essential to ensure that retail inflation continued to moderate and aligned to the target on a durable basis. The monetary authority’s repeated emphasis on ‘a durable basis’ underlines its concern that headline inflation and food price inflation in particular have remained stubbornly unpredictable, with the headline Consumer Price Index-based reading stuck above the RBI’s 4% target for 53 months through February 2024. Nor are the MPC’s projections for price stability in the new fiscal year significantly reassuring in terms of the target: CPI inflation is expected to slow slightly to an average of 4.9% in the current quarter, then decelerate markedly and dip below target to 3.9% in Q2, before quickening again to 4.6% and 4.5% in Q3 and Q4, respectively.</p>\n<p>The MPC is, however, more confident about the outlook for economic growth in the 12 months through March 2025, with the GDP expected to expand by 7% on average this year. For this it cites a multiplicity of factors: from expectations of a normal south-west monsoon, that it posits will boost agricultural activity and rural demand, to sustained momentum in the manufacturing and services sectors. It also points to the RBI’s March round of the consumer confidence survey, which indicates that urban households are less <strong>pessimistic </strong>about the current situation and anticipate improvements in one year’s time on all five key parameters surveyed. Monetary policymakers assert that improving incomes and a rise in readiness to spend on non-essentials augur well for a strengthening in private consumption, which has been struggling for momentum in recent quarters. It is the expectation of strong growth that gives the RBI the policy space to focus on targeting inflation, Mr. Das said. Only too aware that sticky inflation has not only dampened discretionary spending so far but also led to a sharp surge in personal loans for meeting essential expenditure, the RBI chief’s determination to send the elephant back to the forest or risk seeing growth lose momentum again is well justified. Price stability can and must be non-negotiable.</p><br><p><strong>According to RBI Governor Shaktikanta Das, what does the phrase \"elephant in the room - inflation\" imply?</strong></p>", "options": ["<p>Inflation is a significant concern that cannot be ignored</p>", "<p>Inflation is an unpredictable factor</p>", "<p>Inflation is now declining</p>", "<p>Inflation is a temporary issue that will soon be resolved</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The phrase \"elephant in the room\" is an idiomatic expression that refers to an obvious problem or issue that is being ignored or avoided. It is often used to point out a difficult or important topic that has been avoided in a conversation or situation.</p>\n<p>Therefore, option A is the correct answer.</p>"}, {"question": "<p><strong>Read the given passage carefully and answer the questions that follow. Some words may be highlighted to help you locate the same while answering. </strong></p>\n<p>The RBI’s Monetary Policy Committee (MPC) has opted to keep the benchmark policy repo rate unchanged at 6.5% for a seventh consecutive meeting citing food price pressures that are <strong>impeding </strong>its efforts to slow inflation to the 4% target on a durable basis. Explaining the rate decision and the MPC’s resolve to keep the policy stance focused on the withdrawal of accommodation, RBI Governor Shaktikanta Das remarked that the ‘elephant in the room – inflation’, which had hit a peak of 7.8% in April 2022, ‘appeared to be returning to the forest after having gone out for a walk’. “We would like the elephant to return to the forest and remain there on a durable basis,” he said, emphasising that in the best interest of the economy, it was essential to ensure that retail inflation continued to moderate and aligned to the target on a durable basis. The monetary authority’s repeated emphasis on ‘a durable basis’ underlines its concern that headline inflation and food price inflation in particular have remained stubbornly unpredictable, with the headline Consumer Price Index-based reading stuck above the RBI’s 4% target for 53 months through February 2024. Nor are the MPC’s projections for price stability in the new fiscal year significantly reassuring in terms of the target: CPI inflation is expected to slow slightly to an average of 4.9% in the current quarter, then decelerate markedly and dip below target to 3.9% in Q2, before quickening again to 4.6% and 4.5% in Q3 and Q4, respectively.</p>\n<p>The MPC is, however, more confident about the outlook for economic growth in the 12 months through March 2025, with the GDP expected to expand by 7% on average this year. For this it cites a multiplicity of factors: from expectations of a normal south-west monsoon, that it posits will boost agricultural activity and rural demand, to sustained momentum in the manufacturing and services sectors. It also points to the RBI’s March round of the consumer confidence survey, which indicates that urban households are less <strong>pessimistic </strong>about the current situation and anticipate improvements in one year’s time on all five key parameters surveyed. Monetary policymakers assert that improving incomes and a rise in readiness to spend on non-essentials augur well for a strengthening in private consumption, which has been struggling for momentum in recent quarters. It is the expectation of strong growth that gives the RBI the policy space to focus on targeting inflation, Mr. Das said. Only too aware that sticky inflation has not only dampened discretionary spending so far but also led to a sharp surge in personal loans for meeting essential expenditure, the RBI chief’s determination to send the elephant back to the forest or risk seeing growth lose momentum again is well justified. Price stability can and must be non-negotiable.</p><br><p><strong>What was the peak inflation rate mentioned by RBI Governor Shaktikanta Das?</strong></p>", "options": ["<p>6.5%, which was recorded in April 2022, indicating a peak increase</p>", "<p>7.8%, which was noted in April 2022, representing a significant peak in inflation rates</p>", "<p>8.5%, registered in April 2022, highlighting a substantial surge in inflation levels</p>", "<p>9.2%, observed in April 2022, signifying a notable elevation in inflation</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>It is given in the passage that “Explaining the rate decision and the MPC’s resolve to keep the policy stance focused on the withdrawal of accommodation, RBI Governor Shaktikanta Das remarked that the ‘elephant in the room – inflation’, which had hit a peak of 7.8% in April 2022, ‘appeared to be returning to the forest after having gone out for a walk’.”</p>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>Read the given passage carefully and answer the questions that follow. Some words may be highlighted to help you locate the same while answering. </strong></p>\n<p>The RBI’s Monetary Policy Committee (MPC) has opted to keep the benchmark policy repo rate unchanged at 6.5% for a seventh consecutive meeting citing food price pressures that are <strong>impeding </strong>its efforts to slow inflation to the 4% target on a durable basis. Explaining the rate decision and the MPC’s resolve to keep the policy stance focused on the withdrawal of accommodation, RBI Governor Shaktikanta Das remarked that the ‘elephant in the room – inflation’, which had hit a peak of 7.8% in April 2022, ‘appeared to be returning to the forest after having gone out for a walk’. “We would like the elephant to return to the forest and remain there on a durable basis,” he said, emphasising that in the best interest of the economy, it was essential to ensure that retail inflation continued to moderate and aligned to the target on a durable basis. The monetary authority’s repeated emphasis on ‘a durable basis’ underlines its concern that headline inflation and food price inflation in particular have remained stubbornly unpredictable, with the headline Consumer Price Index-based reading stuck above the RBI’s 4% target for 53 months through February 2024. Nor are the MPC’s projections for price stability in the new fiscal year significantly reassuring in terms of the target: CPI inflation is expected to slow slightly to an average of 4.9% in the current quarter, then decelerate markedly and dip below target to 3.9% in Q2, before quickening again to 4.6% and 4.5% in Q3 and Q4, respectively.</p>\n<p>The MPC is, however, more confident about the outlook for economic growth in the 12 months through March 2025, with the GDP expected to expand by 7% on average this year. For this it cites a multiplicity of factors: from expectations of a normal south-west monsoon, that it posits will boost agricultural activity and rural demand, to sustained momentum in the manufacturing and services sectors. It also points to the RBI’s March round of the consumer confidence survey, which indicates that urban households are less <strong>pessimistic </strong>about the current situation and anticipate improvements in one year’s time on all five key parameters surveyed. Monetary policymakers assert that improving incomes and a rise in readiness to spend on non-essentials augur well for a strengthening in private consumption, which has been struggling for momentum in recent quarters. It is the expectation of strong growth that gives the RBI the policy space to focus on targeting inflation, Mr. Das said. Only too aware that sticky inflation has not only dampened discretionary spending so far but also led to a sharp surge in personal loans for meeting essential expenditure, the RBI chief’s determination to send the elephant back to the forest or risk seeing growth lose momentum again is well justified. Price stability can and must be non-negotiable.</p><br><p><strong> </strong><strong>What factor is expected to boost agricultural activity and rural demand, according to the passage?</strong></p>", "options": ["<p>A surge in global commodity prices</p>", "<p>Government subsidies for farmers</p>", "<p>Expectations of a normal south-west monsoon</p>", "<p>Tax incentives for rural businesses</p>", "<p>All the above&nbsp;</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>It is given in the passage that “from expectations of a normal south-west monsoon, that it posits will boost agricultural activity and rural demand, to sustained momentum in the manufacturing and services sectors.”</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>Read the given passage carefully and answer the questions that follow. Some words may be highlighted to help you locate the same while answering. </strong></p>\n<p>The RBI’s Monetary Policy Committee (MPC) has opted to keep the benchmark policy repo rate unchanged at 6.5% for a seventh consecutive meeting citing food price pressures that are <strong>impeding </strong>its efforts to slow inflation to the 4% target on a durable basis. Explaining the rate decision and the MPC’s resolve to keep the policy stance focused on the withdrawal of accommodation, RBI Governor Shaktikanta Das remarked that the ‘elephant in the room – inflation’, which had hit a peak of 7.8% in April 2022, ‘appeared to be returning to the forest after having gone out for a walk’. “We would like the elephant to return to the forest and remain there on a durable basis,” he said, emphasising that in the best interest of the economy, it was essential to ensure that retail inflation continued to moderate and aligned to the target on a durable basis. The monetary authority’s repeated emphasis on ‘a durable basis’ underlines its concern that headline inflation and food price inflation in particular have remained stubbornly unpredictable, with the headline Consumer Price Index-based reading stuck above the RBI’s 4% target for 53 months through February 2024. Nor are the MPC’s projections for price stability in the new fiscal year significantly reassuring in terms of the target: CPI inflation is expected to slow slightly to an average of 4.9% in the current quarter, then decelerate markedly and dip below target to 3.9% in Q2, before quickening again to 4.6% and 4.5% in Q3 and Q4, respectively.</p>\n<p>The MPC is, however, more confident about the outlook for economic growth in the 12 months through March 2025, with the GDP expected to expand by 7% on average this year. For this it cites a multiplicity of factors: from expectations of a normal south-west monsoon, that it posits will boost agricultural activity and rural demand, to sustained momentum in the manufacturing and services sectors. It also points to the RBI’s March round of the consumer confidence survey, which indicates that urban households are less <strong>pessimistic </strong>about the current situation and anticipate improvements in one year’s time on all five key parameters surveyed. Monetary policymakers assert that improving incomes and a rise in readiness to spend on non-essentials augur well for a strengthening in private consumption, which has been struggling for momentum in recent quarters. It is the expectation of strong growth that gives the RBI the policy space to focus on targeting inflation, Mr. Das said. Only too aware that sticky inflation has not only dampened discretionary spending so far but also led to a sharp surge in personal loans for meeting essential expenditure, the RBI chief’s determination to send the elephant back to the forest or risk seeing growth lose momentum again is well justified. Price stability can and must be non-negotiable.</p><br><p><strong>Which of the following is the SYNONYM of the word ‘IMPEDING’ as used in the passage?</strong></p>", "options": ["<p>Encouraging</p>", "<p>Delaying</p>", "<p>Enhancing</p>", "<p>Facilitating</p>", "<p>Advancing</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The word \"<strong>impeding</strong>\" means hindering or obstructing progress. Thus, a synonym for \"impeding\" would be \"<strong>delaying</strong>,\" indicating that these pressures are causing a delay or slowdown in achieving the desired outcome of reducing inflation.</p>\n<p>Therefore, option B is the correct answer. </p>"}, {"question": "<p><strong>Read the given passage carefully and answer the questions that follow. Some words may be highlighted to help you locate the same while answering. </strong></p>\n<p>The RBI’s Monetary Policy Committee (MPC) has opted to keep the benchmark policy repo rate unchanged at 6.5% for a seventh consecutive meeting citing food price pressures that are <strong>impeding </strong>its efforts to slow inflation to the 4% target on a durable basis. Explaining the rate decision and the MPC’s resolve to keep the policy stance focused on the withdrawal of accommodation, RBI Governor Shaktikanta Das remarked that the ‘elephant in the room – inflation’, which had hit a peak of 7.8% in April 2022, ‘appeared to be returning to the forest after having gone out for a walk’. “We would like the elephant to return to the forest and remain there on a durable basis,” he said, emphasising that in the best interest of the economy, it was essential to ensure that retail inflation continued to moderate and aligned to the target on a durable basis. The monetary authority’s repeated emphasis on ‘a durable basis’ underlines its concern that headline inflation and food price inflation in particular have remained stubbornly unpredictable, with the headline Consumer Price Index-based reading stuck above the RBI’s 4% target for 53 months through February 2024. Nor are the MPC’s projections for price stability in the new fiscal year significantly reassuring in terms of the target: CPI inflation is expected to slow slightly to an average of 4.9% in the current quarter, then decelerate markedly and dip below target to 3.9% in Q2, before quickening again to 4.6% and 4.5% in Q3 and Q4, respectively.</p>\n<p>The MPC is, however, more confident about the outlook for economic growth in the 12 months through March 2025, with the GDP expected to expand by 7% on average this year. For this it cites a multiplicity of factors: from expectations of a normal south-west monsoon, that it posits will boost agricultural activity and rural demand, to sustained momentum in the manufacturing and services sectors. It also points to the RBI’s March round of the consumer confidence survey, which indicates that urban households are less <strong>pessimistic </strong>about the current situation and anticipate improvements in one year’s time on all five key parameters surveyed. Monetary policymakers assert that improving incomes and a rise in readiness to spend on non-essentials augur well for a strengthening in private consumption, which has been struggling for momentum in recent quarters. It is the expectation of strong growth that gives the RBI the policy space to focus on targeting inflation, Mr. Das said. Only too aware that sticky inflation has not only dampened discretionary spending so far but also led to a sharp surge in personal loans for meeting essential expenditure, the RBI chief’s determination to send the elephant back to the forest or risk seeing growth lose momentum again is well justified. Price stability can and must be non-negotiable.</p><br><p><strong>Which of the following is the ANTONYM of the word ‘PESSIMISTIC’ as used in the passage?</strong></p>", "options": ["<p>Optimistic</p>", "<p>Realistic</p>", "<p>Cautious</p>", "<p>Doubtful&nbsp;</p>", "<p>Negative</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>In the passage, the term \"<strong>pessimistic</strong>\" refers to having a negative or gloomy outlook. </p>\n<p>Thus, \"<strong>optimistic</strong>\" is the correct answer as it represents a positive perspective or expectation.</p>\n<p>Therefore, option A is the correct answer.</p>"}, {"question": "<p><strong>Identify the incorrect sentence(s) (if any).</strong></p><br><p><strong>a).</strong> She likes hiking, swimming, and biking.</p>\n<p><strong>b).</strong> He is talented in both singing and to dance.</p>\n<p><strong>c).</strong> He can play the piano, but he cannot sing.</p>\n<p><strong>d).</strong> She wants to visit Paris, Rome, and London.</p>\n<p><strong>e).</strong> No error</p>", "options": ["<p>a</p>", "<p>b</p>", "<p>c</p>", "<p>d</p>", "<p>e</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>Sentence A </strong>is grammatically correct. It lists three activities in parallel structure, using gerunds (\"hiking,\" \"swimming,\" and \"biking\") consistently.</p>\n<p><strong>Sentence B </strong>is grammatically incorrect. It lacks in parallel structure. The correct form should maintain consistency in verb forms:</p>\n<p>\"He is talented in both <strong>singing and</strong> dancing.\"</p>\n<p><strong>Sentence C </strong>is grammatically correct. It uses a parallel structure to compare two abilities: \"play the piano\" and \"sing.\"</p>\n<p><strong>Sentence D </strong>is grammatically correct. It lists three destinations in parallel structure.</p>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>Identify the incorrect sentence(s) (if any).</strong></p><br><p><strong>a).</strong> She bought a new car last week.</p>\n<p><strong>b).</strong> They visited the Eiffel Tower during their trip.</p>\n<p><strong>c).</strong> They enjoyed themselves at the party.</p>\n<p><strong>d).</strong> Myself and my friend went to the concert.</p>\n<p><strong>e).</strong> No error</p>", "options": ["<p>a</p>", "<p>b</p>", "<p>c</p>", "<p>d</p>", "<p>e</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>Sentence A </strong>is grammatically correct. It uses the past simple tense \"bought\" to describe an action that happened in the past.</p>\n<p><strong>Sentence B </strong>is grammatically correct. It uses the past simple tense \"visited\" to describe an action that happened in the past.</p>\n<p><strong>Sentence C </strong>is grammatically correct. \"Enjoyed themselves\" correctly uses the reflexive pronoun to indicate that \"they\" were the ones who had fun.</p>\n<p><strong>Sentence D </strong>is grammatically incorrect. \"Myself\" is a reflexive pronoun and should not be used as a subject. The correct form should be:</p>\n<p>\"My friend <strong>and I went to the</strong> concert.\"</p>\n<p>The correct form should be \"My friend and I went to the concert.\" Reflexive pronouns like \"myself\" should not be used as subjects. The subject form \"I\" is required here.</p>\n<p>Therefore, option D is the correct answer.</p>"}, {"question": "<p><strong>Identify the incorrect sentence(s) (if any).</strong></p><br><p><strong>a).</strong> If I were rich, I would travel the world.</p>\n<p><strong>b).</strong> She wishes she was taller.</p>\n<p><strong>c).</strong> Everyone should bring their own lunch.</p>\n<p><strong>d).</strong> The dogs' leashes are hanging on the wall.</p>\n<p><strong>e).</strong> No error</p>", "options": ["<p>a</p>", "<p>b</p>", "<p>c</p>", "<p>d</p>", "<p>e</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>Sentence A </strong>is grammatically correct. It uses the subjunctive mood \"were\" to express a hypothetical situation.</p>\n<p><strong>Sentence B</strong> is grammatically incorrect. When expressing a wish about a situation that is contrary to reality or hypothetical, the subjunctive mood \"were\" should be used instead of \"was.\"<strong> </strong>The correct form is:</p>\n<p>\"She wishes she were taller.\"</p>\n<p><strong>Sentence C</strong> is grammatically correct. \"Everyone\" is a singular indefinite pronoun, but it is often acceptable in modern English to use \"their\" as a gender-neutral singular pronoun to avoid awkward constructions like \"his or her.\"</p>\n<p><strong>Sentence D </strong>is grammatically correct. \"Dogs'\" correctly uses the plural possessive form to indicate that the leashes belong to multiple dogs.</p>\n<p>The correct subjunctive form is \"She wishes she were taller.\" The subjunctive mood uses \"<strong>were</strong>\" instead of \"was\" to express hypothetical or non-real situations.</p>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>Identify the incorrect sentence(s) (if any).</strong></p><br><p><strong>a).</strong> The dogs in the yard bark loudly at night.</p>\n<p><strong>b).</strong> Each of the students have completed the assignment.</p>\n<p><strong>c).</strong> The committee has decided to postpone the meeting.</p>\n<p><strong>d).</strong> Both of the twins enjoy playing soccer.</p>\n<p><strong>e).</strong> No error</p>", "options": ["<p>a</p>", "<p>b</p>", "<p>c</p>", "<p>d</p>", "<p>e</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>Sentence A</strong> is grammatically correct. It uses the plural subject \"dogs\" with the verb \"bark\" to describe a habitual action. <strong>Sentence B</strong> is grammatically incorrect. \"Each\" is a singular subject, so it should be followed by the singular form of the verb \"has\" instead of \"have.\" The correct form is:</p>\n<p>\"Each of the students <strong>has</strong> completed the assignment.\"</p>\n<p><strong>Sentence C</strong> is grammatically correct. \"Committee\" is a collective noun that is treated as singular in American English, so it correctly uses the singular verb \"has decided.\"</p>\n<p><strong>Sentence D</strong> is grammatically correct. \"Both\" is a plural subject, so it correctly uses the plural verb \"enjoy.\"</p>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>Identify the incorrect sentence(s) (if any).</strong></p><br><p><strong>a).</strong> The children played in the park until sunset.</p>\n<p><strong>b).</strong> Excess calories from sugary beverages contribute to weight gain.</p>\n<p><strong>c).</strong> They will travel to Europe last summer.</p>\n<p><strong>d).</strong> I have been studying for hours, so I am taking a break now.</p>\n<p><strong>e).</strong> No error</p>", "options": ["<p>a</p>", "<p>b</p>", "<p>c</p>", "<p>d</p>", "<p>e</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>Sentence A</strong> is grammatically correct. It uses the past simple tense \"played\" to describe an action that happened in the past and was completed in the past.</p>\n<p><strong>Sentence B</strong> is grammatically correct. It uses the simple present tense \"contribute\" to state a general truth or habitual action.</p>\n<p><strong>Sentence C </strong>is grammatically incorrect. The phrase \"last summer\" refers to a time in the past, but \"will travel\" is in the future tense. The correct form should align the tense with the time frame. For example:</p>\n<p>\"They traveled to Europe last summer.\" (past tense)</p>\n<p>\"They will travel to Europe next summer.\" (future tense)</p>\n<p><strong>Sentence D</strong> is grammatically correct. It uses the present perfect continuous tense \"have been studying\" to describe an action that started in the past and is still continuing or has just finished. The present continuous tense \"am taking\" is used to describe an action happening right now.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>A passage is given with five blanks in it. Each blank is represented by a letter. From the given options, choose the most suitable words to fill in these blanks so as to make the passage meaningful. </strong></p>\n<p>In the ever-expanding realm of technological advancement, the year 2024 marks a pivotal moment in the ongoing AI revolution. With breakthroughs across various sectors, artificial intelligence continues to reshape industries, societies, and the way we <strong>__________(A) </strong>the world.</p>\n<p>One of the most notable developments in AI during this period is the <strong>__________(B) </strong>progress in natural language processing (NLP). Advanced language models, such as GPT-4, have <strong>__________(C) </strong>previous iterations in understanding and generating human-like text, revolutionizing content creation, translation, and conversational interfaces. Businesses are <strong>_________(D) </strong>these capabilities to enhance customer service, automate repetitive tasks, and personalize user experiences.</p>\n<p>Moreover, the integration of AI into healthcare is transforming the landscape of medical diagnosis and treatment. AI-powered diagnostic tools analyze vast amounts of patient data to identify patterns and detect diseases with greater accuracy and <strong>_________(E)</strong>. Additionally, AI-driven robotics are revolutionizing surgical procedures, enabling precision and minimizing risks for patients.</p><br><p><strong>Which of the following words fits correctly in blank A?</strong></p>", "options": ["<p>analyze</p>", "<p>perceive</p>", "<p>disregard</p>", "<p>deploy</p>", "<p>evaluate</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>In the context of the sentence, \"<strong>perceive</strong>\" is the most appropriate word as it aligns with the idea of understanding or interpreting the world in light of technological advancements. </p>\n<p>The sentence discusses how artificial intelligence is reshaping industries, societies, and the way we perceive the world. This implies that AI is influencing our perception and understanding the world around us. </p>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>A passage is given with five blanks in it. Each blank is represented by a letter. From the given options, choose the most suitable words to fill in these blanks so as to make the passage meaningful. </strong></p>\n<p>In the ever-expanding realm of technological advancement, the year 2024 marks a pivotal moment in the ongoing AI revolution. With breakthroughs across various sectors, artificial intelligence continues to reshape industries, societies, and the way we <strong>__________(A) </strong>the world.</p>\n<p>One of the most notable developments in AI during this period is the <strong>__________(B) </strong>progress in natural language processing (NLP). Advanced language models, such as GPT-4, have <strong>__________(C) </strong>previous iterations in understanding and generating human-like text, revolutionizing content creation, translation, and conversational interfaces. Businesses are <strong>_________(D) </strong>these capabilities to enhance customer service, automate repetitive tasks, and personalize user experiences.</p>\n<p>Moreover, the integration of AI into healthcare is transforming the landscape of medical diagnosis and treatment. AI-powered diagnostic tools analyze vast amounts of patient data to identify patterns and detect diseases with greater accuracy and <strong>_________(E)</strong>. Additionally, AI-driven robotics are revolutionizing surgical procedures, enabling precision and minimizing risks for patients.</p><br><p><strong>Which of the following words fits correctly in blank B?</strong></p>", "options": ["<p>incremental</p>", "<p>modest</p>", "<p>gradual</p>", "<p>tedious</p>", "<p>unprecedented&nbsp;</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>In the context of the sentence, \"<strong>unprecedented</strong>\" is the most suitable word as it implies something that has never been done before or that exceeds what has been previously seen or experienced. </p>\n<p>The sentence discusses notable developments in artificial intelligence during the year 2024, suggesting that there have been groundbreaking advancements in the field. </p>\n<p>Therefore, option E is the correct answer.</p>"}, {"question": "<p><strong>A passage is given with five blanks in it. Each blank is represented by a letter. From the given options, choose the most suitable words to fill in these blanks so as to make the passage meaningful. </strong></p>\n<p>In the ever-expanding realm of technological advancement, the year 2024 marks a pivotal moment in the ongoing AI revolution. With breakthroughs across various sectors, artificial intelligence continues to reshape industries, societies, and the way we <strong>__________(A) </strong>the world.</p>\n<p>One of the most notable developments in AI during this period is the <strong>__________(B) </strong>progress in natural language processing (NLP). Advanced language models, such as GPT-4, have <strong>__________(C) </strong>previous iterations in understanding and generating human-like text, revolutionizing content creation, translation, and conversational interfaces. Businesses are <strong>_________(D) </strong>these capabilities to enhance customer service, automate repetitive tasks, and personalize user experiences.</p>\n<p>Moreover, the integration of AI into healthcare is transforming the landscape of medical diagnosis and treatment. AI-powered diagnostic tools analyze vast amounts of patient data to identify patterns and detect diseases with greater accuracy and <strong>_________(E)</strong>. Additionally, AI-driven robotics are revolutionizing surgical procedures, enabling precision and minimizing risks for patients.</p><br><p><strong>Which of the following words fits correctly in blank C?</strong></p>", "options": ["<p>lagged</p>", "<p>exceeded</p>", "<p>surpassed&nbsp;</p>", "<p>hindered</p>", "<p>stagnated</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>In the context of the sentence, \"<strong>surpassed</strong>\" is the most appropriate word as it indicates that advanced language models, such as GPT-4, have exceeded or gone beyond the achievements of previous iterations. </p>\n<p>This implies that GPT-4 has achieved a higher level of proficiency in understanding and generating human-like text compared to its predecessors.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>A passage is given with five blanks in it. Each blank is represented by a letter. From the given options, choose the most suitable words to fill in these blanks so as to make the passage meaningful. </strong></p>\n<p>In the ever-expanding realm of technological advancement, the year 2024 marks a pivotal moment in the ongoing AI revolution. With breakthroughs across various sectors, artificial intelligence continues to reshape industries, societies, and the way we <strong>__________(A) </strong>the world.</p>\n<p>One of the most notable developments in AI during this period is the <strong>__________(B) </strong>progress in natural language processing (NLP). Advanced language models, such as GPT-4, have <strong>__________(C) </strong>previous iterations in understanding and generating human-like text, revolutionizing content creation, translation, and conversational interfaces. Businesses are <strong>_________(D) </strong>these capabilities to enhance customer service, automate repetitive tasks, and personalize user experiences.</p>\n<p>Moreover, the integration of AI into healthcare is transforming the landscape of medical diagnosis and treatment. AI-powered diagnostic tools analyze vast amounts of patient data to identify patterns and detect diseases with greater accuracy and <strong>_________(E)</strong>. Additionally, AI-driven robotics are revolutionizing surgical procedures, enabling precision and minimizing risks for patients.</p><br><p><strong>Which of the following words fits correctly in blank D?</strong></p>", "options": ["<p>overlooking</p>", "<p>underscoring</p>", "<p>exploiting</p>", "<p>leveraging</p>", "<p>undermining</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>In the context of the sentence, \"<strong>leveraging</strong>\" is the most suitable word as it means using something to its maximum advantage or effectiveness. </p>\n<p>The sentence discusses how businesses are utilizing the capabilities of advanced language models like GPT-4 to enhance customer service, automate tasks, and personalize user experiences. </p>\n<p>Therefore, option D is the correct answer.</p>"}, {"question": "<p><strong>A passage is given with five blanks in it. Each blank is represented by a letter. From the given options, choose the most suitable words to fill in these blanks so as to make the passage meaningful. </strong></p>\n<p>In the ever-expanding realm of technological advancement, the year 2024 marks a pivotal moment in the ongoing AI revolution. With breakthroughs across various sectors, artificial intelligence continues to reshape industries, societies, and the way we <strong>__________(A) </strong>the world.</p>\n<p>One of the most notable developments in AI during this period is the <strong>__________(B) </strong>progress in natural language processing (NLP). Advanced language models, such as GPT-4, have <strong>__________(C) </strong>previous iterations in understanding and generating human-like text, revolutionizing content creation, translation, and conversational interfaces. Businesses are <strong>_________(D) </strong>these capabilities to enhance customer service, automate repetitive tasks, and personalize user experiences.</p>\n<p>Moreover, the integration of AI into healthcare is transforming the landscape of medical diagnosis and treatment. AI-powered diagnostic tools analyze vast amounts of patient data to identify patterns and detect diseases with greater accuracy and <strong>_________(E)</strong>. Additionally, AI-driven robotics are revolutionizing surgical procedures, enabling precision and minimizing risks for patients.</p><br><p><strong>Which of the following words fits correctly in blank E?</strong></p>", "options": ["<p>efficiency</p>", "<p>inconsistency</p>", "<p>uncertainty</p>", "<p>deficiency</p>", "<p>incompetence</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>In the context of the sentence, \"<strong>efficiency</strong>\" is the most suitable word as it refers to the quality of being able to produce results with minimal waste or effort. </p>\n<p>The sentence discusses how AI-powered diagnostic tools in healthcare analyze vast amounts of patient data to identify patterns and detect diseases with greater accuracy. </p>\n<p>Therefore, option A is the correct answer.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Prelims Mastery Quiz 2025 English (Day-1)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Prelims Mastery Quiz 2025 English (Day-1)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

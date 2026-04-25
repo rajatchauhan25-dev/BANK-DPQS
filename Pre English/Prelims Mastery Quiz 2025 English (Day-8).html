@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Prelims Mastery Quiz 2025 English (Day-8)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Kimchi for many Indians is now their favorite achaar. Its local incarnations are often made with local patta gobi. But over in its homeland, people associate kimchi with the distinctive napa cabbage that really thrives in South Korea's cooler, mountainous region. But climate change now threatens this tradition. This year the country saw its highest ever average summertime temperature, since records began. As one Kimchi Master puts it, this means the heart of the cabbage goes bad, the root becomes mushy. As if suffering from tonnes of extreme weather wasn't bad enough by itself, even our comfort foods are now becoming endangered.</p>\n<p>As rising temperatures force some farmers to leave grapes behind, Bordeaux winemakers are worried about the future of Merlot. In Maine, where lobstering is <em>twined tight into the local culture</em>, fisherfolk to restaurants to the tourism industry as a whole, everyone is anxious about the delectable creature going further and further away in search of cooler waters. If you celebrate a festival centering on one food, you need to read the tea leaves extra closely. US Thanksgiving, for example, is about the turkey, but this gorgeous creature gets stressed out by high temperatures and then its growth gets stunted.</p>\n<p>One clear takeaway is that farming and the food industry need to get greener, do their part to mitigate climate change. Ditto for restaurants from simple things like reducing food wastage to tough ones like carbon-neutrality, they need to up their game. But the apocalypse criers also need to calm down. Food history is full of adaptation and invention. Once upon a time, idli was made of only dal, then chawal got added, likely to make it cheaper and more accessible. For aeons kimchi was made in large, clay drums, but modern-day Koreans have got themselves specialized kimchi fridges. It's progress and still tasty.</p><br><p><strong>What is the main concern regarding kimchi in South Korea, as mentioned in the passage?</strong></p>", "options": ["<p>It is no longer a popular dish in South Korea.</p>", "<p>Rising temperatures are affecting the growth of napa cabbage used for kimchi.</p>", "<p>The younger generation is not interested in eating kimchi anymore.</p>", "<p>The traditional preparation methods are being replaced by modern technology.</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage states that climate change, specifically rising temperatures, is making the napa cabbage in South Korea's cooler regions go bad, which threatens the tradition of making kimchi.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Kimchi for many Indians is now their favorite achaar. Its local incarnations are often made with local patta gobi. But over in its homeland, people associate kimchi with the distinctive napa cabbage that really thrives in South Korea's cooler, mountainous region. But climate change now threatens this tradition. This year the country saw its highest ever average summertime temperature, since records began. As one Kimchi Master puts it, this means the heart of the cabbage goes bad, the root becomes mushy. As if suffering from tonnes of extreme weather wasn't bad enough by itself, even our comfort foods are now becoming endangered.</p>\n<p>As rising temperatures force some farmers to leave grapes behind, Bordeaux winemakers are worried about the future of Merlot. In Maine, where lobstering is <em>twined tight into the local culture</em>, fisherfolk to restaurants to the tourism industry as a whole, everyone is anxious about the delectable creature going further and further away in search of cooler waters. If you celebrate a festival centering on one food, you need to read the tea leaves extra closely. US Thanksgiving, for example, is about the turkey, but this gorgeous creature gets stressed out by high temperatures and then its growth gets stunted.</p>\n<p>One clear takeaway is that farming and the food industry need to get greener, do their part to mitigate climate change. Ditto for restaurants from simple things like reducing food wastage to tough ones like carbon-neutrality, they need to up their game. But the apocalypse criers also need to calm down. Food history is full of adaptation and invention. Once upon a time, idli was made of only dal, then chawal got added, likely to make it cheaper and more accessible. For aeons kimchi was made in large, clay drums, but modern-day Koreans have got themselves specialized kimchi fridges. It's progress and still tasty.</p><br><p><strong>What change in the production of kimchi has been introduced in modern-day Korea, according to the passage?</strong></p>", "options": ["<p>The traditional clay drums have been replaced with specialized kimchi fridges.</p>", "<p>It is now made with completely different ingredients.</p>", "<p>Kimchi is no longer made in Korea and is imported.</p>", "<p>Kimchi is now only produced in small quantities.</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The passage mentions that modern-day Koreans use specialized kimchi fridges instead of large clay drums to make kimchi.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Kimchi for many Indians is now their favorite achaar. Its local incarnations are often made with local patta gobi. But over in its homeland, people associate kimchi with the distinctive napa cabbage that really thrives in South Korea's cooler, mountainous region. But climate change now threatens this tradition. This year the country saw its highest ever average summertime temperature, since records began. As one Kimchi Master puts it, this means the heart of the cabbage goes bad, the root becomes mushy. As if suffering from tonnes of extreme weather wasn't bad enough by itself, even our comfort foods are now becoming endangered.</p>\n<p>As rising temperatures force some farmers to leave grapes behind, Bordeaux winemakers are worried about the future of Merlot. In Maine, where lobstering is <em>twined tight into the local culture</em>, fisherfolk to restaurants to the tourism industry as a whole, everyone is anxious about the delectable creature going further and further away in search of cooler waters. If you celebrate a festival centering on one food, you need to read the tea leaves extra closely. US Thanksgiving, for example, is about the turkey, but this gorgeous creature gets stressed out by high temperatures and then its growth gets stunted.</p>\n<p>One clear takeaway is that farming and the food industry need to get greener, do their part to mitigate climate change. Ditto for restaurants from simple things like reducing food wastage to tough ones like carbon-neutrality, they need to up their game. But the apocalypse criers also need to calm down. Food history is full of adaptation and invention. Once upon a time, idli was made of only dal, then chawal got added, likely to make it cheaper and more accessible. For aeons kimchi was made in large, clay drums, but modern-day Koreans have got themselves specialized kimchi fridges. It's progress and still tasty.</p><br><p><strong>Based on the passage, how might climate change impact the cultural identity of communities tied to specific foods?</strong></p>", "options": ["<p>Climate change will have no effect on food-related cultural traditions.</p>", "<p>Cultural identity will be preserved because modern technology can solve all climate-related issues.</p>", "<p>Climate change may force communities to adapt their traditional foods or face losing them, impacting cultural identity.</p>", "<p>Climate change will cause communities to abandon their traditional foods entirely.</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The passage highlights how climate change threatens traditional foods such as kimchi, Merlot, and lobster, and implies that communities may need to adapt or risk losing these integral parts of their culture.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Kimchi for many Indians is now their favorite achaar. Its local incarnations are often made with local patta gobi. But over in its homeland, people associate kimchi with the distinctive napa cabbage that really thrives in South Korea's cooler, mountainous region. But climate change now threatens this tradition. This year the country saw its highest ever average summertime temperature, since records began. As one Kimchi Master puts it, this means the heart of the cabbage goes bad, the root becomes mushy. As if suffering from tonnes of extreme weather wasn't bad enough by itself, even our comfort foods are now becoming endangered.</p>\n<p>As rising temperatures force some farmers to leave grapes behind, Bordeaux winemakers are worried about the future of Merlot. In Maine, where lobstering is <em>twined tight into the local culture</em>, fisherfolk to restaurants to the tourism industry as a whole, everyone is anxious about the delectable creature going further and further away in search of cooler waters. If you celebrate a festival centering on one food, you need to read the tea leaves extra closely. US Thanksgiving, for example, is about the turkey, but this gorgeous creature gets stressed out by high temperatures and then its growth gets stunted.</p>\n<p>One clear takeaway is that farming and the food industry need to get greener, do their part to mitigate climate change. Ditto for restaurants from simple things like reducing food wastage to tough ones like carbon-neutrality, they need to up their game. But the apocalypse criers also need to calm down. Food history is full of adaptation and invention. Once upon a time, idli was made of only dal, then chawal got added, likely to make it cheaper and more accessible. For aeons kimchi was made in large, clay drums, but modern-day Koreans have got themselves specialized kimchi fridges. It's progress and still tasty.</p><br><p><strong>According to the passage, what impact does rising summertime temperature have on napa cabbage?</strong></p>", "options": ["<p>The cabbage grows faster than usual.</p>", "<p>The heart of the cabbage goes bad, and the root becomes mushy.</p>", "<p>The cabbage becomes too expensive to cultivate.</p>", "<p>There is no impact mentioned on napa cabbage.</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage explains that rising temperatures affect napa cabbage by causing the heart of the cabbage to spoil and the root to become mushy.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>Kimchi for many Indians is now their favorite achaar. Its local incarnations are often made with local patta gobi. But over in its homeland, people associate kimchi with the distinctive napa cabbage that really thrives in South Korea's cooler, mountainous region. But climate change now threatens this tradition. This year the country saw its highest ever average summertime temperature, since records began. As one Kimchi Master puts it, this means the heart of the cabbage goes bad, the root becomes mushy. As if suffering from tonnes of extreme weather wasn't bad enough by itself, even our comfort foods are now becoming endangered.</p>\n<p>As rising temperatures force some farmers to leave grapes behind, Bordeaux winemakers are worried about the future of Merlot. In Maine, where lobstering is <em>twined tight into the local culture</em>, fisherfolk to restaurants to the tourism industry as a whole, everyone is anxious about the delectable creature going further and further away in search of cooler waters. If you celebrate a festival centering on one food, you need to read the tea leaves extra closely. US Thanksgiving, for example, is about the turkey, but this gorgeous creature gets stressed out by high temperatures and then its growth gets stunted.</p>\n<p>One clear takeaway is that farming and the food industry need to get greener, do their part to mitigate climate change. Ditto for restaurants from simple things like reducing food wastage to tough ones like carbon-neutrality, they need to up their game. But the apocalypse criers also need to calm down. Food history is full of adaptation and invention. Once upon a time, idli was made of only dal, then chawal got added, likely to make it cheaper and more accessible. For aeons kimchi was made in large, clay drums, but modern-day Koreans have got themselves specialized kimchi fridges. It's progress and still tasty.</p><br><p><strong>What does the phrase \"twined tight into the local culture\" in the context of Maine's lobster industry most closely mean?</strong></p>", "options": ["<p>Lobstering is disconnected from the local economy.</p>", "<p>Lobstering is deeply integrated and intertwined with the local culture and economy.</p>", "<p>Lobstering is a new and emerging industry in Maine.</p>", "<p>Lobstering is becoming irrelevant to the local culture.</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The phrase implies that lobstering is a key part of Maine’s local culture, strongly connected to the livelihoods of many people and industries in the region.</p>"}, {"question": "<p><strong>Given below is a word followed by three sentences. You need to understand whether the given word is used correctly or not. You have to choose the sentence in which the word has been used incorrectly.</strong></p><br><p><strong>Humble</strong></p>\n<p><strong>1).</strong> Despite his many achievements, he remained <strong>humble</strong>, always giving credit to his team.</p>\n<p><strong>2).</strong> She <strong>humbly</strong> accepted the award, thanking everyone who had supported her journey.</p>\n<p><strong>3).</strong> His arrogant behavior and constant boasting showed that he was far from <strong>humble</strong>.</p>", "options": ["<p>Only 1</p>", "<p>Only 2</p>", "<p>Only 3</p>", "<p>Both 1 &amp; 2</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Sentences 1 and 2 use \"humble\" in a positive context, describing individuals who are modest and unassuming despite their achievements. However, sentence 3 uses \"humble\" in an opposite context, describing someone who is arrogant and boastful, indicating a lack of humility.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>Given below is a word followed by three sentences. You need to understand whether the given word is used correctly or not. You have to choose the sentence in which the word has been used incorrectly.</strong></p><br><p><strong>Efficient</strong></p>\n<p><strong>1).</strong> The new software made the process much more <strong>efficient</strong>, saving both time and resources.</p>\n<p><strong>2).</strong> She is known for her <strong>efficient</strong> work habits, always completing tasks quickly and accurately.</p>\n<p><strong>3).</strong> The outdated machinery was <strong>efficient</strong>, causing frequent delays and increased costs.</p>", "options": ["<p>Only 1</p>", "<p>Only 2</p>", "<p>Only 3</p>", "<p>Both 1 &amp; 2</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Sentences 1 and 2 use \"efficient\" in a positive context, describing processes or habits that save time and resources. In contrast, sentence 3 uses \"efficient\" in an opposite context, describing machinery that causes delays and increased costs, indicating inefficiency.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>Given below is a word followed by three sentences. You need to understand whether the given word is used correctly or not. You have to choose the sentence in which the word has been used incorrectly.</strong></p><br><p><strong>Grateful</strong></p>\n<p><strong>1).</strong> She felt <strong>grateful </strong>for the support of her friends during the difficult times.</p>\n<p><strong>2).</strong> He expressed his <strong>gratefulness</strong> by writing heartfelt thank-you notes to everyone who helped him.</p>\n<p><strong>3).</strong> Despite the kindness shown to him, he remained <strong>grateful</strong> and took everything for granted.</p>", "options": ["<p>Only 1</p>", "<p>Only 2</p>", "<p>Only 3</p>", "<p>Both 1 &amp; 2</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Sentences 1 and 2 use \"grateful\" in a positive context, describing feelings of thankfulness and appreciation. However, sentence 3 uses \"grateful\" in an opposite context, describing someone who is ungrateful and takes things for granted, indicating a lack of appreciation.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>Given below is a word followed by three sentences. You need to understand whether the given word is used correctly or not. You have to choose the sentence in which the word has been used incorrectly.</strong></p><br><p><strong>Innovative</strong></p>\n<p><strong>1).</strong> The company's <strong>innovative</strong> approach to technology has set it apart from its competitors.</p>\n<p><strong>2).</strong> Her <strong>innovative</strong> ideas transformed the project, bringing new and creative solutions to old problems.</p>\n<p><strong>3).</strong> His reluctance to try new methods showed a lack of <strong>innovative</strong> thinking, keeping the team stuck in outdated practices.</p>", "options": ["<p>Only 1</p>", "<p>Only 2</p>", "<p>Only 3</p>", "<p>Both 1 &amp; 2</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Sentences 1 and 2 use \"innovative\" in a positive context, describing approaches or ideas that are creative and forward-thinking. In contrast, sentence 3 uses \"innovative\" in an opposite context, describing someone who is reluctant to try new methods, indicating a lack of innovation.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>Given below is a word followed by three sentences. You need to understand whether the given word is used correctly or not. You have to choose the sentence in which the word has been used incorrectly.</strong></p><br><p><strong>Transparent</strong></p>\n<p><strong>1).</strong> The company's <strong>transparent</strong> policies made it easy for customers to understand their services and fees.</p>\n<p><strong>2).</strong> She appreciated his <strong>transparent</strong> communication, which left no room for misunderstandings.</p>\n<p><strong>3).</strong> His secretive behavior and hidden motives showed that he was far from <strong>transparent</strong>.</p>", "options": ["<p>Only 1</p>", "<p>Only 2</p>", "<p>Only 3</p>", "<p>Both 1 &amp; 2</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>Sentences 1 and 2 use \"transparent\" in a positive context, describing policies or communication that are open and clear. In contrast, sentence 3 uses \"transparent\" in an opposite context, describing behavior that is secretive and hidden, indicating a lack of transparency.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>In the following questions, a set of sentences is given and arranged randomly. You are required to rearrange the given sentences in a proper manner to form a meaningful paragraph.</strong></p>\n<p><strong>A).</strong> Globalization has interconnected economies, cultures, and societies in ways never seen before.</p>\n<p><strong>B).</strong> While globalization offers numerous benefits, such as increased trade and cultural exchange, it also presents challenges, including economic inequality and cultural homogenization.</p>\n<p><strong>C).</strong> To address these challenges, it is important to develop policies that promote sustainable growth while mitigating negative social and environmental impacts.</p>\n<p><strong>D).</strong> In recent years, many countries have seen both the positive and negative effects of globalization.</p>\n<p><strong>E).</strong> As a result, the global community must work together to find solutions that foster inclusive growth and protect cultural diversity.</p><br><p><strong>Which of the following is the FIRST statement after rearrangement?</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The correct rearrangement is A-D- B- C- E.</p>\n<p>Statement A introduces the concept of globalization and how it has connected various aspects of society.</p>\n<p>Statement D follows, mentioning how many countries have experienced the effects of globalization in recent years.</p>\n<p>Statement B elaborates on the benefits and challenges of globalization.</p>\n<p>Statement C discusses the importance of creating policies to address these challenges.</p>\n<p>Statement E concludes by stressing the need for global cooperation to address the issues.</p>\n<p>Thus, the first statement is A, and option A is correct.</p>"}, {"question": "<p><strong>In the following questions, a set of sentences is given and arranged randomly. You are required to rearrange the given sentences in a proper manner to form a meaningful paragraph.</strong></p>\n<p><strong>A).</strong> Globalization has interconnected economies, cultures, and societies in ways never seen before.</p>\n<p><strong>B).</strong> While globalization offers numerous benefits, such as increased trade and cultural exchange, it also presents challenges, including economic inequality and cultural homogenization.</p>\n<p><strong>C).</strong> To address these challenges, it is important to develop policies that promote sustainable growth while mitigating negative social and environmental impacts.</p>\n<p><strong>D).</strong> In recent years, many countries have seen both the positive and negative effects of globalization.</p>\n<p><strong>E).</strong> As a result, the global community must work together to find solutions that foster inclusive growth and protect cultural diversity.</p><br><p><strong>Which of the following is the SECOND statement after rearrangement?</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The correct rearrangement is A-D- B- C- E.</p>\n<p>After introducing globalization in statement A, statement D follows logically, discussing how countries are already experiencing the effects of globalization.</p>\n<p>Thus, the second statement is D, and option D is correct.</p>"}, {"question": "<p><strong>In the following questions, a set of sentences is given and arranged randomly. You are required to rearrange the given sentences in a proper manner to form a meaningful paragraph.</strong></p>\n<p><strong>A).</strong> Globalization has interconnected economies, cultures, and societies in ways never seen before.</p>\n<p><strong>B).</strong> While globalization offers numerous benefits, such as increased trade and cultural exchange, it also presents challenges, including economic inequality and cultural homogenization.</p>\n<p><strong>C).</strong> To address these challenges, it is important to develop policies that promote sustainable growth while mitigating negative social and environmental impacts.</p>\n<p><strong>D).</strong> In recent years, many countries have seen both the positive and negative effects of globalization.</p>\n<p><strong>E).</strong> As a result, the global community must work together to find solutions that foster inclusive growth and protect cultural diversity.</p><br><p><strong>Which of the following is the THIRD statement after rearrangement?</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The correct rearrangement is A-D- B- C- E.</p>\n<p>After explaining the recent effects of globalization (D), statement B follows, discussing the benefits and challenges posed by globalization.</p>\n<p>Thus, the third statement is B, and option B is correct.</p>"}, {"question": "<p><strong>In the following questions, a set of sentences is given and arranged randomly. You are required to rearrange the given sentences in a proper manner to form a meaningful paragraph.</strong></p>\n<p><strong>A).</strong> Globalization has interconnected economies, cultures, and societies in ways never seen before.</p>\n<p><strong>B).</strong> While globalization offers numerous benefits, such as increased trade and cultural exchange, it also presents challenges, including economic inequality and cultural homogenization.</p>\n<p><strong>C).</strong> To address these challenges, it is important to develop policies that promote sustainable growth while mitigating negative social and environmental impacts.</p>\n<p><strong>D).</strong> In recent years, many countries have seen both the positive and negative effects of globalization.</p>\n<p><strong>E).</strong> As a result, the global community must work together to find solutions that foster inclusive growth and protect cultural diversity.</p><br><p><strong>Which of the following is the FOURTH statement after rearrangement?</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The correct rearrangement is A-D- B- C- E..</p>\n<p>After discussing the benefits and challenges of globalization (B), statement C follows, explaining the need for policies to address these issues.</p>\n<p>Thus, the fourth statement is C, and option C is correct.</p>"}, {"question": "<p><strong>In the following questions, a set of sentences is given and arranged randomly. You are required to rearrange the given sentences in a proper manner to form a meaningful paragraph.</strong></p>\n<p><strong>A).</strong> Globalization has interconnected economies, cultures, and societies in ways never seen before.</p>\n<p><strong>B).</strong> While globalization offers numerous benefits, such as increased trade and cultural exchange, it also presents challenges, including economic inequality and cultural homogenization.</p>\n<p><strong>C).</strong> To address these challenges, it is important to develop policies that promote sustainable growth while mitigating negative social and environmental impacts.</p>\n<p><strong>D).</strong> In recent years, many countries have seen both the positive and negative effects of globalization.</p>\n<p><strong>E).</strong> As a result, the global community must work together to find solutions that foster inclusive growth and protect cultural diversity.</p><br><p><strong>Which of the following is the FIFTH (LAST) statement after rearrangement?</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>The correct rearrangement is A-D- B- C- E.</p>\n<p>Statement E concludes the discussion by emphasizing the need for global cooperation to find solutions to the challenges posed by globalization.</p>\n<p>Thus, the fifth statement is E, and option E is correct</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Prelims Mastery Quiz 2025 English (Day-8)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Prelims Mastery Quiz 2025 English (Day-8)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

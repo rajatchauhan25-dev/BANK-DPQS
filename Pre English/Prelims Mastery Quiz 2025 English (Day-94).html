@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Prelims Mastery Quiz 2025 English (Day-94)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>In each of the following questions some words are highlighted in bold, and these words may or may not be in their proper place. You are required to arrange these words appropriately in order to make the sentence meaningful.</strong></p><br><p>Whether the Union government <strong>overtaken</strong> <strong>(A) </strong>it or not, <strong>estimations (B) </strong>in Manipur have <strong>acknowledges</strong> <strong>(C) </strong>its own <strong>developments</strong>, <strong>(D) </strong>if at all there were some, at an alarming pace which no society founded on the principle of rule of law can accept.</p>", "options": ["<p>Only A-C</p>", "<p>Only B-D</p>", "<p>Only C-D</p>", "<p>Both A-C and B-D</p>", "<p>The sentence is correct</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D </strong></p>\n<p>In the given sentence, ‘<strong>overtaken</strong>’ and ‘<strong>acknowledges</strong>’ at their current positions fail to impart valid meaning to the sentence, and ‘<strong>estimations</strong>’ and ‘<strong>developments</strong>’ at their current positions fail to impart valid meaning to the sentence, but interchanging them will make the given sentence both grammatically and contextually correct.</p>\n<p><strong>The correct sentence after re arrangement is: “</strong>Whether the Union government <strong>acknowledges</strong> it or not, <strong>developments</strong> in Manipur have <strong>overtaken</strong> its own <strong>estimations</strong>, if at all there were some, at an alarming pace which no society founded on the principle of rule of law can accept<strong>.”</strong></p>\n<p>So, the correct answer is: d) Both A-C and B-D.</p>"}, {"question": "<p><strong>In each of the following questions some words are highlighted in bold, and these words may or may not be in their proper place. You are required to arrange these words appropriately in order to make the sentence meaningful.</strong></p><br><p>The COP28 Global Stocktake <strong>attention</strong> <strong>(A) </strong>emphasised the need to <strong>arise</strong> <strong>(B) </strong>the tremendous gap in adaptation and gaps in implementation that <strong>bridge</strong> <strong>(C) </strong>from the lack of sufficient <strong>decision</strong> <strong>(D) </strong>and resources.</p>", "options": ["<p>Only A-D</p>", "<p>Only B-C</p>", "<p>Only C-D</p>", "<p>Both A-D and B-C</p>", "<p>The sentence is correct</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D </strong></p>\n<p>In the given sentence, ‘<strong>attention</strong>’ and ‘<strong>decision</strong>’ at their current positions fail to impart valid meaning to the sentence, and ‘<strong>arise</strong>’ and ‘<strong>bridge</strong>’ at their current positions fail to impart valid meaning to the sentence, but interchanging them will make the given sentence both grammatically and contextually correct.</p>\n<p><strong>The correct sentence after re arrangement is: “</strong>The COP28 Global Stocktake <strong>decision</strong> emphasised the need to <strong>bridge</strong> the tremendous gap in adaptation and gaps in implementation that <strong>arise</strong> from the lack of sufficient <strong>attention</strong> and resources<strong>.”</strong></p>\n<p>So, the correct answer is: d) Both A-D and B-C.</p>"}, {"question": "<p><strong>In each of the following questions some words are highlighted in bold, and these words may or may not be in their proper place. You are required to arrange these words appropriately in order to make the sentence meaningful.</strong></p><br><p>The revolution’s success <strong>created</strong> <strong>(A) </strong>on government <strong>interventions</strong>, <strong>(B) </strong>particularly the minimum support price (MSP) mechanism, which <strong>hinged</strong> <strong>(C) </strong>a powerful <strong>incentive</strong> <strong>(D) </strong>structure favouring rice cultivation.</p>", "options": ["<p>Only A-C</p>", "<p>Only B-D</p>", "<p>Only A-D</p>", "<p>Both A-C and B-D</p>", "<p>The sentence is correct</p>"], "correctIndex": 0, "solution": "<p><strong>Answer</strong><strong>: A </strong></p>\n<p>In the given sentence, ‘<strong>created</strong>’ and ‘<strong>hinged</strong>’ at their current positions fail to impart valid meaning to the sentence, but interchanging them will make the given sentence both grammatically and contextually correct.</p>\n<p><strong>The correct sentence after re arrangement is: “</strong>The revolution’s success <strong>hinged</strong> on government <strong>interventions</strong>, particularly the minimum support price (MSP) mechanism, which <strong>created</strong> a powerful <strong>incentive</strong> structure favouring rice cultivation<strong>.”</strong></p>\n<p>So, the correct answer is: a) Only A-C</p>"}, {"question": "<p><strong>In each of the following questions some words are highlighted in bold, and these words may or may not be in their proper place. You are required to arrange these words appropriately in order to make the sentence meaningful.</strong></p><br><p>While the country’s push to become an innovation powerhouse is felt; it can only be realised through an inclusive and diverse <strong>pool</strong> <strong>(A) </strong>of innovators, <strong>coming</strong> <strong>(B) </strong>from different <strong>strata</strong> <strong>(C) </strong>of the society, thus <strong>bringing</strong> <strong>(D) </strong>heterogeneous perspectives.</p>", "options": ["<p>Only A-C</p>", "<p>Only B-D</p>", "<p>Only A-D</p>", "<p>Both A-C and B-D</p>", "<p>The sentence is correct</p>"], "correctIndex": 4, "solution": "<p><strong>Answer</strong><strong>: E </strong></p>\n<p>The sentence is correct, hence no rearrangement required.</p>\n<p><strong>The correct sentence is: </strong>While the country’s push to become an innovation powerhouse is felt; it can only be realised through an inclusive and diverse <strong>pool</strong> of innovators, <strong>coming</strong> from different <strong>strata</strong> of the society, thus <strong>bringing</strong> heterogeneous perspectives.</p>"}, {"question": "<p><strong>In each of the following questions some words are highlighted in bold, and these words may or may not be in their proper place. You are required to arrange these words appropriately in order to make the sentence meaningful.</strong></p><br><p>The National Democratic Alliance (NDA) regime is optimistic of attracting $100 billion <strong>currently</strong> <strong>(A) </strong>in foreign direct investments (FDI) as it is <strong>annually</strong> <strong>(B) </strong>the world’s fastest-growing <strong>where</strong> <strong>(C) </strong>economy with unmatched market growth opportunities in sunrise sectors such as semiconductors, electric vehicles, clean energy, electronics, and consumer goods <strong>large</strong> <strong>(D) </strong>penetration levels in the country’s population are far lower than the global average.</p>", "options": ["<p>Only A-B</p>", "<p>Only C-D</p>", "<p>Only B-C</p>", "<p>Both A-B and C-D</p>", "<p>The sentence is correct</p>"], "correctIndex": 3, "solution": "<p><strong>Answer</strong><strong>: D </strong></p>\n<p>Both A-B and C-D</p>\n<p>In the given sentence, ‘<strong>currently</strong>’ and ‘<strong>annually</strong>’ at their current positions fail to impart valid meaning to the sentence, and ‘<strong>where</strong>’ and ‘<strong>large</strong>’ at their current positions fail to impart valid meaning to the sentence, but interchanging them will make the given sentence both grammatically and contextually correct.</p>\n<p><strong>The correct sentence after re arrangement is: “</strong>The National Democratic Alliance (NDA) regime is optimistic of attracting $100 billion <strong>annually</strong> in foreign direct investments (FDI) as it is <strong>currently</strong> the world’s fastest-growing <strong>large</strong> economy with unmatched market growth opportunities in sunrise sectors such as semiconductors, electric vehicles, clean energy, electronics, and consumer goods <strong>where</strong> penetration levels in the country’s population are far lower than the global average<strong>.”</strong></p>\n<p>So, the correct answer is: d) Both A-B and C-D.</p>"}, {"question": "<p><strong>A passage is given with five blanks in it. Each blank is represented by a letter. From the given options, choose the most suitable words to fill in these blanks so as to make the passage meaningful. </strong></p>\n<p>In recent years, India has <strong>_____(A) </strong>a remarkable transformation in its educational landscape, propelled by the rapid advancement of digital technologies. Digital education in India is revolutionizing traditional classroom practices, making learning more <strong>_____(B)</strong>, interactive, and personalized. Through online platforms, students can now access a vast array of educational resources, including e-books, videos, interactive tutorials, and virtual laboratories, <strong>_____(C) </strong>the limitations of traditional textbooks. </p>\n<p>One of the key drivers of digital education in India is the emergence of EdTech startups, which are leveraging technology to innovate and <strong>______(D) </strong>the traditional education system. Furthermore, the COVID-19 pandemic acted as a catalyst, accelerating the adoption of digital education in India. School closures necessitated the rapid transition to online learning, prompting educational institutions to <strong>______(E) </strong>digital platforms for remote teaching and learning. While this transition posed challenges such as infrastructural constraints, connectivity issues, and equitable access to devices, it underscored the resilience and adaptability of India's education system in embracing digitalization.</p><br><p><strong>Which of the following words fits correctly in blank A?</strong></p>", "options": ["<p>afforded</p>", "<p>failed</p>", "<p>witnessed</p>", "<p>depleted</p>", "<p>reiterated</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The word \"<strong>witnessed</strong>\" fits correctly in blank A because it means to observe or experience something happening. </p>\n<p>In the sentence, it accurately describes how India has seen or experienced a remarkable transformation in its educational landscape.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>A passage is given with five blanks in it. Each blank is represented by a letter. From the given options, choose the most suitable words to fill in these blanks so as to make the passage meaningful. </strong></p>\n<p>In recent years, India has <strong>_____(A) </strong>a remarkable transformation in its educational landscape, propelled by the rapid advancement of digital technologies. Digital education in India is revolutionizing traditional classroom practices, making learning more <strong>_____(B)</strong>, interactive, and personalized. Through online platforms, students can now access a vast array of educational resources, including e-books, videos, interactive tutorials, and virtual laboratories, <strong>_____(C) </strong>the limitations of traditional textbooks. </p>\n<p>One of the key drivers of digital education in India is the emergence of EdTech startups, which are leveraging technology to innovate and <strong>______(D) </strong>the traditional education system. Furthermore, the COVID-19 pandemic acted as a catalyst, accelerating the adoption of digital education in India. School closures necessitated the rapid transition to online learning, prompting educational institutions to <strong>______(E) </strong>digital platforms for remote teaching and learning. While this transition posed challenges such as infrastructural constraints, connectivity issues, and equitable access to devices, it underscored the resilience and adaptability of India's education system in embracing digitalization.</p><br><p><strong>Which of the following words fits correctly in blank B?</strong></p>", "options": ["<p>indifferent</p>", "<p>obscure</p>", "<p>difficult</p>", "<p>accessible</p>", "<p>arduous</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The word that best fits this context is \"<strong>accessible</strong>,\" which means easy to approach, reach, or use. </p>\n<p>It aligns with the idea that digital education is making learning easier and more available to people. </p>\n<p>Therefore, option D is the correct answer.</p>"}, {"question": "<p><strong>A passage is given with five blanks in it. Each blank is represented by a letter. From the given options, choose the most suitable words to fill in these blanks so as to make the passage meaningful. </strong></p>\n<p>In recent years, India has <strong>_____(A) </strong>a remarkable transformation in its educational landscape, propelled by the rapid advancement of digital technologies. Digital education in India is revolutionizing traditional classroom practices, making learning more <strong>_____(B)</strong>, interactive, and personalized. Through online platforms, students can now access a vast array of educational resources, including e-books, videos, interactive tutorials, and virtual laboratories, <strong>_____(C) </strong>the limitations of traditional textbooks. </p>\n<p>One of the key drivers of digital education in India is the emergence of EdTech startups, which are leveraging technology to innovate and <strong>______(D) </strong>the traditional education system. Furthermore, the COVID-19 pandemic acted as a catalyst, accelerating the adoption of digital education in India. School closures necessitated the rapid transition to online learning, prompting educational institutions to <strong>______(E) </strong>digital platforms for remote teaching and learning. While this transition posed challenges such as infrastructural constraints, connectivity issues, and equitable access to devices, it underscored the resilience and adaptability of India's education system in embracing digitalization.</p><br><p><strong>Which of the following words fits correctly in blank C?</strong></p>", "options": ["<p>imposing</p>", "<p>transcending&nbsp;</p>", "<p>misusing</p>", "<p>exploiting</p>", "<p>neglecting</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The word that best fits this context is \"<strong>transcending</strong>,\" which means to go beyond or surpass. </p>\n<p>It indicates that online platforms allow students to access resources that go beyond the limitations of traditional textbooks. </p>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>A passage is given with five blanks in it. Each blank is represented by a letter. From the given options, choose the most suitable words to fill in these blanks so as to make the passage meaningful. </strong></p>\n<p>In recent years, India has <strong>_____(A) </strong>a remarkable transformation in its educational landscape, propelled by the rapid advancement of digital technologies. Digital education in India is revolutionizing traditional classroom practices, making learning more <strong>_____(B)</strong>, interactive, and personalized. Through online platforms, students can now access a vast array of educational resources, including e-books, videos, interactive tutorials, and virtual laboratories, <strong>_____(C) </strong>the limitations of traditional textbooks. </p>\n<p>One of the key drivers of digital education in India is the emergence of EdTech startups, which are leveraging technology to innovate and <strong>______(D) </strong>the traditional education system. Furthermore, the COVID-19 pandemic acted as a catalyst, accelerating the adoption of digital education in India. School closures necessitated the rapid transition to online learning, prompting educational institutions to <strong>______(E) </strong>digital platforms for remote teaching and learning. While this transition posed challenges such as infrastructural constraints, connectivity issues, and equitable access to devices, it underscored the resilience and adaptability of India's education system in embracing digitalization.</p><br><p><strong>Which of the following words fits correctly in blank D?</strong></p>", "options": ["<p>disrupt&nbsp;</p>", "<p>promote</p>", "<p>alleviate</p>", "<p>perpetuate</p>", "<p>continue</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The word that best fits this context is \"<strong>disrupt</strong>,\" which means to radically change or interrupt the normal course of something. </p>\n<p>It indicates that EdTech startups are using technology to bring about significant changes or innovations in the traditional education system.</p>\n<p>Therefore, option A is the correct answer.</p>"}, {"question": "<p><strong>A passage is given with five blanks in it. Each blank is represented by a letter. From the given options, choose the most suitable words to fill in these blanks so as to make the passage meaningful. </strong></p>\n<p>In recent years, India has <strong>_____(A) </strong>a remarkable transformation in its educational landscape, propelled by the rapid advancement of digital technologies. Digital education in India is revolutionizing traditional classroom practices, making learning more <strong>_____(B)</strong>, interactive, and personalized. Through online platforms, students can now access a vast array of educational resources, including e-books, videos, interactive tutorials, and virtual laboratories, <strong>_____(C) </strong>the limitations of traditional textbooks. </p>\n<p>One of the key drivers of digital education in India is the emergence of EdTech startups, which are leveraging technology to innovate and <strong>______(D) </strong>the traditional education system. Furthermore, the COVID-19 pandemic acted as a catalyst, accelerating the adoption of digital education in India. School closures necessitated the rapid transition to online learning, prompting educational institutions to <strong>______(E) </strong>digital platforms for remote teaching and learning. While this transition posed challenges such as infrastructural constraints, connectivity issues, and equitable access to devices, it underscored the resilience and adaptability of India's education system in embracing digitalization.</p><br><p><strong>Which of the following words fits correctly in blank E?</strong></p>", "options": ["<p>diminish</p>", "<p>disregard</p>", "<p>exclude</p>", "<p>denounce</p>", "<p>embrace</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>The word that best fits this context is \"<strong>embrace</strong>,\" which means to accept or adopt willingly. </p>\n<p>It indicates that educational institutions are willingly adopting digital platforms for remote teaching and learning. </p>\n<p>Therefore, option E is the correct answer.</p>"}, {"question": "<p><strong>Read the given passage carefully and answer the questions that follow. Some words may be highlighted to help you locate the same while answering. </strong></p>\n<p>On September 9, 2024, the United Nations highlighted the dire need for global action to safeguard education in conflict zones, with a particular focus on the Middle East. Marking the International Day to Protect Education from Attack, the UN Secretary-General, António Guterres, emphasized the <strong>devastating </strong>effects of ongoing conflicts on children's education. In war-torn regions like Gaza and the West Bank, many schools remain closed due to violence, significantly disrupting the education of thousands of children.</p>\n<p>UNICEF reported that over 625,000 children in Gaza were unable to attend school during the previous academic year, with an additional 45,000 six-year-olds being prevented from starting their education due to continued conflict. The situation is no less alarming in the West Bank, where the threat of violence and psychological trauma further <strong>hinders </strong>school attendance. This loss of education not only impacts academic learning but also harms children’s mental health and well-being. Guterres stressed that education is fundamental to the fulfillment of human rights and urged international communities to prioritize the protection of students. Adele Khodr, the UNICEF Regional Director for the Middle East and North Africa, echoed this sentiment, calling for urgent global efforts to restore education and support children affected by war.</p>\n<p>The UN’s appeal comes at a critical juncture, as education remains one of the least funded sectors in humanitarian appeals, despite being vital for the future of millions of children. The global community is urged to act to ensure that children in conflict zones can exercise their right to education and build a brighter future amidst the challenges of war. This call to action underscores the need for both immediate humanitarian support and long-term strategies to ensure that education is protected in times of conflict.</p><br><p><strong>What is the primary focus of the UN's call for global action on September 9, 2024?</strong></p>", "options": ["<p>Addressing climate change globally</p>", "<p>Protecting education in conflict zones</p>", "<p>Promoting gender equality worldwide</p>", "<p>Providing humanitarian aid to Gaza</p>", "<p>Preventing human rights violations in the West Bank</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage states “On September 9, 2024, the United Nations highlighted the dire need for global action to safeguard education in conflict zones, with a particular focus on the Middle East.”</p>\n<p>Therefore, option B is the correct answer. </p>"}, {"question": "<p><strong>Read the given passage carefully and answer the questions that follow. Some words may be highlighted to help you locate the same while answering. </strong></p>\n<p>On September 9, 2024, the United Nations highlighted the dire need for global action to safeguard education in conflict zones, with a particular focus on the Middle East. Marking the International Day to Protect Education from Attack, the UN Secretary-General, António Guterres, emphasized the <strong>devastating </strong>effects of ongoing conflicts on children's education. In war-torn regions like Gaza and the West Bank, many schools remain closed due to violence, significantly disrupting the education of thousands of children.</p>\n<p>UNICEF reported that over 625,000 children in Gaza were unable to attend school during the previous academic year, with an additional 45,000 six-year-olds being prevented from starting their education due to continued conflict. The situation is no less alarming in the West Bank, where the threat of violence and psychological trauma further <strong>hinders </strong>school attendance. This loss of education not only impacts academic learning but also harms children’s mental health and well-being. Guterres stressed that education is fundamental to the fulfillment of human rights and urged international communities to prioritize the protection of students. Adele Khodr, the UNICEF Regional Director for the Middle East and North Africa, echoed this sentiment, calling for urgent global efforts to restore education and support children affected by war.</p>\n<p>The UN’s appeal comes at a critical juncture, as education remains one of the least funded sectors in humanitarian appeals, despite being vital for the future of millions of children. The global community is urged to act to ensure that children in conflict zones can exercise their right to education and build a brighter future amidst the challenges of war. This call to action underscores the need for both immediate humanitarian support and long-term strategies to ensure that education is protected in times of conflict.</p><br><p><strong>What is a major challenge preventing children in the West Bank from attending school, as highlighted in the passage?</strong></p>", "options": ["<p>Lack of qualified teachers</p>", "<p>High school fees</p>", "<p>Fear of violence and psychological trauma</p>", "<p>Natural disasters</p>", "<p>Inadequate infrastructure</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The passage highlights that children in the West Bank are prevented from attending school due to \"fear of violence, movement restrictions, and mental health concerns,\" which significantly disrupts their education.</p>\n<p>Therefore, option C is the correct answer. </p>"}, {"question": "<p><strong>Read the given passage carefully and answer the questions that follow. Some words may be highlighted to help you locate the same while answering. </strong></p>\n<p>On September 9, 2024, the United Nations highlighted the dire need for global action to safeguard education in conflict zones, with a particular focus on the Middle East. Marking the International Day to Protect Education from Attack, the UN Secretary-General, António Guterres, emphasized the <strong>devastating </strong>effects of ongoing conflicts on children's education. In war-torn regions like Gaza and the West Bank, many schools remain closed due to violence, significantly disrupting the education of thousands of children.</p>\n<p>UNICEF reported that over 625,000 children in Gaza were unable to attend school during the previous academic year, with an additional 45,000 six-year-olds being prevented from starting their education due to continued conflict. The situation is no less alarming in the West Bank, where the threat of violence and psychological trauma further <strong>hinders </strong>school attendance. This loss of education not only impacts academic learning but also harms children’s mental health and well-being. Guterres stressed that education is fundamental to the fulfillment of human rights and urged international communities to prioritize the protection of students. Adele Khodr, the UNICEF Regional Director for the Middle East and North Africa, echoed this sentiment, calling for urgent global efforts to restore education and support children affected by war.</p>\n<p>The UN’s appeal comes at a critical juncture, as education remains one of the least funded sectors in humanitarian appeals, despite being vital for the future of millions of children. The global community is urged to act to ensure that children in conflict zones can exercise their right to education and build a brighter future amidst the challenges of war. This call to action underscores the need for both immediate humanitarian support and long-term strategies to ensure that education is protected in times of conflict.</p><br><p><strong> </strong><strong>Which organization provided information on the number of children affected by the conflict in Gaza and the West Bank?</strong></p>", "options": ["<p>UNESCO</p>", "<p>WHO</p>", "<p>UNICEF</p>", "<p>World Bank</p>", "<p>UNHCR</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The passage states that \"UNICEF reported that over 625,000 children in Gaza were unable to attend school during the previous academic year,\" highlighting the organization's role in providing the data on the children affected by the conflict in Gaza and the West Bank.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>Read the given passage carefully and answer the questions that follow. Some words may be highlighted to help you locate the same while answering. </strong></p>\n<p>On September 9, 2024, the United Nations highlighted the dire need for global action to safeguard education in conflict zones, with a particular focus on the Middle East. Marking the International Day to Protect Education from Attack, the UN Secretary-General, António Guterres, emphasized the <strong>devastating </strong>effects of ongoing conflicts on children's education. In war-torn regions like Gaza and the West Bank, many schools remain closed due to violence, significantly disrupting the education of thousands of children.</p>\n<p>UNICEF reported that over 625,000 children in Gaza were unable to attend school during the previous academic year, with an additional 45,000 six-year-olds being prevented from starting their education due to continued conflict. The situation is no less alarming in the West Bank, where the threat of violence and psychological trauma further <strong>hinders </strong>school attendance. This loss of education not only impacts academic learning but also harms children’s mental health and well-being. Guterres stressed that education is fundamental to the fulfillment of human rights and urged international communities to prioritize the protection of students. Adele Khodr, the UNICEF Regional Director for the Middle East and North Africa, echoed this sentiment, calling for urgent global efforts to restore education and support children affected by war.</p>\n<p>The UN’s appeal comes at a critical juncture, as education remains one of the least funded sectors in humanitarian appeals, despite being vital for the future of millions of children. The global community is urged to act to ensure that children in conflict zones can exercise their right to education and build a brighter future amidst the challenges of war. This call to action underscores the need for both immediate humanitarian support and long-term strategies to ensure that education is protected in times of conflict.</p><br><p><strong>What is a key concern raised regarding education in conflict zones?</strong></p>", "options": ["<p>Lack of educational materials</p>", "<p>Political instability affecting school governance</p>", "<p>Low teacher-to-student ratios</p>", "<p>Lack of technological resources</p>", "<p>Insufficient funding for education in humanitarian appeals</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>The passage mentions that despite the importance of education, it remains one of the least funded sectors in humanitarian efforts.</p>\n<p>Therefore, option E is the correct answer.</p>"}, {"question": "<p><strong>Read the given passage carefully and answer the questions that follow. Some words may be highlighted to help you locate the same while answering. </strong></p>\n<p>On September 9, 2024, the United Nations highlighted the dire need for global action to safeguard education in conflict zones, with a particular focus on the Middle East. Marking the International Day to Protect Education from Attack, the UN Secretary-General, António Guterres, emphasized the <strong>devastating </strong>effects of ongoing conflicts on children's education. In war-torn regions like Gaza and the West Bank, many schools remain closed due to violence, significantly disrupting the education of thousands of children.</p>\n<p>UNICEF reported that over 625,000 children in Gaza were unable to attend school during the previous academic year, with an additional 45,000 six-year-olds being prevented from starting their education due to continued conflict. The situation is no less alarming in the West Bank, where the threat of violence and psychological trauma further <strong>hinders </strong>school attendance. This loss of education not only impacts academic learning but also harms children’s mental health and well-being. Guterres stressed that education is fundamental to the fulfillment of human rights and urged international communities to prioritize the protection of students. Adele Khodr, the UNICEF Regional Director for the Middle East and North Africa, echoed this sentiment, calling for urgent global efforts to restore education and support children affected by war.</p>\n<p>The UN’s appeal comes at a critical juncture, as education remains one of the least funded sectors in humanitarian appeals, despite being vital for the future of millions of children. The global community is urged to act to ensure that children in conflict zones can exercise their right to education and build a brighter future amidst the challenges of war. This call to action underscores the need for both immediate humanitarian support and long-term strategies to ensure that education is protected in times of conflict.</p><br><p><strong>Who is the UNICEF Regional Director for the Middle East and North Africa mentioned in the passage?</strong></p>", "options": ["<p>Ant&oacute;nio Guterres</p>", "<p>Mark Lowcock</p>", "<p>Henrietta Fore</p>", "<p>Adele Khodr</p>", "<p>David Beasley</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The passage states that “Adele Khodr, the UNICEF Regional Director for the Middle East and North Africa, echoed this sentiment, calling for urgent global efforts to restore education and support children affected by war.”</p>\n<p>Therefore, option D is the correct answer. </p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Prelims Mastery Quiz 2025 English (Day-94)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Prelims Mastery Quiz 2025 English (Day-94)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

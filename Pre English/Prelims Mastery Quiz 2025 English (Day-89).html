@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Prelims Mastery Quiz 2025 English (Day-89)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>Read the given passage carefully and answer the questions that follow. Some words may be highlighted to help you locate the same while answering. </strong></p>\n<p>A recent report that focused on the current status and outlook for youth employment in India <strong>paints a grim picture</strong> of the country’s widely touted ‘demographic dividend’, which appears set to waste away unless there are immediate and targeted policy interventions. ‘The India Employment Report 2024’, by the Institute for Human Development/International Labour Organisation, posits a bleak outlook for the approximately 7-8 million young people being added to the labour force each year, with youth accounting for almost 83% of India’s unemployed workforce. Even more distressing is that among the unemployed, the proportion of educated young people, those who have had a secondary level education or higher, had almost doubled to 65.7% as of 2022, from 35.2% in 2000. Also, graduates among the youth experienced a nine times greater unemployment rate (29.1%) than young persons who could not read or write (3.4%). These depressing statistics underline both an absence of jobs capable of absorbing educated young people aspiring for better-paying jobs and the shortcomings in the quality of education that are leaving large numbers of educated youth still incapable of qualifying to meet job criteria. Further, wages, after accounting for inflation, have either <strong>stagnated </strong>or witnessed a decline.</p>\n<p>The window for India to leverage its sizeable cohort of youth for wider socio-economic gains is fast closing, with the share of young people forecast to decline to 23% by 2036, from 27% in 2021. As the report’s authors note: “Despite the economy experiencing significant growth, there are still high levels of unemployment and youth disengagement from employment, education, or training. Additionally, many employed youths face poor working conditions despite the economic growth”. </p>\n<p>The Chief Economic Adviser’s hand wringing over the government’s limitations to engender change has to only be juxtaposed against the U.S. Federal Open Market Committee’s primary policy mandate ‘of promoting maximum employment along with stable prices’ to realise intent ultimately holds the key. With the general election process underway, politicians have their task cut out to ensure jobs and the quality of education and training for a technologically evolving economy are <strong>accorded </strong>primacy not just in their campaigns but in policy formulation thereafter.</p><br><p><strong>According to 'The India Employment Report 2024', what is the primary concern regarding youth employment in India?</strong></p>", "options": ["<p>The lack of job opportunities for educated young people</p>", "<p>The declining number of young people entering the labor force</p>", "<p>The disproportionate representation of youth in informal employment</p>", "<p>The insufficient funding allocated for vocational training programs</p>", "<p>The inadequate access to healthcare services for unemployed youth</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>In the passage, it's mentioned that 'The India Employment Report 2024' highlights a bleak outlook for young people being added to the labour force each year, with youth accounting for almost 83% of India’s unemployed workforce. Even more distressing is that among the unemployed, the proportion of educated young people, those who have had a secondary level education or higher, had almost doubled to 65.7% as of 2022, from 35.2% in 2000.” </p>\n<p>Therefore, option A is the correct answer.</p>"}, {"question": "<p><strong>Read the given passage carefully and answer the questions that follow. Some words may be highlighted to help you locate the same while answering. </strong></p>\n<p>A recent report that focused on the current status and outlook for youth employment in India <strong>paints a grim picture</strong> of the country’s widely touted ‘demographic dividend’, which appears set to waste away unless there are immediate and targeted policy interventions. ‘The India Employment Report 2024’, by the Institute for Human Development/International Labour Organisation, posits a bleak outlook for the approximately 7-8 million young people being added to the labour force each year, with youth accounting for almost 83% of India’s unemployed workforce. Even more distressing is that among the unemployed, the proportion of educated young people, those who have had a secondary level education or higher, had almost doubled to 65.7% as of 2022, from 35.2% in 2000. Also, graduates among the youth experienced a nine times greater unemployment rate (29.1%) than young persons who could not read or write (3.4%). These depressing statistics underline both an absence of jobs capable of absorbing educated young people aspiring for better-paying jobs and the shortcomings in the quality of education that are leaving large numbers of educated youth still incapable of qualifying to meet job criteria. Further, wages, after accounting for inflation, have either <strong>stagnated </strong>or witnessed a decline.</p>\n<p>The window for India to leverage its sizeable cohort of youth for wider socio-economic gains is fast closing, with the share of young people forecast to decline to 23% by 2036, from 27% in 2021. As the report’s authors note: “Despite the economy experiencing significant growth, there are still high levels of unemployment and youth disengagement from employment, education, or training. Additionally, many employed youths face poor working conditions despite the economic growth”. </p>\n<p>The Chief Economic Adviser’s hand wringing over the government’s limitations to engender change has to only be juxtaposed against the U.S. Federal Open Market Committee’s primary policy mandate ‘of promoting maximum employment along with stable prices’ to realise intent ultimately holds the key. With the general election process underway, politicians have their task cut out to ensure jobs and the quality of education and training for a technologically evolving economy are <strong>accorded </strong>primacy not just in their campaigns but in policy formulation thereafter.</p><br><p><strong>What is the difference in unemployment rates between graduates and those unable to read or write, as per 'The India Employment Report 2024'?</strong></p>", "options": ["<p>Graduates have 25.7% lower unemployment rate</p>", "<p>Graduates have 32.5% higher unemployment rate</p>", "<p>Graduates have 9 times lower unemployment rate</p>", "<p>Graduates have 9 times higher unemployment rate</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>It is given in the passage that “Even more distressing is that among the unemployed, the proportion of educated young people, those who have had a secondary level education or higher, had almost doubled to 65.7% as of 2022, from 35.2% in 2000. Also, graduates among the youth experienced a nine times greater unemployment rate (29.1%) than young persons who could not read or write (3.4%). ”</p>\n<p>Therefore, option D is the correct answer.</p>"}, {"question": "<p><strong>Read the given passage carefully and answer the questions that follow. Some words may be highlighted to help you locate the same while answering. </strong></p>\n<p>A recent report that focused on the current status and outlook for youth employment in India <strong>paints a grim picture</strong> of the country’s widely touted ‘demographic dividend’, which appears set to waste away unless there are immediate and targeted policy interventions. ‘The India Employment Report 2024’, by the Institute for Human Development/International Labour Organisation, posits a bleak outlook for the approximately 7-8 million young people being added to the labour force each year, with youth accounting for almost 83% of India’s unemployed workforce. Even more distressing is that among the unemployed, the proportion of educated young people, those who have had a secondary level education or higher, had almost doubled to 65.7% as of 2022, from 35.2% in 2000. Also, graduates among the youth experienced a nine times greater unemployment rate (29.1%) than young persons who could not read or write (3.4%). These depressing statistics underline both an absence of jobs capable of absorbing educated young people aspiring for better-paying jobs and the shortcomings in the quality of education that are leaving large numbers of educated youth still incapable of qualifying to meet job criteria. Further, wages, after accounting for inflation, have either <strong>stagnated </strong>or witnessed a decline.</p>\n<p>The window for India to leverage its sizeable cohort of youth for wider socio-economic gains is fast closing, with the share of young people forecast to decline to 23% by 2036, from 27% in 2021. As the report’s authors note: “Despite the economy experiencing significant growth, there are still high levels of unemployment and youth disengagement from employment, education, or training. Additionally, many employed youths face poor working conditions despite the economic growth”. </p>\n<p>The Chief Economic Adviser’s hand wringing over the government’s limitations to engender change has to only be juxtaposed against the U.S. Federal Open Market Committee’s primary policy mandate ‘of promoting maximum employment along with stable prices’ to realise intent ultimately holds the key. With the general election process underway, politicians have their task cut out to ensure jobs and the quality of education and training for a technologically evolving economy are <strong>accorded </strong>primacy not just in their campaigns but in policy formulation thereafter.</p><br><p><strong>Which of the following is TRUE according to the passage?</strong></p>", "options": ["<p>The share of young people is forecast to increase to 27% by 2036</p>", "<p>The share of young people is forecast to decline to 23% by 2036</p>", "<p>The share of young people is forecast to remain unchanged at 30% by 2036</p>", "<p>The share of young people is forecast to decline to 25% by 2030</p>", "<p>The share of young people is forecast to increase to 20% by 2026</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>It is given in the passage that “The window for India to leverage its sizeable cohort of youth for wider socio-economic gains is fast closing, with the share of young people forecast to decline to 23% by 2036, from 27% in 2021. ”</p>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>Read the given passage carefully and answer the questions that follow. Some words may be highlighted to help you locate the same while answering. </strong></p>\n<p>A recent report that focused on the current status and outlook for youth employment in India <strong>paints a grim picture</strong> of the country’s widely touted ‘demographic dividend’, which appears set to waste away unless there are immediate and targeted policy interventions. ‘The India Employment Report 2024’, by the Institute for Human Development/International Labour Organisation, posits a bleak outlook for the approximately 7-8 million young people being added to the labour force each year, with youth accounting for almost 83% of India’s unemployed workforce. Even more distressing is that among the unemployed, the proportion of educated young people, those who have had a secondary level education or higher, had almost doubled to 65.7% as of 2022, from 35.2% in 2000. Also, graduates among the youth experienced a nine times greater unemployment rate (29.1%) than young persons who could not read or write (3.4%). These depressing statistics underline both an absence of jobs capable of absorbing educated young people aspiring for better-paying jobs and the shortcomings in the quality of education that are leaving large numbers of educated youth still incapable of qualifying to meet job criteria. Further, wages, after accounting for inflation, have either <strong>stagnated </strong>or witnessed a decline.</p>\n<p>The window for India to leverage its sizeable cohort of youth for wider socio-economic gains is fast closing, with the share of young people forecast to decline to 23% by 2036, from 27% in 2021. As the report’s authors note: “Despite the economy experiencing significant growth, there are still high levels of unemployment and youth disengagement from employment, education, or training. Additionally, many employed youths face poor working conditions despite the economic growth”. </p>\n<p>The Chief Economic Adviser’s hand wringing over the government’s limitations to engender change has to only be juxtaposed against the U.S. Federal Open Market Committee’s primary policy mandate ‘of promoting maximum employment along with stable prices’ to realise intent ultimately holds the key. With the general election process underway, politicians have their task cut out to ensure jobs and the quality of education and training for a technologically evolving economy are <strong>accorded </strong>primacy not just in their campaigns but in policy formulation thereafter.</p><br><p><strong>What is the primary focus of politicians during the general election process, according to the passage?</strong></p>", "options": ["<p>Ensuring transparency in campaign financing</p>", "<p>Promoting environmental conservation policies</p>", "<p>Prioritizing job creation and quality education</p>", "<p>Advocating for tax cuts for businesses</p>", "<p>Strengthening national defense capabilities</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The passage states that politicians, during the general election process, have the task of ensuring that \"jobs and the quality of education and training for a technologically evolving economy are accorded primacy not just in their campaigns but in policy formulation thereafter.\" </p>\n<p>This indicates that the primary focus for politicians during the election process is to prioritize two main areas: job creation and quality education. They are tasked with giving significant attention to these issues not only in their election campaigns but also in the formulation of policies afterward. </p>\n<p>Therefore, option C is the correct answer.<strong> </strong></p>"}, {"question": "<p><strong>Read the given passage carefully and answer the questions that follow. Some words may be highlighted to help you locate the same while answering. </strong></p>\n<p>A recent report that focused on the current status and outlook for youth employment in India <strong>paints a grim picture</strong> of the country’s widely touted ‘demographic dividend’, which appears set to waste away unless there are immediate and targeted policy interventions. ‘The India Employment Report 2024’, by the Institute for Human Development/International Labour Organisation, posits a bleak outlook for the approximately 7-8 million young people being added to the labour force each year, with youth accounting for almost 83% of India’s unemployed workforce. Even more distressing is that among the unemployed, the proportion of educated young people, those who have had a secondary level education or higher, had almost doubled to 65.7% as of 2022, from 35.2% in 2000. Also, graduates among the youth experienced a nine times greater unemployment rate (29.1%) than young persons who could not read or write (3.4%). These depressing statistics underline both an absence of jobs capable of absorbing educated young people aspiring for better-paying jobs and the shortcomings in the quality of education that are leaving large numbers of educated youth still incapable of qualifying to meet job criteria. Further, wages, after accounting for inflation, have either <strong>stagnated </strong>or witnessed a decline.</p>\n<p>The window for India to leverage its sizeable cohort of youth for wider socio-economic gains is fast closing, with the share of young people forecast to decline to 23% by 2036, from 27% in 2021. As the report’s authors note: “Despite the economy experiencing significant growth, there are still high levels of unemployment and youth disengagement from employment, education, or training. Additionally, many employed youths face poor working conditions despite the economic growth”. </p>\n<p>The Chief Economic Adviser’s hand wringing over the government’s limitations to engender change has to only be juxtaposed against the U.S. Federal Open Market Committee’s primary policy mandate ‘of promoting maximum employment along with stable prices’ to realise intent ultimately holds the key. With the general election process underway, politicians have their task cut out to ensure jobs and the quality of education and training for a technologically evolving economy are <strong>accorded </strong>primacy not just in their campaigns but in policy formulation thereafter.</p><br><p><strong>What does the phrase \"paints a grim picture\" suggest in the context of the passage?</strong></p>", "options": ["<p>It indicates a positive outlook for the situation</p>", "<p>It implies a situation with favourable outcomes</p>", "<p>It implies a situation with mixed results</p>", "<p>It indicates uncertainty about the situation</p>", "<p>It suggests a troubling or negative scenario</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong></p>\n<p>The phrase<strong> \"paints a grim picture\" </strong>is used figuratively to describe a situation that is depicted in a negative, serious, or troubling manner. </p>\n<p>In the context of the passage, the phrase suggests that the situation being described, which likely includes aspects such as high levels of unemployment, poor working conditions, and youth disengagement despite economic growth, is portrayed in a negative light. </p>\n<p>Therefore, option E is the correct answer.<strong> </strong></p>"}, {"question": "<p><strong>In the following questions, two columns are given containing three sentences/phrases each. In the first column, sentences/phrases are A, B and C and in the second column, the sentences/phrases are D, E and F. A sentence/phrase from the first column may or may not connect with another sentence/phrase from the second column. From the given options, choose the most appropriate combination using which the sentences/phrases can be joined to form a grammatically and contextually correct sentence. If none of the combinations is correct, choose option E as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/1723793784100.png\" title=\"59.PNG\"/></p>", "options": ["<p>Only A-D</p>", "<p>Only B-F</p>", "<p>C-D and B-F</p>", "<p>A-F and C-E</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>The sentences formed are: C-D and B-F</strong></p>\n<ul>\n<li>The International Monetary Fund (IMF) recently downgraded its forecast for global economic growth in 2024, citing factors like the war in Ukraine and rising inflation.</li>\n<li>India's space agency, ISRO, successfully launched its EOS-06 ocean observation satellite on March 26th, 2024.</li>\n</ul>\n<p>Therefore, option C is the correct answer. </p>"}, {"question": "<p><strong>In the following questions, two columns are given containing three sentences/phrases each. In the first column, sentences/phrases are A, B and C and in the second column, the sentences/phrases are D, E and F. A sentence/phrase from the first column may or may not connect with another sentence/phrase from the second column. From the given options, choose the most appropriate combination using which the sentences/phrases can be joined to form a grammatically and contextually correct sentence. If none of the combinations is correct, choose option E as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172379386342.png\" title=\"60.PNG\"/></p>", "options": ["<p>Only A-D&nbsp;</p>", "<p>Only B-F</p>", "<p>Only C-D</p>", "<p>A-F and C-E</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>The sentence formed is: Only A-D </strong></p>\n<ul>\n<li>The Union government introduced stricter regulations on disposable plastic products, making it harder for manufacturers to mislead consumers with \"biodegradable\" labels.</li>\n</ul>\n<p>Therefore, option A is the correct answer. </p>"}, {"question": "<p><strong>In the following questions, two columns are given containing three sentences/phrases each. In the first column, sentences/phrases are A, B and C and in the second column, the sentences/phrases are D, E and F. A sentence/phrase from the first column may or may not connect with another sentence/phrase from the second column. From the given options, choose the most appropriate combination using which the sentences/phrases can be joined to form a grammatically and contextually correct sentence. If none of the combinations is correct, choose option E as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172379392261.png\" title=\"61.PNG\"/></p>", "options": ["<p>Only A-D</p>", "<p>C-D and B-E</p>", "<p>Only B-F&nbsp;</p>", "<p>A-F and C-E</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p><strong>The sentences formed are: C-D and B-E</strong></p>\n<ul>\n<li>The Indian government announced a plan to increase the minimum support price (MSP) for crops in the upcoming Kharif season to support farmers' income.</li>\n<li>Negotiations for a new free trade agreement between India and the United Kingdom are ongoing, with potential benefits for both economies.</li>\n</ul>\n<p>Therefore, option B is the correct answer. </p>"}, {"question": "<p><strong>In the following questions, two columns are given containing three sentences/phrases each. In the first column, sentences/phrases are A, B and C and in the second column, the sentences/phrases are D, E and F. A sentence/phrase from the first column may or may not connect with another sentence/phrase from the second column. From the given options, choose the most appropriate combination using which the sentences/phrases can be joined to form a grammatically and contextually correct sentence. If none of the combinations is correct, choose option E as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172379397831.png\" title=\"62.PNG\"/></p>", "options": ["<p>B-F and A-E</p>", "<p>Only A-D</p>", "<p>Only C-D</p>", "<p>A-F and C-E</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p><strong>The sentence formed is: Only C-D</strong></p>\n<ul>\n<li>India's digital payments platform, UPI, is seeing a surge in adoption, with record-breaking transaction volumes reported recently.</li>\n</ul>\n<p>Therefore, option C is the correct answer. </p>"}, {"question": "<p><strong>In the following questions, two columns are given containing three sentences/phrases each. In the first column, sentences/phrases are A, B and C and in the second column, the sentences/phrases are D, E and F. A sentence/phrase from the first column may or may not connect with another sentence/phrase from the second column. From the given options, choose the most appropriate combination using which the sentences/phrases can be joined to form a grammatically and contextually correct sentence. If none of the combinations is correct, choose option E as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/172379402589.png\" title=\"63.PNG\"/></p>", "options": ["<p>Only A-D&nbsp;</p>", "<p>Only B-F</p>", "<p>Only C-D</p>", "<p>A-D and C-E</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p><strong>The sentences formed are: A-D and C-E</strong></p>\n<ul>\n<li>Scientists achieved a breakthrough in nuclear fusion research, raising hopes for a clean and sustainable energy source in the future.</li>\n<li>The Paris Agreement on climate change remains a key focus for international cooperation, with discussions on stricter emission reduction targets.</li>\n</ul>\n<p>Therefore, option D is the correct answer. </p>"}, {"question": "<p><strong>Read the following passage and answer the questions as directed. There are some blanks given in the passage. You have to find the appropriate word for the given blank and mark the corresponding option as your answer.</strong></p>\n<p>The COVID-19 pandemic has not only put immense pressure on healthcare systems but has also revealed significant gaps in public health preparedness. One of the major developments has been the widespread adoption of <strong>_____ (A) ______</strong> technologies, which have allowed for rapid dissemination of information and virtual healthcare solutions. However, the rapid shift to these platforms has also raised questions about the<strong> _____ (B) ______</strong> of data protection and privacy in digital health services. The vulnerability of health systems to <strong>_____ (C) ______</strong> attacks has intensified, as cybercriminals target hospitals and health organizations that rely heavily on digital infrastructure.</p>\n<p>Furthermore, the pandemic has exposed the inadequacy of many healthcare systems to respond effectively to global health crises, highlighting the need for improved <strong>_____ (D) ______</strong> among nations in terms of resource sharing and knowledge exchange. The emergence of new variants of the virus has further complicated efforts to control its spread, underscoring the urgency for <strong>_____ (E) ______ </strong>action and the formulation of comprehensive global strategies to prevent future pandemics.</p><br><p><strong>Which of the following is appropriate in the blank (A)?</strong></p>", "options": ["<p>Conventional</p>", "<p>Innovative</p>", "<p>Anachronistic</p>", "<p>Obsolete</p>", "<p>None of the above</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong><br/>\"Innovative\" is appropriate because it reflects the rapid adoption of new technologies during the pandemic, especially in the healthcare sector.</p>"}, {"question": "<p><strong>Read the following passage and answer the questions as directed. There are some blanks given in the passage. You have to find the appropriate word for the given blank and mark the corresponding option as your answer.</strong></p>\n<p>The COVID-19 pandemic has not only put immense pressure on healthcare systems but has also revealed significant gaps in public health preparedness. One of the major developments has been the widespread adoption of <strong>_____ (A) ______</strong> technologies, which have allowed for rapid dissemination of information and virtual healthcare solutions. However, the rapid shift to these platforms has also raised questions about the<strong> _____ (B) ______</strong> of data protection and privacy in digital health services. The vulnerability of health systems to <strong>_____ (C) ______</strong> attacks has intensified, as cybercriminals target hospitals and health organizations that rely heavily on digital infrastructure.</p>\n<p>Furthermore, the pandemic has exposed the inadequacy of many healthcare systems to respond effectively to global health crises, highlighting the need for improved <strong>_____ (D) ______</strong> among nations in terms of resource sharing and knowledge exchange. The emergence of new variants of the virus has further complicated efforts to control its spread, underscoring the urgency for <strong>_____ (E) ______ </strong>action and the formulation of comprehensive global strategies to prevent future pandemics.</p><br><p><strong>Which of the following is appropriate in the blank (B)?</strong></p>", "options": ["<p>Integrity</p>", "<p>Transparency</p>", "<p>Viability</p>", "<p>Security</p>", "<p>None of the above</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong><br/>\"Security\" is the best choice as it directly relates to the concerns over data protection and privacy in the context of digital health services.</p>"}, {"question": "<p><strong>Read the following passage and answer the questions as directed. There are some blanks given in the passage. You have to find the appropriate word for the given blank and mark the corresponding option as your answer.</strong></p>\n<p>The COVID-19 pandemic has not only put immense pressure on healthcare systems but has also revealed significant gaps in public health preparedness. One of the major developments has been the widespread adoption of <strong>_____ (A) ______</strong> technologies, which have allowed for rapid dissemination of information and virtual healthcare solutions. However, the rapid shift to these platforms has also raised questions about the<strong> _____ (B) ______</strong> of data protection and privacy in digital health services. The vulnerability of health systems to <strong>_____ (C) ______</strong> attacks has intensified, as cybercriminals target hospitals and health organizations that rely heavily on digital infrastructure.</p>\n<p>Furthermore, the pandemic has exposed the inadequacy of many healthcare systems to respond effectively to global health crises, highlighting the need for improved <strong>_____ (D) ______</strong> among nations in terms of resource sharing and knowledge exchange. The emergence of new variants of the virus has further complicated efforts to control its spread, underscoring the urgency for <strong>_____ (E) ______ </strong>action and the formulation of comprehensive global strategies to prevent future pandemics.</p><br><p><strong>Which of the following is appropriate in the blank (C)?</strong></p>", "options": ["<p>Humanitarian</p>", "<p>Financial</p>", "<p>Cyber</p>", "<p>Social</p>", "<p>None of the above</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong><br/>\"Cyber\" attacks are a direct threat to the digital infrastructure of healthcare systems, especially during the widespread use of online platforms during the pandemic.</p>"}, {"question": "<p><strong>Read the following passage and answer the questions as directed. There are some blanks given in the passage. You have to find the appropriate word for the given blank and mark the corresponding option as your answer.</strong></p>\n<p>The COVID-19 pandemic has not only put immense pressure on healthcare systems but has also revealed significant gaps in public health preparedness. One of the major developments has been the widespread adoption of <strong>_____ (A) ______</strong> technologies, which have allowed for rapid dissemination of information and virtual healthcare solutions. However, the rapid shift to these platforms has also raised questions about the<strong> _____ (B) ______</strong> of data protection and privacy in digital health services. The vulnerability of health systems to <strong>_____ (C) ______</strong> attacks has intensified, as cybercriminals target hospitals and health organizations that rely heavily on digital infrastructure.</p>\n<p>Furthermore, the pandemic has exposed the inadequacy of many healthcare systems to respond effectively to global health crises, highlighting the need for improved <strong>_____ (D) ______</strong> among nations in terms of resource sharing and knowledge exchange. The emergence of new variants of the virus has further complicated efforts to control its spread, underscoring the urgency for <strong>_____ (E) ______ </strong>action and the formulation of comprehensive global strategies to prevent future pandemics.</p><br><p><strong>Which of the following is appropriate in the blank (D)?</strong></p>", "options": ["<p>Isolation</p>", "<p>Coordination</p>", "<p>Fragmentation</p>", "<p>Rivalry</p>", "<p>None of the above</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong><br/>\"Coordination\" fits the context of improved collaboration among countries in sharing resources and knowledge to manage global health crises effectively.</p>"}, {"question": "<p><strong>Read the following passage and answer the questions as directed. There are some blanks given in the passage. You have to find the appropriate word for the given blank and mark the corresponding option as your answer.</strong></p>\n<p>The COVID-19 pandemic has not only put immense pressure on healthcare systems but has also revealed significant gaps in public health preparedness. One of the major developments has been the widespread adoption of <strong>_____ (A) ______</strong> technologies, which have allowed for rapid dissemination of information and virtual healthcare solutions. However, the rapid shift to these platforms has also raised questions about the<strong> _____ (B) ______</strong> of data protection and privacy in digital health services. The vulnerability of health systems to <strong>_____ (C) ______</strong> attacks has intensified, as cybercriminals target hospitals and health organizations that rely heavily on digital infrastructure.</p>\n<p>Furthermore, the pandemic has exposed the inadequacy of many healthcare systems to respond effectively to global health crises, highlighting the need for improved <strong>_____ (D) ______</strong> among nations in terms of resource sharing and knowledge exchange. The emergence of new variants of the virus has further complicated efforts to control its spread, underscoring the urgency for <strong>_____ (E) ______ </strong>action and the formulation of comprehensive global strategies to prevent future pandemics.</p><br><p><strong>Which of the following is appropriate in the blank (E)?</strong></p>", "options": ["<p>Incremental</p>", "<p>Delayed</p>", "<p>Immediate</p>", "<p>Hesitant</p>", "<p>None of the above</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong><br/>\"Immediate\" action is required to formulate global strategies and prevent future pandemics, especially in light of the rapidly evolving nature of viral outbreaks.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Prelims Mastery Quiz 2025 English (Day-89)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Prelims Mastery Quiz 2025 English (Day-89)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

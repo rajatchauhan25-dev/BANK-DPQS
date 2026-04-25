@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Prelims Mastery Quiz 2025 English (Day-81)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>In the following questions, two columns are given, containing three phrases each. A phrase from the first column may or may not connect with a phrase from the second column to make a grammatically and contextually correct sentence. There are five options, four of which display the sequence(s) in which the phrases can be joined to form a correct sentence. If none of the phrases makes a correct sentence, mark 'None of these' as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/173026878052.png\" title=\"1.png\"/></p>", "options": ["<p>Only A-D</p>", "<p>Both A-D and B-F</p>", "<p>Both B-E and C-F</p>", "<p>Both B-F and C-E</p>", "<p>All A-D, B-F and C-E</p>"], "correctIndex": 4, "solution": "<p><strong>Answer</strong><strong>: E</strong></p>\n<p>When combining these two statements <strong>A-D:</strong> \"The credit approval process in banks involves assessing the borrower’s financial history, income, and collateral to determine loan eligibility.\" This forms a coherent sentence describing how banks evaluate a borrower's financial standing before approving a loan.</p>\n<p>When combining these two statements <strong>B-F: </strong>\"Secured loans provided by banks require borrowers to pledge assets as collateral to reduce the bank’s credit risk.\" This describes the requirements for secured loans, where borrowers must pledge assets to mitigate the bank’s risk.</p>\n<p>When combining these two statements <strong>C-E:</strong> \"Bank credit committees review and approve larger loans to ensure that they meet the institution’s credit policy guidelines.\" This sentence describes how bank credit committees operate to ensure compliance with internal guidelines before approving larger loans.</p>\n<p>The other combinations do not form a coherent sentence with a clear connection between the ideas presented in Column I and Column II.</p>"}, {"question": "<p><strong>In the following questions, two columns are given, containing three phrases each. A phrase from the first column may or may not connect with a phrase from the second column to make a grammatically and contextually correct sentence. There are five options, four of which display the sequence(s) in which the phrases can be joined to form a correct sentence. If none of the phrases makes a correct sentence, mark 'None of these' as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/173026897229.png\" title=\"2.png\"/></p>", "options": ["<p>Only A-D</p>", "<p>Both B-D and C-F</p>", "<p>Both A-E and B-D</p>", "<p>Both B-E and C-F</p>", "<p>All A-E, B-D and C-F</p>"], "correctIndex": 1, "solution": "<p><strong>Answer</strong><strong>: B</strong></p>\n<p>When combining these two statements <strong>B-D: </strong>\"Credit scoring models used by banks are designed to quantify a borrower’s likelihood of defaulting on a loan based on historical data.\" This sentence explains the purpose of credit scoring models used by banks.</p>\n<p>When combining these two statements <strong>C-F:</strong> \"Loan restructuring options are offered by banks to help borrowers facing financial difficulties adjust the terms of their repayment.\" This sentence describes how banks assist borrowers through loan restructuring.</p>\n<p>The other combinations do not form a coherent sentence with a clear connection between the ideas presented in Column I and Column II.</p>"}, {"question": "<p><strong>In the following questions, two columns are given, containing three phrases each. A phrase from the first column may or may not connect with a phrase from the second column to make a grammatically and contextually correct sentence. There are five options, four of which display the sequence(s) in which the phrases can be joined to form a correct sentence. If none of the phrases makes a correct sentence, mark 'None of these' as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/173026908584.png\" title=\"3.png\"/></p>", "options": ["<p>Only A-E</p>", "<p>Both A-E and B-D</p>", "<p>Both B-D and C-F</p>", "<p>Both A-E and C-F</p>", "<p>All A-E, B-D and C-F</p>"], "correctIndex": 0, "solution": "<p><strong>Answer</strong><strong>: A</strong></p>\n<p>When combining these two statements <strong>A-E:</strong> \"The credit-to-deposit ratio measures the amount of loans disbursed by a bank compared to the deposits it holds.\" The credit-to-deposit ratio is a financial metric that assesses the balance between loans a bank gives out and the deposits it holds. A higher ratio indicates a higher proportion of loans compared to deposits.</p>\n<p>The other combinations do not form a coherent sentence with a clear connection between the ideas presented in Column I and Column II.</p>"}, {"question": "<p><strong>In the following questions, two columns are given, containing three phrases each. A phrase from the first column may or may not connect with a phrase from the second column to make a grammatically and contextually correct sentence. There are five options, four of which display the sequence(s) in which the phrases can be joined to form a correct sentence. If none of the phrases makes a correct sentence, mark 'None of these' as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/173026919621.png\" title=\"4.png\"/></p>", "options": ["<p>Only A-E</p>", "<p>Both A-D and B-F</p>", "<p>Both A-E and C-D</p>", "<p>Both B-E and C-F</p>", "<p>All A-E, B-D and C-F</p>"], "correctIndex": 2, "solution": "<p><strong>Answer</strong><strong>: C</strong></p>\n<p>When combining these two statements <strong>A-E:</strong> \"Banks assess the borrower’s debt-to-income ratio to ensure that the borrower can manage additional debt without financial strain.\" This sentence clearly explains the rationale for assessing the debt-to-income ratio.</p>\n<p>When combining these two statements <strong>C-D:</strong> \"Credit limits in revolving credit accounts allow borrowers to access a set amount of funds repeatedly, as long as they make timely payments.\" This sentence accurately describes how revolving credit accounts function.</p>\n<p>The other combinations do not form a coherent sentence with a clear connection between the ideas presented in Column I and Column II.</p>"}, {"question": "<p><strong>In the following questions, two columns are given, containing three phrases each. A phrase from the first column may or may not connect with a phrase from the second column to make a grammatically and contextually correct sentence. There are five options, four of which display the sequence(s) in which the phrases can be joined to form a correct sentence. If none of the phrases makes a correct sentence, mark 'None of these' as your answer.</strong></p><br><p><img alt=\"\" class=\"imagepopup\" loading=\"lazy\" src=\"https://cdn.guidely.in/editor/practiceMockQuestions/173026930735.png\" title=\"5.png\"/></p>", "options": ["<p>Only A-E</p>", "<p>Both B-D and C-F</p>", "<p>Both A-E and B-F</p>", "<p>Both B-D and C-E</p>", "<p>All A-E, B-D and C-F</p>"], "correctIndex": 0, "solution": "<p><strong>Answer</strong><strong>: A</strong></p>\n<p>When combining these two statements <strong>A-E: </strong>\"Banks issue personal lines of credit as a flexible borrowing option that allows individuals to draw funds as needed, up to a pre-approved limit.\" This sentence effectively describes the nature of personal lines of credit, highlighting their flexibility and the mechanism of drawing funds.</p>\n<p>The other combinations do not form a coherent sentence with a clear connection between the ideas presented in Column I and Column II.</p>"}, {"question": "<p><strong>A passage is given below with five</strong><strong> blanks labelled (A-E). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>Climate change is one of the most pressing challenges facing humanity today. The rising global temperatures are <strong>(A) ____________</strong> extreme weather events such as hurricanes, heatwaves, and droughts. These events not only pose risks to human lives but also threaten ecosystems and <strong>(B) ____________ </strong>agriculture. Rising sea levels are leading to coastal erosion and the loss of <strong>(C) ____________</strong> habitats, impacting marine biodiversity.</p>\n<p>Addressing climate change requires collective action at a global scale. Countries must commit to reducing greenhouse gas emissions and transitioning to renewable energy sources to mitigate the <strong>(D) ____________</strong> impact of climate change. Additionally, investing in climate resilience measures is crucial to adapt to the changes that are already <strong>(E) ____________.</strong></p><br><p><strong>Which word comes in the blank labelled A?</strong></p>", "options": ["<p>resulting</p>", "<p>decreasing</p>", "<p>expanding</p>", "<p>containing</p>", "<p>preventing</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>\"<strong>Resulting</strong>\" is appropriate as it indicates that rising global temperatures lead to or cause extreme weather events.</p>\n<p>Therefore, option A is the correct answer.</p>"}, {"question": "<p><strong>A passage is given below with five</strong><strong> blanks labelled (A-E). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>Climate change is one of the most pressing challenges facing humanity today. The rising global temperatures are <strong>(A) ____________</strong> extreme weather events such as hurricanes, heatwaves, and droughts. These events not only pose risks to human lives but also threaten ecosystems and <strong>(B) ____________ </strong>agriculture. Rising sea levels are leading to coastal erosion and the loss of <strong>(C) ____________</strong> habitats, impacting marine biodiversity.</p>\n<p>Addressing climate change requires collective action at a global scale. Countries must commit to reducing greenhouse gas emissions and transitioning to renewable energy sources to mitigate the <strong>(D) ____________</strong> impact of climate change. Additionally, investing in climate resilience measures is crucial to adapt to the changes that are already <strong>(E) ____________.</strong></p><br><p><strong>Which word comes in the blank labelled B?</strong></p>", "options": ["<p>enhance</p>", "<p>impair</p>", "<p>improve</p>", "<p>damage</p>", "<p>sustain</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>\"<strong>Damage</strong>\" fits the context as extreme weather events threaten agriculture and cause harm to ecosystems.</p>\n<p>Therefore, option D is the correct answer.</p>"}, {"question": "<p><strong>A passage is given below with five</strong><strong> blanks labelled (A-E). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>Climate change is one of the most pressing challenges facing humanity today. The rising global temperatures are <strong>(A) ____________</strong> extreme weather events such as hurricanes, heatwaves, and droughts. These events not only pose risks to human lives but also threaten ecosystems and <strong>(B) ____________ </strong>agriculture. Rising sea levels are leading to coastal erosion and the loss of <strong>(C) ____________</strong> habitats, impacting marine biodiversity.</p>\n<p>Addressing climate change requires collective action at a global scale. Countries must commit to reducing greenhouse gas emissions and transitioning to renewable energy sources to mitigate the <strong>(D) ____________</strong> impact of climate change. Additionally, investing in climate resilience measures is crucial to adapt to the changes that are already <strong>(E) ____________.</strong></p><br><p><strong>Which word comes in the blank labelled C?</strong></p>", "options": ["<p>urban</p>", "<p>terrestrial</p>", "<p>aquatic</p>", "<p>desert</p>", "<p>forest</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>\"<strong>Aquatic</strong>\" is the correct word as it refers to habitats in oceans and other water bodies affected by rising sea levels.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>A passage is given below with five</strong><strong> blanks labelled (A-E). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>Climate change is one of the most pressing challenges facing humanity today. The rising global temperatures are <strong>(A) ____________</strong> extreme weather events such as hurricanes, heatwaves, and droughts. These events not only pose risks to human lives but also threaten ecosystems and <strong>(B) ____________ </strong>agriculture. Rising sea levels are leading to coastal erosion and the loss of <strong>(C) ____________</strong> habitats, impacting marine biodiversity.</p>\n<p>Addressing climate change requires collective action at a global scale. Countries must commit to reducing greenhouse gas emissions and transitioning to renewable energy sources to mitigate the <strong>(D) ____________</strong> impact of climate change. Additionally, investing in climate resilience measures is crucial to adapt to the changes that are already <strong>(E) ____________.</strong></p><br><p><strong>Which word comes in the blank labelled D?</strong></p>", "options": ["<p>detrimental</p>", "<p>beneficial</p>", "<p>optimistic</p>", "<p>stable</p>", "<p>complex</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>\"<strong>Detrimental</strong>\" fits the context as it describes the harmful impact of climate change that needs to be mitigated.</p>\n<p>Therefore, option A is the correct answer.</p>"}, {"question": "<p><strong>A passage is given below with five</strong><strong> blanks labelled (A-E). Below the passage, five options are given for each blank. Choose the word that fits each blank appropriately in the context of the passage, and mark the corresponding answer.</strong></p>\n<p>Climate change is one of the most pressing challenges facing humanity today. The rising global temperatures are <strong>(A) ____________</strong> extreme weather events such as hurricanes, heatwaves, and droughts. These events not only pose risks to human lives but also threaten ecosystems and <strong>(B) ____________ </strong>agriculture. Rising sea levels are leading to coastal erosion and the loss of <strong>(C) ____________</strong> habitats, impacting marine biodiversity.</p>\n<p>Addressing climate change requires collective action at a global scale. Countries must commit to reducing greenhouse gas emissions and transitioning to renewable energy sources to mitigate the <strong>(D) ____________</strong> impact of climate change. Additionally, investing in climate resilience measures is crucial to adapt to the changes that are already <strong>(E) ____________.</strong></p><br><p><strong>Which word comes in the blank labelled E?</strong></p>", "options": ["<p>happening</p>", "<p>reducing</p>", "<p>reversing</p>", "<p>challenging</p>", "<p>abandoning</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>\"<strong>Happening</strong>\" is appropriate as it describes the current and ongoing changes due to climate change that need adaptation measures.</p>\n<p>Therefore, option A is the correct answer.</p>"}, {"question": "<p><strong>Read the given passage carefully and answer the questions that follow. Some words may be highlighted to help you locate the same while answering.</strong></p>\n<p>The Karnataka water crisis has affected more than 7,000 villages, 1,100 wards, and 220 talukas thus far. The problem encompasses Mandya and Mysuru districts, where a major Cauvery river watershed and the Krishnaraja Sagar dam are located, and both important sources of water to Bengaluru. While the capital has hogged the headlines, the effects of the crisis are wider. Reports have suggested that the distal cause is the ‘insufficient’ rainfall last year, following the surplus in 2022, and the resulting under-‘replenishment’ of the Cauvery. Erratic rainfall is not new to Karnataka. A Coffee Agro-forestry Network (CAFNET) project, a decade ago, assessed 60 years of data and found the rainy season over Kodagu had shrunk by two weeks in three decades while annual rainfall seemed to undulate in a 12-14-year cycle. Yet, the crisis now has come as a surprise thanks to Bengaluru’s lack of preparation, a travesty for being one of India’s wealthiest urban municipalities and home to many research institutions. Bengaluru consumes roughly 1,400 million litres a day each from the Cauvery and groundwater reserves. The groundwater recharge rate is much lower while the Cauvery’s was compromised by last year’s ‘deficient’ rain. These are deficits only relative to Bengaluru’s demand. The situation is worse further away from the city’s centre. This is ironic because these areas do not receive piped water from the Cauvery and depend on groundwater and water tankers, whereas the city was engineered for centuries until the 19th to move away from water from distant sources and towards its surfeit of lakes. Seasonal lakes have since <strong>dwindled</strong>, while perennial lakes have been strangled by concretisation and sewage.</p>\n<p>Climate change is a crisis of time. It precipitates non-linear changes that lead to disproportionate, and sometimes irreversible, outcomes, forcing underprepared governments to mount rapid responses to forces that have been festering for decades. Even if the erratic rainfall is unrelated to climate change, the phenomenon only promises more unpredictability. In this regard, Bengaluru, and most Indian cities, will achieve little when they mount stopgap measures in the event of a crisis and drop the long-term view once the crisis has ended. Rapid growth, such as Bengaluru has had this century, and short-termism cannot coexist. There is a need for bipartisan solutions that <strong>transcend </strong>the change in government every five years; a circular water economy that maximises the utility of every litre, reducing the city’s dependence on external sources; and, not to forget, a clean and healthy Cauvery.</p><br><p><strong>What is highlighted as a contributing factor to the water crisis in Karnataka, particularly in Bengaluru?</strong></p>", "options": ["<p>Insufficient infrastructure development in rural areas</p>", "<p>Surplus rainfall in the previous year</p>", "<p>Historical engineering practices to move away from distant water sources</p>", "<p>Excessive reliance on groundwater reserves</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The passage highlights excessive reliance on groundwater reserves as a contributing factor to the water crisis in Karnataka, particularly in Bengaluru. It mentions that Bengaluru consumes a significant amount of water from both the Cauvery river and groundwater reserves, with a recharge rate much lower than its consumption rate. Additionally, last year's deficient rainfall further compromised the availability of water from the Cauvery. This excessive reliance on groundwater, coupled with reduced surface water availability, exacerbates the water crisis in the region.</p>\n<p>Therefore, option D is the correct answer.</p>"}, {"question": "<p><strong>Read the given passage carefully and answer the questions that follow. Some words may be highlighted to help you locate the same while answering.</strong></p>\n<p>The Karnataka water crisis has affected more than 7,000 villages, 1,100 wards, and 220 talukas thus far. The problem encompasses Mandya and Mysuru districts, where a major Cauvery river watershed and the Krishnaraja Sagar dam are located, and both important sources of water to Bengaluru. While the capital has hogged the headlines, the effects of the crisis are wider. Reports have suggested that the distal cause is the ‘insufficient’ rainfall last year, following the surplus in 2022, and the resulting under-‘replenishment’ of the Cauvery. Erratic rainfall is not new to Karnataka. A Coffee Agro-forestry Network (CAFNET) project, a decade ago, assessed 60 years of data and found the rainy season over Kodagu had shrunk by two weeks in three decades while annual rainfall seemed to undulate in a 12-14-year cycle. Yet, the crisis now has come as a surprise thanks to Bengaluru’s lack of preparation, a travesty for being one of India’s wealthiest urban municipalities and home to many research institutions. Bengaluru consumes roughly 1,400 million litres a day each from the Cauvery and groundwater reserves. The groundwater recharge rate is much lower while the Cauvery’s was compromised by last year’s ‘deficient’ rain. These are deficits only relative to Bengaluru’s demand. The situation is worse further away from the city’s centre. This is ironic because these areas do not receive piped water from the Cauvery and depend on groundwater and water tankers, whereas the city was engineered for centuries until the 19th to move away from water from distant sources and towards its surfeit of lakes. Seasonal lakes have since <strong>dwindled</strong>, while perennial lakes have been strangled by concretisation and sewage.</p>\n<p>Climate change is a crisis of time. It precipitates non-linear changes that lead to disproportionate, and sometimes irreversible, outcomes, forcing underprepared governments to mount rapid responses to forces that have been festering for decades. Even if the erratic rainfall is unrelated to climate change, the phenomenon only promises more unpredictability. In this regard, Bengaluru, and most Indian cities, will achieve little when they mount stopgap measures in the event of a crisis and drop the long-term view once the crisis has ended. Rapid growth, such as Bengaluru has had this century, and short-termism cannot coexist. There is a need for bipartisan solutions that <strong>transcend </strong>the change in government every five years; a circular water economy that maximises the utility of every litre, reducing the city’s dependence on external sources; and, not to forget, a clean and healthy Cauvery.</p><br><p><strong>Which statement accurately describes the findings of the Coffee Agro-forestry Network (CAFNET) project?</strong></p>", "options": ["<p>The rainy season in Kodagu has consistently increased over the past six decades</p>", "<p>Annual rainfall in Kodagu has remained stable without any fluctuations</p>", "<p>The duration of the rainy season in Kodagu has decreased by two weeks in three decades</p>", "<p>Kodagu experiences irregular rainfall patterns with no discernible trends over time</p>", "<p>The rainy season in Kodagu has lengthened by two weeks every decade</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The passage states that the Coffee Agro-forestry Network (CAFNET) project assessed 60 years of data and found that the rainy season over Kodagu had shrunk by two weeks over the course of three decades. </p>\n<p>This means that over the past thirty years, the duration of the rainy season in Kodagu has decreased by two weeks compared to previous decades. This finding highlights a significant change in the weather pattern of Kodagu, indicating a shorter duration of rainfall during the rainy season over time.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>Read the given passage carefully and answer the questions that follow. Some words may be highlighted to help you locate the same while answering.</strong></p>\n<p>The Karnataka water crisis has affected more than 7,000 villages, 1,100 wards, and 220 talukas thus far. The problem encompasses Mandya and Mysuru districts, where a major Cauvery river watershed and the Krishnaraja Sagar dam are located, and both important sources of water to Bengaluru. While the capital has hogged the headlines, the effects of the crisis are wider. Reports have suggested that the distal cause is the ‘insufficient’ rainfall last year, following the surplus in 2022, and the resulting under-‘replenishment’ of the Cauvery. Erratic rainfall is not new to Karnataka. A Coffee Agro-forestry Network (CAFNET) project, a decade ago, assessed 60 years of data and found the rainy season over Kodagu had shrunk by two weeks in three decades while annual rainfall seemed to undulate in a 12-14-year cycle. Yet, the crisis now has come as a surprise thanks to Bengaluru’s lack of preparation, a travesty for being one of India’s wealthiest urban municipalities and home to many research institutions. Bengaluru consumes roughly 1,400 million litres a day each from the Cauvery and groundwater reserves. The groundwater recharge rate is much lower while the Cauvery’s was compromised by last year’s ‘deficient’ rain. These are deficits only relative to Bengaluru’s demand. The situation is worse further away from the city’s centre. This is ironic because these areas do not receive piped water from the Cauvery and depend on groundwater and water tankers, whereas the city was engineered for centuries until the 19th to move away from water from distant sources and towards its surfeit of lakes. Seasonal lakes have since <strong>dwindled</strong>, while perennial lakes have been strangled by concretisation and sewage.</p>\n<p>Climate change is a crisis of time. It precipitates non-linear changes that lead to disproportionate, and sometimes irreversible, outcomes, forcing underprepared governments to mount rapid responses to forces that have been festering for decades. Even if the erratic rainfall is unrelated to climate change, the phenomenon only promises more unpredictability. In this regard, Bengaluru, and most Indian cities, will achieve little when they mount stopgap measures in the event of a crisis and drop the long-term view once the crisis has ended. Rapid growth, such as Bengaluru has had this century, and short-termism cannot coexist. There is a need for bipartisan solutions that <strong>transcend </strong>the change in government every five years; a circular water economy that maximises the utility of every litre, reducing the city’s dependence on external sources; and, not to forget, a clean and healthy Cauvery.</p><br><p><strong>What aspect is highlighted for addressing climate change and water management in Bengaluru, according to the passage?</strong></p>", "options": ["<p>Adopting bipartisan solutions and long-term planning</p>", "<p>Prioritizing rapid economic growth over long-term sustainability</p>", "<p>Continuously relying on external sources for water supply</p>", "<p>Implementing short-term measures to combat immediate crises</p>", "<p>Neglecting the health of the Cauvery river</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The passage emphasizes the importance of adopting bipartisan solutions and long-term planning to address the impact of climate change and water management issues in Bengaluru. </p>\n<p>This means that instead of short-term measures and focusing solely on immediate crises, there is a need for collaborative efforts and strategic planning that transcend changes in government and prioritize long-term sustainability.</p>\n<p>Therefore, option A is the correct answer.</p>"}, {"question": "<p><strong>Read the given passage carefully and answer the questions that follow. Some words may be highlighted to help you locate the same while answering.</strong></p>\n<p>The Karnataka water crisis has affected more than 7,000 villages, 1,100 wards, and 220 talukas thus far. The problem encompasses Mandya and Mysuru districts, where a major Cauvery river watershed and the Krishnaraja Sagar dam are located, and both important sources of water to Bengaluru. While the capital has hogged the headlines, the effects of the crisis are wider. Reports have suggested that the distal cause is the ‘insufficient’ rainfall last year, following the surplus in 2022, and the resulting under-‘replenishment’ of the Cauvery. Erratic rainfall is not new to Karnataka. A Coffee Agro-forestry Network (CAFNET) project, a decade ago, assessed 60 years of data and found the rainy season over Kodagu had shrunk by two weeks in three decades while annual rainfall seemed to undulate in a 12-14-year cycle. Yet, the crisis now has come as a surprise thanks to Bengaluru’s lack of preparation, a travesty for being one of India’s wealthiest urban municipalities and home to many research institutions. Bengaluru consumes roughly 1,400 million litres a day each from the Cauvery and groundwater reserves. The groundwater recharge rate is much lower while the Cauvery’s was compromised by last year’s ‘deficient’ rain. These are deficits only relative to Bengaluru’s demand. The situation is worse further away from the city’s centre. This is ironic because these areas do not receive piped water from the Cauvery and depend on groundwater and water tankers, whereas the city was engineered for centuries until the 19th to move away from water from distant sources and towards its surfeit of lakes. Seasonal lakes have since <strong>dwindled</strong>, while perennial lakes have been strangled by concretisation and sewage.</p>\n<p>Climate change is a crisis of time. It precipitates non-linear changes that lead to disproportionate, and sometimes irreversible, outcomes, forcing underprepared governments to mount rapid responses to forces that have been festering for decades. Even if the erratic rainfall is unrelated to climate change, the phenomenon only promises more unpredictability. In this regard, Bengaluru, and most Indian cities, will achieve little when they mount stopgap measures in the event of a crisis and drop the long-term view once the crisis has ended. Rapid growth, such as Bengaluru has had this century, and short-termism cannot coexist. There is a need for bipartisan solutions that <strong>transcend </strong>the change in government every five years; a circular water economy that maximises the utility of every litre, reducing the city’s dependence on external sources; and, not to forget, a clean and healthy Cauvery.</p><br><p><strong>What does the phrase \"hogged the headlines\" suggest in the context of the passage?</strong></p>", "options": ["<p>The capital city has experienced severe flooding</p>", "<p>The capital city has dominated media attention</p>", "<p>The capital city has implemented effective crisis management strategies</p>", "<p>The capital city has been unaffected by the water crisis</p>", "<p>The capital city has diverted attention from the wider effects of the crisis</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The phrase <strong>\"hogged the headlines\" </strong>suggests that the capital city has dominated media attention. </p>\n<p>This means that the capital city has received significant coverage or publicity in the news, likely due to its prominence or the severity of the situation it faces.</p>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>Read the given passage carefully and answer the questions that follow. Some words may be highlighted to help you locate the same while answering.</strong></p>\n<p>The Karnataka water crisis has affected more than 7,000 villages, 1,100 wards, and 220 talukas thus far. The problem encompasses Mandya and Mysuru districts, where a major Cauvery river watershed and the Krishnaraja Sagar dam are located, and both important sources of water to Bengaluru. While the capital has hogged the headlines, the effects of the crisis are wider. Reports have suggested that the distal cause is the ‘insufficient’ rainfall last year, following the surplus in 2022, and the resulting under-‘replenishment’ of the Cauvery. Erratic rainfall is not new to Karnataka. A Coffee Agro-forestry Network (CAFNET) project, a decade ago, assessed 60 years of data and found the rainy season over Kodagu had shrunk by two weeks in three decades while annual rainfall seemed to undulate in a 12-14-year cycle. Yet, the crisis now has come as a surprise thanks to Bengaluru’s lack of preparation, a travesty for being one of India’s wealthiest urban municipalities and home to many research institutions. Bengaluru consumes roughly 1,400 million litres a day each from the Cauvery and groundwater reserves. The groundwater recharge rate is much lower while the Cauvery’s was compromised by last year’s ‘deficient’ rain. These are deficits only relative to Bengaluru’s demand. The situation is worse further away from the city’s centre. This is ironic because these areas do not receive piped water from the Cauvery and depend on groundwater and water tankers, whereas the city was engineered for centuries until the 19th to move away from water from distant sources and towards its surfeit of lakes. Seasonal lakes have since <strong>dwindled</strong>, while perennial lakes have been strangled by concretisation and sewage.</p>\n<p>Climate change is a crisis of time. It precipitates non-linear changes that lead to disproportionate, and sometimes irreversible, outcomes, forcing underprepared governments to mount rapid responses to forces that have been festering for decades. Even if the erratic rainfall is unrelated to climate change, the phenomenon only promises more unpredictability. In this regard, Bengaluru, and most Indian cities, will achieve little when they mount stopgap measures in the event of a crisis and drop the long-term view once the crisis has ended. Rapid growth, such as Bengaluru has had this century, and short-termism cannot coexist. There is a need for bipartisan solutions that <strong>transcend </strong>the change in government every five years; a circular water economy that maximises the utility of every litre, reducing the city’s dependence on external sources; and, not to forget, a clean and healthy Cauvery.</p><br><p><strong>What does the passage suggest about the nature of climate change and its impact on governments?</strong></p>", "options": ["<p>Climate change results in linear changes that are easily predictable</p>", "<p>Governments are typically well-prepared to address the impacts of climate change</p>", "<p>Climate change leads to irreversible outcomes that governments are often unprepared for</p>", "<p>Governments can address the impacts of climate change without the need for rapid responses</p>", "<p>Climate change has little effect on governments' ability to respond to crises</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The passage suggests that climate change precipitates non-linear changes, meaning that its effects are not straightforward or predictable. </p>\n<p>These changes can lead to disproportionate and sometimes irreversible outcomes, which governments may be unprepared to address. </p>\n<p>As a result, governments are often forced to mount rapid responses to the consequences of climate change, even though these issues may have been building up for decades.</p>\n<p>Therefore, option C is the correct answer.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Prelims Mastery Quiz 2025 English (Day-81)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Prelims Mastery Quiz 2025 English (Day-81)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

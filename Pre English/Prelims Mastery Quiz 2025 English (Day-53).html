@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Mock | By Mickey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ob-blue: #0b4085;
+            --ob-light-blue: #e8f0fe;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border: #dadce0;
+            --success: #0f9d58;
+            --danger: #d93025;
+            --marked: #9334e6;
+            --unvisited: #f1f3f4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
+
+        /* PREMIUM HEADER - SLIM & COMPACT */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--ob-blue);
+            padding: 5px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .fullscreen-btn {
+            background: none; border: none; font-size: 22px; color: var(--ob-blue); 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .fullscreen-btn:hover { transform: scale(1.1); }
+        
+        .header-left-group { display: flex; align-items: center; }
+        .file-title { font-size: 19px; font-weight: 700; color: var(--ob-blue); } 
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--danger); background: #fce8e6; padding: 4px 14px; border-radius: 50px; border: 1px solid #fad2cf; }
+        .marquee-container { width: 100%; background: var(--ob-light-blue); border-radius: 50px; padding: 2px 10px; } 
+        marquee { font-size: 14px; font-weight: 600; color: var(--ob-blue); letter-spacing: 0.5px; }
+
+        /* MAIN LAYOUT - WIDER CONTAINER & MOVED UP */
+        .container {
+            display: flex;
+            max-width: 1520px; 
+            margin: 10px auto; 
+            gap: 20px;
+            padding: 0 15px;
+            height: calc(100vh - 90px); 
+        }
+
+        /* LEFT: SPLIT QUESTION AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .question-header {
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fafbfd;
+        }
+        .q-no { font-weight: 700; font-size: 17px; color: var(--ob-blue); }
+        
+        .q-header-right { display: flex; align-items: center; gap: 12px; }
+        .q-marks { font-size: 13px; font-weight: 600; background: var(--card-bg); padding: 3px 12px; border-radius: 50px; border: 1px solid var(--border); }
+        .q-marks .pos { color: var(--success); margin-right: 8px;}
+        .q-marks .neg { color: var(--danger); }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--ob-light-blue);
+            border: 1px solid var(--ob-blue);
+            border-radius: 8px;
+            font-size: 18px;
+            color: var(--ob-blue);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-weight: bold;
+        }
+
+        /* --- SPLIT PANE CSS --- */
+        .question-content {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            padding: 15px 25px; 
+            overflow: hidden; 
+        }
+        .q-left-pane {
+            flex: 1.5; 
+            font-size: 17px;
+            line-height: 1.6;
+            border-right: 1px solid var(--border);
+            padding-right: 25px;
+            overflow-y: auto;
+        }
+        .q-right-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding-left: 5px;
+        }
+        .q-left-pane img, .q-right-pane img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-item {
+            display: flex; align-items: flex-start; padding: 12px 18px;
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+            transition: all 0.2s; background: var(--card-bg); font-size: 16px;
+        }
+        .option-item:hover { border-color: var(--ob-blue); background: var(--ob-light-blue); }
+        .option-item.selected { border-color: var(--ob-blue); background: var(--ob-light-blue); box-shadow: 0 0 0 1px var(--ob-blue); }
+        .option-item input { margin-top: 4px; margin-right: 15px; transform: scale(1.3); cursor: pointer; accent-color: var(--ob-blue); }
+
+        /* SOLUTIONS HIGHLIGHTS */
+        .option-item.correct-ans { background: #e6f4ea !important; border-color: var(--success) !important; color: #137333; font-weight: 600; }
+        .option-item.wrong-ans { background: #fce8e6 !important; border-color: var(--danger) !important; color: #c5221f; font-weight: 600; }
+        .sol-box { margin-top: 15px; padding: 15px 20px; background: var(--ob-light-blue); border-radius: 12px; border: 1px solid #c2d7fa; font-size: 15px; line-height: 1.6; color: var(--ob-blue); }
+        .sol-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+
+        /* ROUNDED BUTTONS AREA */
+        .action-buttons {
+            padding: 12px 20px; 
+            border-top: 1px solid var(--border);
+            background: #fafbfd;
+            display: flex;
+        }
+        .btn { padding: 10px 22px; border: none; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center;}
+        .btn-clear { background: var(--unvisited); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-clear:hover { background: #e8eaed; color: var(--text-main); }
+        .btn-mark { background: #fef7e0; color: #b06000; border: 1px solid #fde293; }
+        .btn-mark:hover { background: #fde293; }
+        .btn-next { background: var(--ob-blue); color: white; box-shadow: 0 4px 6px rgba(11, 64, 133, 0.2); }
+        .btn-next:hover { background: #08306b; transform: translateY(-1px); }
+        .btn-submit { background: var(--success); color: white; box-shadow: 0 4px 6px rgba(15, 157, 88, 0.2); }
+        .btn-submit:hover { background: #0b8043; transform: translateY(-1px); }
+        
+        /* RIGHT: COMPACT PALETTE AREA */
+        .sidebar { width: 260px; background: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; transition: right 0.3s ease; position: relative;}
+        .palette-header { padding: 15px; text-align: center; font-weight: 700; background: var(--ob-blue); color: white; border-radius: 16px 16px 0 0; font-size: 15px; position: relative; }
+        .palette-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; }
+        .palette-btn { height: 35px; width: 35px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; background: var(--unvisited); color: var(--text-muted); margin: auto; }
+        .palette-btn:hover { transform: scale(1.1); }
+        .palette-btn.active { border: 2px solid var(--text-main); transform: scale(1.15); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .close-drawer-btn { display: none; position: absolute; right: 15px; top: 12px; background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+
+        /* Test States */
+        .state-answered { background: var(--success); color: white; border-color: var(--success); }
+        .state-not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-marked { background: var(--marked); color: white; border-color: var(--marked); }
+        .state-correct { background: var(--success); color: white; border-color: var(--success); }
+        .state-wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .state-unattempted { background: #e0e0e0; color: #555; border-color: #ccc; }
+        
+        .palette-legend { margin-top: auto; padding: 15px; border-top: 1px solid var(--border); font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafbfd; border-radius: 0 0 16px 16px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text-muted); }
+        .l-box { width: 14px; height: 14px; border-radius: 50%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 64, 133, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; display: none; }
+        .drawer-overlay.show { display: block; }
+        
+        .popup-card { background: white; padding: 35px 30px; border-radius: 24px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); }
+        .popup-card h2 { color: var(--ob-blue); margin-bottom: 5px; font-size: 28px; font-weight: 800; }
+        
+        /* Premium Telegram Button Style */
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            width: 100%;
+        }
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            color: white;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .lang-select-container { margin-bottom: 20px; text-align: left; background: #fafbfd; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .lang-select-container label { font-weight: 600; font-size: 14px; color: var(--ob-blue); display: block; margin-bottom: 8px; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; transition: 0.2s; cursor: pointer; }
+        .lang-select:focus { border-color: var(--ob-blue); }
+        
+        .scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
+        .score-box { padding: 20px 10px; background: #fafbfd; border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: 0.3s; }
+        .score-box:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .score-box h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .score-box .val { font-size: 26px; font-weight: 800; color: var(--ob-blue); }
+
+        .hidden { display: none !important; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block !important; }
+            .container { flex-direction: column; height: auto; margin-top: 5px; }
+            
+            .sidebar { 
+                position: fixed !important; 
+                top: 0; right: -320px; width: 280px !important; height: 100dvh !important; 
+                max-height: 100dvh !important; z-index: 1001; border-radius: 0 !important; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { right: 0; }
+            .palette-header { border-radius: 0 !important; text-align: left; padding-left: 20px;}
+            .close-drawer-btn { display: block; } 
+            .palette-legend { border-radius: 0 !important; }
+            
+            .header { padding: 4px 10px; gap: 2px; }
+            .file-title { 
+                font-size: 14px; 
+                line-height: 1.2; 
+                display: -webkit-box; 
+                -webkit-line-clamp: 2; 
+                -webkit-box-orient: vertical; 
+                overflow: hidden; 
+            }
+            .timer-box { font-size: 13px; padding: 3px 8px; }
+            .fullscreen-btn { font-size: 20px; }
+
+            .question-content { flex-direction: column; overflow-y: auto; padding: 10px; gap: 10px; }
+            .q-left-pane { border-right: none; padding-right: 0; border-bottom: 1px dashed var(--border); padding-bottom: 10px; overflow-y: visible; font-size: 14px !important; } 
+            .q-right-pane { overflow-y: visible; padding-left: 0; }
+            .option-item { font-size: 14px !important; padding: 8px 12px !important; } 
+            
+            .q-no { font-size: 15px !important; }
+            .q-marks { font-size: 11px !important; padding: 2px 8px !important; }
+            
+            .action-buttons div { justify-content: center; width: 100%; }
+            .btn { flex: 1; padding: 10px; font-size: 13px; text-align: center;}
+            .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .warning-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drawer-overlay" class="drawer-overlay hidden" onclick="toggleDrawer()"></div>
+
+    <div id="start-popup" class="overlay">
+        <div class="popup-card">
+            <h2>Mains Mastery Quiz</h2>
+            <div style="font-weight: 600; color: #1a4b8c; font-size: 16px; margin-top: 5px;">
+                ✨ This quiz is created by Mickey with love ✨
+            </div>
+            
+            <a href="https://t.me/PureSoul222" target="_blank" class="telegram-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.204-.054-.31-.346-.116l-6.405 4.025-2.766-.86c-.602-.188-.616-.602.126-.89l10.82-4.17c.504-.184.945.106.818.91l.433-2.55z"/>
+                </svg>
+                Contact Mickey @PureSoul222
+            </a>
+
+            <div class="lang-select-container">
+                <label for="languageSelect">Select Test Language:</label>
+                <select id="languageSelect" class="lang-select">
+                    <option value="">-- Choose Language --</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <div id="lang-warning" style="color:var(--danger); font-size:13px; margin-top:8px; display:none;">⚠️ Please select a language to start!</div>
+            </div>
+
+            <div class="warning-box">
+                <span style="font-size: 20px;">⚠️</span>
+                <div>
+                    <strong>STRICTLY 100% FREE:</strong> Please do not pay anyone for this test. Anyone selling this file is a scammer and has no authorization.
+                </div>
+            </div>
+
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 18px; justify-content:center; box-shadow: 0 8px 20px rgba(11, 64, 133, 0.25);" onclick="startTest()">Start Test Now</button>
+        </div>
+    </div>
+
+    <div id="main-ui" class="hidden">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left-group">
+                    <div class="file-title" id="display-file-title">Prelims Mastery Quiz 2025 English (Day-53)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fullscreen-btn" onclick="toggleFullScreen()" title="Full Screen">⤢</button>
+                    <div class="timer-box" id="timer-display">00:00:00</div>
+                </div>
+            </div>
+            <div class="marquee-container">
+                <marquee scrollamount="6">✨ Quizzes created by Mickey | @PureSoul222 ✨</marquee>
+            </div>
+        </div>
+
+        <div class="container">
+            <main class="main-area">
+                <div class="question-header">
+                    <div class="q-no" id="q-no-display">Question 1 / 22</div>
+                    <div class="q-header-right">
+                        <div class="q-marks"><span class="pos">+1.00</span> <span class="neg">-0.25</span></div>
+                        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    <div class="q-left-pane">
+                        <div id="q-text"></div>
+                    </div>
+                    <div class="q-right-pane">
+                        <div class="options-list" id="options-container"></div>
+                        <div id="solution-box" class="sol-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div id="test-actions" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px; flex:1;">
+                            <button class="btn btn-mark" onclick="markForReview()">Mark for Review</button>
+                            <button class="btn btn-clear" onclick="clearResponse()">Clear Response</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-next" onclick="saveAndNext()">Save & Next</button>
+                            <button class="btn btn-submit" onclick="submitExam()">Submit Test</button>
+                        </div>
+                    </div>
+                    <div id="solution-actions" class="hidden" style="display:flex; justify-content:space-between; width:100%; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-clear" onclick="prevQ()">⬅ Previous</button>
+                        <button class="btn btn-mark" style="background:#fce8e6; color:var(--danger); border-color:#fad2cf;" onclick="backToScore()">📊 Back to Result</button>
+                        <button class="btn btn-next" onclick="nextQ()">Next ➡</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="sidebar" id="sidebar-drawer">
+                <div class="palette-header" id="pal-header">
+                    Question Palette
+                    <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>
+                </div>
+                <div class="palette-grid" id="palette-grid"></div>
+                
+                <div id="test-legend" class="palette-legend">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Answered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Unanswered</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--marked);"></div> Marked</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--unvisited); border:1px solid var(--border);"></div> Not Visited</div>
+                </div>
+                <div id="solution-legend" class="palette-legend hidden">
+                    <div class="legend-item"><div class="l-box" style="background:var(--success);"></div> Correct</div>
+                    <div class="legend-item"><div class="l-box" style="background:var(--danger);"></div> Incorrect</div>
+                    <div class="legend-item"><div class="l-box" style="background:#e0e0e0;"></div> Unattempted</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="scorecard-popup" class="overlay hidden">
+        <div class="popup-card" style="max-width: 700px;">
+            <h2>Pro Scorecard Analysis</h2>
+            <p>Here is your detailed performance breakdown.</p>
+            <div class="scorecard-grid">
+                <div class="score-box"><h4>Total Score</h4><div class="val" id="sc-score">0.00</div></div>
+                <div class="score-box"><h4>Accuracy</h4><div class="val" id="sc-acc">0%</div></div>
+                <div class="score-box"><h4>Time Taken</h4><div class="val" id="sc-time">00:00</div></div>
+                <div class="score-box"><h4>Attempted</h4><div class="val" id="sc-att">0</div></div>
+                <div class="score-box"><h4>Correct</h4><div class="val" id="sc-cor" style="color:var(--success);">0</div></div>
+                <div class="score-box"><h4>Incorrect</h4><div class="val" id="sc-inc" style="color:var(--danger);">0</div></div>
+            </div>
+            <button class="btn btn-next" style="width: 100%; padding: 16px; font-size: 16px; justify-content:center;" onclick="showSolutions()">View Detailed Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_BY_LANGUAGE = {
+    en: [{"question": "<p><strong>The sentences of a paragraph have been jumbled and given below. You have to read the same, rearrange them and form a coherent paragraph. Then answer the questions that follow.</strong></p>\n<p><strong>A</strong><strong>)</strong><strong>.</strong> The international community has made efforts to combat this crisis, including agreements like the Paris Accord, aimed at reducing greenhouse gas emissions.<br/><strong>B</strong><strong>)</strong><strong>.</strong> Rising sea levels, extreme weather events, and shifts in biodiversity are just some of the consequences of this phenomenon.<br/><strong>C</strong><strong>)</strong><strong>.</strong> Despite these efforts, progress has been slow, and the need for urgent, collective action remains critical.<br/><strong>D</strong><strong>)</strong><strong>.</strong> Mitigating climate change requires not only governmental action but also individual responsibility and innovation in technology.<br/><strong>E</strong><strong>)</strong><strong>.</strong> Climate change is one of the most pressing global challenges, with far-reaching impacts on ecosystems, economies, and human health.</p><br><p><strong>Which of the following should form a consecutive pair after re-arrangement?</strong></p>", "options": ["<p>CD</p>", "<p>EA</p>", "<p>AD</p>", "<p>BC</p>", "<p>DE</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p><strong>E</strong> introduces the topic broadly.</p>\n<p><strong>B</strong> adds specific details about the consequences of climate change.</p>\n<p><strong>A</strong> discusses solutions initiated by the global community.</p>\n<p><strong>C</strong> evaluates the effectiveness of these efforts, emphasizing urgency.</p>\n<p><strong>D </strong>concludes with a call for broader action and innovation.</p>\n<p><strong>Rearranged order:</strong> E - B - A - C - D<br/>consecutive pair after re-arrangement- CD</p>"}, {"question": "<p><strong>The sentences of a paragraph have been jumbled and given below. You have to read the same, rearrange them and form a coherent paragraph. Then answer the questions that follow.</strong></p>\n<p><strong>A</strong><strong>)</strong><strong>.</strong> The international community has made efforts to combat this crisis, including agreements like the Paris Accord, aimed at reducing greenhouse gas emissions.<br/><strong>B</strong><strong>)</strong><strong>.</strong> Rising sea levels, extreme weather events, and shifts in biodiversity are just some of the consequences of this phenomenon.<br/><strong>C</strong><strong>)</strong><strong>.</strong> Despite these efforts, progress has been slow, and the need for urgent, collective action remains critical.<br/><strong>D</strong><strong>)</strong><strong>.</strong> Mitigating climate change requires not only governmental action but also individual responsibility and innovation in technology.<br/><strong>E</strong><strong>)</strong><strong>.</strong> Climate change is one of the most pressing global challenges, with far-reaching impacts on ecosystems, economies, and human health.</p><br><p><strong>Which sentence will come second after rearrangement?</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong><br/><strong>Rearranged order:</strong> E - B - A - C – D<br/>Sentence <strong>B</strong> logically follows the introductory statement in E by elaborating on the specific consequences of climate change, such as rising sea levels and extreme weather events. It adds detail to the issue introduced in the first sentence, maintaining a coherent flow.</p>"}, {"question": "<p><strong>The sentences of a paragraph have been jumbled and given below. You have to read the same, rearrange them and form a coherent paragraph. Then answer the questions that follow.</strong></p>\n<p><strong>A</strong><strong>)</strong><strong>.</strong> The international community has made efforts to combat this crisis, including agreements like the Paris Accord, aimed at reducing greenhouse gas emissions.<br/><strong>B</strong><strong>)</strong><strong>.</strong> Rising sea levels, extreme weather events, and shifts in biodiversity are just some of the consequences of this phenomenon.<br/><strong>C</strong><strong>)</strong><strong>.</strong> Despite these efforts, progress has been slow, and the need for urgent, collective action remains critical.<br/><strong>D</strong><strong>)</strong><strong>.</strong> Mitigating climate change requires not only governmental action but also individual responsibility and innovation in technology.<br/><strong>E</strong><strong>)</strong><strong>.</strong> Climate change is one of the most pressing global challenges, with far-reaching impacts on ecosystems, economies, and human health.</p><br><p><strong>Which sentence will come third after rearrangement?</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong><br/><strong>Rearranged order: </strong>E - B - A - C - D<br/>After explaining the consequences in <strong>B, </strong>sentence <strong>A</strong> transitions to the efforts made by the international community, such as agreements like the Paris Accord. This shift from problems to solutions keeps the narrative logical and organized.</p>"}, {"question": "<p><strong>The sentences of a paragraph have been jumbled and given below. You have to read the same, rearrange them and form a coherent paragraph. Then answer the questions that follow.</strong></p>\n<p><strong>A</strong><strong>)</strong><strong>.</strong> The international community has made efforts to combat this crisis, including agreements like the Paris Accord, aimed at reducing greenhouse gas emissions.<br/><strong>B</strong><strong>)</strong><strong>.</strong> Rising sea levels, extreme weather events, and shifts in biodiversity are just some of the consequences of this phenomenon.<br/><strong>C</strong><strong>)</strong><strong>.</strong> Despite these efforts, progress has been slow, and the need for urgent, collective action remains critical.<br/><strong>D</strong><strong>)</strong><strong>.</strong> Mitigating climate change requires not only governmental action but also individual responsibility and innovation in technology.<br/><strong>E</strong><strong>)</strong><strong>.</strong> Climate change is one of the most pressing global challenges, with far-reaching impacts on ecosystems, economies, and human health.</p><br><p><strong>Which sentence will come fourth after rearrangement?</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong><br/><strong>Rearranged order: </strong>E - B - A - C - D<br/>Sentence <strong>C</strong> follows <strong>A </strong>by critically assessing the progress of these international efforts. It introduces a sense of urgency, pointing out the gaps in the current measures to combat climate change. This naturally builds on the solutions mentioned in the previous sentence.</p>"}, {"question": "<p><strong>The sentences of a paragraph have been jumbled and given below. You have to read the same, rearrange them and form a coherent paragraph. Then answer the questions that follow.</strong></p>\n<p><strong>A</strong><strong>)</strong><strong>.</strong> The international community has made efforts to combat this crisis, including agreements like the Paris Accord, aimed at reducing greenhouse gas emissions.<br/><strong>B</strong><strong>)</strong><strong>.</strong> Rising sea levels, extreme weather events, and shifts in biodiversity are just some of the consequences of this phenomenon.<br/><strong>C</strong><strong>)</strong><strong>.</strong> Despite these efforts, progress has been slow, and the need for urgent, collective action remains critical.<br/><strong>D</strong><strong>)</strong><strong>.</strong> Mitigating climate change requires not only governmental action but also individual responsibility and innovation in technology.<br/><strong>E</strong><strong>)</strong><strong>.</strong> Climate change is one of the most pressing global challenges, with far-reaching impacts on ecosystems, economies, and human health.</p><br><p><strong>Which of the given sentences will come first after rearrangement?</strong></p>", "options": ["<p>A</p>", "<p>B</p>", "<p>C</p>", "<p>D</p>", "<p>E</p>"], "correctIndex": 4, "solution": "<p><strong>Answer: E</strong><br/><strong>Rearranged order: </strong>E - B - A - C - D<br/>E introduces the theme of the passage, providing an overview of climate change as a global challenge.</p>"}, {"question": "<p><strong>A passage is given with five blanks in it. Each blank is represented by a letter. From the given options, choose the most suitable words to fill in these blanks so as to make the passage meaningful. </strong></p>\n<p>Over the past few decades, the Indian economy has emerged as one of the fastest-growing economies in the world. This transformation has been driven by a combination of policy reforms, demographic dividends, and a burgeoning service sector. The liberalization of the Indian economy in the early 1990s marked the beginning of a new era. The government initiated a series of economic reforms aimed at opening up the economy, <strong>_________(A) </strong>trade barriers, and attracting foreign investment. These measures fostered an environment <strong>___________(B) </strong>to growth and innovation.</p>\n<p>One of the critical drivers of this economic boom has been the information technology (IT) and software services sector. Cities like Bengaluru, Hyderabad, and Pune have become global IT hubs, <strong>_________(C) </strong>investments from leading multinational corporations. The growth in this sector has not only created millions of jobs but has also contributed <strong>__________(D) </strong>to the country’s GDP.</p>\n<p>India’s demographic advantage, characterized by a young and dynamic workforce, has also played a <strong>_________(E) </strong>role in its economic ascent. With over half of its population under the age of 25, India has a vast pool of human resources that can drive future growth. This demographic dividend is expected to continue propelling the economy forward, provided that adequate investments are made in education and skill development.</p><br><p><strong>Which of the following words fits correctly in blank A?</strong></p>", "options": ["<p>preserving</p>", "<p>reducing&nbsp;</p>", "<p>imposing&nbsp;</p>", "<p>complicating</p>", "<p>strengthening</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The correct word for blank (A) is <strong>\"reducing.\" </strong>This is because the sentence describes reforms aimed at making the economy more open. \"Reducing trade barriers\" means lowering restrictions on trade, which aligns with the goal of economic liberalization and attracting foreign investment.</p>\n<p>Therefore, option B is the correct answer.</p>"}, {"question": "<p><strong>A passage is given with five blanks in it. Each blank is represented by a letter. From the given options, choose the most suitable words to fill in these blanks so as to make the passage meaningful. </strong></p>\n<p>Over the past few decades, the Indian economy has emerged as one of the fastest-growing economies in the world. This transformation has been driven by a combination of policy reforms, demographic dividends, and a burgeoning service sector. The liberalization of the Indian economy in the early 1990s marked the beginning of a new era. The government initiated a series of economic reforms aimed at opening up the economy, <strong>_________(A) </strong>trade barriers, and attracting foreign investment. These measures fostered an environment <strong>___________(B) </strong>to growth and innovation.</p>\n<p>One of the critical drivers of this economic boom has been the information technology (IT) and software services sector. Cities like Bengaluru, Hyderabad, and Pune have become global IT hubs, <strong>_________(C) </strong>investments from leading multinational corporations. The growth in this sector has not only created millions of jobs but has also contributed <strong>__________(D) </strong>to the country’s GDP.</p>\n<p>India’s demographic advantage, characterized by a young and dynamic workforce, has also played a <strong>_________(E) </strong>role in its economic ascent. With over half of its population under the age of 25, India has a vast pool of human resources that can drive future growth. This demographic dividend is expected to continue propelling the economy forward, provided that adequate investments are made in education and skill development.</p><br><p><strong>Which of the following words fits correctly in blank B?</strong></p>", "options": ["<p>detrimental</p>", "<p>resistant</p>", "<p>hostile</p>", "<p>conducive&nbsp;</p>", "<p>antagonistic</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The word \"<strong>conducive</strong>\" means making a certain situation or outcome likely or possible, which fits the context of fostering growth and innovation. Thus, \"conducive\" is the appropriate choice.</p>\n<p>Therefore, option D is the correct answer.</p>"}, {"question": "<p><strong>A passage is given with five blanks in it. Each blank is represented by a letter. From the given options, choose the most suitable words to fill in these blanks so as to make the passage meaningful. </strong></p>\n<p>Over the past few decades, the Indian economy has emerged as one of the fastest-growing economies in the world. This transformation has been driven by a combination of policy reforms, demographic dividends, and a burgeoning service sector. The liberalization of the Indian economy in the early 1990s marked the beginning of a new era. The government initiated a series of economic reforms aimed at opening up the economy, <strong>_________(A) </strong>trade barriers, and attracting foreign investment. These measures fostered an environment <strong>___________(B) </strong>to growth and innovation.</p>\n<p>One of the critical drivers of this economic boom has been the information technology (IT) and software services sector. Cities like Bengaluru, Hyderabad, and Pune have become global IT hubs, <strong>_________(C) </strong>investments from leading multinational corporations. The growth in this sector has not only created millions of jobs but has also contributed <strong>__________(D) </strong>to the country’s GDP.</p>\n<p>India’s demographic advantage, characterized by a young and dynamic workforce, has also played a <strong>_________(E) </strong>role in its economic ascent. With over half of its population under the age of 25, India has a vast pool of human resources that can drive future growth. This demographic dividend is expected to continue propelling the economy forward, provided that adequate investments are made in education and skill development.</p><br><p><strong>Which of the following words fits correctly in blank C?</strong></p>", "options": ["<p>attracting&nbsp;</p>", "<p>deterring</p>", "<p>deflecting</p>", "<p>repelling</p>", "<p>evading</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The word \"<strong>attracting</strong>\" means drawing in or bringing investments, which fits the context of these cities becoming prominent centers for IT and receiving investments from multinational corporations.</p>\n<p>Therefore, option A is the correct answer.</p>"}, {"question": "<p><strong>A passage is given with five blanks in it. Each blank is represented by a letter. From the given options, choose the most suitable words to fill in these blanks so as to make the passage meaningful. </strong></p>\n<p>Over the past few decades, the Indian economy has emerged as one of the fastest-growing economies in the world. This transformation has been driven by a combination of policy reforms, demographic dividends, and a burgeoning service sector. The liberalization of the Indian economy in the early 1990s marked the beginning of a new era. The government initiated a series of economic reforms aimed at opening up the economy, <strong>_________(A) </strong>trade barriers, and attracting foreign investment. These measures fostered an environment <strong>___________(B) </strong>to growth and innovation.</p>\n<p>One of the critical drivers of this economic boom has been the information technology (IT) and software services sector. Cities like Bengaluru, Hyderabad, and Pune have become global IT hubs, <strong>_________(C) </strong>investments from leading multinational corporations. The growth in this sector has not only created millions of jobs but has also contributed <strong>__________(D) </strong>to the country’s GDP.</p>\n<p>India’s demographic advantage, characterized by a young and dynamic workforce, has also played a <strong>_________(E) </strong>role in its economic ascent. With over half of its population under the age of 25, India has a vast pool of human resources that can drive future growth. This demographic dividend is expected to continue propelling the economy forward, provided that adequate investments are made in education and skill development.</p><br><p><strong>Which of the following words fits correctly in blank D?</strong></p>", "options": ["<p>minimally</p>", "<p>detrimentally</p>", "<p>significantly&nbsp;</p>", "<p>marginally</p>", "<p>insignificantly</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>he word \"<strong>significantly</strong>\" means to a large or important degree, which matches the context of the substantial contribution of the IT sector to the GDP.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>A passage is given with five blanks in it. Each blank is represented by a letter. From the given options, choose the most suitable words to fill in these blanks so as to make the passage meaningful. </strong></p>\n<p>Over the past few decades, the Indian economy has emerged as one of the fastest-growing economies in the world. This transformation has been driven by a combination of policy reforms, demographic dividends, and a burgeoning service sector. The liberalization of the Indian economy in the early 1990s marked the beginning of a new era. The government initiated a series of economic reforms aimed at opening up the economy, <strong>_________(A) </strong>trade barriers, and attracting foreign investment. These measures fostered an environment <strong>___________(B) </strong>to growth and innovation.</p>\n<p>One of the critical drivers of this economic boom has been the information technology (IT) and software services sector. Cities like Bengaluru, Hyderabad, and Pune have become global IT hubs, <strong>_________(C) </strong>investments from leading multinational corporations. The growth in this sector has not only created millions of jobs but has also contributed <strong>__________(D) </strong>to the country’s GDP.</p>\n<p>India’s demographic advantage, characterized by a young and dynamic workforce, has also played a <strong>_________(E) </strong>role in its economic ascent. With over half of its population under the age of 25, India has a vast pool of human resources that can drive future growth. This demographic dividend is expected to continue propelling the economy forward, provided that adequate investments are made in education and skill development.</p><br><p><strong>Which of the following words fits correctly in blank E?</strong></p>", "options": ["<p>trivial</p>", "<p>negligible</p>", "<p>pivotal&nbsp;</p>", "<p>minor</p>", "<p>irrational</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The word \"<strong>pivotal</strong>\" means of crucial importance in relation to the development or success of something else, which fits the context of the significant impact of the young workforce on India's economic growth.</p>\n<p>Therefore, option C is the correct answer.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>The rapid deforestation of the Amazon rainforest has become a critical environmental issue over the past few decades. The Amazon, often referred to as the \"lungs of the Earth,\" plays a vital role in regulating the planet's oxygen and carbon dioxide levels. Despite global efforts to curb deforestation, vast areas of the rainforest are still being cleared for agriculture, logging, and mining. This destruction has dire consequences not only for the countless species that call the Amazon home but also for the global climate.</p>\n<p>Deforestation leads to the release of large amounts of carbon dioxide stored in trees, contributing to climate change. Additionally, the loss of biodiversity in the Amazon is alarming. Many species that are <strong>endemic</strong> to the region are at risk of extinction. Indigenous communities, who have lived in harmony with the forest for centuries, are also being displaced as their land is encroached upon.</p>\n<p>In response to this crisis, several international organizations and governments have called for more stringent measures to protect the Amazon. These measures include stricter enforcement of environmental laws, financial incentives for sustainable practices, and support for reforestation efforts. However, the effectiveness of these measures is often hampered by political and economic interests, as well as the sheer scale of the problem.</p>\n<p>As the world becomes increasingly aware of the importance of the Amazon, there is growing pressure on governments and corporations to take action. The future of the Amazon, and by extension, the health of the planet, depends on the success of these efforts.</p><br><p><strong>Why does the passage mention international organizations and governments?</strong></p>", "options": ["<p>To highlight their role in contributing to deforestation</p>", "<p>To show their efforts in opposing the indigenous communities</p>", "<p>To indicate their involvement in protecting the Amazon</p>", "<p>To criticize their lack of involvement in environmental issues</p>", "<p>None of these</p>"], "correctIndex": 2, "solution": "<p><strong>Answer: C</strong></p>\n<p>The passage refers to international organizations and governments as entities that have called for measures to protect the Amazon.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>The rapid deforestation of the Amazon rainforest has become a critical environmental issue over the past few decades. The Amazon, often referred to as the \"lungs of the Earth,\" plays a vital role in regulating the planet's oxygen and carbon dioxide levels. Despite global efforts to curb deforestation, vast areas of the rainforest are still being cleared for agriculture, logging, and mining. This destruction has dire consequences not only for the countless species that call the Amazon home but also for the global climate.</p>\n<p>Deforestation leads to the release of large amounts of carbon dioxide stored in trees, contributing to climate change. Additionally, the loss of biodiversity in the Amazon is alarming. Many species that are <strong>endemic</strong> to the region are at risk of extinction. Indigenous communities, who have lived in harmony with the forest for centuries, are also being displaced as their land is encroached upon.</p>\n<p>In response to this crisis, several international organizations and governments have called for more stringent measures to protect the Amazon. These measures include stricter enforcement of environmental laws, financial incentives for sustainable practices, and support for reforestation efforts. However, the effectiveness of these measures is often hampered by political and economic interests, as well as the sheer scale of the problem.</p>\n<p>As the world becomes increasingly aware of the importance of the Amazon, there is growing pressure on governments and corporations to take action. The future of the Amazon, and by extension, the health of the planet, depends on the success of these efforts.</p><br><p><strong>What is the primary role of the Amazon rainforest as mentioned in the passage?</strong></p>", "options": ["<p>A source of timber for construction</p>", "<p>A natural barrier against wildfires</p>", "<p>A tourist destination</p>", "<p>A regulator of the planet's oxygen and carbon dioxide levels</p>", "<p>None of these</p>"], "correctIndex": 3, "solution": "<p><strong>Answer: D</strong></p>\n<p>The passage describes the Amazon rainforest as the \"lungs of the Earth,\" indicating its crucial role in regulating oxygen and carbon dioxide levels.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>The rapid deforestation of the Amazon rainforest has become a critical environmental issue over the past few decades. The Amazon, often referred to as the \"lungs of the Earth,\" plays a vital role in regulating the planet's oxygen and carbon dioxide levels. Despite global efforts to curb deforestation, vast areas of the rainforest are still being cleared for agriculture, logging, and mining. This destruction has dire consequences not only for the countless species that call the Amazon home but also for the global climate.</p>\n<p>Deforestation leads to the release of large amounts of carbon dioxide stored in trees, contributing to climate change. Additionally, the loss of biodiversity in the Amazon is alarming. Many species that are <strong>endemic</strong> to the region are at risk of extinction. Indigenous communities, who have lived in harmony with the forest for centuries, are also being displaced as their land is encroached upon.</p>\n<p>In response to this crisis, several international organizations and governments have called for more stringent measures to protect the Amazon. These measures include stricter enforcement of environmental laws, financial incentives for sustainable practices, and support for reforestation efforts. However, the effectiveness of these measures is often hampered by political and economic interests, as well as the sheer scale of the problem.</p>\n<p>As the world becomes increasingly aware of the importance of the Amazon, there is growing pressure on governments and corporations to take action. The future of the Amazon, and by extension, the health of the planet, depends on the success of these efforts.</p><br><p><strong>What are the main causes of deforestation in the Amazon as stated in the passage?</strong></p>", "options": ["<p>Urban development and tourism</p>", "<p>Agriculture, logging, and mining</p>", "<p>Natural disasters and wildfires</p>", "<p>Industrial pollution and climate change</p>", "<p>None of these</p>"], "correctIndex": 1, "solution": "<p><strong>Answer: B</strong></p>\n<p>The passage explicitly mentions that vast areas of the rainforest are being cleared for agriculture, logging, and mining.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>The rapid deforestation of the Amazon rainforest has become a critical environmental issue over the past few decades. The Amazon, often referred to as the \"lungs of the Earth,\" plays a vital role in regulating the planet's oxygen and carbon dioxide levels. Despite global efforts to curb deforestation, vast areas of the rainforest are still being cleared for agriculture, logging, and mining. This destruction has dire consequences not only for the countless species that call the Amazon home but also for the global climate.</p>\n<p>Deforestation leads to the release of large amounts of carbon dioxide stored in trees, contributing to climate change. Additionally, the loss of biodiversity in the Amazon is alarming. Many species that are <strong>endemic</strong> to the region are at risk of extinction. Indigenous communities, who have lived in harmony with the forest for centuries, are also being displaced as their land is encroached upon.</p>\n<p>In response to this crisis, several international organizations and governments have called for more stringent measures to protect the Amazon. These measures include stricter enforcement of environmental laws, financial incentives for sustainable practices, and support for reforestation efforts. However, the effectiveness of these measures is often hampered by political and economic interests, as well as the sheer scale of the problem.</p>\n<p>As the world becomes increasingly aware of the importance of the Amazon, there is growing pressure on governments and corporations to take action. The future of the Amazon, and by extension, the health of the planet, depends on the success of these efforts.</p><br><p><strong>Which of the following is NOT a consequence of deforestation in the Amazon?</strong></p>", "options": ["<p>Increase in biodiversity</p>", "<p>Contribution to climate change</p>", "<p>Displacement of indigenous communities</p>", "<p>Risk of extinction for endemic species</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>The passage mentions a loss of biodiversity, not an increase, as a consequence of deforestation.</p>"}, {"question": "<p><strong>In the following question, a passage has been given and followed by several questions. You are required to answer the questions based on the information provided in the passage.</strong></p>\n<p>The rapid deforestation of the Amazon rainforest has become a critical environmental issue over the past few decades. The Amazon, often referred to as the \"lungs of the Earth,\" plays a vital role in regulating the planet's oxygen and carbon dioxide levels. Despite global efforts to curb deforestation, vast areas of the rainforest are still being cleared for agriculture, logging, and mining. This destruction has dire consequences not only for the countless species that call the Amazon home but also for the global climate.</p>\n<p>Deforestation leads to the release of large amounts of carbon dioxide stored in trees, contributing to climate change. Additionally, the loss of biodiversity in the Amazon is alarming. Many species that are <strong>endemic</strong> to the region are at risk of extinction. Indigenous communities, who have lived in harmony with the forest for centuries, are also being displaced as their land is encroached upon.</p>\n<p>In response to this crisis, several international organizations and governments have called for more stringent measures to protect the Amazon. These measures include stricter enforcement of environmental laws, financial incentives for sustainable practices, and support for reforestation efforts. However, the effectiveness of these measures is often hampered by political and economic interests, as well as the sheer scale of the problem.</p>\n<p>As the world becomes increasingly aware of the importance of the Amazon, there is growing pressure on governments and corporations to take action. The future of the Amazon, and by extension, the health of the planet, depends on the success of these efforts.</p><br><p><strong>In the context of the passage, what does the phrase \"lungs of the Earth\" imply?</strong></p>", "options": ["<p>The Amazon produces a significant amount of the world's oxygen</p>", "<p>The Amazon is prone to respiratory diseases</p>", "<p>The Amazon is the largest source of timber in the world</p>", "<p>The Amazon has the highest altitude on Earth</p>", "<p>None of these</p>"], "correctIndex": 0, "solution": "<p><strong>Answer: A</strong></p>\n<p>\"Lungs of the Earth\" metaphorically refers to the Amazon's role in producing oxygen and absorbing carbon dioxide, similar to how lungs function in a living organism.</p>"}] ,
+    hi: [] 
+};
+        const rawTitle = "Prelims Mastery Quiz 2025 English (Day-53)";
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        if(typeof QUESTIONS_BY_LANGUAGE === 'string') {
+            document.write("<h2 style='text-align:center; margin-top:50px; color:red;'>⚠️ Please run the batch script to process files.</h2>");
+        } else {
+            const cleanTitle = rawTitle.replace(".html", "").replace("Prelims Mastery Quiz 2025 English (Day-53)", "Bankers Premium Mock");
+            document.title = cleanTitle + " | By Mickey";
+            document.querySelectorAll("#display-file-title").forEach(el => el.innerText = cleanTitle);
+
+            let questionsData = []; 
+            let currentQ = 0;
+            let totalQ = 0;
+            let answers = [];
+            let states = []; 
+            let totalTimeSeconds = 1080; 
+            let timerInterval;
+            let isSolutionMode = false;
+
+            window.onload = function() {
+                const langSelect = document.getElementById("languageSelect");
+                const hasEn = QUESTIONS_BY_LANGUAGE.en && QUESTIONS_BY_LANGUAGE.en.length > 0;
+                const hasHi = QUESTIONS_BY_LANGUAGE.hi && QUESTIONS_BY_LANGUAGE.hi.length > 0;
+                
+                if (hasEn && !hasHi) {
+                    langSelect.value = "en";
+                    langSelect.disabled = true; 
+                } else if (hasHi && !hasEn) {
+                    langSelect.value = "hi";
+                    langSelect.disabled = true; 
+                }
+            }
+
+            window.toggleDrawer = function() {
+                const sidebar = document.getElementById('sidebar-drawer');
+                const overlay = document.getElementById('drawer-overlay');
+                if(sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            }
+
+            window.startTest = function() {
+                const selectedLang = document.getElementById("languageSelect").value;
+                if(!selectedLang) {
+                    document.getElementById("lang-warning").style.display = "block";
+                    return;
+                }
+                
+                questionsData = QUESTIONS_BY_LANGUAGE[selectedLang];
+                if(!questionsData || questionsData.length === 0) {
+                    alert("Questions not found for the selected language!");
+                    return;
+                }
+
+                totalQ = questionsData.length;
+                answers = new Array(totalQ).fill(null);
+                states = new Array(totalQ).fill('unvisited');
+
+                const paletteGrid = document.getElementById('palette-grid');
+                paletteGrid.innerHTML = '';
+                for(let i=0; i<totalQ; i++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'palette-btn';
+                    btn.innerText = i + 1;
+                    btn.onclick = () => jumpToQuestion(i);
+                    paletteGrid.appendChild(btn);
+                }
+
+                document.getElementById('start-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                states[0] = 'unanswered';
+                loadQuestion(0);
+                timerInterval = setInterval(() => {
+                    totalTimeSeconds--;
+                    let h = Math.floor(totalTimeSeconds / 3600).toString().padStart(2, '0');
+                    let m = Math.floor((totalTimeSeconds % 3600) / 60).toString().padStart(2, '0');
+                    let s = (totalTimeSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+                    if(totalTimeSeconds <= 0) submitExam();
+                }, 1000);
+            }
+
+            function loadQuestion(index) {
+                currentQ = index;
+                const q = questionsData[index];
+                document.getElementById('q-no-display').innerText = `Question ${index + 1} / ${totalQ}`;
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    let div = document.createElement('div');
+                    div.className = 'option-item';
+                    let isSelected = answers[currentQ] === idx;
+
+                    if(isSolutionMode) {
+                        if(idx === q.correctIndex) {
+                            div.classList.add('correct-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">✅ Correct</span></div>`;
+                        } else if(isSelected) {
+                            div.classList.add('wrong-ans');
+                            div.innerHTML = `<input type="radio" checked disabled> <div style="width:100%">${opt} <span style="float:right;">❌ Your Ans</span></div>`;
+                        } else {
+                            div.innerHTML = `<input type="radio" disabled> <div>${opt}</div>`;
+                        }
+                    } else {
+                        if(isSelected) div.classList.add('selected');
+                        div.innerHTML = `<input type="radio" name="opt" ${isSelected ? 'checked' : ''}> <div>${opt}</div>`;
+                        div.onclick = () => { answers[currentQ] = idx; states[currentQ] = 'answered'; loadQuestion(currentQ); updatePalette(); };
+                    }
+                    optionsContainer.appendChild(div);
+                });
+
+                const solBox = document.getElementById('solution-box');
+                if(isSolutionMode) {
+                    solBox.classList.remove('hidden');
+                    solBox.innerHTML = `<strong>💡 Detailed Solution:</strong><br>${q.solution}`;
+                } else {
+                    solBox.classList.add('hidden');
+                }
+
+                updatePalette();
+            }
+
+            window.saveAndNext = function() {
+                if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.markForReview = function() {
+                states[currentQ] = 'marked';
+                if(currentQ < totalQ - 1) { currentQ++; if(states[currentQ] === 'unvisited') states[currentQ] = 'unanswered'; loadQuestion(currentQ); }
+                updatePalette();
+            }
+            window.clearResponse = function() {
+                answers[currentQ] = null;
+                states[currentQ] = 'unanswered';
+                loadQuestion(currentQ);
+                updatePalette();
+            }
+            window.jumpToQuestion = function(idx) {
+                if(!isSolutionMode) {
+                    if(answers[currentQ] === null && states[currentQ] !== 'marked') states[currentQ] = 'unanswered';
+                    if(states[idx] === 'unvisited') states[idx] = 'unanswered';
+                }
+                currentQ = idx;
+                loadQuestion(currentQ);
+                
+                if(window.innerWidth <= 900) {
+                    const sidebar = document.getElementById('sidebar-drawer');
+                    if(sidebar.classList.contains('open')) toggleDrawer();
+                }
+            }
+            window.nextQ = function() { if(currentQ < totalQ - 1) { currentQ++; loadQuestion(currentQ); } }
+            window.prevQ = function() { if(currentQ > 0) { currentQ--; loadQuestion(currentQ); } }
+
+            function updatePalette() {
+                const btns = document.querySelectorAll('.palette-btn');
+                btns.forEach((btn, idx) => {
+                    let stateClass = '';
+                    if(isSolutionMode) {
+                        if(answers[idx] === questionsData[idx].correctIndex) stateClass = 'state-correct';
+                        else if(answers[idx] !== null) stateClass = 'state-wrong';
+                        else stateClass = 'state-unattempted';
+                    } else {
+                        stateClass = states[idx] === 'answered' ? 'state-answered' : states[idx] === 'marked' ? 'state-marked' : states[idx] === 'unanswered' ? 'state-not-answered' : '';
+                    }
+                    btn.className = 'palette-btn ' + stateClass + (idx === currentQ ? ' active' : '');
+                });
+            }
+
+            window.submitExam = function() {
+                clearInterval(timerInterval);
+                document.getElementById('main-ui').classList.add('hidden');
+                
+                let correct = 0, wrong = 0, attempted = 0;
+                answers.forEach((ans, idx) => {
+                    if(ans !== null) {
+                        attempted++;
+                        if(ans === questionsData[idx].correctIndex) correct++;
+                        else wrong++;
+                    }
+                });
+
+                let score = (correct * 1) - (wrong * 0.25);
+                let acc = attempted > 0 ? ((correct/attempted)*100).toFixed(0) : 0;
+                let timeUsed = 1080 - totalTimeSeconds;
+                let tm = Math.floor(timeUsed / 60).toString().padStart(2, '0');
+                let ts = (timeUsed % 60).toString().padStart(2, '0');
+
+                document.getElementById('sc-score').innerText = score.toFixed(2);
+                document.getElementById('sc-acc').innerText = `${acc}%`;
+                document.getElementById('sc-att').innerText = attempted;
+                document.getElementById('sc-cor').innerText = correct;
+                document.getElementById('sc-inc').innerText = wrong;
+                document.getElementById('sc-time').innerText = `${tm}:${ts}`;
+
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+
+            window.showSolutions = function() {
+                isSolutionMode = true;
+                document.getElementById('scorecard-popup').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('hidden');
+                
+                document.getElementById('test-actions').classList.add('hidden');
+                document.getElementById('solution-actions').classList.remove('hidden');
+                document.getElementById('test-legend').classList.add('hidden');
+                document.getElementById('solution-legend').classList.remove('hidden');
+                
+                document.getElementById('timer-display').innerText = "Solutions";
+                document.getElementById('pal-header').innerHTML = 'Solution Palette <button class="close-drawer-btn" onclick="toggleDrawer()">×</button>';
+                
+                currentQ = 0;
+                loadQuestion(0);
+            }
+
+            window.backToScore = function() {
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('scorecard-popup').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
